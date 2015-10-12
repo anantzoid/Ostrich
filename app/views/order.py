@@ -8,6 +8,12 @@ def OrderItem():
     user_id = int(request.form['user_id'])
 
     order = Order(item_id, user_id)
-    order_id = order.placeOrder()
+    order_placed = order.placeOrder()
 
-    return jsonify(order_id = order_id)
+    if 'order_id' in order_placed:
+        order_placed['status'] = 'True'
+    else:
+        order_placed['status'] = 'False'
+
+    return jsonify(order_placed)
+
