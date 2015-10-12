@@ -2,7 +2,6 @@ from app import webapp
 from app import mysql
 import datetime
 #from app.models import User, Item
-import MySQLdb
 
 class Order():
     def __init__(self, item_id, user_id, order_return=None):
