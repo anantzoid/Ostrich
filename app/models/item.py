@@ -4,43 +4,81 @@ from app import mysql
 
 class Item():
     def __init__(self, item_id):
-        self.item_id = item_id
+        self.item_id = int(item_id)
+        self.data = self.getData() 
+
+    def __getattr__(self, field):
+        if field in self.data:
+            return self.data[field]
+        else:
+            return None
+
+    def getData(self):
+        obj_cursor = mysql.connect().cursor()
+        obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(self.item_id))
+        data = fetchOneAssoc(obj_cursor)
+        data['price'] = float(data['price']) if data['price'] else data['price']
+        data['security_deposit'] = 0#self.getSecurityDepositAmount()
+
+        return data
 
 
-    @staticmethod
-    def searchQuery(q):
-        connect = mysql.connect()
-        search_cursor = connect.cursor()
-        search_cursor.execute("SELECT item_id, item_name, author FROM items \
-                WHERE item_name LIKE '%% %s %%' OR author LIKE '%% %s %%'" %(q, q))
-        results = search_cursor.fetchall()
+    def getObj(self):
+        item_obj = vars(self)
+        item_obj = item_obj['data']
+        item_obj['item_id'] = self.item_id
+        
+        item_obj = self.getTempVarsForBookModel(item_obj)
 
-        refined_results = {}
-        for i, item in enumerate(results):
-            refined_results[i] = {
-                        "item_id": int(item[0]),
-                        "item_name": item[1],
-                        "author": item[2]
-                    }
+        return item_obj
 
-        search_cursor.close()
-        if len(refined_results) > 20:
-            return refined_results
+    def getSecurityDepositAmount(self):
+        security = 0
+        if self.data['price']:
+            security = max(1000, 0.5*self.data['price'])
 
-        search_cursor = self.connect.cursor()
-        search_cursor.execute("SELECT i.item_id, i.item_name, i.author FROM items i \
-                        LEFT JOIN items_categories ic ON i.item_id = ic.item_id \
-                        LEFT JOIN categories c ON c.category_id = ic.category_id \
-                        WHERE c.category_name LIKE '%% %s %%'" %(q)) 
-        results = search_cursor.fetchall()
+        return security
 
-        i = len(results)
-        for item in enumerate(results):
-            refined_results[i] = {
-                        "item_id": int(item[0]),
-                        "item_name": item[1],
-                        "author": item[2]
-                    }
-            i += 1
+    def getTempVarsForBookModel(self, item_obj):
+        item_obj['isbn'] = item_obj['ISBN-10']
+        item_obj['title'] = item_obj['item_name']
+        item_obj['cover'] = ''
+        item_obj['reviews'] = ''
+        item_obj['deposit'] = item_obj['security_deposit']
+        item_obj['delivery'] = 0
+        item_obj['available_in_hours'] = 3
+        item_obj['bound'] = ''
+        item_obj['year'] = 2014
+        item_obj['photos'] = []
+        item_obj['return_days'] = []
+        item_obj['rating_avg'] = int(item_obj['ratings'][0]) if item_obj['ratings'] else 0
+        item_obj['rating_numbers'] = item_obj['num_ratings']
+        
+        del item_obj['ASIN']
+        del item_obj['ISBN-10']
+        del item_obj['ISBN-13']
+        del item_obj['item_name']
+        del item_obj['language']
+        del item_obj['num_ratings']
+        del item_obj['ratings']
+        del item_obj['price']
+        
+        return item_obj
 
-        return refined_results
+'''
+Generic helpers
+'''
+def fetchOneAssoc(cursor) :
+    data = cursor.fetchone()
+    if data == None :
+        return None
+    desc = cursor.description
+
+    dict = {}
+
+    for (name, value) in zip(desc, data) :
+        dict[name[0]] = value
+
+    return dict
+
+
