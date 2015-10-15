@@ -5,7 +5,8 @@ from app import mysql
 class Item():
     def __init__(self, item_id):
         self.item_id = int(item_id)
-        self.data = self.getData() 
+        self.data = []
+        self.getData() 
 
     def __getattr__(self, field):
         if field in self.data:
@@ -16,11 +17,10 @@ class Item():
     def getData(self):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(self.item_id))
-        data = fetchOneAssoc(obj_cursor)
-        data['price'] = float(data['price']) if data['price'] else data['price']
-        data['security_deposit'] = self.getSecurityDepositAmount()
+        self.data = fetchOneAssoc(obj_cursor)
+        self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
+        self.data['security_deposit'] = self.getSecurityDepositAmount()
 
-        return data
 
 
     def getObj(self):
@@ -34,11 +34,9 @@ class Item():
 
     def getSecurityDepositAmount(self):
 
-        #FIXME 
         security = 0
-        return 0
         if self.data['price']:
-            security = max(1000, 0.5*self.data['price'])
+            security = min(1000, 0.5*self.data['price'])
 
         return security
 
@@ -65,6 +63,7 @@ class Item():
         del item_obj['num_ratings']
         del item_obj['ratings']
         del item_obj['price']
+        del item_obj['security_deposit']
         
         return item_obj
 
@@ -77,11 +76,11 @@ def fetchOneAssoc(cursor) :
         return None
     desc = cursor.description
 
-    dict = {}
+    datadict = {}
 
     for (name, value) in zip(desc, data) :
-        dict[name[0]] = value
+        datadict[name[0]] = value
 
-    return dict
+    return datadict
 
 

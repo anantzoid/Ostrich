@@ -22,7 +22,7 @@ class Order():
        
         #check user validity
 
-       inventory_ids = self.getInventoryIds() 
+        inventory_ids = self.getInventoryIds() 
         
         '''
         #NOTE Skipping this too for now
@@ -32,7 +32,7 @@ class Order():
         '''
                 
         insert_data_cursor = self.connect.cursor()
-        insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \ 
+        insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
                 order_placed, order_return) VALUES(%d, %d, '%s', '%s')" % \
                 (self.user, self.address_id, self.order_placed, self.order_return) )
         self.connect.commit()
