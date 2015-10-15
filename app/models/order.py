@@ -4,12 +4,13 @@ import datetime
 #from app.models import User, Item
 
 class Order():
-    def __init__(self, item_id, user_id, order_return=None):
+    def __init__(self, item_id, user_id, address_id, order_return=None):
         #self.user = User(user_id)
         #self.item = Item(item_id)
 
         self.user = user_id
         self.item = item_id
+        self.address_id = address_id
         
         self.order_placed = self.getCurrentTimestamp()
         if not order_return:
@@ -45,7 +46,7 @@ class Order():
             return {'message': 'Can only order after returning'}
 
         insert_data_cursor = self.connect.cursor()
-        insert_data_cursor.execute("INSERT INTO orders (item_id, user_id, order_placed, order_return) VALUES(%d, %d, '%s', '%s')" %(self.item, self.user, self.order_placed, self.order_return) )
+        insert_data_cursor.execute("INSERT INTO orders (item_id, user_id, address_id, order_placed, order_return) VALUES(%d, %d, %d, '%s', '%s')" %(self.item, self.user, self.address_id, self.order_placed, self.order_return) )
         self.connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
