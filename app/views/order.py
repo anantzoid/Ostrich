@@ -20,8 +20,7 @@ def OrderItem():
         return jsonify({'status':'False', 'message':'Address id missing'})
 
     item_ids = [int(item_id) for item_id in item_ids.split(',')]
-    order = Order(item_ids, user_id, address_id)
-    order_placed = order.placeOrder()
+    order_placed = Order.placeOrder(item_ids, user_id, address_id)
 
     if 'order_id' in order_placed:
         order_placed['status'] = 'True'

@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-
+from app.models import Helpers
 
 class Item():
     def __init__(self, item_id):
@@ -17,10 +17,9 @@ class Item():
     def getData(self):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(self.item_id))
-        self.data = fetchOneAssoc(obj_cursor)
+        self.data = Helpers.fetchOneAssoc(obj_cursor)
         self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
         self.data['security_deposit'] = self.getSecurityDepositAmount()
-
 
 
     def getObj(self):
@@ -66,21 +65,5 @@ class Item():
         del item_obj['security_deposit']
         
         return item_obj
-
-'''
-Generic helpers
-'''
-def fetchOneAssoc(cursor) :
-    data = cursor.fetchone()
-    if data == None :
-        return None
-    desc = cursor.description
-
-    datadict = {}
-
-    for (name, value) in zip(desc, data) :
-        datadict[name[0]] = value
-
-    return datadict
 
 

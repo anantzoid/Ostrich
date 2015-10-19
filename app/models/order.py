@@ -36,6 +36,9 @@ class Order():
         insert_data_cursor.close()
 
         order.updateInventoryPostOrder(item_ids)
+        #TODO call roadrunnr api
+        #TODO send user order confirmation notification
+
         return {'order_id': order.order_id}
     
 
@@ -73,11 +76,6 @@ class Order():
             #TODO send notification to lender
 
              
-
-        #TODO call roadrunnr api
-        #TODO send user order confirmation notification
-
-
 
     def getInventoryIds(self, item_ids):
         
