@@ -1,6 +1,23 @@
 from app import webapp
-from app.models import User
+from app.models import User, Helpers
 from flask import request, jsonify
+
+@webapp.route('/fetchUser', methods=['POST'])
+def fetchUser():
+    response = {'status': 'False'}
+
+    social_id = Helpers.getParam(request.form, 'id') 
+    if not social_id:
+        response['message'] = 'Social ID missing'
+        return jsonify(response)
+
+    source = Helpers.getParam(request.form, 'source') 
+    if not source:
+        response['message'] = 'Login source missing'
+        return jsonify(response)
+
+    user = User(social_id, source) 
+    return jsonify(user=user.getObj())
 
 @webapp.route('/signup', methods=['POST'])
 def userSignup():
@@ -30,7 +47,7 @@ def addAddress():
         response['message'] = 'Address missing'
         return jsonify(response)
 
-    user = User(user_id)
+    user = User(user_id, 'user_id')
     address_id = user.addAddress(address)
     if address_id:
         response = {
@@ -53,7 +70,7 @@ def editDetails():
     for key in request.form:
         user_data[key] = request.form[key]
 
-    user = User(user_id)
+    user = User(user_id, 'user_id')
     status = user.editDetails(user_data)
     if status:
         response['status'] = 'True'

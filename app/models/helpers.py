@@ -18,4 +18,7 @@ class Helpers():
 
         return datadict
 
+    @staticmethod
+    def getParam(obj, var):
+        return obj[var] if var in obj else ''
 

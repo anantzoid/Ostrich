@@ -4,9 +4,8 @@ from app.models import Helpers
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User():
-    def __init__(self, user_id):
-        self.user_id = user_id
-        self.getData()
+    def __init__(self, user_id, login_type):
+        self.getData(user_id, login_type)
 
     def __getattr__(self, field):
         if field in self.data:
@@ -15,9 +14,16 @@ class User():
             return None
 
     
-    def getData(self):
+    def getData(self, user_id, login_type):
+
+        get_data_query = "SELECT * FROM users WHERE %s = %d" 
+        if login_type != 'user_id':
+            get_data_query = get_data_query.replace("%d", "'%s'")
+        else:
+            user_id = int(user_id)
+
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT * FROM users WHERE user_id = %d" %(self.user_id))
+        obj_cursor.execute(get_data_query % (login_type, user_id))
         self.data = Helpers.fetchOneAssoc(obj_cursor)
         
         self.data['address'] = {}
@@ -26,10 +32,11 @@ class User():
         for address in obj_cursor.fetchall():
             self.data['address'][int(address[0])] = address[1]
    
+
     def getObj(self):
         user_obj = vars(self)
         user_obj = user_obj['data']
-        user_obj['user_id'] = self.user_id
+        # user_obj['user_id'] = self.user_id
         
         return user_obj
 
@@ -46,18 +53,23 @@ class User():
         phone = user_data['phone'] if 'phone' in user_data else ''
         email = user_data['email'] if 'email' in user_data else ''
 
+        address = Helpers.getParam(user_data, 'address')
+
+        #TODO handle facebook_id
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
 
+        
         if email:
             conn = mysql.connect()
             check_email_cursor = conn.cursor()
             check_email_cursor.execute("SELECT user_id FROM users WHERE email = '%s'" %(email))
-            record_count = check_email_cursor.fetchone()
+            user_exists_id = check_email_cursor.fetchone()
             check_email_cursor.close()
 
-            if record_count:
-                return {'message': 'Email exists'} 
+            if user_exists_id and len(user_exists_id):
+                user_exists = User(int(user_exists_id[0]))
+                return {'message': 'Email exists', 'user': user_exists.getObj()} 
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("INSERT INTO users (username, password, name, \
@@ -66,9 +78,11 @@ class User():
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)
-        user = User(user_id)
         create_user_cursor.close()
-        
+
+        user = User(user_id)
+        address_id = user.addAddress(address)
+         
         return {'user_id': user_id}
    
 
