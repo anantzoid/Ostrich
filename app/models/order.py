@@ -116,6 +116,28 @@ class Order():
 
         return inventory_ids
 
+    @staticmethod
+    def lendItem(lend_data):
+       
+        lend_date['delivery_date'] = '2020-20-20 20:20:20'
+        conn = mysql.connect()
+        set_lend_cursor = conn.cursor()
+        set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added \
+                date_removed, in_stock, pickup_slot, delivery_slot) VALUES \
+                (%d, %d, '%s', '%s', %d, %d, %d)" % \
+                (lend_data['item_id'], \
+                 lend_data['lender_id'], \
+                 lend_data['pickup_date'], \
+                 lend_data['delivery_date'], \
+                 0, \
+                 lend_data['pickup_slot'], \
+                 lend_data['delivery_slot'], \
+                ))
+        conn.commit()
+        inv_id = set_lend_cursor.lastrowid
+        set_lend_cursor.close()
+
+        return inv_id
 
     @staticmethod    
     def getTimeSlot():
@@ -128,7 +150,6 @@ class Order():
             time_slots.append(Helpers.fetchOneAssoc(time_slot_cursor))
 
         time_slot_cursor.close()
-        print time_slots
         return time_slots
 
 

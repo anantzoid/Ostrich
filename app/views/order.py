@@ -30,6 +30,36 @@ def OrderItem():
     return jsonify(order_placed)
 
 
+@webapp.route('/lend', methods=['POST'])
+def lendItem():
+    response = {'status': 'False'}
+    lend_data = {}
+
+    lend_data['item_id'] = Helpers.getParam(request.form, 'item_id')
+    lend_data['user_id'] = Helpers.getParam(request.form, 'user_id')
+
+    #incentive info will have delivery date (depending on period of rental)
+    lend_data['incentive_id'] = Helpers.getParam(request.form, 'incentive_id ')
+    lend_data['delivery_slot'] = Helpers.getParam(request.form, 'delivery_slot')
+
+    #for pickup
+    lend_data['pickup_date'] = Helpers.getParam(request.form, 'pickup_date')
+    lend_data['pickup_slot'] = Helpers.getParam(request.form, 'pickup_slot')
+  
+    for key in lend_data:
+        if not lend_data[key]:
+            response['message'] = key+' missing'
+            return jsonify(response)
+
+    inventory_id = Order.lendItem(lend_data)
+   
+    if inventory_id:
+        response['status'] = 'True'
+        response['inventory_id'] = inventory_id
+
+    return response
+
+
 @webapp.route('/requestItem', methods=['POST'])
 def requestItem():
     item_type = Helpers.getParam(request.form, 'item_type')
