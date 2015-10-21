@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Order
+from app.models import Order, Item, Helpers
 from flask import request, jsonify
 
 @webapp.route('/order', methods=['POST'])
@@ -29,3 +29,25 @@ def OrderItem():
 
     return jsonify(order_placed)
 
+@webapp.route('/requestItem', methods=['POST'])
+def requestItem():
+    item_type = Helpers.getParam(request.form, 'item_type')
+    
+    # ISBN in case of books
+    #TODO look into this for genericity
+    item_id = Helpers.getParam(request.form, 'item_id')
+    item_name = Helpers.getParam(request.form, 'item_name')
+
+    Item.storeItemRequest(isbn, item_name, itemp_type)
+
+@webapp.route('/getRentalRate')
+def getRentalRate():
+    return None
+
+@webapp.route('/getIncentiveSlab')
+def getIncentiveSlab():
+    return None
+
+@webapp.route('/getTimeSlot')
+def getTimeSlot():
+    return jsonify(time_slots=Order.getTimeSlot())

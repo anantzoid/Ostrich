@@ -1,5 +1,6 @@
 from app import webapp
 from app import mysql
+from app.models import Helpers
 import datetime
 #from app.models import User, Item
 
@@ -11,9 +12,9 @@ class Order():
     @staticmethod
     def placeOrder(item_ids, user_id, address_id, order_return=None):
        
-        order_placed = getCurrentTimestamp()
+        order_placed = Helpers.getCurrentTimestamp()
         if not order_return:
-            order_return = getDefaultReturnTimestamp()
+            order_return = Helpers.getDefaultReturnTimestamp()
 
         #check user validity
         #check order validity
@@ -113,23 +114,23 @@ class Order():
                     'lender_id': 0
                     })
 
-
         return inventory_ids
 
-    
-def getCurrentTimestamp():
-    current_timestamp = datetime.datetime.now()
-    order_placed = str(current_timestamp).split('.')[0]
 
-    return order_placed
+    @staticmethod    
+    def getTimeSlot():
+        time_slot_cursor = mysql.connect().cursor()
+        time_slot_cursor.execute("SELECT * FROM time_slots")
+        num_slots = time_slot_cursor.rowcount
 
+        time_slots = []
+        for slot in range(num_slots):
+            time_slots.append(Helpers.fetchOneAssoc(time_slot_cursor))
 
-def getDefaultReturnTimestamp():
-    current_timestamp = datetime.datetime.now()
-    next_week_timestamp = str(current_timestamp + datetime.timedelta(days=7))
-    order_return = next_week_timestamp.split('.')[0]
+        time_slot_cursor.close()
+        print time_slots
+        return time_slots
 
-    return order_return
 
 '''
 def checkOrderValidity(self):

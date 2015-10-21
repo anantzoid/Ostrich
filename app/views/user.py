@@ -17,7 +17,7 @@ def fetchUser():
         return jsonify(response)
 
     user = User(social_id, source) 
-    return jsonify(user=user.getObj())
+    return jsonify(user.getObj())
 
 @webapp.route('/signup', methods=['POST'])
 def userSignup():
