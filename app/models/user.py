@@ -2,6 +2,7 @@ from app import webapp
 from app import mysql
 from app.models import Helpers
 from werkzeug.security import generate_password_hash, check_password_hash
+import json
 
 class User():
     def __init__(self, user_id, login_type):
@@ -26,11 +27,15 @@ class User():
         obj_cursor.execute(get_data_query % (login_type, user_id))
         self.data = Helpers.fetchOneAssoc(obj_cursor)
         
-        self.data['address'] = {}
-        obj_cursor.execute("SELECT address_id, address FROM user_addresses WHERE \
+        self.data['address'] = []
+        obj_cursor.execute("SELECT * FROM user_addresses WHERE \
                 user_id = %d" % (self.user_id))
-        for address in obj_cursor.fetchall():
-            self.data['address'][int(address[0])] = address[1]
+        num_address = obj_cursor.rowcount
+        for i in range(num_address):
+            self.data['address'].append(Helpers.fetchOneAssoc(obj_cursor))
+
+        if len(self.data['address']) == 1:
+            self.data['address'] = self.data['address'][0]
    
 
     def getObj(self):
@@ -54,7 +59,7 @@ class User():
         email = user_data['email'] if 'email' in user_data else ''
 
         address = Helpers.getParam(user_data, 'address')
-
+    
         #TODO handle facebook_id
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
@@ -68,7 +73,7 @@ class User():
             check_email_cursor.close()
 
             if user_exists_id and len(user_exists_id):
-                user_exists = User(int(user_exists_id[0]))
+                user_exists = User(int(user_exists_id[0]), 'user_id')
                 return {'message': 'Email exists', 'user': user_exists.getObj()} 
 
         create_user_cursor = conn.cursor()
@@ -80,17 +85,24 @@ class User():
         user_id = int(create_user_cursor.lastrowid)
         create_user_cursor.close()
 
-        user = User(user_id)
-        address_id = user.addAddress(address)
+        user = User(user_id, 'user_id')
+        if address: 
+            address = json.loads(address)
+            address_id = user.addAddress(address)
          
         return {'user_id': user_id}
    
 
-    def addAddress(self, address):
+    def addAddress(self, address_obj):
+        address = Helpers.getParam(address_obj, 'address')
+        lat = Helpers.getParam(address_obj, 'latitude')
+        lng = Helpers.getParam(address_obj, 'longitude')
+
         conn = mysql.connect()
         insert_add_cursor = conn.cursor()
-        insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address) \
-                 VALUES (%d, '%s')" % (self.user_id, address))
+        insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
+                latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
+                address, lat, lng))
         conn.commit()
         
         address_id = int(insert_add_cursor.lastrowid)
