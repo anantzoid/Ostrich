@@ -1,3 +1,4 @@
+
 from app import webapp
 from app.models import Order, Item, Helpers
 from flask import request, jsonify
@@ -63,16 +64,21 @@ def lendItem():
 
 @webapp.route('/orderStatus', methods=['POST'])
 def orderStatus():
-    user_id = Helpers.getParam(request.form, 'user_id')
-    order_id = Helpers.getParam(request.form, 'order_id')
+    resp = {"status": "False"}
+
+    user_id = Helpers.getParam(request.form, 'user_id', 'int')
+    order_id = Helpers.getParam(request.form, 'order_id', 'int')
 
     # Asking for user_id to double check
-    if not(user_id or order_id):
-        return jsonify({"status": "False"})
+    if not(user_id and order_id):
+        return jsonify(resp)
 
     order = Order(int(order_id))
     order_status = order.getStatus(int(user_id))
-    
+   
+    if not order_status:
+        order_status = resp
+
     return jsonify(order_status)
 
 @webapp.route('/requestItem', methods=['POST'])
@@ -84,7 +90,12 @@ def requestItem():
     item_id = Helpers.getParam(request.form, 'item_id')
     item_name = Helpers.getParam(request.form, 'item_name')
 
-    Item.storeItemRequest(isbn, item_name, itemp_type)
+    if not(item_name and item_type and item_id):
+        return jsonify({'status': 'False'})
+
+    Item.storeItemRequest(item_type, item_id, item_name)
+
+    return jsonify(status='True')
 
 @webapp.route('/getRentalRate')
 def getRentalRate():

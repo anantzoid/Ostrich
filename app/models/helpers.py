@@ -21,10 +21,14 @@ class Helpers():
         return datadict
 
     @staticmethod
-    def getParam(obj, var):
-        return obj[var] if var in obj else ''
+    def getParam(obj, var, var_type=None):
+        param = obj[var] if var in obj else ''
+        if var_type == 'int':
+            if not param.isdigit():
+                param = ''
 
-
+        return param
+        
     @staticmethod
     def getCurrentTimestamp():
         current_timestamp = datetime.datetime.now()

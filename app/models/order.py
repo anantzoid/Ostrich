@@ -131,18 +131,12 @@ class Order():
         else:
             return {}
 
-        print status
         order_info = {}
-        order_info['status_details'] = Order.getStatusDetails(status_id)
-        order_info['item'] = Item(int(status[1])).getObj()
-        order_info['user'] = User(user_id, 'user_id')
+        if status_id:
+            order_info['status_details'] = Order.getStatusDetails(status_id)
+            order_info['item'] = Item(int(status[1])).getObj()
 
-
-        print order_info
         return order_info
-
-        # item snippet
-        # user snippet
 
     @staticmethod
     def lendItem(lend_data):

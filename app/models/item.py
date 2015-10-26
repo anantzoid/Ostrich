@@ -40,7 +40,7 @@ class Item():
         return security
 
     def getTempVarsForBookModel(self, item_obj):
-        item_obj['isbn'] = item_obj['ISBN-10']
+        item_obj['isbn'] = item_obj['ISBN_10']
         item_obj['title'] = item_obj['item_name']
         item_obj['cover'] = ''
         item_obj['reviews'] = ''
@@ -55,8 +55,8 @@ class Item():
         item_obj['rating_numbers'] = item_obj['num_ratings']
         
         del item_obj['ASIN']
-        del item_obj['ISBN-10']
-        del item_obj['ISBN-13']
+        del item_obj['ISBN_10']
+        del item_obj['ISBN_13']
         del item_obj['item_name']
         del item_obj['language']
         del item_obj['num_ratings']
@@ -72,17 +72,24 @@ class Item():
         # This would be rarely used theoretically
         # only when the user will be puttin an item on rent
         # not present in our DB
+
+        if len(item_id) > 10:
+            isbn = 'ISBN_10'
+        else:
+            isbn = 'ISBN_13'
+
         conn = mysql.connect()
         store_request_cursor = conn.cursor()
         store_request_cursor.execute("INSERT INTO items (item_name, %s) VALUES \
-                ('%s', '%s')" % (item_name, item_id))
+                ('%s', '%s')" % (isbn, item_name, item_id))
         conn.commit()
         insert_id = store_request_cursor.lastrowid
 
         #TODO map item_type to category_id somehow
         category_id = 1
-        store_request_cursor.execute("INSERT INTO item_categories (item_id, category_id) \
+        store_request_cursor.execute("INSERT INTO items_categories (item_id, category_id) \
                 VALUES (%d, %d)" % (insert_id, category_id))
         conn.commit()
         store_request_cursor.close()
 
+        return True
