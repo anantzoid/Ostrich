@@ -45,7 +45,9 @@ def lendItem():
     #for pickup
     lend_data['pickup_date'] = Helpers.getParam(request.form, 'pickup_date')
     lend_data['pickup_slot'] = Helpers.getParam(request.form, 'pickup_slot')
-  
+
+    lend_data['condition'] = Helpers.getParam(request.form, 'item_condition')
+   
     for key in lend_data:
         if not lend_data[key]:
             response['message'] = key+' missing'
@@ -59,6 +61,19 @@ def lendItem():
 
     return response
 
+@webapp.route('/orderStatus', methods=['POST'])
+def orderStatus():
+    user_id = Helpers.getParam(request.form, 'user_id')
+    order_id = Helpers.getParam(request.form, 'order_id')
+
+    # Asking for user_id to double check
+    if not(user_id or order_id):
+        return jsonify({"status": "False"})
+
+    order = Order(int(order_id))
+    order_status = order.getStatus(int(user_id))
+    
+    return jsonify(order_status)
 
 @webapp.route('/requestItem', methods=['POST'])
 def requestItem():

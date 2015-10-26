@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-from app.models import Helpers
+from app.models import User, Item, Helpers
 import datetime
 #from app.models import User, Item
 
@@ -116,14 +116,43 @@ class Order():
 
         return inventory_ids
 
+    def getStatus(self, user_id):
+        get_status_cursor = mysql.connect().cursor()
+        get_status_cursor.execute("SELECT o.order_status, i.item_id FROM orders o \
+                INNER JOIN order_history i \
+                ON o.order_id = i.order_id \
+                WHERE o.order_id = %d \
+                AND o.user_id = %d" 
+                % (self.order_id, user_id))
+
+        status = get_status_cursor.fetchone()
+        if status:
+            status_id = int(status[0])
+        else:
+            return {}
+
+        print status
+        order_info = {}
+        order_info['status_details'] = Order.getStatusDetails(status_id)
+        order_info['item'] = Item(int(status[1])).getObj()
+        order_info['user'] = User(user_id, 'user_id')
+
+
+        print order_info
+        return order_info
+
+        # item snippet
+        # user snippet
+
     @staticmethod
     def lendItem(lend_data):
-       
-        lend_date['delivery_date'] = '2020-20-20 20:20:20'
+     
+        # TODO get this from incentive slab
+        lend_data['delivery_date'] = '2020-20-20 20:20:20'
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
         set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added \
-                date_removed, in_stock, pickup_slot, delivery_slot) VALUES \
+                date_removed, in_stock, pickup_slot, delivery_slot, condition) VALUES \
                 (%d, %d, '%s', '%s', %d, %d, %d)" % \
                 (lend_data['item_id'], \
                  lend_data['lender_id'], \
@@ -132,6 +161,7 @@ class Order():
                  0, \
                  lend_data['pickup_slot'], \
                  lend_data['delivery_slot'], \
+                 lend_data['condition'] \
                 ))
         conn.commit()
         inv_id = set_lend_cursor.lastrowid
@@ -151,6 +181,55 @@ class Order():
 
         time_slot_cursor.close()
         return time_slots
+
+
+    @staticmethod
+    def getStatusDetails(status_id):
+        status_info = {
+                1: {
+                    "Status": "Order placed",
+                    "Description": "The user has confirmed the order"
+                    },
+                2: {
+                    "Status": "Picked up",
+                    "Description": "Order has been picked up for delivery"
+                    },
+                3: {
+                    "Status": "Enroute",
+                    "Description": "Order is on the way, with the delivery guy"
+                    },
+                4: {
+                    "Status": "Delivered",
+                    "Description": "Order has been delivered to the user"
+                    },
+                5: {
+                    "Status": "Picked up",
+                    "Description": "Order has been picked up from the user for return"
+                    },
+                6: {
+                    "Status": "Returned",
+                    "Description": "Order has been retured to the inventory"
+                    }
+                }
+        
+        if status_id in status_info:
+            return status_info[status_id]
+        else:
+            return {}
+
+
+'''
+def checkOrderValidity(self):
+    check_record_cursor = self.connect.cursor()
+    check_record_cursor.execute("SELECT order_id FROM orders WHERE user_id = %d \
+            AND item_id = %d AND UNIX_TIMESTAMP(order_return) <= UNIX_TIMESTAMP('%s')" \
+            %(self.user, self.item, self.order_placed))
+    record_count = check_record_cursor.fetchone()
+    check_record_cursor.close()
+    return 0 if record_count else 1
+'''
+
+
 
 
 '''
