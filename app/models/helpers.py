@@ -14,7 +14,7 @@ class Helpers():
         datadict = {}
 
         for (name, value) in zip(desc, data) :
-            if isinstance(value, datetime.timedelta):
+            if isinstance(value, datetime.datetime) or isinstance(value, datetime.timedelta):
                 value = str(value)
             datadict[name[0]] = value
 

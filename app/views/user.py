@@ -77,3 +77,17 @@ def editDetails():
 
     return jsonify(response)
 
+
+@webapp.route('/myOrders', methods=['POST'])
+def getMyOrders():
+    response = {'status': 'false'}
+    
+    user_id = Helpers.getParam(request.form, 'user_id')
+    if not user_id:
+        return jsonify(response)
+
+    user = User(int(user_id), 'user_id')
+    orders = user.getOrders()
+
+    return jsonify(orders)
+

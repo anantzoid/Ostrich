@@ -26,10 +26,27 @@ class Item():
         item_obj = vars(self)
         item_obj = item_obj['data']
         item_obj['item_id'] = self.item_id
-        
         item_obj = self.getTempVarsForBookModel(item_obj)
 
         return item_obj
+
+    def getMinObj(self):
+        min_obj = {}
+        item_obj = self.getObj()
+
+        min_obj["item_id"] = item_obj["item_id"]
+        min_obj["item_name"] = item_obj["title"]
+        min_obj["images"] = item_obj["photos"]
+
+        #TODO generic minification: after making BookModel items consistent
+        '''
+        min_properties = ["item_id", "item_name", "photos"]
+        for prop in min_properties:
+            min_obj[prop] = item_obj[prop]
+        '''
+
+        return min_obj
+
 
     def getSecurityDepositAmount(self):
 

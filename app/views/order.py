@@ -40,15 +40,15 @@ def lendItem():
     lend_data['user_id'] = Helpers.getParam(request.form, 'user_id')
 
     #incentive info will have delivery date (depending on period of rental)
-    lend_data['incentive_id'] = Helpers.getParam(request.form, 'incentive_id ')
+    lend_data['incentive_id'] = Helpers.getParam(request.form, 'incentive_id')
     lend_data['delivery_slot'] = Helpers.getParam(request.form, 'delivery_slot')
 
     #for pickup
     lend_data['pickup_date'] = Helpers.getParam(request.form, 'pickup_date')
     lend_data['pickup_slot'] = Helpers.getParam(request.form, 'pickup_slot')
 
-    lend_data['condition'] = Helpers.getParam(request.form, 'item_condition')
-   
+    lend_data['item_condition'] = Helpers.getParam(request.form, 'item_condition')
+  
     for key in lend_data:
         if not lend_data[key]:
             response['message'] = key+' missing'
@@ -60,7 +60,7 @@ def lendItem():
         response['status'] = 'True'
         response['inventory_id'] = inventory_id
 
-    return response
+    return jsonify(response)
 
 @webapp.route('/orderStatus', methods=['POST'])
 def orderStatus():

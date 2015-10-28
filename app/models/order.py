@@ -140,22 +140,23 @@ class Order():
 
     @staticmethod
     def lendItem(lend_data):
-     
+
         # TODO get this from incentive slab
         lend_data['delivery_date'] = '2020-20-20 20:20:20'
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
-        set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added \
-                date_removed, in_stock, pickup_slot, delivery_slot, condition) VALUES \
-                (%d, %d, '%s', '%s', %d, %d, %d)" % \
-                (lend_data['item_id'], \
-                 lend_data['lender_id'], \
-                 lend_data['pickup_date'], \
-                 lend_data['delivery_date'], \
+        
+        set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added, \
+                date_removed, in_stock, pickup_slot, delivery_slot, item_condition) VALUES \
+                (%d, %d, '%s', '%s', %d, %d, %d, '%s')" % \
+                (int(lend_data['item_id']), \
+                 int(lend_data['user_id']), \
+                 str(lend_data['pickup_date']), \
+                 str(lend_data['delivery_date']), \
                  0, \
-                 lend_data['pickup_slot'], \
-                 lend_data['delivery_slot'], \
-                 lend_data['condition'] \
+                 int(lend_data['pickup_slot']), \
+                 int(lend_data['delivery_slot']), \
+                 str(lend_data['item_condition']) \
                 ))
         conn.commit()
         inv_id = set_lend_cursor.lastrowid
