@@ -2,6 +2,13 @@ from app import webapp
 from app.models import User, Helpers
 from flask import request, jsonify
 
+@webapp.route('/preregister', methods=['POST'])
+def preregister():
+    email = Helpers.getParam(request.form, 'email')
+    if email:
+        User.preregisterUser(email)
+    return jsonify({'success': 'true'});
+
 @webapp.route('/fetchUser', methods=['POST'])
 def fetchUser():
     response = {'status': 'False'}

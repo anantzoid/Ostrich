@@ -237,4 +237,15 @@ class User():
         print rentals
         return rentals
 
-   
+
+    @staticmethod
+    def preregisterUser(email):
+        conn = mysql.connect() 
+        cursor = conn.cursor()
+        cursor.execute("SELECT `id` FROM preregisters WHERE email = '%s'" % (email))
+        result = cursor.fetchone()
+        if not result:
+            cursor.execute("INSERT INTO preregisters (email) VALUES ('%s')" % (email))
+            conn.commit()
+
+
