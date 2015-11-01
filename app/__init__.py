@@ -1,9 +1,12 @@
 import os, sys
 from flask import Flask
 from flaskext.mysql import MySQL
+from flask.ext.cors import CORS
 
 webapp = Flask(__name__)
 mysql = MySQL()
+
+cors = CORS(webapp)
 
 if os.environ.get('APP_ENV') == 'dev':
     #TODO change for production
