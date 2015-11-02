@@ -36,11 +36,23 @@ class Order():
         order = Order(order_id)
         insert_data_cursor.close()
 
+        response = {'order_id': order.order_id}
         order.updateInventoryPostOrder(item_ids)
         #TODO call roadrunnr api
         #TODO send user order confirmation notification
 
-        return {'order_id': order.order_id}
+        '''
+        TODO: remove this
+        user = User(user_id, 'user_id')
+        invite = user.fetchInviteScheme()
+        if invite:
+            response['has_invite'] = 1
+            response['invite'] = invite
+        else:
+            response['has_invite'] = 0
+        '''
+
+        return response 
     
 
     def updateInventoryPostOrder(self, item_ids):
@@ -82,7 +94,7 @@ class Order():
         
         inventory_ids = []
         for item_id in item_ids:
-            item_check_cursor = self.connect.cursor()
+            item_check_cursor = mysql.connect().cursor()
             item_check_cursor.execute("SELECT inventory_id, lender_id FROM inventory \
                     WHERE item_id = %d AND in_stock = 1 ORDER BY date_added" % (item_id))
             inv_items = item_check_cursor.fetchall()
@@ -103,9 +115,10 @@ class Order():
                     })
             else:
                 #TODO change this logic once we stop incremental inventory
-                insert_inv_item = self.connect.cursor()
+                connect = mysql.connect()
+                insert_inv_item = connect.cursor()
                 insert_inv_item.execute("INSERT INTO inventory (item_id) VALUES ('%s')" %(item_id))
-                self.connect.commit()
+                connect.commit()
                 new_inv_id = insert_inv_item.lastrowid
                 insert_inv_item.close()
 
@@ -142,7 +155,7 @@ class Order():
     def lendItem(lend_data):
 
         # TODO get this from incentive slab
-        lend_data['delivery_date'] = '2020-20-20 20:20:20'
+        lend_data['delivery_date'] = '2020-02-02 20:20:20'
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
         

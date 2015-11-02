@@ -70,7 +70,6 @@ def editDetails():
     response = {'status': 'False'}
     user_id = int(request.form['user_id']) if 'user_id' in request.form else ''
     if not user_id:
-        response['message'] = 'User ID missing'
         return jsonify(response)
     
     user_data = {}
@@ -81,20 +80,31 @@ def editDetails():
     status = user.editDetails(user_data)
     if status:
         response['status'] = 'True'
-
     return jsonify(response)
 
 
 @webapp.route('/myOrders', methods=['POST'])
 def getMyOrders():
     response = {'status': 'false'}
-    
     user_id = Helpers.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
 
     user = User(int(user_id), 'user_id')
     orders = user.getOrders()
-
     return jsonify(orders)
+
+'''
+TODO: remove this
+@webapp.route('/updateInviteLevel', methods=['POST'])
+def updateUserInvite():
+    response = {'status': 'false'}
+    user_id = Helpers.getParam(request.form, 'user_id')
+    if not user_id:
+        return jsonify(response)
+
+    user = User(int(user_id), 'user_id')
+    response['status'] = user.upgradeInviteScheme()
+    return jsonify(response)
+'''
 

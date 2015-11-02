@@ -1,20 +1,14 @@
 from app import webapp
 from app import mysql
-from app.models import Item, Helpers
+from app.models import Prototype, Item, Helpers, Incentive
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 
-class User():
+class User(Prototype):
     def __init__(self, user_id, login_type):
         self.getData(user_id, login_type)
 
-    def __getattr__(self, field):
-        if field in self.data:
-            return self.data[field]
-        else:
-            return None
-
-    
+   
     def getData(self, user_id, login_type):
 
         get_data_query = "SELECT * FROM users WHERE %s = %d" 
@@ -41,8 +35,6 @@ class User():
     def getObj(self):
         user_obj = vars(self)
         user_obj = user_obj['data']
-        # user_obj['user_id'] = self.user_id
-        
         return user_obj
 
 
@@ -249,3 +241,51 @@ class User():
             conn.commit()
 
 
+    '''
+    TODO remove this
+    def fetchUsedIncentive(self):
+        fetch_scheme_cursor = mysql.connect().cursor()
+        fetch_scheme_cursor.execute("SELECT user_id, incentive_id FROM user_invites WHERE \
+                user_id = %d ORDER BY incentive_id DESC" %(self.user_id))
+        result = fetch_scheme_cursor.fetchone()
+        return result 
+
+   
+    '''
+    '''
+    def fetchInviteScheme(self):
+        result = self.fetchUsedIncentive()
+        if result:
+            used_incentive = int(result[1])
+            if used_incentive < 999:
+                incentive = Incentive(used_incentive)
+                user_incentive = incentive.fetchNextIncentive()
+            else:
+                user_incentive = None
+        else:
+            next_incentive_id = Incentive.fetchFirstInviteScheme()
+            if next_incentive_id:
+                user_incentive = Incentive(next_incentive_id).getObj()
+            else:
+                user_incentive = None
+
+        return user_incentive
+
+    def upgradeInviteScheme(self):
+        result = self.fetchUsedIncentive()
+        if result:
+            incentive = Incentive(int(result[1]))
+            if incentive.next_incentive:
+                current_incentive_id = incentive.next_incentive
+            else:
+                current_incentive_id = 999
+        else:
+            current_incentive_id = Incentive.fetchFirstInviteScheme()
+
+        conn = mysql.connect()
+        invite_cursor = conn.cursor()
+        invite_cursor.execute("INSERT INTO user_invites (user_id, incentive_id) \
+                VALUES (%d, %d)" % (self.user_id, int(current_incentive_id)))
+        conn.commit()
+        return True
+    ''' 

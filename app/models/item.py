@@ -1,18 +1,12 @@
 from app import webapp
 from app import mysql
-from app.models import Helpers
+from app.models import Prototype, Helpers
 
-class Item():
+class Item(Prototype):
     def __init__(self, item_id):
         self.item_id = int(item_id)
         self.data = []
         self.getData() 
-
-    def __getattr__(self, field):
-        if field in self.data:
-            return self.data[field]
-        else:
-            return None
 
     def getData(self):
         obj_cursor = mysql.connect().cursor()
