@@ -3,6 +3,7 @@ from app import mysql
 from app.models import Prototype, Item, Helpers, Incentive
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+from datetime import datetime
 
 class User(Prototype):
     def __init__(self, user_id, login_type):
@@ -20,7 +21,7 @@ class User(Prototype):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute(get_data_query % (login_type, user_id))
         self.data = Helpers.fetchOneAssoc(obj_cursor)
-        
+       
         self.data['address'] = []
         obj_cursor.execute("SELECT * FROM user_addresses WHERE \
                 user_id = %d" % (self.user_id))
@@ -131,7 +132,6 @@ class User(Prototype):
 
 
     def getOrders(self):
-
         orders = {}
         orders['current'] = self.getCurrentOrder()
         orders['history'] = self.getOrderHistory()
@@ -141,9 +141,7 @@ class User(Prototype):
         return orders
 
     def getCurrentOrder(self):
-
         current_orders = []
-
         orders_cursor = mysql.connect().cursor()
         orders_cursor.execute("SELECT o.order_id, \
                 o.order_placed, \
@@ -207,7 +205,6 @@ class User(Prototype):
 
 
     def getRentals(self):
-
         rentals = []
         rental_cursor = mysql.connect().cursor()
         rental_cursor.execute("SELECT i.date_added, \
@@ -228,6 +225,56 @@ class User(Prototype):
             rentals.append(rental)
         print rentals
         return rentals
+
+   
+    def logReferral(self, uuid, referent_id=0):
+        conn = mysql.connect()
+        if referent_id:
+            date_activated = Helpers.getCurrentTimestamp()
+            source = 'link'
+            #if User.referentExists(referent_id):
+            #    return False 
+        else:
+            date_activated = None
+            source = 'phone'
+
+        log_ref_cursor = conn.cursor()
+        log_ref_cursor.execute("INSERT INTO referrals (referrer_id, google_uuid, \
+                referent_id, activation_date, source) VALUES (%d, '%s', %d, '%s', '%s')" %
+                (self.user_id, uuid, referent_id, date_activated, source))
+        conn.commit()
+        referral_id = log_ref_cursor.lastrowid
+        return referral_id
+
+
+    def confirmReferral(self, uuid):
+        if not self.isReferralValid():
+            return False
+        else:
+            activation_date = Helpers.getCurrentTimestamp()
+            conn = mysql.connect()
+            confirm_ref_cursor = conn.cursor()
+            confirm_ref_cursor.execute("UPDATE referrals SET referent_id = %d, activated = %d, \
+                    activation_date = '%s' WHERE google_uuid = '%s'" % (self.user_id, 1, activation_date, uuid))
+            conn.commit()
+            if not confirm_ref_cursor.rowcount:
+                return False
+            #TODO add credits in wallet
+
+            return True
+
+
+    def isReferralValid(self):
+        #TODO validity referent and referrer are not same, but the 5 minute check will handle that now
+        #TODO replace time check with caching on signup
+        user_created_datetime = datetime.strptime(self.date_created, '%Y-%m-%d %H:%M:%S')
+        timedelta = datetime.now() - user_created_datetime
+        print Helpers.getCurrentTimestamp()
+        print timedelta.seconds, self.date_created
+        if timedelta.seconds > 300:
+            return False
+        else:
+            return True
 
 
     @staticmethod
@@ -251,8 +298,6 @@ class User(Prototype):
         return result 
 
    
-    '''
-    '''
     def fetchInviteScheme(self):
         result = self.fetchUsedIncentive()
         if result:

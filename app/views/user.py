@@ -44,7 +44,7 @@ def userSignup():
 @webapp.route('/addAddress', methods=['POST'])
 def addAddress():
     response = {'status': 'False'}
-    user_id = int(request.form['user_id']) if 'user_id' in request.form else ''
+    user_id = Helpers.getParam(request.form, 'user_id')
     if not user_id:
         response['message'] = 'User ID missing'
         return jsonify(response)
@@ -68,7 +68,7 @@ def addAddress():
 @webapp.route('/editDetails', methods=['POST'])
 def editDetails():
     response = {'status': 'False'}
-    user_id = int(request.form['user_id']) if 'user_id' in request.form else ''
+    user_id = Helpers.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
     
@@ -94,6 +94,50 @@ def getMyOrders():
     orders = user.getOrders()
     return jsonify(orders)
 
+
+@webapp.route('/putReferral', methods=['POST'])
+def putReferral():
+    response = {'status': 'False'}
+    user_id = Helpers.getParam(request.form, 'user_id')
+    if not user_id:
+        return jsonify(response)
+    
+    uuid = Helpers.getParam(request.form, 'uuid')
+    if not uuid:
+        return jsonify(response)
+
+    user = User(int(user_id), 'user_id')
+    referral_id = user.logReferral(uuid)
+    if not referral_id:
+        response['message'] = 'User already existed'
+    else:
+        response['status'] = 'True'
+        response['referral_id'] = referral_id
+
+    return jsonify(response)
+    
+
+@webapp.route('/confirmReferral', methods=['POST'])
+def confirmReferral():
+    response = {'status': 'false'}
+    user_id = Helpers.getParam(request.form, 'user_id')
+    if not user_id:
+        return jsonify(response)
+ 
+    uuid = Helpers.getParam(request.form, 'uuid')
+    if not uuid:
+        return jsonify(response)
+
+    user = User(int(user_id), 'user_id')
+    result = user.confirmReferral(uuid)
+    if not result:
+        response['message'] = 'Referral not valid'
+    else:
+        response['status'] = 'True'
+
+    return jsonify(response)
+
+    
 '''
 TODO: remove this
 @webapp.route('/updateInviteLevel', methods=['POST'])
