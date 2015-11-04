@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-from app.models import Prototype, Helpers
+from app.models import Prototype, Utils
 
 class Item(Prototype):
     def __init__(self, item_id):
@@ -11,7 +11,7 @@ class Item(Prototype):
     def getData(self):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(self.item_id))
-        self.data = Helpers.fetchOneAssoc(obj_cursor)
+        self.data = Utils.fetchOneAssoc(obj_cursor)
         self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
         self.data['security_deposit'] = self.getSecurityDepositAmount()
 

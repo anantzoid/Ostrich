@@ -1,6 +1,6 @@
 
 from app import webapp
-from app.models import Order, Item, Helpers
+from app.models import Order, Item, Utils
 from flask import request, jsonify
 
 @webapp.route('/order', methods=['POST'])
@@ -36,18 +36,18 @@ def lendItem():
     response = {'status': 'False'}
     lend_data = {}
 
-    lend_data['item_id'] = Helpers.getParam(request.form, 'item_id')
-    lend_data['user_id'] = Helpers.getParam(request.form, 'user_id')
+    lend_data['item_id'] = Utils.getParam(request.form, 'item_id')
+    lend_data['user_id'] = Utils.getParam(request.form, 'user_id')
 
     #incentive info will have delivery date (depending on period of rental)
-    lend_data['incentive_id'] = Helpers.getParam(request.form, 'incentive_id')
-    lend_data['delivery_slot'] = Helpers.getParam(request.form, 'delivery_slot')
+    lend_data['incentive_id'] = Utils.getParam(request.form, 'incentive_id')
+    lend_data['delivery_slot'] = Utils.getParam(request.form, 'delivery_slot')
 
     #for pickup
-    lend_data['pickup_date'] = Helpers.getParam(request.form, 'pickup_date')
-    lend_data['pickup_slot'] = Helpers.getParam(request.form, 'pickup_slot')
+    lend_data['pickup_date'] = Utils.getParam(request.form, 'pickup_date')
+    lend_data['pickup_slot'] = Utils.getParam(request.form, 'pickup_slot')
 
-    lend_data['item_condition'] = Helpers.getParam(request.form, 'item_condition')
+    lend_data['item_condition'] = Utils.getParam(request.form, 'item_condition')
   
     for key in lend_data:
         if not lend_data[key]:
@@ -66,8 +66,8 @@ def lendItem():
 def orderStatus():
     resp = {"status": "False"}
 
-    user_id = Helpers.getParam(request.form, 'user_id', 'int')
-    order_id = Helpers.getParam(request.form, 'order_id', 'int')
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    order_id = Utils.getParam(request.form, 'order_id', 'int')
 
     # Asking for user_id to double check
     if not(user_id and order_id):
@@ -83,12 +83,12 @@ def orderStatus():
 
 @webapp.route('/requestItem', methods=['POST'])
 def requestItem():
-    item_type = Helpers.getParam(request.form, 'item_type')
+    item_type = Utils.getParam(request.form, 'item_type')
     
     # ISBN in case of books
     #TODO look into this for genericity
-    item_id = Helpers.getParam(request.form, 'item_id')
-    item_name = Helpers.getParam(request.form, 'item_name')
+    item_id = Utils.getParam(request.form, 'item_id')
+    item_name = Utils.getParam(request.form, 'item_name')
 
     if not(item_name and item_type and item_id):
         return jsonify({'status': 'False'})

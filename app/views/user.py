@@ -1,10 +1,10 @@
 from app import webapp
-from app.models import User, Helpers
+from app.models import User, Utils
 from flask import request, jsonify
 
 @webapp.route('/preregister', methods=['POST'])
 def preregister():
-    email = Helpers.getParam(request.form, 'email')
+    email = Utils.getParam(request.form, 'email')
     if email:
         User.preregisterUser(email)
     return jsonify({'success': 'true'});
@@ -13,12 +13,12 @@ def preregister():
 def fetchUser():
     response = {'status': 'False'}
 
-    social_id = Helpers.getParam(request.form, 'id') 
+    social_id = Utils.getParam(request.form, 'id') 
     if not social_id:
         response['message'] = 'Social ID missing'
         return jsonify(response)
 
-    source = Helpers.getParam(request.form, 'source') 
+    source = Utils.getParam(request.form, 'source') 
     if not source:
         response['message'] = 'Login source missing'
         return jsonify(response)
@@ -44,7 +44,7 @@ def userSignup():
 @webapp.route('/addAddress', methods=['POST'])
 def addAddress():
     response = {'status': 'False'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         response['message'] = 'User ID missing'
         return jsonify(response)
@@ -68,7 +68,7 @@ def addAddress():
 @webapp.route('/editDetails', methods=['POST'])
 def editDetails():
     response = {'status': 'False'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
     
@@ -86,7 +86,7 @@ def editDetails():
 @webapp.route('/myOrders', methods=['POST'])
 def getMyOrders():
     response = {'status': 'false'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
 
@@ -98,11 +98,11 @@ def getMyOrders():
 @webapp.route('/putReferral', methods=['POST'])
 def putReferral():
     response = {'status': 'False'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
     
-    uuid = Helpers.getParam(request.form, 'uuid')
+    uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
         return jsonify(response)
 
@@ -120,11 +120,11 @@ def putReferral():
 @webapp.route('/confirmReferral', methods=['POST'])
 def confirmReferral():
     response = {'status': 'false'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
  
-    uuid = Helpers.getParam(request.form, 'uuid')
+    uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
         return jsonify(response)
 
@@ -142,11 +142,11 @@ def confirmReferral():
 @webapp.route('/applyReferralCode', methods=['POST'])
 def applyReferralCode():
     response = {'status': 'false'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
  
-    code = Helpers.getParam(request.form, 'code')
+    code = Utils.getParam(request.form, 'code')
     if not code:
         return jsonify(response)
     
@@ -166,7 +166,7 @@ TODO: remove this
 @webapp.route('/updateInviteLevel', methods=['POST'])
 def updateUserInvite():
     response = {'status': 'false'}
-    user_id = Helpers.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         return jsonify(response)
 

@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-from app.models import User, Item, Helpers
+from app.models import User, Item, Utils
 import datetime
 #from app.models import User, Item
 
@@ -12,9 +12,9 @@ class Order():
     @staticmethod
     def placeOrder(item_ids, user_id, address_id, order_return=None):
        
-        order_placed = Helpers.getCurrentTimestamp()
+        order_placed = Utils.getCurrentTimestamp()
         if not order_return:
-            order_return = Helpers.getDefaultReturnTimestamp()
+            order_return = Utils.getDefaultReturnTimestamp()
 
         #check user validity
         #check order validity
@@ -185,7 +185,7 @@ class Order():
 
         time_slots = []
         for slot in range(num_slots):
-            time_slots.append(Helpers.fetchOneAssoc(time_slot_cursor))
+            time_slots.append(Utils.fetchOneAssoc(time_slot_cursor))
 
         time_slot_cursor.close()
         return time_slots

@@ -6,7 +6,7 @@ import string
 '''
 Generic helpers
 '''
-class Helpers():
+class Utils():
     @staticmethod
     def fetchOneAssoc(cursor):
         data = cursor.fetchone()

@@ -1,6 +1,6 @@
 from app import webapp 
 from app import mysql
-from app.models import Prototype, Helpers
+from app.models import Prototype, Utils
 
 class Incentive(Prototype):
     def __init__(self, incentive_id):
@@ -9,7 +9,7 @@ class Incentive(Prototype):
     def getData(self, incentive_id):
         getdata_cursor = mysql.connect().cursor()
         getdata_cursor.execute("SELECT * FROM incentives WHERE incentive_id = %d" % (incentive_id))
-        self.data = Helpers.fetchOneAssoc(getdata_cursor)
+        self.data = Utils.fetchOneAssoc(getdata_cursor)
 
     def fetchNextIncentive(self):
         if self.next_incentive:

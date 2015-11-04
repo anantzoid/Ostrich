@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-from app.models import Prototype, Item, Helpers, Incentive
+from app.models import Prototype, Item, Utils, Incentive
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import datetime
@@ -20,14 +20,14 @@ class User(Prototype):
 
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute(get_data_query % (login_type, user_id))
-        self.data = Helpers.fetchOneAssoc(obj_cursor)
+        self.data = Utils.fetchOneAssoc(obj_cursor)
        
         self.data['address'] = []
         obj_cursor.execute("SELECT * FROM user_addresses WHERE \
                 user_id = %d" % (self.user_id))
         num_address = obj_cursor.rowcount
         for i in range(num_address):
-            self.data['address'].append(Helpers.fetchOneAssoc(obj_cursor))
+            self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
 
         if len(self.data['address']) == 1:
             self.data['address'] = self.data['address'][0]
@@ -51,7 +51,7 @@ class User(Prototype):
         phone = user_data['phone'] if 'phone' in user_data else ''
         email = user_data['email'] if 'email' in user_data else ''
 
-        address = Helpers.getParam(user_data, 'address')
+        address = Utils.getParam(user_data, 'address')
     
         #TODO handle facebook_id
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
@@ -90,9 +90,9 @@ class User(Prototype):
    
 
     def addAddress(self, address_obj):
-        address = Helpers.getParam(address_obj, 'address')
-        lat = Helpers.getParam(address_obj, 'latitude')
-        lng = Helpers.getParam(address_obj, 'longitude')
+        address = Utils.getParam(address_obj, 'address')
+        lat = Utils.getParam(address_obj, 'latitude')
+        lng = Utils.getParam(address_obj, 'longitude')
 
         conn = mysql.connect()
         insert_add_cursor = conn.cursor()
@@ -161,7 +161,7 @@ class User(Prototype):
 
         num_orders = orders_cursor.rowcount
         for i in range(num_orders):
-            current_order = Helpers.fetchOneAssoc(orders_cursor)
+            current_order = Utils.fetchOneAssoc(orders_cursor)
             current_order['items'] = []
             if current_order['item_ids']:
                 for item_id in current_order['item_ids'].split(","):
@@ -194,7 +194,7 @@ class User(Prototype):
 
         num_orders = orders_cursor.rowcount
         for i in range(num_orders):
-            order = Helpers.fetchOneAssoc(orders_cursor)
+            order = Utils.fetchOneAssoc(orders_cursor)
             order['items'] = []
             if order['item_ids']:
                 for item_id in order['item_ids'].split(","):
@@ -219,7 +219,7 @@ class User(Prototype):
                 WHERE i.lender_id = %d" %(self.user_id))
         num_rentals = rental_cursor.rowcount
         for i in range(num_rentals):
-            rental = Helpers.fetchOneAssoc(rental_cursor)
+            rental = Utils.fetchOneAssoc(rental_cursor)
             if rental['item_id']:
                 item = Item(int(rental['item_id']))
                 rental['items'] = item.getMinObj()
@@ -248,7 +248,7 @@ class User(Prototype):
         if not self.isReferralValid():
             return False
         else:
-            activation_date = Helpers.getCurrentTimestamp()
+            activation_date = Utils.getCurrentTimestamp()
             conn = mysql.connect()
             confirm_ref_cursor = conn.cursor()
             confirm_ref_cursor.execute("UPDATE referrals SET referent_id = %d, activated = %d, \
@@ -266,7 +266,7 @@ class User(Prototype):
         #TODO replace time check with caching on signup
         user_created_datetime = datetime.strptime(self.date_created, '%Y-%m-%d %H:%M:%S')
         timedelta = datetime.now() - user_created_datetime
-        print Helpers.getCurrentTimestamp()
+        print Utils.getCurrentTimestamp()
         print timedelta.seconds, self.date_created
         if timedelta.seconds > 300:
             return False
@@ -302,7 +302,7 @@ class User(Prototype):
 
 
     def setInviteCode(self):
-        invite_code = Helpers.generateCode()
+        invite_code = Utils.generateCode()
 
         conn = mysql.connect()
         set_code_cursor = conn.cursor()
