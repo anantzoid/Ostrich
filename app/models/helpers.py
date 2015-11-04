@@ -1,5 +1,7 @@
 from app import webapp
 import datetime
+import random
+import string
 
 '''
 Generic helpers
@@ -26,9 +28,15 @@ class Helpers():
         if var_type == 'int':
             if not param.isdigit():
                 param = ''
-
         return param
+
+
+    @staticmethod
+    def generateCode(size=4):
+        chars = string.ascii_uppercase + string.ascii_lowercase
+        return ''.join(random.choice(chars) for _ in range(size))
         
+
     @staticmethod
     def getCurrentTimestamp():
         current_timestamp = datetime.datetime.now()

@@ -79,10 +79,13 @@ class User(Prototype):
         create_user_cursor.close()
 
         user = User(user_id, 'user_id')
+
         if address: 
             address = json.loads(address)
             address_id = user.addAddress(address)
          
+        user.data['invite_code'] = user.setInviteCode()
+
         return {'user_id': user_id}
    
 
@@ -227,16 +230,10 @@ class User(Prototype):
         return rentals
 
    
-    def logReferral(self, uuid, referent_id=0):
+    def logReferral(self, uuid):
         conn = mysql.connect()
-        if referent_id:
-            date_activated = Helpers.getCurrentTimestamp()
-            source = 'link'
-            #if User.referentExists(referent_id):
-            #    return False 
-        else:
-            date_activated = None
-            source = 'phone'
+        date_activated = None
+        source = 'phone'
 
         log_ref_cursor = conn.cursor()
         log_ref_cursor.execute("INSERT INTO referrals (referrer_id, google_uuid, \
@@ -276,6 +273,45 @@ class User(Prototype):
         else:
             return True
 
+
+    def applyReferralCode(self, code):
+        if not self.isCodeValid(code):
+            return False
+        else:
+            conn = mysql.connect()
+            apply_code_cursor = conn.cursor()
+            apply_code_cursor.execute("UPDATE user_invite_codes SET counter = counter +1 \
+                    WHERE invite_code = '%s'" % (code))
+            conn.commit()
+            if not apply_code_cursor.rowcount:
+                return False
+            
+            #TODO log transaction
+            #TODO add credit to wallet
+            return True
+
+
+    def isCodeValid(self, code):
+        check_code_cursor = mysql.connect().cursor()
+        check_code_cursor.execute("SELECT code_id FROM user_invite_codes WHERE \
+                invite_code = '%s' AND user_id != %d" % (code, self.user_id))
+        if check_code_cursor.fetchone():
+            return True
+        else:
+            return False
+
+
+    def setInviteCode(self):
+        invite_code = Helpers.generateCode()
+
+        conn = mysql.connect()
+        set_code_cursor = conn.cursor()
+        set_code_cursor.execute("INSERT INTO user_invite_codes (user_id, invite_code) \
+                VALUES (%d, '%s')" %(self.user_id, invite_code))
+        conn.commit()
+        
+        return invite_code
+            
 
     @staticmethod
     def preregisterUser(email):

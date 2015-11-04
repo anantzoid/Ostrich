@@ -134,10 +134,33 @@ def confirmReferral():
         response['message'] = 'Referral not valid'
     else:
         response['status'] = 'True'
+        response['message'] = 'Success! Check your wallet for free credits.'
 
     return jsonify(response)
 
+
+@webapp.route('/applyReferralCode', methods=['POST'])
+def applyReferralCode():
+    response = {'status': 'false'}
+    user_id = Helpers.getParam(request.form, 'user_id')
+    if not user_id:
+        return jsonify(response)
+ 
+    code = Helpers.getParam(request.form, 'code')
+    if not code:
+        return jsonify(response)
     
+    user = User(int(user_id), 'user_id')
+    status = user.applyReferralCode(code)
+
+    if not status:
+        response['message'] = 'Code not applicable'
+    else:
+        response['status'] = 'true'
+        response['message'] = 'Code applied successfully'
+
+    return jsonify(response)
+
 '''
 TODO: remove this
 @webapp.route('/updateInviteLevel', methods=['POST'])
