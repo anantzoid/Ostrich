@@ -1,6 +1,6 @@
 from app import webapp
 from app import mysql
-from app.models import Prototype, Item, Utils, Incentive
+from app.models import Prototype, Item, Utils
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import datetime
@@ -12,7 +12,11 @@ class User(Prototype):
    
     def getData(self, user_id, login_type):
 
-        get_data_query = "SELECT * FROM users WHERE %s = %d" 
+        get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
+                u.gcm_id, u.date_created, ui.invite_code, uw.wallet_id, uw.amount FROM users u \
+                LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id \
+                LEFT JOIN user_wallet uw ON uw.user_id = u.user_id \
+                WHERE u.%s = %d" 
         if login_type != 'user_id':
             get_data_query = get_data_query.replace("%d", "'%s'")
         else:
@@ -227,16 +231,19 @@ class User(Prototype):
         print rentals
         return rentals
 
-   
-    def logReferral(self, uuid):
+  
+    '''
+        User Referral and Invite Functions
+    '''
+
+
+    def logReferral(self, uuid, source = 'phone'):
         conn = mysql.connect()
-        date_activated = None
-        source = 'phone'
 
         log_ref_cursor = conn.cursor()
         log_ref_cursor.execute("INSERT INTO referrals (referrer_id, google_uuid, \
-                referent_id, activation_date, source) VALUES (%d, '%s', %d, '%s', '%s')" %
-                (self.user_id, uuid, referent_id, date_activated, source))
+                source) VALUES (%d, '%s','%s')" %
+                (self.user_id, uuid, source))
         conn.commit()
         referral_id = log_ref_cursor.lastrowid
         return referral_id
@@ -245,18 +252,18 @@ class User(Prototype):
     def confirmReferral(self, uuid):
         if not self.isReferralValid():
             return False
-        else:
-            activation_date = Utils.getCurrentTimestamp()
-            conn = mysql.connect()
-            confirm_ref_cursor = conn.cursor()
-            confirm_ref_cursor.execute("UPDATE referrals SET referent_id = %d, activated = %d, \
-                    activation_date = '%s' WHERE google_uuid = '%s'" % (self.user_id, 1, activation_date, uuid))
-            conn.commit()
-            if not confirm_ref_cursor.rowcount:
-                return False
-            #TODO add credits in wallet
 
-            return True
+        activation_date = Utils.getCurrentTimestamp()
+        conn = mysql.connect()
+        confirm_ref_cursor = conn.cursor()
+        confirm_ref_cursor.execute("UPDATE referrals SET referent_id = %d, activated = %d, \
+                activation_date = '%s' WHERE google_uuid = '%s'" % (self.user_id, 1, activation_date, uuid))
+        conn.commit()
+        if not confirm_ref_cursor.rowcount:
+            return False
+        else:
+            self.creditWallet()
+        return True
 
 
     def isReferralValid(self):
@@ -264,13 +271,26 @@ class User(Prototype):
         #TODO replace time check with caching on signup
         user_created_datetime = datetime.strptime(self.date_created, '%Y-%m-%d %H:%M:%S')
         timedelta = datetime.now() - user_created_datetime
-        print Utils.getCurrentTimestamp()
-        print timedelta.seconds, self.date_created
         if timedelta.seconds > 300:
             return False
         else:
-            return True
+            if not self.isUserValidForReferral():
+                return False
+            else:
+                return True
 
+
+    def setInviteCode(self):
+        invite_code = Utils.generateCode()
+
+        conn = mysql.connect()
+        set_code_cursor = conn.cursor()
+        set_code_cursor.execute("INSERT INTO user_invite_codes (user_id, invite_code) \
+                VALUES (%d, '%s')" %(self.user_id, invite_code))
+        conn.commit()
+        
+        return invite_code
+ 
 
     def applyReferralCode(self, code):
         code_details = self.isCodeValid(code)
@@ -290,11 +310,14 @@ class User(Prototype):
                     %d)" % (referrer_id, self.user_id, 1, Utils.getCurrentTimestamp(), 'invite_code', code_id))
             conn.commit()
 
-            #TODO add credit to wallet
+            self.creditWallet()
             return True
 
 
     def isCodeValid(self, code):
+        if not self.isUserValidForReferral():
+            return False
+        
         check_code_cursor = mysql.connect().cursor()
         check_code_cursor.execute("SELECT code_id, user_id FROM user_invite_codes WHERE \
                 invite_code = '%s' AND user_id != %d" % (code, self.user_id))
@@ -305,17 +328,27 @@ class User(Prototype):
             return False
 
 
-    def setInviteCode(self):
-        invite_code = Utils.generateCode()
+    def isUserValidForReferral(self):
+        check_user_cursor = mysql.connect().cursor()
+        check_user_cursor.execute("SELECT referent_id FROM referrals WHERE referent_id = %d"
+                % (self.user_id))
+        if check_user_cursor.fetchone():
+            return False
+        else:
+            return True
+
+
+    def creditWallet(self, amount=200):
+        if not self.wallet_id:
+            query = "INSERT INTO user_wallet (amount, user_id) VALUES (%d, %d)"
+        else:
+            query = "UPDATE user_wallet SET amount = amount + %d WHERE user_id = %d"
 
         conn = mysql.connect()
-        set_code_cursor = conn.cursor()
-        set_code_cursor.execute("INSERT INTO user_invite_codes (user_id, invite_code) \
-                VALUES (%d, '%s')" %(self.user_id, invite_code))
+        wallet_cursor = conn.cursor()
+        wallet_cursor.execute(query % (amount, self.user_id))
         conn.commit()
-        
-        return invite_code
-            
+
 
     @staticmethod
     def preregisterUser(email):
@@ -328,49 +361,3 @@ class User(Prototype):
             conn.commit()
 
 
-    '''
-    TODO remove this
-    def fetchUsedIncentive(self):
-        fetch_scheme_cursor = mysql.connect().cursor()
-        fetch_scheme_cursor.execute("SELECT user_id, incentive_id FROM user_invites WHERE \
-                user_id = %d ORDER BY incentive_id DESC" %(self.user_id))
-        result = fetch_scheme_cursor.fetchone()
-        return result 
-
-   
-    def fetchInviteScheme(self):
-        result = self.fetchUsedIncentive()
-        if result:
-            used_incentive = int(result[1])
-            if used_incentive < 999:
-                incentive = Incentive(used_incentive)
-                user_incentive = incentive.fetchNextIncentive()
-            else:
-                user_incentive = None
-        else:
-            next_incentive_id = Incentive.fetchFirstInviteScheme()
-            if next_incentive_id:
-                user_incentive = Incentive(next_incentive_id).getObj()
-            else:
-                user_incentive = None
-
-        return user_incentive
-
-    def upgradeInviteScheme(self):
-        result = self.fetchUsedIncentive()
-        if result:
-            incentive = Incentive(int(result[1]))
-            if incentive.next_incentive:
-                current_incentive_id = incentive.next_incentive
-            else:
-                current_incentive_id = 999
-        else:
-            current_incentive_id = Incentive.fetchFirstInviteScheme()
-
-        conn = mysql.connect()
-        invite_cursor = conn.cursor()
-        invite_cursor.execute("INSERT INTO user_invites (user_id, incentive_id) \
-                VALUES (%d, %d)" % (self.user_id, int(current_incentive_id)))
-        conn.commit()
-        return True
-    ''' 
