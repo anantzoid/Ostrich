@@ -1,26 +1,26 @@
-from app import webapp
 from app import mysql
 from app.models import Prototype, Utils
 
 class Item(Prototype):
     def __init__(self, item_id):
-        self.item_id = int(item_id)
-        self.data = []
-        self.getData() 
+        self.getData(item_id) 
 
-    def getData(self):
+    def getData(self, item_id):
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(self.item_id))
+        obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(item_id))
         self.data = Utils.fetchOneAssoc(obj_cursor)
-        self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
-        self.data['security_deposit'] = self.getSecurityDepositAmount()
+        if not self.data:
+            self.data = {}
+        else:
+            self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
+            self.data['security_deposit'] = self.getSecurityDepositAmount()
 
 
     def getObj(self):
         item_obj = vars(self)
         item_obj = item_obj['data']
-        item_obj['item_id'] = self.item_id
-        item_obj = self.getTempVarsForBookModel(item_obj)
+        if item_obj:
+            item_obj = self.getTempVarsForBookModel(item_obj)
 
         return item_obj
 
@@ -33,22 +33,17 @@ class Item(Prototype):
         min_obj["images"] = item_obj["photos"]
 
         #TODO generic minification: after making BookModel items consistent
-        '''
-        min_properties = ["item_id", "item_name", "photos"]
-        for prop in min_properties:
-            min_obj[prop] = item_obj[prop]
-        '''
 
         return min_obj
 
 
     def getSecurityDepositAmount(self):
-
         security = 0
         if self.data['price']:
             security = min(1000, 0.5*self.data['price'])
 
         return security
+
 
     def getTempVarsForBookModel(self, item_obj):
         item_obj['isbn'] = item_obj['ISBN_10']

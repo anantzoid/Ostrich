@@ -1,4 +1,3 @@
-from app import webapp 
 from app import mysql
 from app.models import Prototype, Utils
 

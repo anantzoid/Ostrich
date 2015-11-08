@@ -1,4 +1,3 @@
-from app import webapp
 import datetime
 import random
 import string

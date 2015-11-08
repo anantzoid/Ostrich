@@ -1,4 +1,3 @@
-from app import webapp
 from app import mysql
 from app.models import User, Item, Utils
 import datetime
@@ -142,7 +141,7 @@ class Order():
         if status:
             status_id = int(status[0])
         else:
-            return {}
+            return False
 
         order_info = {}
         if status_id:
@@ -223,31 +222,6 @@ class Order():
         if status_id in status_info:
             return status_info[status_id]
         else:
-            return {}
+            return False
 
-
-'''
-def checkOrderValidity(self):
-    check_record_cursor = self.connect.cursor()
-    check_record_cursor.execute("SELECT order_id FROM orders WHERE user_id = %d \
-            AND item_id = %d AND UNIX_TIMESTAMP(order_return) <= UNIX_TIMESTAMP('%s')" \
-            %(self.user, self.item, self.order_placed))
-    record_count = check_record_cursor.fetchone()
-    check_record_cursor.close()
-    return 0 if record_count else 1
-'''
-
-
-
-
-'''
-def checkOrderValidity(self):
-    check_record_cursor = self.connect.cursor()
-    check_record_cursor.execute("SELECT order_id FROM orders WHERE user_id = %d \
-            AND item_id = %d AND UNIX_TIMESTAMP(order_return) <= UNIX_TIMESTAMP('%s')" \
-            %(self.user, self.item, self.order_placed))
-    record_count = check_record_cursor.fetchone()
-    check_record_cursor.close()
-    return 0 if record_count else 1
-'''
 

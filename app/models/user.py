@@ -1,4 +1,3 @@
-from app import webapp
 from app import mysql
 from app.models import Prototype, Item, Utils
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -25,13 +24,15 @@ class User(Prototype):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute(get_data_query % (login_type, user_id))
         self.data = Utils.fetchOneAssoc(obj_cursor)
-       
-        self.data['address'] = []
-        obj_cursor.execute("SELECT * FROM user_addresses WHERE \
-                user_id = %d" % (self.user_id))
-        num_address = obj_cursor.rowcount
-        for i in range(num_address):
-            self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
+        if not self.data: 
+            self.data = {}
+        else:
+            self.data['address'] = []
+            obj_cursor.execute("SELECT * FROM user_addresses WHERE \
+                    user_id = %d" % (self.user_id))
+            num_address = obj_cursor.rowcount
+            for i in range(num_address):
+                self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
 
    
 
@@ -228,15 +229,12 @@ class User(Prototype):
 
             del rental['item_id']
             rentals.append(rental)
-        print rentals
         return rentals
 
   
     '''
         User Referral and Invite Functions
     '''
-
-
     def logReferral(self, uuid, source = 'phone'):
         conn = mysql.connect()
 
