@@ -29,8 +29,6 @@ class User(Prototype):
         for i in range(num_address):
             self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
 
-        if len(self.data['address']) == 1:
-            self.data['address'] = self.data['address'][0]
    
 
     def getObj(self):
@@ -81,7 +79,6 @@ class User(Prototype):
         user = User(user_id, 'user_id')
 
         if address: 
-            address = json.loads(address)
             address_id = user.addAddress(address)
          
         user.data['invite_code'] = user.setInviteCode()
@@ -89,7 +86,8 @@ class User(Prototype):
         return {'user_id': user_id}
    
 
-    def addAddress(self, address_obj):
+    def addAddress(self, address):
+        address_obj = json.loads(address)
         address = Utils.getParam(address_obj, 'address')
         lat = Utils.getParam(address_obj, 'latitude')
         lng = Utils.getParam(address_obj, 'longitude')
@@ -275,28 +273,34 @@ class User(Prototype):
 
 
     def applyReferralCode(self, code):
-        if not self.isCodeValid(code):
+        code_details = self.isCodeValid(code)
+        if not code_details:
             return False
         else:
+            [code_id, referrer_id] = code_details
             conn = mysql.connect()
             apply_code_cursor = conn.cursor()
             apply_code_cursor.execute("UPDATE user_invite_codes SET counter = counter +1 \
-                    WHERE invite_code = '%s'" % (code))
+                    WHERE code_id = %d" % (code_id))
             conn.commit()
-            if not apply_code_cursor.rowcount:
-                return False
-            
-            #TODO log transaction
+           
+            log_referral_cursor = conn.cursor()
+            log_referral_cursor.execute("INSERT INTO referrals (referrer_id, referent_id, \
+                    activated, activation_date, source, source_id) VALUES (%d, %d, %d, '%s', '%s', \
+                    %d)" % (referrer_id, self.user_id, 1, Utils.getCurrentTimestamp(), 'invite_code', code_id))
+            conn.commit()
+
             #TODO add credit to wallet
             return True
 
 
     def isCodeValid(self, code):
         check_code_cursor = mysql.connect().cursor()
-        check_code_cursor.execute("SELECT code_id FROM user_invite_codes WHERE \
+        check_code_cursor.execute("SELECT code_id, user_id FROM user_invite_codes WHERE \
                 invite_code = '%s' AND user_id != %d" % (code, self.user_id))
-        if check_code_cursor.fetchone():
-            return True
+        code_id = check_code_cursor.fetchone()
+        if code_id:
+            return [int(code_id[0]), int(code_id[1])] 
         else:
             return False
 

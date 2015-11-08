@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from helpers import *
+from utils import *
 from prototype import *
 from item import *
 from incentive import *
