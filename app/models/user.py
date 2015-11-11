@@ -1,5 +1,5 @@
 from app import mysql
-from app.models import Prototype, Item, Utils
+from app.models import Prototype, Item, Utils, Wallet
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import datetime
@@ -12,7 +12,7 @@ class User(Prototype):
     def getData(self, user_id, login_type):
 
         get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
-                u.gcm_id, u.date_created, ui.invite_code, uw.wallet_id, uw.amount FROM users u \
+                u.gcm_id, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u \
                 LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id \
                 LEFT JOIN user_wallet uw ON uw.user_id = u.user_id \
                 WHERE u.%s = %d" 
@@ -44,7 +44,8 @@ class User(Prototype):
 
     @staticmethod
     def createUser(user_data):
-        
+       
+        #TODO place order type validation
         username = user_data['username'] if 'username' in user_data else ''
         password = user_data['password'] if 'password' in user_data else ''
         if password:
@@ -141,7 +142,7 @@ class User(Prototype):
         orders = {}
         orders['current'] = self.getCurrentOrder()
         orders['history'] = self.getOrderHistory()
-        orders['rentals'] = self.getRentals()
+        #orders['rentals'] = self.getRentals()
         #TODO add rental history option
 
         return orders
@@ -209,7 +210,7 @@ class User(Prototype):
 
         return order_history
 
-
+    '''
     def getRentals(self):
         rentals = []
         rental_cursor = mysql.connect().cursor()
@@ -230,7 +231,7 @@ class User(Prototype):
             del rental['item_id']
             rentals.append(rental)
         return rentals
-
+    '''
   
     '''
         User Referral and Invite Functions
@@ -260,7 +261,8 @@ class User(Prototype):
         if not confirm_ref_cursor.rowcount:
             return False
         else:
-            self.creditWallet()
+            referral_id = confirm_ref_cursor.lastrowid
+            Wallet.creditTransaction(self.wallet_id, self.user_id, 'referral', referent_id)
         return True
 
 
@@ -307,8 +309,9 @@ class User(Prototype):
                     activated, activation_date, source, source_id) VALUES (%d, %d, %d, '%s', '%s', \
                     %d)" % (referrer_id, self.user_id, 1, Utils.getCurrentTimestamp(), 'invite_code', code_id))
             conn.commit()
+            referral_id = log_referral_cursor.lastrowid
 
-            self.creditWallet()
+            Wallet.creditTransaction(self.wallet_id, self.user_id, 'referral', referral_id)
             return True
 
 
@@ -335,17 +338,6 @@ class User(Prototype):
         else:
             return True
 
-
-    def creditWallet(self, amount=200):
-        if not self.wallet_id:
-            query = "INSERT INTO user_wallet (amount, user_id) VALUES (%d, %d)"
-        else:
-            query = "UPDATE user_wallet SET amount = amount + %d WHERE user_id = %d"
-
-        conn = mysql.connect()
-        wallet_cursor = conn.cursor()
-        wallet_cursor.execute(query % (amount, self.user_id))
-        conn.commit()
 
 
     @staticmethod

@@ -1,22 +1,37 @@
 from app import mysql
-from app.models import User, Item, Utils
+from app.models import User, Item, Utils, Wallet
 import datetime
-#from app.models import User, Item
 
 class Order():
     def __init__(self, order_id):
         self.order_id = order_id
-        
 
     @staticmethod
-    def placeOrder(item_ids, user_id, address_id, order_return=None):
+    def placeOrder(order_data):
        
+        order_fields = ['item_id', 'user_id', 'address_id']
+        for key in order_data:
+            if key not in order_fields:
+                return {'message': 'Required params missing'}
+            elif not (order_data[key] and isinstance(order_data[key], int)):
+                return {'message': 'Wrong param value'}
+            else:
+                order_data[key] = int(order_data[key])
+        
+        payment_mode = order_data['payment_mode'] if 'payment_mode' in order_data else 'cash'
         order_placed = Utils.getCurrentTimestamp()
-        if not order_return:
-            order_return = Utils.getDefaultReturnTimestamp()
+        order_return = order_data['order_return'] if 'order_return' in order_data else Utils.getDefaultReturnTimestamp()
+
+        #TODO calc total amount
+        order_amount = 0 
 
         #check user validity
         #check order validity
+
+        if payment_mode == 'wallet':
+            user = User(user_id, 'user_id')
+            if user.wallet_balance < order_amount:
+                return {'message': 'Not enough balance in wallet'}
         
         '''
         #NOTE Skipping this too for now
@@ -28,33 +43,27 @@ class Order():
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
-                order_placed, order_return) VALUES(%d, %d, '%s', '%s')" % \
-                (user_id, address_id, order_placed, order_return) )
+                order_placed, order_return, payment_mode) VALUES(%d, %d, '%s', '%s', '%s')" % \
+                (user_id, address_id, order_placed, order_return, payment_mode))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
-        order = Order(order_id)
         insert_data_cursor.close()
+        response = {'order_id': order_id}
 
-        response = {'order_id': order.order_id}
+        order = Order(order_id)
         order.updateInventoryPostOrder(item_ids)
+
+        if payment_mode == 'wallet':
+            Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_amount) 
+
         #TODO call roadrunnr api
         #TODO send user order confirmation notification
-
-        '''
-        TODO: remove this
-        user = User(user_id, 'user_id')
-        invite = user.fetchInviteScheme()
-        if invite:
-            response['has_invite'] = 1
-            response['invite'] = invite
-        else:
-            response['has_invite'] = 0
-        '''
 
         return response 
     
 
     def updateInventoryPostOrder(self, item_ids):
+        #NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
         inventory_ids = self.getInventoryIds(item_ids) 
 
         #update order_history and clear stock in inventory
@@ -73,7 +82,9 @@ class Order():
             connect.commit()
             update_stock_cursor.close()
 
+            
 
+            '''
             #add credits to lender
             #TODO credits based on business logic
             item_credits = 0
@@ -84,6 +95,7 @@ class Order():
                     inventory_item['inventory_id'], item_credits, 0))
             connect.commit()
             add_credit_cursor.close()
+            '''
 
             #TODO send notification to lender
 
