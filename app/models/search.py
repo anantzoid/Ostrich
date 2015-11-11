@@ -1,8 +1,42 @@
 from app import mysql
 from app.models import Item
+from elasticsearch import Elasticsearch
 
 class Search():
+    def __init__(self, query, size=20):
+        self.es = Elasticsearch()
+        self.query = query
+        self.index = 'items'
+        self.size = size
 
+    def basicSearch(self, page=0):
+        data = {
+                "query": {
+                        "query_string": {
+                                "query": self.query
+                            }
+                    }
+                }
+
+        search_results = self.es.search(index=self.index, body=data, from_=page, size=self.size)
+
+        item_results = []
+        if 'hits' in search_results and search_results['hits']['total']:
+            total_results = search_results['hits']['total']
+            for item in search_results['hits']['hits']:
+                item_results.append(item['_source'])
+                        
+
+        final_search_results = {
+                "total": total_results,
+                "items": item_results
+                }
+        return final_search_results
+
+
+    '''
+        MySQL searches
+    '''
     @staticmethod
     def searchQuery(q, page=1):
 

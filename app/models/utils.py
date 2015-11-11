@@ -18,15 +18,14 @@ class Utils():
             if isinstance(value, datetime.datetime) or isinstance(value, datetime.timedelta):
                 value = str(value)
             datadict[name[0]] = value
-
         return datadict
 
     @staticmethod
-    def getParam(obj, var, var_type=None):
-        param = obj[var] if var in obj else ''
+    def getParam(obj, var, var_type=None, default=''):
+        param = obj[var] if var in obj else default
         if var_type == 'int':
-            if not param.isdigit():
-                param = ''
+            if not param.isdigit() and not param >= 0:
+                param = default
         return param
 
 
