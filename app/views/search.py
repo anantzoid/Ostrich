@@ -10,14 +10,20 @@ def searchString():
 
     query = Utils.getParam(request.args, 'q') 
     page = int(Utils.getParam(request.args, 'page', var_type='int', default=1))
+    search_type = Utils.getParam(request.args, 'type', default='free')
 
     if not query:
         return jsonify(response)
 
     search = Search(query)
-    results = search.basicSearch(page=page-1)
-    return jsonify(results=results)
+    if search_type == 'free':
+        results = search.basicSearch(page=page-1)
+    elif search_type == 'category':
+        results = search.categorySearch(page=page-1)
+    elif search_type == 'isbn':
+        results = search.isbnSearch(page=page-1)
 
+    return jsonify(results=results)
 
 @webapp.route('/sqlsearch', methods=['GET'])
 def search():

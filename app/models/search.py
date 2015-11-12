@@ -12,28 +12,65 @@ class Search():
     def basicSearch(self, page=0):
         data = {
                 "query": {
-                        "query_string": {
+                    "function_score": {
+                        "query": {
+                            "query_string": {
                                 "query": self.query
-                            }
+                                }
+                            },
+                        "functions": [
+                            {
+                                "field_value_factor": {
+                                    "field": "num_ratings"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+        return self.execute(data, page)
+
+
+    def categorySearch(self, page=0):
+        data = {
+                "query": {
+                    "term": {
+                        "categories": self.query
+                        }
+                    }
+                }
+        return self.execute(data, page)
+
+    def isbnSearch(self, page=0):
+        data = {
+                "query": {
+                    "term": {
+                        "isbn_10": self.query
+                        }
                     }
                 }
 
-        search_results = self.es.search(index=self.index, body=data, from_=page, size=self.size)
+        return self.execute(data, page)
 
+
+    def execute(self, data, page):
+        search_results = self.es.search(index=self.index, body=data, from_=page, size=self.size)
         item_results = []
+        total_results = 0
         if 'hits' in search_results and search_results['hits']['total']:
             total_results = search_results['hits']['total']
             for item in search_results['hits']['hits']:
                 item_results.append(item['_source'])
-                        
 
         final_search_results = {
                 "total": total_results,
                 "items": item_results
                 }
+
         return final_search_results
 
 
+    
     '''
         MySQL searches
     '''
