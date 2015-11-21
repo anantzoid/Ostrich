@@ -40,7 +40,7 @@ def lendItem():
     for key in lend_data:
         if not lend_data[key]:
             response['message'] = key+' missing'
-            return jsonify(response)
+            return jsonify(response), webapp.config['http_status_code_data_missing']
 
     inventory_id = Order.lendItem(lend_data)
    
@@ -59,7 +59,7 @@ def orderStatus():
 
     # Asking for user_id to double check
     if not(user_id and order_id):
-        return jsonify(resp)
+        return jsonify(resp), webapp.config['http_status_code_data_missing']
 
     order = Order(int(order_id))
     order_status = order.getStatus(int(user_id))
@@ -79,7 +79,7 @@ def requestItem():
     item_name = Utils.getParam(request.form, 'item_name')
 
     if not(item_name and item_type and item_id):
-        return jsonify({'status': 'False'})
+        return jsonify({'status': 'False'}), webapp.config['http_status_code_data_missing']
 
     Item.storeItemRequest(item_type, item_id, item_name)
 

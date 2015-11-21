@@ -262,7 +262,8 @@ class User(Prototype):
             return False
         else:
             referral_id = confirm_ref_cursor.lastrowid
-            Wallet.creditTransaction(self.wallet_id, self.user_id, 'referral', referent_id)
+            #NOTE instead of uuid, can extract referent id too
+            Wallet.creditTransaction(self.wallet_id, self.user_id, 'referral', uuid)
         return True
 
 

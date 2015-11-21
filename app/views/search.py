@@ -13,7 +13,7 @@ def searchString():
     search_type = Utils.getParam(request.args, 'type', default='free')
 
     if not query:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     search = Search(query)
     if search_type == 'free':
@@ -23,7 +23,7 @@ def searchString():
     elif search_type == 'isbn':
         results = search.isbnSearch(page=page-1)
 
-    return jsonify(results=results)
+    return jsonify(results)
 
 @webapp.route('/sqlsearch', methods=['GET'])
 def search():

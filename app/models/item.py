@@ -19,8 +19,8 @@ class Item(Prototype):
     def getObj(self):
         item_obj = vars(self)
         item_obj = item_obj['data']
-        if item_obj:
-            item_obj = self.getTempVarsForBookModel(item_obj)
+        #if item_obj:
+        #    item_obj = self.getTempVarsForBookModel(item_obj)
 
         return item_obj
 

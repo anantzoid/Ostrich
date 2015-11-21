@@ -16,12 +16,12 @@ def fetchUser():
     social_id = Utils.getParam(request.form, 'id') 
     if not social_id:
         response['message'] = 'Social ID missing'
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     source = Utils.getParam(request.form, 'source') 
     if not source:
         response['message'] = 'Login source missing'
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     user = User(social_id, source) 
     return jsonify(user.getObj())
@@ -47,12 +47,12 @@ def addAddress():
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         response['message'] = 'User ID missing'
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     address = request.form['address']  if 'address' in request.form else ''
     if not address:
         response['message'] = 'Address missing'
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     user = User(user_id, 'user_id')
     address_id = user.addAddress(address)
@@ -70,7 +70,7 @@ def editDetails():
     response = {'status': 'False'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
     
     user_data = {}
     for key in request.form:
@@ -88,7 +88,7 @@ def getMyOrders():
     response = {'status': 'false'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     user = User(int(user_id), 'user_id')
     orders = user.getOrders()
@@ -100,11 +100,11 @@ def putReferral():
     response = {'status': 'False'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
     
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     user = User(int(user_id), 'user_id')
     referral_id = user.logReferral(uuid)
@@ -122,11 +122,11 @@ def confirmReferral():
     response = {'status': 'false'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
  
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
 
     user = User(int(user_id), 'user_id')
     result = user.confirmReferral(uuid)
@@ -144,11 +144,11 @@ def applyReferralCode():
     response = {'status': 'false'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
  
     code = Utils.getParam(request.form, 'code')
     if not code:
-        return jsonify(response)
+        return jsonify(response), webapp.config['http_status_code_data_missing']
     
     user = User(int(user_id), 'user_id')
     status = user.applyReferralCode(code)
