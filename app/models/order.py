@@ -33,13 +33,6 @@ class Order():
             if user.wallet_balance < order_amount:
                 return {'message': 'Not enough balance in wallet'}
         
-        '''
-        #NOTE Skipping this too for now
-        #check if user is ordering same item in same period
-        if not self.checkOrderValidity():
-            return {'message': 'Can only order after returning'}
-        '''
-
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \

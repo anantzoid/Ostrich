@@ -94,17 +94,25 @@ class User(Prototype):
 
     def addAddress(self, address):
         address_obj = json.loads(address)
+        address_id = Utils.getParam(address_obj, 'address_id')
         address = Utils.getParam(address_obj, 'address')
         lat = Utils.getParam(address_obj, 'latitude')
         lng = Utils.getParam(address_obj, 'longitude')
 
         conn = mysql.connect()
         insert_add_cursor = conn.cursor()
-        insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
-                latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
-                address, lat, lng))
-        conn.commit()
-        
+
+        if not address_id:
+            insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
+                    latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
+                    address, lat, lng))
+            conn.commit()
+        else:
+            insert_add_cursor.execute("UPDATE user_addresses SET address = '%s', \
+                    latitude = '%s', longitude = '%s' WHERE address_id = %d" % \
+                    (address, lat, lng, address_id))
+       
+        #TODO test this for edit address
         address_id = int(insert_add_cursor.lastrowid)
         insert_add_cursor.close()
 
@@ -117,9 +125,7 @@ class User(Prototype):
         name = user_data['name'] if 'name' in user_data else self.name
         phone = user_data['phone'] if 'phone' in user_data else self.phone
         email = user_data['email'] if 'email' in user_data else self.email
-
-        #TODO supporting only 1 address for now
-        address = user_data['address'] if 'address' in user_data else self.address[self.address.keys()[0]]
+        address = Utils.getParam(user_data, 'address')
 
         conn = mysql.connect()
         edit_user_cursor = conn.cursor()
@@ -129,11 +135,8 @@ class User(Prototype):
         conn.commit()
         edit_user_cursor.close()
 
-        edit_address_cursor = conn.cursor()
-        edit_address_cursor.execute("UPDATE user_addresses SET address = '%s' \
-                 WHERE user_id = %d" % (address, self.user_id))
-        conn.commit()
-        edit_address_cursor.close()
+        if address: 
+            address_id = user.addAddress(address)
 
         return True
 

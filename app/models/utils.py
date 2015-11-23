@@ -1,6 +1,8 @@
 import datetime
 import random
 import string
+from app import webapp
+from flask import make_response, jsonify
 
 '''
 Generic helpers
@@ -52,3 +54,6 @@ class Utils():
         return order_return
 
 
+    @staticmethod
+    def errorResponse(response_object, error_code=webapp.config['http_status_code_error']):
+       return make_response(jsonify(response_object), error_code) 

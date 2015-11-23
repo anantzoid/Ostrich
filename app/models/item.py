@@ -29,8 +29,9 @@ class Item(Prototype):
         item_obj = self.getObj()
 
         min_obj["item_id"] = item_obj["item_id"]
-        min_obj["item_name"] = item_obj["title"]
-        min_obj["images"] = item_obj["photos"]
+        min_obj["title"] = item_obj["item_name"]
+        
+        #min_obj["images"] = item_obj["photos"]
 
         #TODO generic minification: after making BookModel items consistent
 
@@ -78,7 +79,8 @@ class Item(Prototype):
         # This would be rarely used theoretically
         # only when the user will be puttin an item on rent
         # not present in our DB
-
+        #TODO store these requests in a different table too for monitoring??
+    
         if len(item_id) > 10:
             isbn = 'ISBN_10'
         else:

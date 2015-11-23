@@ -4,6 +4,16 @@ from flask import request, jsonify
 import json
 
 
+'''
+    Generic search call
+    @params
+        q: search query
+        page: the page number of search results (default 0)
+        type: type of search: {default: free(all fields), category, isbn}
+
+    @response
+        List of search result objects(ES)
+'''
 @webapp.route('/search')
 def searchString():
     response = {'status': 'False'}
