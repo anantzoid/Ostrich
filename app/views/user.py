@@ -37,7 +37,10 @@ def fetchUser():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(social_id, source) 
-    return jsonify(user.getObj())
+    if user:
+        return jsonify(user.getObj())
+    else:
+        return Utils.errorResponse(response)
 
 '''
     User registration call
@@ -98,6 +101,9 @@ def addAddress():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(user_id, 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     address_id = user.addAddress(address)
     if address_id:
         response = {
@@ -131,6 +137,9 @@ def editDetails():
         user_data[key] = request.form[key]
 
     user = User(user_id, 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     status = user.editDetails(user_data)
     if status:
         response['status'] = 'True'
@@ -154,6 +163,9 @@ def getMyOrders():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(int(user_id), 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     orders = user.getOrders()
     return jsonify(orders)
 
@@ -178,6 +190,9 @@ def putReferral():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(int(user_id), 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     referral_id = user.logReferral(uuid)
     if not referral_id:
         response['message'] = 'User already existed'
@@ -209,10 +224,13 @@ def confirmReferral():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(int(user_id), 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     result = user.confirmReferral(uuid)
     if not result:
         response['message'] = 'Referral not valid'
-        return User.errorResponse(response)
+        return Utils.errorResponse(response)
     else:
         response['status'] = 'True'
         response['message'] = 'Success! Check your wallet for free credits.'
@@ -240,6 +258,9 @@ def applyReferralCode():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
     
     user = User(int(user_id), 'user_id')
+    if not user:
+        return Utils.errorResponse(response)
+
     status = user.applyReferralCode(code)
 
     if not status:

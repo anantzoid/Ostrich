@@ -106,11 +106,11 @@ class User(Prototype):
             insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
                     latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
                     address, lat, lng))
-            conn.commit()
         else:
             insert_add_cursor.execute("UPDATE user_addresses SET address = '%s', \
                     latitude = '%s', longitude = '%s' WHERE address_id = %d" % \
                     (address, lat, lng, address_id))
+        conn.commit()
        
         #TODO test this for edit address
         address_id = int(insert_add_cursor.lastrowid)
@@ -136,7 +136,7 @@ class User(Prototype):
         edit_user_cursor.close()
 
         if address: 
-            address_id = user.addAddress(address)
+            address_id = self.addAddress(address)
 
         return True
 

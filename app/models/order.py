@@ -30,6 +30,9 @@ class Order():
 
         if payment_mode == 'wallet':
             user = User(user_id, 'user_id')
+            if not user:
+                return {'message': 'User does not exist'}
+
             if user.wallet_balance < order_amount:
                 return {'message': 'Not enough balance in wallet'}
         

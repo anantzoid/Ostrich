@@ -10,7 +10,7 @@ from flask import request, jsonify
         address_id
 
         optional:
-        payment_mode: cash(for now)
+        payment_mode: {cash, wallet} (for now)
         order_return: Y-m-d
 
     @response
