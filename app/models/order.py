@@ -10,10 +10,10 @@ class Order():
     def placeOrder(order_data):
        
         order_fields = ['item_id', 'user_id', 'address_id']
-        for key in order_data:
-            if key not in order_fields:
+        for key in order_fields:
+            if key not in order_data.keys():
                 return {'message': 'Required params missing'}
-            elif not (order_data[key] and isinstance(order_data[key], int)):
+            elif not (order_data[key] and order_data[key].isdigit()):
                 return {'message': 'Wrong param value'}
             else:
                 order_data[key] = int(order_data[key])
@@ -26,28 +26,31 @@ class Order():
         order_amount = 0 
 
         #check user validity
+        #   if address_id belongs to user    
         #check order validity
 
         if payment_mode == 'wallet':
-            user = User(user_id, 'user_id')
-            if not user:
+            user = User(order_data['user_id'], 'user_id')
+            if user is None:
                 return {'message': 'User does not exist'}
 
-            if user.wallet_balance < order_amount:
+            
+            if user.wallet_balance is not None and user.wallet_balance < order_amount:
                 return {'message': 'Not enough balance in wallet'}
-        
+       
+
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
                 order_placed, order_return, payment_mode) VALUES(%d, %d, '%s', '%s', '%s')" % \
-                (user_id, address_id, order_placed, order_return, payment_mode))
+                (order_data['user_id'], order_data['address_id'], order_placed, order_return, payment_mode))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
         response = {'order_id': order_id}
 
         order = Order(order_id)
-        order.updateInventoryPostOrder(item_ids)
+        order.updateInventoryPostOrder([order_data['item_id']])
 
         if payment_mode == 'wallet':
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_amount) 

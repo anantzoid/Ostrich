@@ -7,7 +7,6 @@ from datetime import datetime
 class User(Prototype):
     def __init__(self, user_id, login_type):
         self.getData(user_id, login_type)
-
    
     def getData(self, user_id, login_type):
 
@@ -33,7 +32,6 @@ class User(Prototype):
             num_address = obj_cursor.rowcount
             for i in range(num_address):
                 self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
-
    
 
     def getObj(self):

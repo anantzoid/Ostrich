@@ -10,7 +10,6 @@ class Search():
         self.size = size
 
     def basicSearch(self, page=0):
-        '''
         data = {
                 "query": {
                     "function_score": {
@@ -38,6 +37,7 @@ class Search():
                     }
                 }
 
+        '''
             
         print data, page
         return self.execute(data, page)

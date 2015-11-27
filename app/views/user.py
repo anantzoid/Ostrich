@@ -37,7 +37,7 @@ def fetchUser():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(social_id, source) 
-    if user:
+    if user is not None:
         return jsonify(user.getObj())
     else:
         return Utils.errorResponse(response)
@@ -101,7 +101,7 @@ def addAddress():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(user_id, 'user_id')
-    if not user:
+    if user is None:
         return Utils.errorResponse(response)
 
     address_id = user.addAddress(address)
@@ -137,7 +137,7 @@ def editDetails():
         user_data[key] = request.form[key]
 
     user = User(user_id, 'user_id')
-    if not user:
+    if user is None:
         return Utils.errorResponse(response)
 
     status = user.editDetails(user_data)
@@ -163,7 +163,7 @@ def getMyOrders():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
 
     user = User(int(user_id), 'user_id')
-    if not user:
+    if user is None:
         return Utils.errorResponse(response)
 
     orders = user.getOrders()
@@ -258,7 +258,7 @@ def applyReferralCode():
         return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
     
     user = User(int(user_id), 'user_id')
-    if not user:
+    if user is None:
         return Utils.errorResponse(response)
 
     status = user.applyReferralCode(code)
