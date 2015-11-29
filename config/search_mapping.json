@@ -1,0 +1,63 @@
+PUT items_v2
+{
+  "mappings": {
+    "item": {
+      "properties": {
+        "author": {
+          "type": "multi_field",
+          "fields": {
+            "author": {
+              "type": "string"
+            },
+            "original": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "categories": {
+          "type": "multi_field",
+          "fields": {
+            "categories": {
+              "type": "string"
+            },
+            "original": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "isbn_10": {
+          "type": "string"
+        },
+        "item_id": {
+          "type": "long"
+        },
+        "item_name": {
+          "type": "multi_field",
+          "fields": {
+            "item_name": {
+              "type": "string"
+            },
+            "original": {
+              "type": "string",
+              "index": "not_analyzed"
+            }
+          }
+        },
+        "item_type": {
+          "type": "string"
+        },
+        "num_ratings": {
+          "type": "long"
+        },
+        "price": {
+          "type": "double"
+        },
+        "ratings": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

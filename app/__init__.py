@@ -10,9 +10,9 @@ cors = CORS(webapp)
 
 if os.environ.get('APP_ENV') == 'dev':
     #TODO change for production
-    webapp.config.from_pyfile('../config.cfg', silent=True)
+    webapp.config.from_pyfile('../config/config.cfg', silent=True)
 else:
-    webapp.config.from_pyfile('../config.cfg', silent=True)
+    webapp.config.from_pyfile('../config/config.cfg', silent=True)
 
 #TODO put in config file
 webapp.config['http_status_code_data_missing'] = 400
