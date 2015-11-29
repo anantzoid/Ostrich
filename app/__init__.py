@@ -14,11 +14,6 @@ if os.environ.get('APP_ENV') == 'dev':
 else:
     webapp.config.from_pyfile('../config/config.cfg', silent=True)
 
-#TODO put in config file
-webapp.config['http_status_code_data_missing'] = 400
-webapp.config['http_status_code_entry_exists'] = 409
-webapp.config['http_status_code_success'] = 200
-webapp.config['http_status_code_error'] = 500
 
 #initialize global objects of libraries
 mysql.init_app(webapp)

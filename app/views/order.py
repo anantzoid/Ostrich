@@ -71,7 +71,7 @@ def lendItem():
     for key in lend_data:
         if not lend_data[key]:
             response['message'] = key+' missing'
-            return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+            return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     inventory_id = Order.lendItem(lend_data)
    
@@ -106,7 +106,7 @@ def orderStatus():
 
     # Asking for user_id to double check
     if not(user_id and order_id):
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     order = Order(int(order_id))
     order_status = order.getStatus(int(user_id))
@@ -138,7 +138,7 @@ def requestItem():
     item_name = Utils.getParam(request.form, 'item_name')
 
     if not(item_name and item_type and item_id):
-        return Utils.errorResponse({'status': 'False'}, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse({'status': 'False'}, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     Item.storeItemRequest(item_type, item_id, item_name)
 

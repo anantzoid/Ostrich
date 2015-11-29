@@ -2,10 +2,12 @@ from elasticsearch import Elasticsearch
 import MySQLdb
 import json
 import requests
+import os
 
 class Search():
-    def __init__(self):
-        self.es = Elasticsearch()
+    def __init__(self, url):
+        self.es_url = url.split(',')
+        self.es = Elasticsearch(self.es_url)
         self.es_index = 'items'
         self.es_doctype = 'item'
 
@@ -48,13 +50,13 @@ class Search():
         es_resp = self.es.index(index = self.es_index, doc_type=self.es_doctype, id=item_id, body=data)
         return es_resp
 
-    def newIndex(self, index_name):
+    def newIndex(self, index_name, limit):
         cursor = self.getCursor()
         cursor.execute("SELECT i.item_id, i.item_name, i.price, i.author, i.ratings, \
                 i.num_ratings, i.ISBN_10, \
                 (select group_concat(c.category_name SEPARATOR '|') FROM categories c \
                 INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE ic.item_id = i.item_id) AS categories \
-                FROM items i limit 12000")
+                FROM items i limit %s" % (limit))
 
         results = cursor.fetchall()
       
@@ -96,5 +98,12 @@ class Search():
                 print >>f, str(e), "=====>", data
                 print item_id, str(e)
 
+    def putMapping(self, index_name):
+        with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../config/search_mapping.json')) as json_file:
+            mapping_data = json.load(json_file) 
+        self.es.put_mapping(index=index_name, doc_type='item', body=mapping_data)
 
-Search().newIndex('items_v2')
+
+prod_url = 'https://search-darthvarder-l6yp4bk44zqjzu22o53nqxaxwa.ap-southeast-1.es.amazonaws.com/'
+local_url = 'http://localhost:9200'
+Search(local_url).newIndex('items', '10000')

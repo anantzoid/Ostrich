@@ -2,8 +2,6 @@ from app import webapp
 from app.models import User, Utils
 from flask import request, jsonify
 
-response_code = webapp.config['http_status_code_error']
-
 @webapp.route('/preregister', methods=['POST'])
 def preregister():
     email = Utils.getParam(request.form, 'email')
@@ -29,12 +27,12 @@ def fetchUser():
     social_id = Utils.getParam(request.form, 'id') 
     if not social_id:
         response['message'] = 'Social ID missing'
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     source = Utils.getParam(request.form, 'source') 
     if not source:
         response['message'] = 'Login source missing'
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(social_id, source) 
     if user is not None:
@@ -93,12 +91,12 @@ def addAddress():
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         response['message'] = 'User ID missing'
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     address = request.form['address']  if 'address' in request.form else ''
     if not address:
         response['message'] = 'Address missing'
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(user_id, 'user_id')
     if user is None:
@@ -130,7 +128,7 @@ def editDetails():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     
     user_data = {}
     for key in request.form:
@@ -160,7 +158,7 @@ def getMyOrders():
     response = {'status': 'false'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
     if user is None:
@@ -183,11 +181,11 @@ def putReferral():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
     if not user:
@@ -196,7 +194,7 @@ def putReferral():
     referral_id = user.logReferral(uuid)
     if not referral_id:
         response['message'] = 'User already existed'
-        return Utils.errorResponse(response, webapp.config['http_status_code_entry_exists'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_ENTRY_EXISTS'])
     else:
         response['status'] = 'True'
         response['referral_id'] = referral_id
@@ -217,11 +215,11 @@ def confirmReferral():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
  
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
     if not user:
@@ -251,11 +249,11 @@ def applyReferralCode():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
  
     code = Utils.getParam(request.form, 'code')
     if not code:
-        return Utils.errorResponse(response, webapp.config['http_status_code_data_missing'])
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     
     user = User(int(user_id), 'user_id')
     if user is None:

@@ -55,5 +55,5 @@ class Utils():
 
 
     @staticmethod
-    def errorResponse(response_object, error_code=webapp.config['http_status_code_error']):
+    def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):
        return make_response(jsonify(response_object), error_code) 

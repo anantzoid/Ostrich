@@ -1,10 +1,14 @@
 from app import mysql
+from app import webapp
 from app.models import Item
 from elasticsearch import Elasticsearch
+import requests
+import string
 
 class Search():
     def __init__(self, query, size=20):
-        self.es = Elasticsearch()
+        self.es_url  = webapp.config['ES_NODES'].split(',')
+        self.es = Elasticsearch(self.es_url)
         self.query = query
         self.index = 'items'
         self.size = size
@@ -39,8 +43,7 @@ class Search():
 
         '''
             
-        print data, page
-        return self.execute(data, page)
+        return self.executeSearch(data, page)
 
 
     def categorySearch(self, page=0):
@@ -51,21 +54,21 @@ class Search():
                         }
                     }
                 }
-        return self.execute(data, page)
+        return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
         data = {
                 "query": {
                     "term": {
-                        "isbn_10": self.query
+                        "isbn": self.query
                         }
                     }
                 }
 
-        return self.execute(data, page)
+        return self.executeSearch(data, page)
 
 
-    def execute(self, data, page):
+    def executeSearch(self, data, page):
         search_results = self.es.search(index=self.index, body=data, from_=page, size=self.size)
         item_results = []
         total_results = 0
@@ -81,6 +84,14 @@ class Search():
 
         return final_search_results
 
+
+    '''
+        To call other ES apis directly
+        TODO: add data support
+    '''
+    def customQuery(self):
+        resp = requests.get(string.rstrip(self.es_url[0], '/')+'/'+self.query)
+        return resp.text
 
     
     '''

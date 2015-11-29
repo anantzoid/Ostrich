@@ -1,4 +1,3 @@
-PUT items_v2
 {
   "mappings": {
     "item": {

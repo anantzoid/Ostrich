@@ -23,7 +23,7 @@ def searchString():
     search_type = Utils.getParam(request.args, 'type', default='free')
 
     if not query:
-        return jsonify(response), webapp.config['http_status_code_data_missing']
+        return jsonify(response), webapp.config['HTTP_STATUS_CODE_DATA_MISSING']
 
     search = Search(query)
     if search_type == 'free':
@@ -32,6 +32,9 @@ def searchString():
         results = search.categorySearch(page=page-1)
     elif search_type == 'isbn':
         results = search.isbnSearch(page=page-1)
+    elif search_type == 'custom':
+        results = search.customQuery()
+        return results
 
     return jsonify(results)
 
