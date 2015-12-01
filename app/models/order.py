@@ -29,15 +29,13 @@ class Order():
         #   if address_id belongs to user    
         #check order validity
 
-        if payment_mode == 'wallet':
-            user = User(order_data['user_id'], 'user_id')
-            if user is None:
-                return {'message': 'User does not exist'}
+        user = User(order_data['user_id'], 'user_id')
+        if user.getObj() is None:
+            return {'message': 'User does not exist'}
 
-            
-            if user.wallet_balance is not None and user.wallet_balance < order_amount:
-                return {'message': 'Not enough balance in wallet'}
-       
+        # Wallet validity 
+        if payment_mode == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_amount:
+            return {'message': 'Not enough balance in wallet'}
 
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()

@@ -35,7 +35,7 @@ def fetchUser():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(social_id, source) 
-    if user is not None:
+    if user.getObj() is not None:
         return jsonify(user.getObj())
     else:
         return Utils.errorResponse(response)
@@ -69,7 +69,7 @@ def userSignup():
         return jsonify(user_id)
     else:
         user_id['status'] = 'False'
-        return Utils.errorResponse(response)
+        return Utils.errorResponse(user_id)
 
 '''
     Add address for a user
@@ -99,7 +99,7 @@ def addAddress():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(user_id, 'user_id')
-    if user is None:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     address_id = user.addAddress(address)
@@ -135,7 +135,7 @@ def editDetails():
         user_data[key] = request.form[key]
 
     user = User(user_id, 'user_id')
-    if user is None:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     status = user.editDetails(user_data)
@@ -161,7 +161,7 @@ def getMyOrders():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
-    if user is None:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     orders = user.getOrders()
@@ -188,7 +188,7 @@ def putReferral():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
-    if not user:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     referral_id = user.logReferral(uuid)
@@ -222,7 +222,7 @@ def confirmReferral():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     user = User(int(user_id), 'user_id')
-    if not user:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     result = user.confirmReferral(uuid)
@@ -256,7 +256,7 @@ def applyReferralCode():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     
     user = User(int(user_id), 'user_id')
-    if user is None:
+    if user.getObj() is None:
         return Utils.errorResponse(response)
 
     status = user.applyReferralCode(code)

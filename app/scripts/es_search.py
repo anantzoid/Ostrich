@@ -3,6 +3,7 @@ import MySQLdb
 import json
 import requests
 import os
+import unicodedata
 
 class Search():
     def __init__(self, url):
@@ -10,6 +11,8 @@ class Search():
         self.es = Elasticsearch(self.es_url)
         self.es_index = 'items'
         self.es_doctype = 'item'
+
+        self.error_log = '/home/ubuntu/es_error.txt'
 
     def getCursor(self):
         conn = MySQLdb.connect("localhost","root","root","appdb")
@@ -36,7 +39,7 @@ class Search():
             item_id = int(record['_id'])
             self.indexDataField('num_ratings', item_id, record)
         
-    def indexDataField(self, field, tem_id, record):
+    def indexDataField(self, field, item_id, record):
         cursor = self.getCursor()
         print item_id
 
@@ -50,17 +53,17 @@ class Search():
         es_resp = self.es.index(index = self.es_index, doc_type=self.es_doctype, id=item_id, body=data)
         return es_resp
 
-    def newIndex(self, index_name, limit):
+    def newIndex(self, index_name, limit, query_condition=''):
         cursor = self.getCursor()
         cursor.execute("SELECT i.item_id, i.item_name, i.price, i.author, i.ratings, \
                 i.num_ratings, i.ISBN_10, \
                 (select group_concat(c.category_name SEPARATOR '|') FROM categories c \
                 INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE ic.item_id = i.item_id) AS categories \
-                FROM items i limit %s" % (limit))
+                FROM items i %s limit %s" % (query_condition, limit))
 
         results = cursor.fetchall()
       
-        f = open('/home/ubuntu/es_error.txt', 'w')
+        f = open(self.error_log, 'a')
         for res in results:
 
             item_id = int(res[0])
@@ -73,10 +76,12 @@ class Search():
                 categories = res[7].split("|")
                 categories.remove("books")
 
+            #Handles non unicode characters
+            item_name = unicodedata.normalize('NFKD', unicode(res[1], "latin-1"))
 
             data = {
                     "item_id": item_id,
-                    "item_name": res[1],
+                    "item_name": item_name,
                     "price": price,
                     "ratings": res[4],
                     "author": res[3],
@@ -87,23 +92,34 @@ class Search():
                     }
 
             try:
+
                 data = json.dumps(data)
             except Exception, e:
                 print >>f, str(e),"------>", data
                 continue
             try:
-                resp = self.es.index(index=index_name, doc_type='item', id=item_id, body=data, refresh=True)
+                resp = self.es.index(index=index_name, doc_type=self.es_doctype, id=item_id, body=data, refresh=True)
             except Exception, e:
                 #self.curlIndex(data)
                 print >>f, str(e), "=====>", data
                 print item_id, str(e)
 
-    def putMapping(self, index_name):
+    def putMapping(self):
         with open(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../config/search_mapping.json')) as json_file:
             mapping_data = json.load(json_file) 
-        self.es.put_mapping(index=index_name, doc_type='item', body=mapping_data)
+        self.es.put_mapping(index=self.es_index, doc_type=self.es_doctype, body=mapping_data)
 
+    
+    def indexFromFile(self, filename):
+        itemids = []
+        with open(filename, 'r') as f:
+            for item_id in f.readlines():
+                itemids.append(item_id.replace('\n', ''))
+
+        query_condition = " where i.item_id in (%s)"%(','.join(itemids))
+        self.newIndex('items', '100000', query_condition)
 
 prod_url = 'https://search-darthvarder-l6yp4bk44zqjzu22o53nqxaxwa.ap-southeast-1.es.amazonaws.com/'
 local_url = 'http://localhost:9200'
-Search(local_url).newIndex('items', '10000')
+#Search(local_url).newIndex('items', '10000')
+Search(local_url).indexFromFile('/home/ubuntu/utf_ids.txt')
