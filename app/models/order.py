@@ -25,13 +25,18 @@ class Order():
         #TODO calc total amount
         order_amount = 0 
 
-        #check user validity
-        #   if address_id belongs to user    
         #check order validity
+
+        # User validity
+        # TODO if address_id belongs to user    
 
         user = User(order_data['user_id'], 'user_id')
         if user.getObj() is None:
             return {'message': 'User does not exist'}
+
+        # User can only own 2 book @ a time
+        if len(user.getCurrentOrders()) == 2:
+            return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
 
         # Wallet validity 
         if payment_mode == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_amount:
@@ -72,27 +77,13 @@ class Order():
             connect.commit()
             order_history_cursor.close()
 
-
             update_stock_cursor = connect.cursor()
             update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
                     inventory_id = %d" % (inventory_item['inventory_id']))
             connect.commit()
             update_stock_cursor.close()
 
-            
-
-            '''
-            #add credits to lender
-            #TODO credits based on business logic
-            item_credits = 0
-            add_credit_cursor = connect.cursor()
-            add_credit_cursor.execute("INSERT INTO lender_credits (lender_id, \
-                    order_id, inventory_id, credits, redeemed) VALUES (%d, %d, \
-                    %d, %d, %d)" %(inventory_item['lender_id'], self.order_id, \
-                    inventory_item['inventory_id'], item_credits, 0))
-            connect.commit()
-            add_credit_cursor.close()
-            '''
+            #TODO Check if item is lended, add credits to the wallet for that user
 
             #TODO send notification to lender
 

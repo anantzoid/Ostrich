@@ -143,14 +143,14 @@ class User(Prototype):
 
     def getOrders(self):
         orders = {}
-        orders['current'] = self.getCurrentOrder()
+        orders['current'] = self.getCurrentOrders()
         orders['history'] = self.getOrderHistory()
         #orders['rentals'] = self.getRentals()
         #TODO add rental history option
 
         return orders
 
-    def getCurrentOrder(self):
+    def getCurrentOrders(self):
         current_orders = []
         orders_cursor = mysql.connect().cursor()
         orders_cursor.execute("SELECT o.order_id, \
@@ -183,7 +183,7 @@ class User(Prototype):
 
     def getOrderHistory(self):
         '''
-            Separated from getCurrentOrder as cache will be implemented here
+            Separated from getCurrentOrders as cache will be implemented here
         '''
 
         order_history = []
