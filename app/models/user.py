@@ -1,4 +1,5 @@
 from app import mysql
+from app import webapp
 from app.models import Prototype, Item, Utils, Wallet
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
@@ -81,13 +82,15 @@ class User(Prototype):
 
         user_id = int(create_user_cursor.lastrowid)
         create_user_cursor.close()
-
         user = User(user_id, 'user_id')
 
         if address: 
             address_id = user.addAddress(address)
-         
         user.data['invite_code'] = user.setInviteCode()
+
+        # Free 200 credits on signup
+        if not webapp.config['APP_INVITE']:
+            Wallet.creditTransaction(user.wallet_id, user.user_id, 'signup', user.user_id)
 
         return {'user_id': user_id}
    
@@ -213,28 +216,26 @@ class User(Prototype):
 
         return order_history
 
-    '''
-    def getRentals(self):
-        rentals = []
-        rental_cursor = mysql.connect().cursor()
-        rental_cursor.execute("SELECT i.date_added, \
-                i.item_id, \
-                i.in_stock, \
-                l.credit_id \
-                FROM inventory i \
-                INNER JOIN lender_credits l ON i.inventory_id = l.inventory_id \
-                WHERE i.lender_id = %d" %(self.user_id))
-        num_rentals = rental_cursor.rowcount
-        for i in range(num_rentals):
-            rental = Utils.fetchOneAssoc(rental_cursor)
-            if rental['item_id']:
-                item = Item(int(rental['item_id']))
-                rental['items'] = item.getMinObj()
+     #def getRentals(self):
+     #    rentals = []
+     #    rental_cursor = mysql.connect().cursor()
+     #    rental_cursor.execute("SELECT i.date_added, \
+     #            i.item_id, \
+     #            i.in_stock, \
+     #            l.credit_id \
+     #            FROM inventory i \
+     #            INNER JOIN lender_credits l ON i.inventory_id = l.inventory_id \
+     #            WHERE i.lender_id = %d" %(self.user_id))
+     #    num_rentals = rental_cursor.rowcount
+     #    for i in range(num_rentals):
+     #        rental = Utils.fetchOneAssoc(rental_cursor)
+     #        if rental['item_id']:
+     #            item = Item(int(rental['item_id']))
+     #            rental['items'] = item.getMinObj()
 
-            del rental['item_id']
-            rentals.append(rental)
-        return rentals
-    '''
+     #        del rental['item_id']
+     #        rentals.append(rental)
+     #    return rentals
   
     '''
         User Referral and Invite Functions
@@ -334,6 +335,10 @@ class User(Prototype):
 
 
     def isUserValidForReferral(self):
+
+        if not webapp.config['APP_INVITE']:
+            return False
+
         check_user_cursor = mysql.connect().cursor()
         check_user_cursor.execute("SELECT referent_id FROM referrals WHERE referent_id = %d"
                 % (self.user_id))

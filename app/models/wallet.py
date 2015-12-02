@@ -37,8 +37,8 @@ class Wallet():
         conn = mysql.connect()
         wallet_cursor = conn.cursor()
         wallet_cursor.execute("INSERT INTO wallet_transactions (user_id, transaction_type, \
-                amount, source_type, source_id) VALUES (%d, '%s', %d, '%s', %d)" 
+                amount, source_type, source_id) VALUES (%d, '%s', %d, '%s', '%s')" 
                 % (user_id, transaction_type, amount, source, source_id))
-        commit.commit()
+        conn.commit()
 
 
