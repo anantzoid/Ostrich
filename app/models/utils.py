@@ -46,13 +46,19 @@ class Utils():
 
 
     @staticmethod
-    def getDefaultReturnTimestamp():
-        current_timestamp = datetime.datetime.now()
-        next_week_timestamp = str(current_timestamp + datetime.timedelta(days=7))
+    def getDefaultReturnTimestamp(current_timestamp, num_days):
+        if isinstance(current_timestamp, str) or isinstance(current_timestamp, unicode):
+            current_timestamp = datetime.datetime.strptime(current_timestamp, "%Y-%m-%d %H:%M:%S")
+
+        next_week_timestamp = str(current_timestamp + datetime.timedelta(days=num_days))
         order_return = next_week_timestamp.split('.')[0]
 
         return order_return
 
+    @staticmethod
+    def getNextTimeSlot(order_type):
+        # TODO calculate next available time slot based on current time
+        return 1
 
     @staticmethod
     def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):

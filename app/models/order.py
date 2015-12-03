@@ -1,5 +1,5 @@
 from app import mysql
-from app.models import User, Item, Utils, Wallet
+from app.models import User, Item, Utils, Wallet, Mailer
 import datetime
 
 class Order():
@@ -20,12 +20,16 @@ class Order():
         
         payment_mode = order_data['payment_mode'] if 'payment_mode' in order_data else 'cash'
         order_placed = Utils.getCurrentTimestamp()
-        order_return = order_data['order_return'] if 'order_return' in order_data else Utils.getDefaultReturnTimestamp()
+        order_return = order_data['order_return'] if 'order_return' in order_data else Utils.getDefaultReturnTimestamp(order_placed, 15)
+
+        delivery_slot = Utils.getParam(order_data, 'delivery_slot', None, Utils.getNextTimeSlot('delivery'))
+        pickup_slot = Utils.getParam(order_data, 'pickup_slot', None, Utils.getNextTimeSlot('pickup'))
 
         #TODO calc total amount
         order_amount = 0 
 
         #check order validity
+        # TODO check item exists
 
         # User validity
         # TODO if address_id belongs to user    
@@ -36,6 +40,7 @@ class Order():
 
         # User can only own 2 book @ a time
         if len(user.getCurrentOrders()) == 2:
+            Mailer.excessOrder(user.user_id, order_data['item_id'])
             return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
 
         # Wallet validity 
@@ -45,8 +50,10 @@ class Order():
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
-                order_placed, order_return, payment_mode) VALUES(%d, %d, '%s', '%s', '%s')" % \
-                (order_data['user_id'], order_data['address_id'], order_placed, order_return, payment_mode))
+                order_placed, order_return, delivery_slot, pickup_slot, payment_mode) \
+                VALUES(%d, %d, '%s', '%s', %d, %d, '%s')" % \
+                (order_data['user_id'], order_data['address_id'], order_placed, 
+                    order_return, delivery_slot, pickup_slot, payment_mode))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
@@ -73,7 +80,8 @@ class Order():
         for inventory_item in inventory_ids:
             order_history_cursor = connect.cursor()
             order_history_cursor.execute("INSERT INTO order_history (inventory_id, \
-                    order_id) VALUES (%d, %d)" %(inventory_item['inventory_id'], self.order_id))
+                    item_id, order_id) VALUES (%d, %d, %d)" %(inventory_item['inventory_id'], \
+                    inventory_item['item_id'], self.order_id))
             connect.commit()
             order_history_cursor.close()
 
@@ -110,7 +118,8 @@ class Order():
 
                 inventory_ids.append({
                     'inventory_id': item_selected[0],
-                    'lender_id': item_selected[1]
+                    'lender_id': item_selected[1],
+                    'item_id': item_id
                     })
             else:
                 #TODO change this logic once we stop incremental inventory
@@ -153,11 +162,9 @@ class Order():
     @staticmethod
     def lendItem(lend_data):
 
-        # TODO get this from incentive slab
-        lend_data['delivery_date'] = '2020-02-02 20:20:20'
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
-        
+       
         set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added, \
                 date_removed, in_stock, pickup_slot, delivery_slot, item_condition) VALUES \
                 (%d, %d, '%s', '%s', %d, %d, %d, '%s')" % \
@@ -173,6 +180,10 @@ class Order():
         conn.commit()
         inv_id = set_lend_cursor.lastrowid
         set_lend_cursor.close()
+
+        # Give 50 credits to lender irrepective of days lent
+        user = User(lend_data['user_id'], 'user_id') 
+        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend', inv_id, 50) 
 
         return inv_id
 

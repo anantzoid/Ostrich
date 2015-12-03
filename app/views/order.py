@@ -43,7 +43,7 @@ def OrderItem():
         item_id: The item's id (correspoding to the DB)
         incentive_id: Rental slab from DB (to procure rental amount, period etc)
         delivery_slot: time slot id for delivring back the object
-        pickup_date: Y-m-d for pickup
+        pickup_date: Y-m-d H:i:s  
         pickup_slot: time slot id for picking up from user
         item_condition: Description condition of item
 
@@ -60,11 +60,13 @@ def lendItem():
 
     #incentive info will have delivery date (depending on period of rental)
     lend_data['incentive_id'] = Utils.getParam(request.form, 'incentive_id')
-    lend_data['delivery_slot'] = Utils.getParam(request.form, 'delivery_slot')
 
     #for pickup
     lend_data['pickup_date'] = Utils.getParam(request.form, 'pickup_date')
     lend_data['pickup_slot'] = Utils.getParam(request.form, 'pickup_slot')
+
+    lend_data['delivery_slot'] = Utils.getParam(request.form, 'delivery_slot')
+    lend_data['delivery_date'] = Utils.getParam(request.form, 'delivery_date', None, Utils.getDefaultReturnTimestamp(lend_data['pickup_date'], 45))
 
     lend_data['item_condition'] = Utils.getParam(request.form, 'item_condition')
   
