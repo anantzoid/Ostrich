@@ -12,10 +12,10 @@ class Search():
         self.es_index = 'items'
         self.es_doctype = 'item'
 
-        self.error_log = '/home/ubuntu/es_error.txt'
+        self.error_log = '/var/log/app_logs/es_script.log'
 
     def getCursor(self):
-        conn = MySQLdb.connect("localhost","root","root","appdb")
+        conn = MySQLdb.connect("52.74.20.228","root","root","appdb")
         cursor = conn.cursor()
         return cursor
 
@@ -55,6 +55,7 @@ class Search():
 
     def newIndex(self, index_name, limit, query_condition=''):
         cursor = self.getCursor()
+
         cursor.execute("SELECT i.item_id, i.item_name, i.price, i.author, i.ratings, \
                 i.num_ratings, i.ISBN_10, \
                 (select group_concat(c.category_name SEPARATOR '|') FROM categories c \
@@ -119,7 +120,7 @@ class Search():
         query_condition = " where i.item_id in (%s)"%(','.join(itemids))
         self.newIndex('items', '100000', query_condition)
 
-prod_url = 'https://search-darthvarder-l6yp4bk44zqjzu22o53nqxaxwa.ap-southeast-1.es.amazonaws.com/'
+prod_url = 'https://search-darthvader-4vmjlechafg3wwswxfpqp4xity.us-west-2.es.amazonaws.com'
 local_url = 'http://localhost:9200'
-#Search(local_url).newIndex('items', '10000')
-Search(local_url).indexFromFile('/home/ubuntu/utf_ids.txt')
+Search(prod_url).newIndex('items', '10000', 'where i.item_name like "%harry%"')
+#Search(local_url).indexFromFile('/home/ubuntu/utf_ids.txt')
