@@ -69,7 +69,7 @@ class Search():
 
 
     def executeSearch(self, data, page):
-        search_results = self.es.search(index=self.index, body=data, from_=page, size=self.size)
+        search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
         item_results = []
         total_results = 0
         if 'hits' in search_results and search_results['hits']['total']:
