@@ -77,8 +77,8 @@ class Order():
         order_info = order.getOrderInfo()
         notification_data = {
                     "type": "order",
-                    "id": order_info['order_status'],
-                    "message": order.getStatusDetails(order_info['order_status'])['Description'] 
+                    "id": str(order_info['order_status']),
+                    "message": order.getOrderStatusDetails(order_info['order_status'])['Description'] 
                 }
         temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
         Notifications(temp_gcm_id).sendNotification(notification_data)
@@ -182,14 +182,13 @@ class Order():
 
         order_info = {}
         if status_id:
-            order_info['status_details'] = Order.getStatusDetails(status_id)
+            order_info['status_details'] = Order.getOrderStatusDetails(status_id)
             order_info['item'] = Item(int(status[1])).getObj()
 
         return order_info
 
     @staticmethod
     def lendItem(lend_data):
-
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
        
@@ -228,9 +227,23 @@ class Order():
         time_slot_cursor.close()
         return time_slots
 
+    def updateOrderStatus(self, status_id):
+        conn = mysql.connect()
+        update_cursor = conn.cursor()
+        update_cursor.execute("UPDATE orders SET order_status = %d WHERE order_id = %d"
+                %(status_id, self.order_id))
+        conn.commit()
+
+        # Putting item back in stock
+        if status_id == 6:
+            update_cursor.execute("UPDATE inventory SET in_stock = 1 WHERE \
+                    inventory_id IN (SELECT inventory_id FROM order_history WHERE \
+                    order_id = %d)"%(self.order_id)) 
+            conn.commit()
+        update_cursor.close()
 
     @staticmethod
-    def getStatusDetails(status_id):
+    def getOrderStatusDetails(status_id):
         status_info = {
                 1: {
                     "Status": "Order placed",
@@ -262,4 +275,18 @@ class Order():
             return status_info[status_id]
         else:
             return False
+
+    
+    @staticmethod
+    def deleteOrder(order_id):
+        #TODO delete from inventory if added right now
+        # check time sync
+        conn = mysql.connect()
+        delete_cursor = conn.cursor()
+        delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
+        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
+        %(order_id))
+        conn.commit()
+        delete_cursor.close()
+
 

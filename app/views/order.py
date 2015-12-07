@@ -112,14 +112,37 @@ def orderStatus():
     if not(user_id and order_id):
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
-    order = Order(int(order_id))
-    order_status = order.getOrderStatusForUser(int(user_id))
+    order = Order(order_id)
+    order_status = order.getOrderStatusForUser(user_id)
    
     if order_status:
         response = order_status
         return jsonify(response)
     else:
         return Utils.errorResponse(response)
+
+'''
+    Update status of order in various status
+    Statuses defined in getOrderStatusDetails method in order model
+    @params
+    order_id, status_id
+
+'''
+@webapp.route('/updateOrderStatus', methods=['POST'])
+def updateOrderStatus():
+    order_id = Utils.getParam(request.form, 'order_id', 'int')
+    status_id = Utils.getParam(request.form, 'status_id', 'int')
+    # Asking for user_id to double check
+    if not(order_id and status_id):
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+    
+    if Order.getOrderStatusDetails(status_id):
+        Order(order_id).updateOrderStatus(status_id)
+        return jsonify({'status': 'true'})
+    else:
+        response = {'status': 'false', 'message': 'Wrong Status Id'}
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_ERROR'])
+
 
 '''
     Request an item to be added to inventory if it's being put on rent
@@ -148,13 +171,6 @@ def requestItem():
 
     return jsonify(status='True')
 
-@webapp.route('/getRentalRate')
-def getRentalRate():
-    return None
-
-@webapp.route('/getIncentiveSlab')
-def getIncentiveSlab():
-    return None
 
 '''
     Returns time slots for delivery
@@ -169,7 +185,9 @@ def getIncentiveSlab():
 def getTimeSlot():
     return jsonify(time_slots=Order.getTimeSlot())
 
-
+'''
+    Test API calls
+'''
 @webapp.route('/push', methods=['POST'])
 def pushNotification():
     if 'gcm_id' in request.form:
@@ -177,6 +195,9 @@ def pushNotification():
     else:
         temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
     notification_data = json.loads(str(request.form['data']))
-    print notification_data
     status = Notifications(temp_gcm_id).sendNotification(notification_data)
     return jsonify(status)
+
+@webapp.route('/deleteOrder')
+def deleteOrder():
+    Order.deleteOrder(int(request.args['order_id']))

@@ -29,6 +29,8 @@ class Utils():
         if var_type == 'int' and param != default:
             if not param.isdigit() and not param >= 0:
                 param = default
+            else:
+                param = int(param)
         return param
 
 
