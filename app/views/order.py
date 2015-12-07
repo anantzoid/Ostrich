@@ -113,7 +113,7 @@ def orderStatus():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     order = Order(int(order_id))
-    order_status = order.getStatus(int(user_id))
+    order_status = order.getOrderStatusForUser(int(user_id))
    
     if order_status:
         response = order_status

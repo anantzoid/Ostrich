@@ -12,6 +12,15 @@ class Order():
     def __init__(self, order_id):
         self.order_id = order_id
 
+    def getOrderInfo(self):
+        obj_cursor = mysql.connect().cursor()
+        obj_cursor.execute("SELECT o.*, oi.* \
+                FROM orders o \
+                INNER JOIN order_history oi ON o.order_id = oi.order_id \
+                WHERE o.order_id = %d" %(self.order_id))
+        order_info = Utils.fetchOneAssoc(obj_cursor)
+        return order_info
+
     @staticmethod
     def placeOrder(order_data):
        
@@ -65,21 +74,16 @@ class Order():
 
         #TODO call roadrunnr api
         #TODO send push notification as a callback to rr response
-        order.order_status = order.getOrderStatus()
+        order_info = order.getOrderInfo()
         notification_data = {
                     "type": "order",
-                    "id": order.order_status,
-                    "message": order.getStatusDetails(order.order_status)['Description'] 
+                    "id": order_info['order_status'],
+                    "message": order.getStatusDetails(order_info['order_status'])['Description'] 
                 }
         temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
         Notifications(temp_gcm_id).sendNotification(notification_data)
         return response 
     
-    def getOrderStatus(self):
-        obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT order_status FROM orders WHERE order_id = %d" %(self.order_id))
-        return int(obj_cursor.fetchone()[0])
-
     def updateInventoryPostOrder(self, item_ids):
         #NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
         inventory_ids = self.getInventoryIds(item_ids) 
@@ -161,7 +165,7 @@ class Order():
         # TODO if address_id belongs to user    
         return None
 
-    def getStatus(self, user_id):
+    def getOrderStatusForUser(self, user_id):
         get_status_cursor = mysql.connect().cursor()
         get_status_cursor.execute("SELECT o.order_status, i.item_id FROM orders o \
                 INNER JOIN order_history i \
