@@ -2,6 +2,7 @@ import datetime
 import random
 import string
 from app import webapp
+from app import mysql
 from flask import make_response, jsonify
 
 '''
@@ -25,7 +26,7 @@ class Utils():
     @staticmethod
     def getParam(obj, var, var_type=None, default=''):
         param = obj[var] if var in obj else default
-        if var_type == 'int':
+        if var_type == 'int' and param != default:
             if not param.isdigit() and not param >= 0:
                 param = default
         return param
@@ -56,9 +57,11 @@ class Utils():
         return order_return
 
     @staticmethod
-    def getNextTimeSlot(order_type):
-        # TODO calculate next available time slot based on current time
-        return 1
+    def getDefaultTimeSlot():
+        cursor = mysql.connect().cursor()
+        cursor.execute("SELECT slot_id FROM time_slots LIMIT 1")
+        slot = int(cursor.fetchone()[0])
+        return slot
 
     @staticmethod
     def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):

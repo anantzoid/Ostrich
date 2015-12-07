@@ -348,8 +348,6 @@ class User(Prototype):
         else:
             return True
 
-
-
     @staticmethod
     def preregisterUser(email):
         conn = mysql.connect() 

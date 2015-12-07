@@ -19,7 +19,7 @@ def searchString():
     response = {'status': 'False'}
 
     query = Utils.getParam(request.args, 'q') 
-    page = int(Utils.getParam(request.args, 'page', var_type='int', default='1'))
+    page = int(Utils.getParam(request.args, 'page', var_type='int', default=1))
     search_type = Utils.getParam(request.args, 'type', default='free')
 
     if not query:

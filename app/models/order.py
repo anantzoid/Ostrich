@@ -1,4 +1,5 @@
 from app import mysql
+from app import webapp
 from app.models import User
 from app.models import Item
 from app.models import Utils
@@ -23,42 +24,34 @@ class Order():
             else:
                 order_data[key] = int(order_data[key])
         
-        payment_mode = order_data['payment_mode'] if 'payment_mode' in order_data else 'cash'
-        order_placed = Utils.getCurrentTimestamp()
-        order_return = order_data['order_return'] if 'order_return' in order_data else Utils.getDefaultReturnTimestamp(order_placed, 15)
-
-        delivery_slot = int(Utils.getParam(order_data, 'delivery_slot', 0, Utils.getNextTimeSlot('delivery')))
-        pickup_slot = int(Utils.getParam(order_data, 'pickup_slot', 0, Utils.getNextTimeSlot('pickup')))
+        order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
+                default = 'cash')
+        order_data['order_placed'] = Utils.getCurrentTimestamp()
+        order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
+                default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], 15))
+        order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
+                'int', Utils.getDefaultTimeSlot()))
 
         #TODO calc total amount
-        order_amount = 0 
+        order_data['order_amount'] = 0 
 
         #check order validity
         # TODO check item exists
 
-        # User validity
-        # TODO if address_id belongs to user    
-
         user = User(order_data['user_id'], 'user_id')
-        if user.getObj() is None:
-            return {'message': 'User does not exist'}
-
-        # User can only own 2 book @ a time
-        if len(user.getCurrentOrders()) == 2:
-            Mailer.excessOrder(user.user_id, order_data['item_id'])
-            return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
-
-        # Wallet validity 
-        if payment_mode == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_amount:
-            return {'message': 'Not enough balance in wallet'}
+        # User validity
+        user_not_valid = Order.isUserValidForOrder(user, order_data)
+        if user_not_valid:
+            return user_not_valid
 
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
                 order_placed, order_return, delivery_slot, pickup_slot, payment_mode) \
                 VALUES(%d, %d, '%s', '%s', %d, %d, '%s')" % \
-                (order_data['user_id'], order_data['address_id'], order_placed, 
-                    order_return, delivery_slot, pickup_slot, payment_mode))
+                (order_data['user_id'], order_data['address_id'], order_data['order_placed'], 
+                    order_data['order_return'], order_data['delivery_slot'], 
+                    order_data['delivery_slot'], order_data['payment_mode']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
@@ -67,8 +60,8 @@ class Order():
         order = Order(order_id)
         order.updateInventoryPostOrder([order_data['item_id']])
 
-        if payment_mode == 'wallet':
-            Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_amount) 
+        if order_data['payment_mode'] == 'wallet':
+            Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
 
         #TODO call roadrunnr api
         #TODO send push notification as a callback to rr response
@@ -108,10 +101,7 @@ class Order():
             update_stock_cursor.close()
 
             #TODO Check if item is lended, add credits to the wallet for that user
-
             #TODO send notification to lender
-
-             
 
     def getInventoryIds(self, item_ids):
         
@@ -133,12 +123,11 @@ class Order():
                         break
 
                 inventory_ids.append({
-                    'inventory_id': int(item_selected[0]),
+                    'inventory_id': item_selected[0],
                     'lender_id': item_selected[1],
                     'item_id': item_id
                     })
             else:
-                #TODO change this logic once we stop incremental inventory
                 connect = mysql.connect()
                 insert_inv_item = connect.cursor()
                 insert_inv_item.execute("INSERT INTO inventory (item_id) VALUES ('%s')" %(item_id))
@@ -153,6 +142,24 @@ class Order():
                     })
 
         return inventory_ids
+
+    @staticmethod
+    def isUserValidForOrder(user, order_data):
+        if user.getObj() is None:
+            return {'message': 'User does not exist'}
+
+        # User can only own 2 book @ a time
+        if webapp.config['USER_BOOKS_LIMIT']:
+            if len(user.getCurrentOrders()) >= 2:
+                Mailer.excessOrder(user.user_id, order_data['item_id'])
+                return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
+
+        # Wallet validity 
+        if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
+            return {'message': 'Not enough balance in wallet'}
+
+        # TODO if address_id belongs to user    
+        return None
 
     def getStatus(self, user_id):
         get_status_cursor = mysql.connect().cursor()
