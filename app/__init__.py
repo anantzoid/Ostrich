@@ -16,7 +16,6 @@ if os.environ.get('APP_ENV') == 'dev':
 else:
     webapp.config.from_pyfile('../config/config_prod.cfg', silent=True)
 
-
 #initialize global objects of libraries
 mysql.init_app(webapp)
 

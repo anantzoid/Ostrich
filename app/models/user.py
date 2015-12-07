@@ -128,13 +128,14 @@ class User(Prototype):
         name = user_data['name'] if 'name' in user_data else self.name
         phone = user_data['phone'] if 'phone' in user_data else self.phone
         email = user_data['email'] if 'email' in user_data else self.email
+        gcm_id = user_data['gcm_id '] if 'gcm_id ' in user_data else self.gcm_id 
         address = Utils.getParam(user_data, 'address')
 
         conn = mysql.connect()
         edit_user_cursor = conn.cursor()
         edit_user_cursor.execute("UPDATE users SET username = '%s', name = '%s', \
-                phone = '%s', email = '%s' WHERE user_id = %d" % (username, name, \
-                phone, email, self.user_id))
+                phone = '%s', email = '%s', gcm_id = '%s' WHERE user_id = %d" % (username, name, \
+                phone, email, gcm_id, self.user_id))
         conn.commit()
         edit_user_cursor.close()
 

@@ -1,5 +1,10 @@
 from app import mysql
-from app.models import User, Item, Utils, Wallet, Mailer
+from app.models import User
+from app.models import Item
+from app.models import Utils
+from app.models import Wallet
+from app.models import Mailer
+from app.models import Notifications
 import datetime
 
 class Order():
@@ -22,8 +27,8 @@ class Order():
         order_placed = Utils.getCurrentTimestamp()
         order_return = order_data['order_return'] if 'order_return' in order_data else Utils.getDefaultReturnTimestamp(order_placed, 15)
 
-        delivery_slot = Utils.getParam(order_data, 'delivery_slot', None, Utils.getNextTimeSlot('delivery'))
-        pickup_slot = Utils.getParam(order_data, 'pickup_slot', None, Utils.getNextTimeSlot('pickup'))
+        delivery_slot = int(Utils.getParam(order_data, 'delivery_slot', 0, Utils.getNextTimeSlot('delivery')))
+        pickup_slot = int(Utils.getParam(order_data, 'pickup_slot', 0, Utils.getNextTimeSlot('pickup')))
 
         #TODO calc total amount
         order_amount = 0 
@@ -66,10 +71,21 @@ class Order():
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_amount) 
 
         #TODO call roadrunnr api
-        #TODO send user order confirmation notification
-
+        #TODO send push notification as a callback to rr response
+        order.order_status = order.getOrderStatus()
+        notification_data = {
+                    "type": "order",
+                    "id": order.order_status,
+                    "message": order.getStatusDetails(order.order_status)['Description'] 
+                }
+        temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
+        Notifications(temp_gcm_id).sendNotification(notification_data)
         return response 
     
+    def getOrderStatus(self):
+        obj_cursor = mysql.connect().cursor()
+        obj_cursor.execute("SELECT order_status FROM orders WHERE order_id = %d" %(self.order_id))
+        return int(obj_cursor.fetchone()[0])
 
     def updateInventoryPostOrder(self, item_ids):
         #NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
@@ -117,7 +133,7 @@ class Order():
                         break
 
                 inventory_ids.append({
-                    'inventory_id': item_selected[0],
+                    'inventory_id': int(item_selected[0]),
                     'lender_id': item_selected[1],
                     'item_id': item_id
                     })
@@ -132,7 +148,8 @@ class Order():
 
                 inventory_ids.append({
                     'inventory_id': new_inv_id,
-                    'lender_id': 0
+                    'lender_id': 0,
+                    'item_id': item_id
                     })
 
         return inventory_ids
@@ -206,19 +223,19 @@ class Order():
         status_info = {
                 1: {
                     "Status": "Order placed",
-                    "Description": "The user has confirmed the order"
+                    "Description": "Your order has been confirmed"
                     },
                 2: {
                     "Status": "Picked up",
-                    "Description": "Order has been picked up for delivery"
+                    "Description": "Your order has been picked up for delivery"
                     },
                 3: {
                     "Status": "Enroute",
-                    "Description": "Order is on the way, with the delivery guy"
+                    "Description": "Your order is on the way"
                     },
                 4: {
                     "Status": "Delivered",
-                    "Description": "Order has been delivered to the user"
+                    "Description": "Your order has been delivered"
                     },
                 5: {
                     "Status": "Picked up",
@@ -234,5 +251,4 @@ class Order():
             return status_info[status_id]
         else:
             return False
-
 
