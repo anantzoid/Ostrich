@@ -279,14 +279,29 @@ class Order():
     
     @staticmethod
     def deleteOrder(order_id):
-        #TODO delete from inventory if added right now
-        # check time sync
         conn = mysql.connect()
         delete_cursor = conn.cursor()
+        
+        order_info = Order(order_id).getOrderInfo()
+        if order_info is None:
+            return {'status':'false'}
+
+        delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
+        order_id = %d""" %(order_id))
+        inventory_id = delete_cursor.fetchone()[0]
+
+        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
+        """+ str(inventory_id) +""" AND
+        DATE_FORMAT(date_added,'%Y-%m-%d %h:%i') =
+        DATE_FORMAT('"""+str(order_info['order_placed'])+"""', '%Y-%m-%d %h:%i')""") 
+        conn.commit()
+        
         delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
         order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
         %(order_id))
         conn.commit()
-        delete_cursor.close()
 
+        delete_cursor.close()
+        
+        return {'status':'true'}
 
