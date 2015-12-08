@@ -4,7 +4,7 @@ from app.models import User
 from app.models import Order
 from app.models import Notifications
 
-def extensionReminder(): 
+def returnDateExtensionReminder(): 
     current_timestamp = Utils.getCurrentTimestamp()
     return_date = Utils.getDefaultReturnTimestamp(current_timestamp, 3)
 
@@ -17,7 +17,7 @@ def extensionReminder():
 
     user = User(query_data['user_id'])
     order = Order(query_data['order_id'])
-
+    
     notification_data = {
             "type": "order_extension",
             "id": order.order_id,
