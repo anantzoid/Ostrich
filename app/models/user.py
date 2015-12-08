@@ -92,10 +92,10 @@ class User(Prototype):
         if not webapp.config['APP_INVITE']:
             Wallet.creditTransaction(user.wallet_id, user.user_id, 'signup', user.user_id)
 
-        return {'user_id': user_id}
-   
+        return {'user': user.getObj()}
 
-    def addAddress(self, address):
+
+    def addAddress(self, address, mode='insert'):
         address_obj = json.loads(address)
         address_id = Utils.getParam(address_obj, 'address_id')
         address = Utils.getParam(address_obj, 'address')
@@ -105,11 +105,11 @@ class User(Prototype):
         conn = mysql.connect()
         insert_add_cursor = conn.cursor()
 
-        if not address_id:
+        if mode == 'insert':
             insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
                     latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
                     address, lat, lng))
-        else:
+        elif mode == 'edit' and address_id:
             insert_add_cursor.execute("UPDATE user_addresses SET address = '%s', \
                     latitude = '%s', longitude = '%s' WHERE address_id = %d" % \
                     (address, lat, lng, address_id))
@@ -140,7 +140,7 @@ class User(Prototype):
         edit_user_cursor.close()
 
         if address: 
-            address_id = self.addAddress(address)
+            address_id = self.addAddress(address, mode='edit')
 
         return True
 

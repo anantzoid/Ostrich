@@ -63,13 +63,12 @@ def userSignup():
     for key in request.form:
         user_data[key] = request.form[key]
 
-    user_id = User.createUser(user_data)
-    if 'user_id' in user_id:
-        user_id['status'] = 'True'
-        return jsonify(user_id)
+    user = User.createUser(user_data)
+    if 'user' in user:
+        return jsonify(user)
     else:
-        user_id['status'] = 'False'
-        return Utils.errorResponse(user_id)
+        user['status'] = 'False'
+        return Utils.errorResponse(user)
 
 '''
     Add address for a user
