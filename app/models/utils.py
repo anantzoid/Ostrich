@@ -44,9 +44,7 @@ class Utils():
     def getCurrentTimestamp():
         current_timestamp = datetime.datetime.now()
         order_placed = str(current_timestamp).split('.')[0]
-
         return order_placed
-
 
     @staticmethod
     def getDefaultReturnTimestamp(current_timestamp, num_days):

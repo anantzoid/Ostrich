@@ -1,8 +1,10 @@
 from app import mysql
+from app import webapp
 
 class Wallet():
     @staticmethod
-    def creditTransaction(wallet_id, user_id, source, source_id, amount=200):
+    def creditTransaction(wallet_id, user_id, source, source_id,
+            amount=webapp.config['DEFAULT_WALLET_CREDIT_AMOUNT']):
         #TODO source, source_id etc validation
         if not wallet_id:
             query = "INSERT INTO user_wallet (amount, user_id) VALUES (%d, %d)"

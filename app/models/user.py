@@ -6,7 +6,7 @@ import json
 from datetime import datetime
 
 class User(Prototype):
-    def __init__(self, user_id, login_type):
+    def __init__(self, user_id, login_type='user_id'):
         self.getData(user_id, login_type)
    
     def getData(self, user_id, login_type):
