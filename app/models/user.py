@@ -195,7 +195,16 @@ class User(Prototype):
             inv_info['item'] = Item(int(inv_info['item_id'])).getObj()
             inv_items.append(inv_info)
        
-        return inv_items
+        rental_statses = {"rentals":[], "rental_history": []}
+        current_timestamp = datetime.now() 
+        for item in inv_items:
+            date_removed = datetime.strptime(item['date_removed'], "%Y-%m-%d %H:%M:%S")
+            diff = current_timestamp - date_removed
+            if diff.days < 0:
+                rental_statses["rental_history"].append(item)
+            else:
+                rental_statses["rentals"].append(item)
+        return rental_statses
 
 
     '''

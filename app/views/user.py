@@ -164,7 +164,7 @@ def getMyOrders():
         return Utils.errorResponse(response)
 
     orders = user.getAllOrders()
-    orders['rentals'] = user.getAllRentals()
+    orders.update(user.getAllRentals())
     return jsonify(orders)
 
 '''

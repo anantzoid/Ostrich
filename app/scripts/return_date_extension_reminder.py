@@ -15,7 +15,7 @@ def returnDateExtensionReminder():
         """ % (return_date))
     query_data = Utils.fetchOneAssoc(cursor)
 
-    f = open("test_sup.log", "a")
+    f = open("/home/ubuntu/test_sup.log", "a")
     print >>f, query_data['user_id']+', '+query_data['order_id']
 
     user = User(query_data['user_id'])
