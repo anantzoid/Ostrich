@@ -144,100 +144,60 @@ class User(Prototype):
 
         return True
 
+    @staticmethod
+    def getUserAddress(address_id):
+        address_cusor = mysql.connect().cursor()
+        address_cusor.execute("""SELECT 
+                address_id,
+                latitude,
+                longitude,
+                address
+                FROM user_addresses
+                WHERE address_id = %d""" %(address_id))
+        address_obj = Utils.fetchOneAssoc(address_cusor)
+        return address_obj
 
-    def getOrders(self):
-        orders = {}
-        orders['current'] = self.getCurrentOrders()
-        orders['history'] = self.getOrderHistory()
-        #orders['rentals'] = self.getRentals()
-        #TODO add rental history option
-
-        return orders
-
-    def getCurrentOrders(self):
-        current_orders = []
+    def getAllOrders(self):
+        from app.models import Order 
+        order_list = []
         orders_cursor = mysql.connect().cursor()
-        orders_cursor.execute("SELECT o.order_id, \
-                o.order_placed, \
-                o.order_status, \
-                o.order_return, \
-                o.pickup_slot, \
-                o.delivery_slot, \
-                a.address, \
-                (select group_concat(oh.item_id SEPARATOR ',') FROM order_history oh \
-                WHERE oh.order_id = o.order_id) AS item_ids \
-                FROM orders o \
-                INNER JOIN user_addresses a ON o.address_id = a.address_id \
-                WHERE o.user_id = %d AND o.order_status <= 4" % (self.user_id))
-
-        num_orders = orders_cursor.rowcount
-        for i in range(num_orders):
-            current_order = Utils.fetchOneAssoc(orders_cursor)
-            current_order['items'] = []
-            if current_order['item_ids']:
-                for item_id in current_order['item_ids'].split(","):
-                    item = Item(int(item_id))
-                    current_order['items'].append(item.getMinObj())
-
-            del current_order['item_ids']
-            current_orders.append(current_order)
-
-        return current_orders
+        orders_cursor.execute("""SELECT order_id
+                FROM orders
+                WHERE user_id = %d""" % (self.user_id))
+        for order_id in orders_cursor.fetchall():
+            order = Order(int(order_id[0]))
+            order_info = order.getOrderInfo()
+            #TODO item_id will be list in future
+            order_info['items'] = [Item(int(order_info['item_id'])).getObj()]
+            order_info['address'] = User.getUserAddress(order_info['address_id']) 
+            order_list.append(order_info)
         
+        order_statuses = {"ordered":[], "reading":[], "previous":[]}
+        for order in order_list:
+            if order['order_status'] in [1, 2, 3]:
+                order_statuses['ordered'].append(order)
+            elif order['order_status'] == 4:
+                order_statuses['reading'].append(order)
+            elif order['order_status'] in [5, 6]:
+                order_statuses['previous'].append(order)
+            
+        return order_statuses
 
-    def getOrderHistory(self):
-        '''
-            Separated from getCurrentOrders as cache will be implemented here
-        '''
+    def getAllRentals(self):
+        inv_cursor = mysql.connect().cursor()
+        inv_cursor.execute("""SELECT *
+                FROM inventory
+                WHERE lender_id = %d"""%(self.user_id))
+        num_items = inv_cursor.rowcount
+        inv_items = []
+        for slot in range(num_items):
+            inv_info = Utils.fetchOneAssoc(inv_cursor)
+            inv_info['item'] = Item(int(inv_info['item_id'])).getObj()
+            inv_items.append(inv_info)
+       
+        return inv_items
 
-        order_history = []
 
-        orders_cursor = mysql.connect().cursor()
-        orders_cursor.execute("SELECT o.order_id, \
-                o.order_placed, \
-                o.order_return, \
-                a.address, \
-                (select group_concat(oh.item_id SEPARATOR ',') FROM order_history oh \
-                WHERE oh.order_id = o.order_id) AS item_ids \
-                FROM orders o \
-                INNER JOIN user_addresses a ON o.address_id = a.address_id \
-                WHERE o.user_id = %d AND o.order_status > 4" % (self.user_id))
-
-        num_orders = orders_cursor.rowcount
-        for i in range(num_orders):
-            order = Utils.fetchOneAssoc(orders_cursor)
-            order['items'] = []
-            if order['item_ids']:
-                for item_id in order['item_ids'].split(","):
-                    item = Item(int(item_id))
-                    order['items'].append(item.getMinObj())
-
-            del order['item_ids']
-            order_history.append(order)
-
-        return order_history
-
-     #def getRentals(self):
-     #    rentals = []
-     #    rental_cursor = mysql.connect().cursor()
-     #    rental_cursor.execute("SELECT i.date_added, \
-     #            i.item_id, \
-     #            i.in_stock, \
-     #            l.credit_id \
-     #            FROM inventory i \
-     #            INNER JOIN lender_credits l ON i.inventory_id = l.inventory_id \
-     #            WHERE i.lender_id = %d" %(self.user_id))
-     #    num_rentals = rental_cursor.rowcount
-     #    for i in range(num_rentals):
-     #        rental = Utils.fetchOneAssoc(rental_cursor)
-     #        if rental['item_id']:
-     #            item = Item(int(rental['item_id']))
-     #            rental['items'] = item.getMinObj()
-
-     #        del rental['item_id']
-     #        rentals.append(rental)
-     #    return rentals
-  
     '''
         User Referral and Invite Functions
     '''

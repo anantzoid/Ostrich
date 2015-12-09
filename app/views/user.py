@@ -163,7 +163,8 @@ def getMyOrders():
     if user.getObj() is None:
         return Utils.errorResponse(response)
 
-    orders = user.getOrders()
+    orders = user.getAllOrders()
+    orders['rentals'] = user.getAllRentals()
     return jsonify(orders)
 
 '''

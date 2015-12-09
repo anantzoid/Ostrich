@@ -14,6 +14,8 @@ class Order():
         self.order_id = order_id
 
     def getOrderInfo(self):
+        # TODO concatnate list of inv_id and item_id, else this will have
+        # multiple rows
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("SELECT o.*, oi.* \
                 FROM orders o \
@@ -165,6 +167,7 @@ class Order():
 
         # TODO if address_id belongs to user    
         return None
+
 
     def getOrderStatusForUser(self, user_id):
         get_status_cursor = mysql.connect().cursor()

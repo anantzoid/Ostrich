@@ -21,21 +21,7 @@ class Item(Prototype):
         item_obj = item_obj['data']
         #if item_obj:
         #    item_obj = self.getTempVarsForBookModel(item_obj)
-
         return item_obj
-
-    def getMinObj(self):
-        min_obj = {}
-        item_obj = self.getObj()
-
-        min_obj["item_id"] = item_obj["item_id"]
-        min_obj["title"] = item_obj["item_name"]
-        
-        #min_obj["images"] = item_obj["photos"]
-
-        #TODO generic minification: after making BookModel items consistent
-
-        return min_obj
 
 
     def getSecurityDepositAmount(self):
@@ -46,6 +32,7 @@ class Item(Prototype):
         return security
 
 
+    # TODO delete this
     def getTempVarsForBookModel(self, item_obj):
         item_obj['isbn'] = item_obj['ISBN_10']
         item_obj['title'] = item_obj['item_name']
