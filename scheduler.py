@@ -16,3 +16,11 @@ def returnDateExtensionReminder():
     from app.scripts.return_date_extension_reminder import returnDateExtensionReminder
     returnDateExtensionReminder()
 
+'''
+    Run everyday at 6pm to prompt users to give a pickup time for the order
+'''
+@periodic_task(run_every=(crontab(hour="18", minute="0")))
+def returnDateExtensionReminder():
+    from app.scripts.pickup_timeslot import pickupTimeslot
+    pickupTimeslot()
+

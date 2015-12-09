@@ -178,3 +178,4 @@ def pushNotification():
 @webapp.route('/deleteOrder')
 def deleteOrder():
     Order.deleteOrder(int(request.args['order_id']))
+

@@ -1,4 +1,5 @@
 from app import mysql
+from app.models import Utils
 from app.models import User
 from app.models import Notifications
 
@@ -11,6 +12,7 @@ def pickupTimeslot():
             FROM orders
             WHERE DATE(order_return) = DATE('%s')
             """ % (return_date))
+    query_data = Utils.fetchOneAssoc(cursor)
 
     f = open("/home/ubuntu/extension_reminder.log", "a")
     print >>f, query_data['user_id']+', '+query_data['order_id']
