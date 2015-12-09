@@ -54,38 +54,15 @@ def OrderItem():
 '''
 @webapp.route('/lend', methods=['POST'])
 def lendItem():
-    response = {'status': 'False'}
     lend_data = {}
+    for key in request.form:
+        lend_data[key] = request.form[key]
+    lend_info = Order.lendItem(lend_data)
 
-    lend_data['item_id'] = Utils.getParam(request.form, 'item_id')
-    lend_data['user_id'] = Utils.getParam(request.form, 'user_id')
-
-    #incentive info will have delivery date (depending on period of rental)
-    lend_data['incentive_id'] = Utils.getParam(request.form, 'incentive_id')
-
-    #for pickup
-    lend_data['pickup_date'] = Utils.getParam(request.form, 'pickup_date')
-    lend_data['pickup_slot'] = Utils.getParam(request.form, 'pickup_slot')
-
-    lend_data['delivery_slot'] = Utils.getParam(request.form, 'delivery_slot')
-    lend_data['delivery_date'] = Utils.getParam(request.form, 'delivery_date', None, Utils.getDefaultReturnTimestamp(lend_data['pickup_date'], 45))
-
-    lend_data['item_condition'] = Utils.getParam(request.form, 'item_condition')
-  
-    for key in lend_data:
-        if not lend_data[key]:
-            response['message'] = key+' missing'
-            return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
-
-    inventory_id = Order.lendItem(lend_data)
-   
-    if inventory_id:
-        response['status'] = 'True'
-        response['inventory_id'] = inventory_id
-
-        return jsonify(response)
+    if 'inventory_id' in lend_info and lend_info['inventory_id']:
+        return jsonify(lend_info)
     else:
-        return Utils.errorResponse(response)
+        return Utils.errorResponse(lend_info)
 
 '''
     Get the status of a current order

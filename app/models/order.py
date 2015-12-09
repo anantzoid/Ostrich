@@ -7,6 +7,7 @@ from app.models import Wallet
 from app.models import Mailer
 from app.models import Notifications
 import datetime
+import json
 
 class Order():
     def __init__(self, order_id):
@@ -189,30 +190,58 @@ class Order():
 
     @staticmethod
     def lendItem(lend_data):
+        lend_fields = ['item_id', 'user_id', 'pickup_slot']
+        for key in lend_fields:
+            if key not in lend_data.keys():
+                return {'message': 'Required params missing'}
+            elif not (lend_data[key] and lend_data[key].isdigit()):
+                return {'message': 'Wrong param value'}
+            else:
+                lend_data[key] = int(lend_data[key])
+
+        lend_data['pickup_date'] = Utils.getParam(lend_data, 'pickup_date',
+                default=Utils.getCurrentTimestamp())
+        lend_data['delivery_date'] = Utils.getParam(lend_data,'delivery_date', 
+                default=Utils.getDefaultReturnTimestamp(lend_data['pickup_date'], 45))
+        lend_data['delivery_slot'] = lend_data['pickup_slot']
+        lend_data['item_condition'] = Utils.getParam(lend_data,
+            'item_condition', None)
+        '''
+        if lend_data['item_condition']:
+            print json.loads("{'a':"+lend_data['item_condition']+"}")
+            return
+            lend_data['item_condition'] = json.loads({'item_condition':
+                list(lend_data['item_condition'])})['item_condition']
+            print lend_data['item_condition']
+            lend_data['item_condition'] = ", ".join([_['name'] for _ in
+                lend_data['item_condition'] if _['selected']])
+        '''        
+
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
        
         set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added, \
                 date_removed, in_stock, pickup_slot, delivery_slot, item_condition) VALUES \
                 (%d, %d, '%s', '%s', %d, %d, %d, '%s')" % \
-                (int(lend_data['item_id']), \
-                 int(lend_data['user_id']), \
+                (lend_data['item_id'], \
+                 lend_data['user_id'], \
                  str(lend_data['pickup_date']), \
                  str(lend_data['delivery_date']), \
-                 0, \
-                 int(lend_data['pickup_slot']), \
-                 int(lend_data['delivery_slot']), \
-                 str(lend_data['item_condition']) \
+                 1, \
+                 lend_data['pickup_slot'], \
+                 lend_data['delivery_slot'], \
+                 lend_data['item_condition'] \
                 ))
         conn.commit()
-        inv_id = set_lend_cursor.lastrowid
+        inventory_id = set_lend_cursor.lastrowid
         set_lend_cursor.close()
 
         # Give 50 credits to lender irrepective of days lent
         user = User(lend_data['user_id'], 'user_id') 
-        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend', inv_id, 50) 
+        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
+                inventory_id, 50) 
 
-        return inv_id
+        return {'inventory_id': inventory_id }
 
     @staticmethod    
     def getTimeSlot():
