@@ -27,14 +27,14 @@ class Order():
     @staticmethod
     def placeOrder(order_data):
        
-        order_fields = ['item_id', 'user_id', 'address_id']
+        order_fields = ['item_id', 'user_id', 'address']
         for key in order_fields:
             if key not in order_data.keys():
                 return {'message': 'Required params missing'}
-            elif not (order_data[key] and order_data[key].isdigit()):
+            elif not order_data[key]:
                 return {'message': 'Wrong param value'}
             else:
-                order_data[key] = int(order_data[key])
+                order_data[key] = int(order_data[key]) if key != 'address' else json.loads(order_data[key])
         
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
@@ -50,18 +50,28 @@ class Order():
         #check order validity
         # TODO check item exists
 
-        user = User(order_data['user_id'], 'user_id')
         # User validity
+        user = User(order_data['user_id'], 'user_id')
         user_not_valid = Order.isUserValidForOrder(user, order_data)
         if user_not_valid:
             return user_not_valid
+
+        # Since Address is editable before placing order
+        address_valid = False
+        for address in user.address:
+            if address['address_id'] == order_data['address']['address_id']:
+                address_valid = True
+                if address['address'] != order_data['address']['address']:
+                    user.editDetails({'address': order_data['address']})
+        if not address_valid:
+            return {'message': 'Address not associated'}
 
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
         insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
                 order_placed, order_return, delivery_slot, pickup_slot, payment_mode) \
                 VALUES(%d, %d, '%s', '%s', %d, %d, '%s')" % \
-                (order_data['user_id'], order_data['address_id'], order_data['order_placed'], 
+                (order_data['user_id'], order_data['address']['address_id'], order_data['order_placed'], 
                     order_data['order_return'], order_data['delivery_slot'], 
                     order_data['delivery_slot'], order_data['payment_mode']))
         connect.commit()
@@ -83,8 +93,7 @@ class Order():
                     "id": str(order_info['order_status']),
                     "message": order.getOrderStatusDetails(order_info['order_status'])['Description'] 
                 }
-        temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
-        Notifications(temp_gcm_id).sendNotification(notification_data)
+        Notifications(user.gcm_id).sendNotification(notification_data)
         return response 
     
     def updateInventoryPostOrder(self, item_ids):

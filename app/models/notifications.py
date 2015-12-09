@@ -8,7 +8,7 @@ class Notifications():
         self.is_enabled = webapp.config['NOTIFICATIONS_ENABLED']
 
     def sendNotification(self, data):
-        if self.is_enabled:
+        if self.is_enabled and self.gcm_id:
             notification_status = self.gcm.json_request(registration_ids=self.gcm_id, data=data)
             return notification_status
 

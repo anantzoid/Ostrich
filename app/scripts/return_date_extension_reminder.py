@@ -25,8 +25,7 @@ def returnDateExtensionReminder():
             "type": "order_extension",
             "id": order.order_id,
             }
-    temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
-    Notifications(temp_gcm_id).sendNotification(notification_data)
+    Notifications(user.gcm_id).sendNotification(notification_data)
 
     
         

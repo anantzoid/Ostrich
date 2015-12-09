@@ -96,7 +96,7 @@ class User(Prototype):
 
 
     def addAddress(self, address, mode='insert'):
-        address_obj = json.loads(address)
+        address_obj = address if isinstance(address, dict) else json.loads(address) 
         address_id = Utils.getParam(address_obj, 'address_id')
         address = Utils.getParam(address_obj, 'address')
         lat = Utils.getParam(address_obj, 'latitude')
@@ -123,7 +123,7 @@ class User(Prototype):
 
 
     def editDetails(self, user_data):
-
+    
         username = user_data['username'] if 'username' in user_data else self.username
         name = user_data['name'] if 'name' in user_data else self.name
         phone = user_data['phone'] if 'phone' in user_data else self.phone
