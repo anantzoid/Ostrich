@@ -192,7 +192,7 @@ class User(Prototype):
         inv_items = []
         for slot in range(num_items):
             inv_info = Utils.fetchOneAssoc(inv_cursor)
-            inv_info['item'] = Item(int(inv_info['item_id'])).getObj()
+            inv_info['items'] = [Item(int(inv_info['item_id'])).getObj()]
             inv_items.append(inv_info)
        
         rental_statses = {"rentals":[], "rental_history": []}
