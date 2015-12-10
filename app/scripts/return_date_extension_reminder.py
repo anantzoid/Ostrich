@@ -14,14 +14,9 @@ def returnDateExtensionReminder():
         """ % (return_date))
     num_items = cursor.rowcount
 
-    f = open("/home/ubuntu/extension_reminder.log", "a")
     for num in range(num_items):
         query_data = Utils.fetchOneAssoc(cursor)
-
-        print >>f, str(query_data['user_id'])+', '+str(query_data['order_id'])
-
         user = User(query_data['user_id'])
-        print user.gcm_id
         
         notification_data = {
                 "notification_id": 2,
