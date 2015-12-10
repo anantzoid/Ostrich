@@ -303,7 +303,13 @@ class Order():
                 return False
             else:
                 order_data['delivery_slot'] = int(order_data['delivery_slot'])
-                #TODO check if time slot exists in a pythonic way
+                slot_exists = False
+                for slot in Order.getTimeSlot():
+                    if slot['slot_id'] == order_data['delivery_slot']:
+                        slot_exists = True
+                        break
+                if not slot_exists:
+                    return False
         else:
             order_data['delivery_slot'] = order_info['delivery_slot']
        
