@@ -10,11 +10,7 @@ mysql = MySQL()
 cors = CORS(webapp)
 mail = Mail(webapp)
 
-if os.environ.get('APP_ENV') == 'dev':
-    #TODO change for production
-    webapp.config.from_pyfile('../config/config.cfg', silent=True)
-else:
-    webapp.config.from_pyfile('../config/config.cfg', silent=True)
+webapp.config.from_pyfile('/etc/app_config.cfg', silent=True)
 
 #initialize global objects of libraries
 mysql.init_app(webapp)
