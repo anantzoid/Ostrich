@@ -89,8 +89,8 @@ class Order():
         #TODO send push notification as a callback to rr response
         order_info = order.getOrderInfo()
         notification_data = {
-                    "type": "order",
-                    "id": str(order_info['order_status']),
+                    "notification_id": 1,
+                    "entity_id": order_info['order_id'],
                     "message": order.getOrderStatusDetails(order_info['order_status'])['Description'] 
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)

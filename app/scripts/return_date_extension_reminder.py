@@ -20,8 +20,9 @@ def returnDateExtensionReminder():
     user = User(query_data['user_id'])
     
     notification_data = {
-            "type": "order_extension",
-            "id": query_data['order_id'],
+            "notification_id": 2
+            "entity_id": query_data['order_id'],
+            "message": "Not finised yet? Extend the return date"
             }
     Notifications(user.gcm_id).sendNotification(notification_data)
 

@@ -19,8 +19,9 @@ def pickupTimeslot():
 
     user = User(query_data['user_id'])
     notification_data = {
-            "type": "pickup_time",
-            "id": query_data['order_id'],
+            "notification_id": 2
+            "entity_id": query_data['order_id'],
+            "message": "When should we come over to pickup tomorrow?",
             }
     Notifications(user.gcm_id).sendNotification(notification_data)
 

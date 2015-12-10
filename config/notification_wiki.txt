@@ -1,0 +1,36 @@
+////////////////////////////////
+////Push Notifications Wiki/////
+////////////////////////////////
+
+Data Structure:
+===============
+{
+    "notification_id",
+    "entity_id",
+    "message"
+}
+
+Types:
+==================
+Notification id: 1
+Entity id: order_id
+Response on app: Take to current order page
+Events: Order placed
+        En route
+        Delivered
+        
+        Pickup guy on the way
+        Pickup up (Gratitude/Rating)
+
+
+Notification id: 2
+Entity id: order_id
+Response on app: Open order edit modal on current order page
+Events: At 10 am on 3 days before pickup date (to extend order)
+        At 6pm day before pickup, to select time slot
+
+
+Notification id: 3
+Entity id: order_id
+Response on app: TBA (Rating maybe)
+Events: On pickup of order
