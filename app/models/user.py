@@ -1,4 +1,5 @@
 from app import mysql
+from datetime import datetime
 from app import webapp
 from app.models import Prototype, Item, Utils, Wallet
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -128,7 +129,7 @@ class User(Prototype):
         name = user_data['name'] if 'name' in user_data else self.name
         phone = user_data['phone'] if 'phone' in user_data else self.phone
         email = user_data['email'] if 'email' in user_data else self.email
-        gcm_id = user_data['gcm_id '] if 'gcm_id ' in user_data else self.gcm_id 
+        gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else self.gcm_id 
         address = Utils.getParam(user_data, 'address')
 
         conn = mysql.connect()

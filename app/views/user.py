@@ -125,7 +125,7 @@ def addAddress():
 def editDetails():
     response = {'status': 'False'}
 
-    user_id = Utils.getParam(request.form, 'user_id')
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
     if not user_id:
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     

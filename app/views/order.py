@@ -118,7 +118,27 @@ def updateOrderStatus():
         return jsonify({'status': 'true'})
     else:
         response = {'status': 'false', 'message': 'Wrong Status Id'}
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_ERROR'])
+        return Utils.errorResponse(response)
+
+
+@webapp.route('/editOrderDetails', methods=['POST'])
+def editOrderDetails():
+    response = {'status': 'False'}
+    order_id = Utils.getParam(request.form, 'order_id', 'int')
+    if not order_id:
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+
+    order_data = {}
+    for key in request.form:
+        order_data[key] = request.form[key]
+
+    order = Order(order_id)
+    status = order.editOrderDetails(order_data)
+    if status:
+        response['status'] = 'True'
+        return jsonify(response)
+    else:
+        return Utils.errorResponse(response)
 
 
 '''

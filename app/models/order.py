@@ -6,7 +6,7 @@ from app.models import Utils
 from app.models import Wallet
 from app.models import Mailer
 from app.models import Notifications
-import datetime
+from datetime import datetime
 import json
 
 class Order():
@@ -282,6 +282,56 @@ class Order():
                     order_id = %d)"%(self.order_id)) 
             conn.commit()
         update_cursor.close()
+
+    def editOrderDetails(self, order_data):
+        # order_return validity
+        order_info = self.getOrderInfo()
+        if not order_info:
+            return False
+
+        if 'order_return' in order_data:
+            old_order_return = datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
+            new_order_return = datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
+            diff = new_order_return - old_order_return 
+            if diff.days <= 0:
+                return False
+        else:
+            order_data['order_return'] = order_info['order_return']
+       
+        if 'delivery_slot' in order_data:
+            if not order_data['delivery_slot'].isdigit():
+                return False
+            else:
+                order_data['delivery_slot'] = int(order_data['delivery_slot'])
+                #TODO check if time slot exists in a pythonic way
+        else:
+            order_data['delivery_slot'] = order_info['delivery_slot']
+       
+        # NOTE Future generic incomplete code. Remove else part when using this
+        '''
+        edit_query_string = []
+        for data in order_data.keys():
+            if data != 'order_id':
+                format_value = "'%s'" if isinstance(order_data[data], 'str') else "%d"
+                edit_query_string.append(data+" = "+format_value)
+        if not edit_query_string:
+            return False
+        else:
+            edit_query_string ", ".join(edit_query_string)
+        '''
+
+        conn = mysql.connect()
+        update_cursor = conn.cursor()
+        update_cursor.execute("""UPDATE orders SET order_return = '%s',
+                delivery_slot = %d WHERE
+                order_id = %d""" %(order_data['order_return'],
+                order_data['delivery_slot'], self.order_id))
+        conn.commit()
+        if update_cursor.rowcount:
+            return True
+        else:
+            return False
+
 
     @staticmethod
     def getOrderStatusDetails(status_id):
