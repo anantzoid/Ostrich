@@ -12,17 +12,21 @@ def pickupTimeslot():
             FROM orders
             WHERE DATE(order_return) = DATE('%s')
             """ % (return_date))
-    query_data = Utils.fetchOneAssoc(cursor)
+    num_items = cursor.rowcount
 
-    f = open("/home/ubuntu/extension_reminder.log", "a")
-    print >>f, query_data['user_id']+', '+query_data['order_id']
+    f = open("/home/ubuntu/extension_reminder1.log", "a")
+    for num in range(num_items):
+        query_data = Utils.fetchOneAssoc(cursor)
+        print >>f, query_data.keys()[0]
 
-    user = User(query_data['user_id'])
-    notification_data = {
-            "notification_id": 2
+        user = User(query_data['user_id'])
+        print user.gcm_id
+        
+        notification_data = {
+            "notification_id": 2,
             "entity_id": query_data['order_id'],
-            "message": "When should we come over to pickup tomorrow?",
+            "message": "When should we come over to pickup tomorrow?"
             }
-    Notifications(user.gcm_id).sendNotification(notification_data)
+        Notifications(user.gcm_id).sendNotification(notification_data)
 
  
