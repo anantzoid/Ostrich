@@ -158,6 +158,17 @@ class User(Prototype):
         address_obj = Utils.fetchOneAssoc(address_cusor)
         return address_obj
 
+
+    def validateUserAddress(self, address_obj):
+        address_valid = False
+        for address in self.address:
+            if address['address_id'] == address_obj['address_id']:
+                address_valid = True
+                if address['address'] != address_obj['address']:
+                    self.editDetails({'address': address_obj})
+        return address_valid
+
+
     def getAllOrders(self):
         from app.models import Order 
         order_list = []

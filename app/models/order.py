@@ -42,13 +42,13 @@ class Order():
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], 15))
         order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
-                'int', Utils.getDefaultTimeSlot()))
+                default = Utils.getDefaultTimeSlot()))
 
         #TODO calc total amount
         order_data['order_amount'] = 0 
 
         #check order validity
-        # TODO check item exists
+        # TODO check if item exists
 
         # User validity
         user = User(order_data['user_id'], 'user_id')
@@ -56,24 +56,23 @@ class Order():
         if user_not_valid:
             return user_not_valid
 
-        # Since Address is editable before placing order
-        address_valid = False
-        for address in user.address:
-            if address['address_id'] == order_data['address']['address_id']:
-                address_valid = True
-                if address['address'] != order_data['address']['address']:
-                    user.editDetails({'address': order_data['address']})
-        if not address_valid:
-            return {'message': 'Address not associated'}
-
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
-        insert_data_cursor.execute("INSERT INTO orders (user_id, address_id, \
-                order_placed, order_return, delivery_slot, pickup_slot, payment_mode) \
-                VALUES(%d, %d, '%s', '%s', %d, %d, '%s')" % \
-                (order_data['user_id'], order_data['address']['address_id'], order_data['order_placed'], 
-                    order_data['order_return'], order_data['delivery_slot'], 
-                    order_data['delivery_slot'], order_data['payment_mode']))
+        insert_data_cursor.execute("""INSERT INTO orders (user_id, 
+                address_id, 
+                order_placed, 
+                order_return, 
+                delivery_slot, 
+                pickup_slot, 
+                payment_mode) 
+                VALUES(%d, %d, '%s', '%s', %d, %d, '%s')"""  
+                %(order_data['user_id'], 
+                    order_data['address']['address_id'], 
+                    order_data['order_placed'], 
+                    order_data['order_return'], 
+                    order_data['delivery_slot'], 
+                    order_data['delivery_slot'], 
+                    order_data['payment_mode']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
@@ -97,7 +96,8 @@ class Order():
         return response 
     
     def updateInventoryPostOrder(self, item_ids):
-        #NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
+        # NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
+
         inventory_ids = self.getInventoryIds(item_ids) 
 
         #update order_history and clear stock in inventory
@@ -111,49 +111,50 @@ class Order():
             order_history_cursor.close()
 
             update_stock_cursor = connect.cursor()
-            update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
+            update_stock_cursor.execute("UPDATE inventory_new SET in_stock = 0 WHERE \
                     inventory_id = %d" % (inventory_item['inventory_id']))
             connect.commit()
             update_stock_cursor.close()
 
-            #TODO Check if item is lended, add credits to the wallet for that user
-            #TODO send notification to lender
 
     def getInventoryIds(self, item_ids):
-        
+        # Incremental Inventory Logic
+        #   in_stock: Item is in inventory (not with a user)
+        #   fetched: Item has been acquired
+        #     
+        #   During order, check if acuquired item is in inventory
+        #   If not, insert a new item (to be purchased now), which is not yet
+        #   bought(thus, fetched=0). 
+        #   fetched=1 happens when 
+        #   1.status is changed from the dashboard while entering other 
+        #     inventory info (price, isbn)
+        #   2. Order status changes to 2(en route).(In case the change was not
+        #     made form dashboard.
+
         inventory_ids = []
         for item_id in item_ids:
             item_check_cursor = mysql.connect().cursor()
-            item_check_cursor.execute("SELECT inventory_id, lender_id FROM inventory \
-                    WHERE item_id = %d AND in_stock = 1 ORDER BY date_added" % (item_id))
+            item_check_cursor.execute("""SELECT inventory_id FROM
+                    inventory_new WHERE item_id = %d AND in_stock = 1 
+                    AND fetched = 1""" % (item_id))
             inv_items = item_check_cursor.fetchall()
             item_check_cursor.close()
 
             if inv_items: 
-                # check if a lender's item is present,
-                # else return the inventory item
-                item_selected = list(inv_items[0])
-                for item in inv_items:
-                    if item[1]:
-                        item_selected = item
-                        break
-
                 inventory_ids.append({
                     'inventory_id': item_selected[0],
-                    'lender_id': item_selected[1],
                     'item_id': item_id
                     })
             else:
                 connect = mysql.connect()
                 insert_inv_item = connect.cursor()
-                insert_inv_item.execute("INSERT INTO inventory (item_id) VALUES ('%s')" %(item_id))
+                insert_inv_item.execute("INSERT INTO inventory_new (item_id) VALUES ('%s')" %(item_id))
                 connect.commit()
                 new_inv_id = insert_inv_item.lastrowid
                 insert_inv_item.close()
 
                 inventory_ids.append({
                     'inventory_id': new_inv_id,
-                    'lender_id': 0,
                     'item_id': item_id
                     })
 
@@ -174,7 +175,10 @@ class Order():
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
             return {'message': 'Not enough balance in wallet'}
 
-        # TODO if address_id belongs to user    
+        # Since Address is editable before placing order
+        if not user.validateUserAddress(order_data['address']):
+            return {'message': 'Address not associated'}
+
         return None
 
 
@@ -202,59 +206,99 @@ class Order():
 
     @staticmethod
     def lendItem(lend_data):
-        lend_fields = ['item_id', 'user_id', 'pickup_slot']
+        lend_fields = ['item_id', 'user_id', 'address']
         for key in lend_fields:
             if key not in lend_data.keys():
                 return {'message': 'Required params missing'}
-            elif not (lend_data[key] and lend_data[key].isdigit()):
+            elif not lend_data[key]:
                 return {'message': 'Wrong param value'}
             else:
-                lend_data[key] = int(lend_data[key])
+                lend_data[key] = int(lend_data[key]) if key != 'address' else json.loads(lend_data[key])
 
         lend_data['pickup_date'] = Utils.getParam(lend_data, 'pickup_date',
                 default=Utils.getCurrentTimestamp())
         lend_data['delivery_date'] = Utils.getParam(lend_data,'delivery_date', 
                 default=Utils.getDefaultReturnTimestamp(lend_data['pickup_date'], 45))
+        lend_data['pickup_slot'] = int(Utils.getParam(lend_data, 'pickup_slot',
+               default = Utils.getDefaultTimeSlot()))
         lend_data['delivery_slot'] = lend_data['pickup_slot']
-        lend_data['item_condition'] = Utils.getParam(lend_data,
-            'item_condition', None)
-        '''
-        if lend_data['item_condition']:
-            print json.loads("{'a':"+lend_data['item_condition']+"}")
-            return
-            lend_data['item_condition'] = json.loads({'item_condition':
-                list(lend_data['item_condition'])})['item_condition']
-            print lend_data['item_condition']
-            lend_data['item_condition'] = ", ".join([_['name'] for _ in
-                lend_data['item_condition'] if _['selected']])
-        '''        
+
+        # Item conditions is a list of {"name":"condition", "selected": "True/False"}
+        item_conditions = Utils.getParam(lend_data, 'item_condition', None)
+        item_conditions = json.loads(item_conditions) if item_conditions is not None else item_conditions
+        lend_data['item_condition'] = []
+        for condition in item_conditions:
+            if condition['selected'].lower() == "true":
+                lend_data['item_condition'].append(condition['name'])
+        lend_data['item_condition'] = "|".join(lend_data['item_condition'])
+
+        # Since Address is editable before placing order
+        user = User(lend_data['user_id'], 'user_id')
+        if not user.validateUserAddress(lend_data['address']):
+            return {'message': 'Address not associated'}
 
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
        
-        set_lend_cursor.execute("INSERT INTO inventory (item_id, lender_id, date_added, \
-                date_removed, in_stock, pickup_slot, delivery_slot, item_condition) VALUES \
-                (%d, %d, '%s', '%s', %d, %d, %d, '%s')" % \
-                (lend_data['item_id'], \
-                 lend_data['user_id'], \
-                 str(lend_data['pickup_date']), \
-                 str(lend_data['delivery_date']), \
-                 1, \
-                 lend_data['pickup_slot'], \
-                 lend_data['delivery_slot'], \
-                 lend_data['item_condition'] \
+        set_lend_cursor.execute("""INSERT INTO inventory_new (item_id, 
+                date_added, date_removed, item_condition) VALUES 
+                (%d, '%s', '%s', '%s')""" % 
+                (lend_data['item_id'], 
+                 str(lend_data['pickup_date']), 
+                 str(lend_data['delivery_date']), 
+                 lend_data['item_condition'] 
                 ))
         conn.commit()
-        inventory_id = set_lend_cursor.lastrowid
+        lend_data['inventory_id'] = set_lend_cursor.lastrowid
         set_lend_cursor.close()
+
+        lend_data['lender_id'] = Order.addLender(lend_data) 
+        if not lend_data['lender_id']:
+            Order.rollbackLend(lend_data['inventory_id'])
+            return {}
 
         # Give 50 credits to lender irrepective of days lent
         user = User(lend_data['user_id'], 'user_id') 
         Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
-                inventory_id, 50) 
+                lend_data['inventory_id'], 50) 
 
-        return {'inventory_id': inventory_id }
+        return {'inventory_id': lend_data['inventory_id'], 'lender_id':
+                lend_data['lender_id']}
 
+    @staticmethod    
+    def addLender(lend_data):
+        conn = mysql.connect()
+        lender_cusror = conn.cursor()
+        lender_cusror.execute("""INSERT into lenders (
+            inventory_id,
+            user_id,
+            delivery_date,
+            pickup_date,
+            delivery_slot,
+            pickup_slot,
+            address_id) VALUES (%d, %d, '%s', '%s', %d, %d, %d) """
+            %(lend_data['inventory_id'],
+                lend_data['user_id'],
+                lend_data['delivery_date'],
+                lend_data['pickup_date'],
+                lend_data['delivery_slot'],
+                lend_data['pickup_slot'],
+                lend_data['address']['address_id']))
+        conn.commit()
+        lender_id = lender_cusror.lastrowid
+        lender_cusror.close()
+        return lender_id
+
+
+    @staticmethod    
+    def rollbackLend(inventory_id):
+        conn = mysql.connect()
+        del_cursor = conn.cursor()
+        del_cursor.execute("""DELETE FROM inventory WHERE inventory_id = %d"""
+                %(inventory_id))
+        conn.commit()
+        return True
+    
     @staticmethod    
     def getTimeSlot():
         time_slot_cursor = mysql.connect().cursor()
@@ -275,11 +319,19 @@ class Order():
                 %(status_id, self.order_id))
         conn.commit()
 
+        update_inv_query = ''
         # Putting item back in stock
         if status_id == 6:
-            update_cursor.execute("UPDATE inventory SET in_stock = 1 WHERE \
-                    inventory_id IN (SELECT inventory_id FROM order_history WHERE \
-                    order_id = %d)"%(self.order_id)) 
+            update_inv_query = """UPDATE inventory_new SET in_stock = 1 WHERE 
+                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
+                    order_id = %d)""" % (self.order_id)
+        elif status_id == 2:
+            update_inv_query = """UPDATE inventory_new SET fetched = 1 WHERE
+                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
+                    order_id = %d)""" % (self.order_id)
+
+        if update_inv_query:
+            update_cursor.execute(update_inv_query) 
             conn.commit()
         update_cursor.close()
 
@@ -387,8 +439,8 @@ class Order():
         order_id = %d""" %(order_id))
         inventory_id = delete_cursor.fetchone()[0]
 
-        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
-        """+ str(inventory_id) +""" AND
+        delete_cursor.execute("""DELETE FROM inventory_new WHERE inventory_id =
+        """+ str(inventory_id) +""" AND fetched = 0 AND in_stock = 0 AND
         DATE_FORMAT(date_added,'%Y-%m-%d %h:%i') =
         DATE_FORMAT('"""+str(order_info['order_placed'])+"""', '%Y-%m-%d %h:%i')""") 
         conn.commit()

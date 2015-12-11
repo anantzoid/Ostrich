@@ -43,14 +43,15 @@ def OrderItem():
     @params
         user_id: The current user's id
         item_id: The item's id (correspoding to the DB)
-        incentive_id: Rental slab from DB (to procure rental amount, period etc)
+        pickup_date: Y-m-d H:i:s 
+        pickup_slot: slot id for picking up from user
+        delivery_date: Date of delivery back
         delivery_slot: time slot id for delivring back the object
-        pickup_date: Y-m-d H:i:s  
-        pickup_slot: time slot id for picking up from user
         item_condition: Description condition of item
 
     @response
-        status, inventory_id(optional)
+        inventory_id(optional)
+        message(optional)
 '''
 @webapp.route('/lend', methods=['POST'])
 def lendItem():
@@ -195,7 +196,10 @@ def pushNotification():
     status = Notifications(temp_gcm_id).sendNotification(notification_data)
     return jsonify(status)
 
-@webapp.route('/deleteOrder')
+@webapp.route('/deleteOrder', methods=['POST'])
 def deleteOrder():
-    Order.deleteOrder(int(request.args['order_id']))
+    Order.deleteOrder(int(request.form['order_id']))
 
+@webapp.route('/nextTime')
+def nextTime():
+    return jsonify(Utils.getDefaultTimeSlot(request.args['time']))
