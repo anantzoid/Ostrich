@@ -85,16 +85,22 @@ class Order():
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
 
         #TODO call roadrunnr api
-        #TODO send push notification as a callback to rr response
-        order_info = order.getOrderInfo()
+        order.sendOrderNotification(1, user)
+        return response 
+
+    def sendOrderNotification(self, status_id, user=None):
+        order_info = self.getOrderInfo()
         notification_data = {
                     "notification_id": 1,
-                    "entity_id": order_info['order_id'],
-                    "message": order.getOrderStatusDetails(order_info['order_status'])['Description'] 
+                    "entity_id": self.order_id,
+                    "message": self.getOrderStatusDetails(order_info['order_status'])['Description'] 
                 }
+
+        if user is None:
+            user = User(order_info['user_id'], 'user_id')
         Notifications(user.gcm_id).sendNotification(notification_data)
-        return response 
-    
+
+
     def updateInventoryPostOrder(self, item_ids):
         # NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
 
@@ -337,6 +343,8 @@ class Order():
             update_cursor.execute(update_inv_query) 
             conn.commit()
         update_cursor.close()
+        if status_id in [3, 4, 5, 6]:
+            self.sendOrderNotification(status_id) 
 
     def editOrderDetails(self, order_data):
         # order_return validity
@@ -414,10 +422,14 @@ class Order():
                     "Description": "Your order has been delivered"
                     },
                 5: {
-                    "Status": "Picked up",
-                    "Description": "Order has been picked up from the user for return"
+                    "Status": "Enroute for pickup",
+                    "Description": "We're on our way to pickup the book"
                     },
                 6: {
+                    "Status": "Picked up",
+                    "Description": "Thank you for ordering with us. We hope you enjoyed your book."
+                    },
+                7: {
                     "Status": "Returned",
                     "Description": "Order has been retured to the inventory"
                     }

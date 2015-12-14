@@ -198,8 +198,9 @@ class User(Prototype):
     def getAllRentals(self):
         inv_cursor = mysql.connect().cursor()
         inv_cursor.execute("""SELECT *
-                FROM inventory
-                WHERE lender_id = %d"""%(self.user_id))
+                FROM inventory_new
+                WHERE inventory_id IN (SELECT inventory_id
+                FROM lenders WHERE user_id = %d )"""%(self.user_id))
         num_items = inv_cursor.rowcount
         inv_items = []
         for slot in range(num_items):
@@ -212,7 +213,7 @@ class User(Prototype):
         for item in inv_items:
             date_removed = datetime.strptime(item['date_removed'], "%Y-%m-%d %H:%M:%S")
             diff = current_timestamp - date_removed
-            if diff.days < 0:
+            if diff.days > 0:
                 rental_statses["rental_history"].append(item)
             else:
                 rental_statses["rentals"].append(item)
