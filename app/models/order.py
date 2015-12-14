@@ -224,8 +224,11 @@ class Order():
         lend_data['delivery_slot'] = lend_data['pickup_slot']
 
         # Item conditions is a list of {"name":"condition", "selected": "True/False"}
-        item_conditions = Utils.getParam(lend_data, 'item_condition', None)
-        item_conditions = json.loads(item_conditions) if item_conditions is not None else item_conditions
+        item_conditions = Utils.getParam(lend_data, 'item_condition', default=None)
+        if item_conditions is not None:
+            item_conditions = json.loads(item_conditions)
+        else:
+            item_conditions = [{'name':'New', 'selected':'true'}]
         lend_data['item_condition'] = []
         for condition in item_conditions:
             if condition['selected'].lower() == "true":

@@ -12,6 +12,12 @@ class Search():
         self.query = query
         self.index = 'items'
         self.size = size
+        self.relevance_functions = [{
+                "field_value_factor": {
+                    "field": "num_ratings"
+                    }
+                }]
+
 
     def basicSearch(self, page=0):
         data = {
@@ -22,13 +28,7 @@ class Search():
                                 "query": self.query
                                 }
                             },
-                        "functions": [
-                            {
-                                "field_value_factor": {
-                                    "field": "num_ratings"
-                                    }
-                                }
-                            ]
+                        "functions": self.relevance_functions
                         }
                     }
                 }
@@ -49,8 +49,13 @@ class Search():
     def categorySearch(self, page=0):
         data = {
                 "query": {
-                    "term": {
-                        "categories": self.query
+                    "function_score": {
+                        "query": {
+                            "term": {
+                                "categories": self.query
+                                }
+                            },
+                        "functions": self.relevance_functions
                         }
                     }
                 }
@@ -59,12 +64,16 @@ class Search():
     def isbnSearch(self, page=0):
         data = {
                 "query": {
-                    "term": {
-                        "isbn": self.query
+                    "function_score": {
+                        "query": {
+                            "term": {
+                                "isbn": self.query
+                                }
+                            },
+                        "functions": self.relevance_functions
                         }
                     }
                 }
-
         return self.executeSearch(data, page)
 
 

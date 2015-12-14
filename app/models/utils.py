@@ -57,7 +57,7 @@ class Utils():
         return order_return
 
     @staticmethod
-    def getDefaultTimeSlot(time):
+    def getDefaultTimeSlot():
         # Gets best time slot nearest to the next 6 hours
         # Logic:
         # Calculate the timestamp 6 hours from now
@@ -70,9 +70,8 @@ class Utils():
         current_timestamp = datetime.datetime.now()
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
       
-        next_timestamp = datetime.datetime.strptime(time, '%H:%M:%S')
         from app.models import Order
-        time_slots = Order.getTimeSlot()
+        # time_slots = Order.getTimeSlot()
         time_slots_dirty = Order.getTimeSlot()
         for slot in time_slots_dirty:
             slot['start_time'] = datetime.datetime.strptime(slot['start_time'], '%H:%M:%S')
@@ -80,7 +79,7 @@ class Utils():
 
             # Checking if new timestamp lies within any given slot
             if slot['start_time'].hour <= next_timestamp.hour and slot['end_time'].hour > next_timestamp.hour:
-                return [_ for _ in time_slots if _['slot_id'] == slot['slot_id']][0]
+                return slot['slot_id']
 
         previous_slots = []
         next_slots = []
@@ -105,14 +104,14 @@ class Utils():
         if previous_slots:
             min_prev_slot = min(previous_slots, key=itemgetter('diff'))
             if min_prev_slot['diff'] <= 1800:
-                return [_ for _ in time_slots if _['slot_id'] == min_prev_slot['slot_id']][0]
+                return min_prev_slot['slot_id']
 
         # Get next immediate time slot
         if next_slots:
             min_next_slot = min(next_slots, key=itemgetter('diff'))
-            return [_ for _ in time_slots if _['slot_id'] == min_next_slot['slot_id']][0]
+            return min_next_slot['slot_id']
         
-        return [_ for _ in time_slots if _['slot_id'] == 1][0]
+        return 1
 
 
     @staticmethod
