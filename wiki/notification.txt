@@ -7,30 +7,84 @@ Data Structure:
 {
     "notification_id",
     "entity_id",
-    "message"
+    "message",
+    "title",
+    "bottom_text",
+    "expanded_text"
 }
 
 Types:
 ==================
-Notification id: 1
+Notification id: 1 (Generic. Open Order page.)
 Entity id: order_id
 Response on app: Take to current order page
 Events: Order placed
-        En route
-        Delivered
-        
-        Pickup guy on the way
-        Pickup up (Gratitude/Rating)
+En route
+Delivered
+
+Pickup guy on the way
+Pickup up (Gratitude/Rating)
 
 
-Notification id: 2
+Notification id: 2 (Extend Order. 3 Days before)
 Entity id: order_id
 Response on app: Open order edit modal on current order page
 Events: At 10 am on 3 days before pickup date (to extend order)
-        At 6pm day before pickup, to select time slot
+
+Notification id: 3 (Confirm Pickup. Return Day)
+Entity id: order_id
+Response on app: Open order edit modal on current order page
+Events: At 6pm day before pickup, to select time slot
 
 
-Notification id: 3
+Notification id: 4 (Thanks)
 Entity id: order_id
 Response on app: TBA (Rating maybe)
 Events: On pickup of order
+
+Examples
+===============
+
+Order Placed:
+
+    {
+      "notification_id": 1,
+      "entity_id": 91,
+      "title": "Order Placed",
+      "message": "Your order has been placed",   
+      "bottom_text": "We'd be there in 3 hours",
+      "expanded_text": "Your order has been placed. You would get it within 3 hours."
+    }
+
+Out for Delivery/Pickup:
+
+    {
+      "notification_id": 1,
+      "entity_id": 91,
+      "title": "Out for Delivery",
+      "message": "An Ostrich is out for delivery",   
+      "bottom_text": "We'd be there in 30 minutes",
+      "expanded_text": "An Ostrich is out for delivery. We'd be there in 30 minutes."
+    }
+
+3 Days before Return:
+
+    {
+      "notification_id": 2,
+      "entity_id": 91,
+      "title": "3 Days Left",
+      "message": "You can extend your borrow period.",   
+      "bottom_text": "We'd be there in 30 minutes",
+      "expanded_text": "You can extend your borrow period or edit the pickup slot of your return day."
+    }
+
+Day of Return:
+
+    {
+      "notification_id": 3,
+      "entity_id": 91,
+      "title": "Return Day Tomorrow",
+      "message": "Please confirm your pickup slot.",   
+      "bottom_text": "Current Slot - %s",
+      "expanded_text": "Please confirm your current pickup slot - %s. You can change the slot."
+    }
