@@ -17,10 +17,10 @@ class Indexer():
             resp = self.es.index(index=self.es_index, doc_type=self.es_doctype,
                     id=data['item_id'], body=data, refresh=True)
         except Exception, e:
-            print >>self.err_log, str(e)+","+ data['item_id']
+            print >>self.err_log, str(e)+","+ str(data['item_id'])
             print str(e), data['item_id']
 
-    def getAllDataFromDB(self, query_condition='', limit=0):
+    def getAllDataFromDB(self, query_condition='', limit=''):
 
         search_query = """SELECT i.*,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
@@ -32,7 +32,7 @@ class Indexer():
             search_query += query_condition
 
         if limit:
-            search_query += ' LIMIT %d'%(limit)
+            search_query += ' LIMIT '+limit
 
         cursor = mysql.connect().cursor()
         cursor.execute(search_query)

@@ -12,6 +12,7 @@ class Search():
         self.query = query
         self.index = 'items'
         self.size = size
+        self.switchToRating = False
         self.relevance_functions = [{
                 "field_value_factor": {
                     "field": "num_ratings"
@@ -20,60 +21,85 @@ class Search():
 
 
     def basicSearch(self, page=0):
-        data = {
-                "query": {
-                    "function_score": {
-                        "query": {
-                            "query_string": {
-                                "query": self.query
-                                }
-                            },
-                        "functions": self.relevance_functions
+        if self.switchToRating:
+            data = {
+                    "query": {
+                        "function_score": {
+                            "query": {
+                                "query_string": {
+                                    "query": self.query
+                                    }
+                                },
+                            "functions": self.relevance_functions
+                            }
                         }
                     }
-                }
-        '''
-        data = {
-                "query": {
-                    "query_string": {
-                        "query": self.query
+        else:
+            data = {
+                    "query": {
+                        "query_string": {
+                            "query": self.query
+                            }
                         }
                     }
-                }
 
-        '''
-            
         return self.executeSearch(data, page)
 
 
     def categorySearch(self, page=0):
-        data = {
-                "query": {
-                    "function_score": {
-                        "query": {
-                            "term": {
-                                "categories": self.query
-                                }
-                            },
-                        "functions": self.relevance_functions
+        # NOTE temp. Figure out why it only searches for lower case
+        self.query = self.query.lower()
+
+        if self.switchToRating:
+            data = {
+                    "query": {
+                        "function_score": {
+                            "query": {
+                                "term": {
+                                    "categories": self.query
+                                    }
+                                },
+                            "functions": self.relevance_functions
+                            }
                         }
                     }
-                }
+        else:
+            data = {
+                    "query": {
+                        "term": {
+                            "categories": self.query
+                            }
+                        }
+                    }
+
+
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
-        data = {
-                "query": {
-                    "function_score": {
-                        "query": {
-                            "term": {
-                                "isbn": self.query
+        if self.switchToRating:
+            data = {
+                    "query": {
+                        "function_score": {
+                            "query": {
+                                "multi_match": {
+                                    "query": self.query,
+                                    "fields":["isbn_10", "isbn_13"]
+                                    }
                                 }
                             },
                         "functions": self.relevance_functions
                         }
                     }
-                }
+        else:
+            data = {
+                    "query": {
+                        "multi_match": {
+                            "query": self.query,
+                            "fields":["isbn_10", "isbn_13"]
+                            }
+                        }
+                    }
+
         return self.executeSearch(data, page)
 
 

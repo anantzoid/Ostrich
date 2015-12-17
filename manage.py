@@ -10,7 +10,7 @@ def hello():
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    Indexer().getAllDataFromDB()
+    Indexer().getAllDataFromDB(limit='1000 offset 1506')
 
 if __name__ == "__main__":
     manager.run()
