@@ -1,9 +1,10 @@
 from elasticsearch import Elasticsearch
-import MySQLdb
 import json
 import requests
 import os
 import unicodedata
+from app import mysql 
+from app.models import Utils
 
 class Search():
     def __init__(self, url):
@@ -13,12 +14,6 @@ class Search():
         self.es_doctype = 'item'
 
         self.error_log = '/var/log/app_logs/es_script.log'
-
-    def getCursor(self):
-        conn = MySQLdb.connect("52.74.20.228","root","root","appdb")
-        cursor = conn.cursor()
-        return cursor
-
 
     def indexById(self, item_id):
         #TODO handle NotFoundError
@@ -40,7 +35,7 @@ class Search():
             self.indexDataField('num_ratings', item_id, record)
         
     def indexDataField(self, field, item_id, record):
-        cursor = self.getCursor()
+        cursor = mysql.connect().cursor()
         print item_id
 
         data = record['_source']
@@ -54,13 +49,13 @@ class Search():
         return es_resp
 
     def newIndex(self, index_name, limit, query_condition=''):
-        cursor = self.getCursor()
+        cursor = mysql.connect().cursor()
 
-        cursor.execute("SELECT i.item_id, i.item_name, i.price, i.author, i.ratings, \
-                i.num_ratings, i.ISBN_10, \
-                (select group_concat(c.category_name SEPARATOR '|') FROM categories c \
-                INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE ic.item_id = i.item_id) AS categories \
-                FROM items i %s limit %s" % (query_condition, limit))
+        cursor.execute("""SELECT i.*,
+        (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
+        INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
+        ic.item_id = i.item_id) AS categories,
+        FROM items i %s limit %s""" % (query_condition, limit))
 
         results = cursor.fetchall()
       
@@ -86,10 +81,12 @@ class Search():
                     "price": price,
                     "ratings": res[4],
                     "author": res[3],
-                    "item_type" : "book",
                     "categories": categories,
                     "num_ratings": num_ratings,
-                    "isbn": res[6]
+                    "isbn10": isbn10,
+                    "isbn13": isbn13,
+                    "order_price": order_price,
+                    "img_small": res[5]
                     }
 
             try:
