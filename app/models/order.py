@@ -117,7 +117,7 @@ class Order():
             order_history_cursor.close()
 
             update_stock_cursor = connect.cursor()
-            update_stock_cursor.execute("UPDATE inventory_new SET in_stock = 0 WHERE \
+            update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
                     inventory_id = %d" % (inventory_item['inventory_id']))
             connect.commit()
             update_stock_cursor.close()
@@ -141,7 +141,7 @@ class Order():
         for item_id in item_ids:
             item_check_cursor = mysql.connect().cursor()
             item_check_cursor.execute("""SELECT inventory_id FROM
-                    inventory_new WHERE item_id = %d AND in_stock = 1 
+                    inventory WHERE item_id = %d AND in_stock = 1 
                     AND fetched = 1""" % (item_id))
             inv_items = item_check_cursor.fetchall()
             item_check_cursor.close()
@@ -154,7 +154,7 @@ class Order():
             else:
                 connect = mysql.connect()
                 insert_inv_item = connect.cursor()
-                insert_inv_item.execute("INSERT INTO inventory_new (item_id) VALUES ('%s')" %(item_id))
+                insert_inv_item.execute("INSERT INTO inventory (item_id) VALUES ('%s')" %(item_id))
                 connect.commit()
                 new_inv_id = insert_inv_item.lastrowid
                 insert_inv_item.close()
@@ -249,7 +249,7 @@ class Order():
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
        
-        set_lend_cursor.execute("""INSERT INTO inventory_new (item_id, 
+        set_lend_cursor.execute("""INSERT INTO inventory (item_id, 
                 date_added, date_removed, item_condition) VALUES 
                 (%d, '%s', '%s', '%s')""" % 
                 (lend_data['item_id'], 
@@ -331,11 +331,11 @@ class Order():
         update_inv_query = ''
         # Putting item back in stock
         if status_id == 6:
-            update_inv_query = """UPDATE inventory_new SET in_stock = 1 WHERE 
+            update_inv_query = """UPDATE inventory SET in_stock = 1 WHERE 
                     inventory_id IN (SELECT inventory_id FROM order_history WHERE
                     order_id = %d)""" % (self.order_id)
         elif status_id == 2:
-            update_inv_query = """UPDATE inventory_new SET fetched = 1 WHERE
+            update_inv_query = """UPDATE inventory SET fetched = 1 WHERE
                     inventory_id IN (SELECT inventory_id FROM order_history WHERE
                     order_id = %d)""" % (self.order_id)
 
@@ -454,7 +454,7 @@ class Order():
         order_id = %d""" %(order_id))
         inventory_id = delete_cursor.fetchone()[0]
 
-        delete_cursor.execute("""DELETE FROM inventory_new WHERE inventory_id =
+        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
         """+ str(inventory_id) +""" AND fetched = 0 AND in_stock = 0 AND
         DATE_FORMAT(date_added,'%Y-%m-%d %h:%i') =
         DATE_FORMAT('"""+str(order_info['order_placed'])+"""', '%Y-%m-%d %h:%i')""") 

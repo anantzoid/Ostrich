@@ -198,7 +198,7 @@ class User(Prototype):
     def getAllRentals(self):
         inv_cursor = mysql.connect().cursor()
         inv_cursor.execute("""SELECT *
-                FROM inventory_new
+                FROM inventory
                 WHERE inventory_id IN (SELECT inventory_id
                 FROM lenders WHERE user_id = %d )"""%(self.user_id))
         num_items = inv_cursor.rowcount
