@@ -173,7 +173,8 @@ class Order():
 
         # User can only own 2 book @ a time
         if webapp.config['USER_BOOKS_LIMIT']:
-            if len(user.getCurrentOrders()) >= 2:
+            user_orders = user.getAllOrders()
+            if (len(user_orders['ordered']) + len(user_orders['reading'])) >= 2:
                 Mailer.excessOrder(user.user_id, order_data['item_id'])
                 return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
 

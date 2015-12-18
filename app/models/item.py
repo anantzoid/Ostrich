@@ -17,6 +17,8 @@ class Item(Prototype):
     def getObj(self):
         item_obj = vars(self)
         item_obj = item_obj['data']
+        #TODO move these conversions to implicit mysqldb converters
+        item_obj['price'] = float(item_obj['price'])
         return item_obj
 
     @staticmethod
