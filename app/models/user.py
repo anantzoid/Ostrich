@@ -340,4 +340,48 @@ class User(Prototype):
             cursor.execute("INSERT INTO preregisters (email) VALUES ('%s')" % (email))
             conn.commit()
 
+    @staticmethod
+    def deleteUser(ids):
+        from app.models import Order 
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        for user_id in ids:
+            user_id = int(user_id)
 
+            # TODO check if user is genuine and has lent an item
+            cursor.execute("""SELECT inventory_id FROM lenders WHERE user_id = %d"""%(user_id))
+            items = cursor.fetchall()
+            inv_ids = []
+            if items:
+                for item in items:
+                    inv_ids.append(str(item[0]))
+                inv_ids = ",".join(inv_ids)
+                cursor.execute("""DELETE FROM inventory WHERE inventory_id IN
+                        ("""+inv_ids+""")""")
+                conn.commit()
+
+            cursor.execute("""DELETE FROM lenders WHERE user_id =%d"""%(user_id))
+            conn.commit()
+
+            cursor.execute("""DELETE FROM users WHERE user_id = %d"""%(user_id))
+            conn.commit()
+
+            cursor.execute("""DELETE FROM user_addresses WHERE user_id = %d"""
+                    %(user_id))
+            conn.commit()
+
+            cursor.execute("""DELETE FROM user_invite_codes WHERE user_id = %d"""
+                    %(user_id))
+            conn.commit()
+
+            cursor.execute("""DELETE FROM user_wallet WHERE user_id = %d"""
+                    %(user_id))
+            conn.commit()
+       
+            cursor.execute("""SELECT order_id FROM orders WHERE user_id = %d"""
+                   %(user_id))
+            orders = cursor.fetchall()
+            for order_id in orders:
+                Order.deleteOrder(int(order_id[0]))
+            
+        return

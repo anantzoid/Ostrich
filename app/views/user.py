@@ -270,4 +270,12 @@ def applyReferralCode():
 
         return jsonify(response)
 
-
+#TODO uncomment this when authentication is made
+'''
+@webapp.route('/deleteUser')
+def deleteUser():
+    # TODO sessions stuff
+    ids = request.args.get('id').split(',')
+    User.deleteUser(ids)
+    return jsonify(status=True)
+'''

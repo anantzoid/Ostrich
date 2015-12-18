@@ -455,9 +455,7 @@ class Order():
         inventory_id = delete_cursor.fetchone()[0]
 
         delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
-        """+ str(inventory_id) +""" AND fetched = 0 AND in_stock = 0 AND
-        DATE_FORMAT(date_added,'%Y-%m-%d %h:%i') =
-        DATE_FORMAT('"""+str(order_info['order_placed'])+"""', '%Y-%m-%d %h:%i')""") 
+        """+ str(inventory_id) +""" AND fetched = 0""") 
         conn.commit()
         
         delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
