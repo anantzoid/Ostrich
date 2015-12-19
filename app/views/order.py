@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Order, Item, Utils
+from app.models import Order, Lend, Item, Utils
 from flask import request, jsonify
 from app.models import Notifications
 import json
@@ -58,7 +58,7 @@ def lendItem():
     lend_data = {}
     for key in request.form:
         lend_data[key] = request.form[key]
-    lend_info = Order.lendItem(lend_data)
+    lend_info = Lend.lendItem(lend_data)
 
     if 'inventory_id' in lend_info and lend_info['inventory_id']:
         return jsonify(lend_info)
@@ -108,18 +108,26 @@ def orderStatus():
 '''
 @webapp.route('/updateOrderStatus', methods=['POST'])
 def updateOrderStatus():
+    response = {'status': 'false', 'message': 'Wrong Status Id'}
+
     order_id = Utils.getParam(request.form, 'order_id', 'int')
     status_id = Utils.getParam(request.form, 'status_id', 'int')
+    order_type = Utils.getParam(request.form, 'order_type')
     # Asking for user_id to double check
     if not(order_id and status_id):
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+    if order_type not in ['borrow', 'lend']:
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
     
-    if Order.getOrderStatusDetails(status_id):
-        Order(order_id).updateOrderStatus(status_id)
-        return jsonify({'status': 'true'})
+    if order_type == 'borrow':
+        if Order.getOrderStatusDetails(status_id):
+            Order(order_id).updateOrderStatus(status_id)
+            return jsonify({'status': 'true'})
     else:
-        response = {'status': 'false', 'message': 'Wrong Status Id'}
-        return Utils.errorResponse(response)
+        if Lend.updateLendStatus(order_id, status_id):
+            return jsonify({'status':'true'})
+            
+    return Utils.errorResponse(response)
 
 
 @webapp.route('/editOrderDetails', methods=['POST'])

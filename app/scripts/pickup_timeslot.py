@@ -19,7 +19,7 @@ def pickupTimeslot():
         user = User(query_data['user_id'])
         
         notification_data = {
-            "notification_id": 2,
+            "notification_id": 3,
             "entity_id": query_data['order_id'],
             "message": "When should we come over to pickup tomorrow?"
             }

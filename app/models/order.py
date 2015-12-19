@@ -90,8 +90,12 @@ class Order():
 
     def sendOrderNotification(self, status_id, user=None):
         order_info = self.getOrderInfo()
+        notification_id = 1
+        if status_id == 6:
+            notification_id = 4
+        
         notification_data = {
-                    "notification_id": 1,
+                    "notification_id": notification_id,
                     "entity_id": self.order_id,
                     "message": self.getOrderStatusDetails(order_info['order_status'])['Description'] 
                 }
@@ -211,104 +215,7 @@ class Order():
 
         return order_info
 
-    @staticmethod
-    def lendItem(lend_data):
-        lend_fields = ['item_id', 'user_id', 'address']
-        for key in lend_fields:
-            if key not in lend_data.keys():
-                return {'message': 'Required params missing'}
-            elif not lend_data[key]:
-                return {'message': 'Wrong param value'}
-            else:
-                lend_data[key] = int(lend_data[key]) if key != 'address' else json.loads(lend_data[key])
-
-        lend_data['pickup_date'] = Utils.getParam(lend_data, 'pickup_date',
-                default=Utils.getCurrentTimestamp())
-        lend_data['delivery_date'] = Utils.getParam(lend_data,'delivery_date', 
-                default=Utils.getDefaultReturnTimestamp(lend_data['pickup_date'], 45))
-        lend_data['pickup_slot'] = int(Utils.getParam(lend_data, 'pickup_slot',
-               default = Utils.getDefaultTimeSlot()))
-        lend_data['delivery_slot'] = lend_data['pickup_slot']
-
-        # Item conditions is a list of {"name":"condition", "selected": "True/False"}
-        item_conditions = Utils.getParam(lend_data, 'item_condition', default=None)
-        if item_conditions is not None:
-            item_conditions = json.loads(item_conditions)
-        else:
-            item_conditions = [{'name':'New', 'selected':'true'}]
-        lend_data['item_condition'] = []
-        for condition in item_conditions:
-            if condition['selected'].lower() == "true":
-                lend_data['item_condition'].append(condition['name'])
-        lend_data['item_condition'] = "|".join(lend_data['item_condition'])
-
-        # Since Address is editable before placing order
-        user = User(lend_data['user_id'], 'user_id')
-        if not user.validateUserAddress(lend_data['address']):
-            return {'message': 'Address not associated'}
-
-        conn = mysql.connect()
-        set_lend_cursor = conn.cursor()
-       
-        set_lend_cursor.execute("""INSERT INTO inventory (item_id, 
-                date_added, date_removed, item_condition) VALUES 
-                (%d, '%s', '%s', '%s')""" % 
-                (lend_data['item_id'], 
-                 str(lend_data['pickup_date']), 
-                 str(lend_data['delivery_date']), 
-                 lend_data['item_condition'] 
-                ))
-        conn.commit()
-        lend_data['inventory_id'] = set_lend_cursor.lastrowid
-        set_lend_cursor.close()
-
-        lend_data['lender_id'] = Order.addLender(lend_data) 
-        if not lend_data['lender_id']:
-            Order.rollbackLend(lend_data['inventory_id'])
-            return {}
-
-        # Give 50 credits to lender irrepective of days lent
-        user = User(lend_data['user_id'], 'user_id') 
-        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
-                lend_data['inventory_id'], 50) 
-
-        return {'inventory_id': lend_data['inventory_id'], 'lender_id':
-                lend_data['lender_id']}
-
-    @staticmethod    
-    def addLender(lend_data):
-        conn = mysql.connect()
-        lender_cusror = conn.cursor()
-        lender_cusror.execute("""INSERT into lenders (
-            inventory_id,
-            user_id,
-            delivery_date,
-            pickup_date,
-            delivery_slot,
-            pickup_slot,
-            address_id) VALUES (%d, %d, '%s', '%s', %d, %d, %d) """
-            %(lend_data['inventory_id'],
-                lend_data['user_id'],
-                lend_data['delivery_date'],
-                lend_data['pickup_date'],
-                lend_data['delivery_slot'],
-                lend_data['pickup_slot'],
-                lend_data['address']['address_id']))
-        conn.commit()
-        lender_id = lender_cusror.lastrowid
-        lender_cusror.close()
-        return lender_id
-
-
-    @staticmethod    
-    def rollbackLend(inventory_id):
-        conn = mysql.connect()
-        del_cursor = conn.cursor()
-        del_cursor.execute("""DELETE FROM inventory WHERE inventory_id = %d"""
-                %(inventory_id))
-        conn.commit()
-        return True
-    
+   
     @staticmethod    
     def getTimeSlot():
         time_slot_cursor = mysql.connect().cursor()
@@ -331,7 +238,7 @@ class Order():
 
         update_inv_query = ''
         # Putting item back in stock
-        if status_id == 6:
+        if status_id == 7:
             update_inv_query = """UPDATE inventory SET in_stock = 1 WHERE 
                     inventory_id IN (SELECT inventory_id FROM order_history WHERE
                     order_id = %d)""" % (self.order_id)
@@ -346,6 +253,7 @@ class Order():
         update_cursor.close()
         if status_id in [3, 4, 5, 6]:
             self.sendOrderNotification(status_id) 
+        return True
 
     def editOrderDetails(self, order_data):
         # order_return validity
@@ -463,8 +371,6 @@ class Order():
         order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
         %(order_id))
         conn.commit()
-
         delete_cursor.close()
-        
         return {'status':'true'}
 
