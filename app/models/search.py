@@ -129,6 +129,11 @@ class Search():
         return resp.text
 
     @staticmethod
+    def getSearchCategories():
+        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classic', 'Comics', 'Indian Writing', 'Inspiration', 'Thriller', 'Mind Body & Spirit']
+        return categories
+
+    @staticmethod
     def reportFail(user_id, q, q_type):
         conn = mysql.connect()
         cursor = conn.cursor()

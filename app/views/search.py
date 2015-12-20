@@ -38,6 +38,11 @@ def searchString():
 
     return jsonify(results)
 
+@webapp.route('/getCategories')
+def getCategories():
+    categories = Search.getSearchCategories()
+    return jsonify(categories=categories)
+
 @webapp.route('/searchFail', methods=['GET'])
 def searchFail():
     user_id = Utils.getParam(request.args, 'user_id', 'int')
