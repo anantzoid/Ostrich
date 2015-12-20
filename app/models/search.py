@@ -129,12 +129,12 @@ class Search():
         return resp.text
 
     @staticmethod
-    def reportFail(user_id, q):
+    def reportFail(user_id, q, q_type):
         conn = mysql.connect()
         cursor = conn.cursor()
         q = q.replace('"',"'")
-        cursor.execute("""INSERT INTO search_fails (user_id, query) VALUES (%d,"%s")
-        """ %(user_id, q))
+        cursor.execute("""INSERT INTO search_fails (user_id, query, type) VALUES (%d,"%s","%s")
+        """ %(user_id, q, q_type))
         conn.commit()
         return
 

@@ -42,8 +42,9 @@ def searchString():
 def searchFail():
     user_id = Utils.getParam(request.args, 'user_id', 'int')
     q = Utils.getParam(request.args, 'q')
+    q_type = Utils.getParam(request.args,'type')
     
-    Search.reportFail(user_id,q)
+    Search.reportFail(user_id, q, q_type)
     return jsonify(status='true')
 
 @webapp.route('/sqlsearch', methods=['GET'])
