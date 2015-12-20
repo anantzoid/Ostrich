@@ -90,14 +90,16 @@ class Order():
 
     def sendOrderNotification(self, status_id, user=None):
         order_info = self.getOrderInfo()
+        status_info = self.getOrderStatusDetails(order_info['order_status']) 
+
         notification_id = 1
         if status_id == 6:
             notification_id = 4
-        
         notification_data = {
                     "notification_id": notification_id,
                     "entity_id": self.order_id,
-                    "message": self.getOrderStatusDetails(order_info['order_status'])['Description'] 
+                    "title": status_info["Status"],
+                    "message": status_info["Description"]
                 }
 
         if user is None:
@@ -323,7 +325,7 @@ class Order():
                     "Description": "Your order has been picked up for delivery"
                     },
                 3: {
-                    "Status": "Enroute",
+                    "Status": "Out for Delivery",
                     "Description": "Your order is on the way"
                     },
                 4: {
@@ -331,7 +333,7 @@ class Order():
                     "Description": "Your order has been delivered"
                     },
                 5: {
-                    "Status": "Enroute for pickup",
+                    "Status": "Out for pickup",
                     "Description": "We're on our way to pickup the book"
                     },
                 6: {

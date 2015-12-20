@@ -149,13 +149,16 @@ class Lend():
             user_id = int(user_id[0])
             user = User(user_id, 'user_id')
 
+        status_info = Lend.getLendStatusDetails(status_id)
+
         notification_id = 1
         if status_id == 6:
             notification_id = 4
         notification_data = {
                 "notification_id": notification_id,
                 "entity_id": lender_id,
-                "message": Lend.getLendStatusDetails(status_id)['Description']
+                "title": status_info["Status"],
+                "message": status_info["Description"] 
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
         return 
@@ -168,7 +171,7 @@ class Lend():
                     "Description": "Your request has been received successfully"
                     },
                 2: {
-                    "Status": "Enroute",
+                    "Status": "Out for Pickup",
                     "Description": "We're on our way to pickup the book"
                     },
                 3: {
@@ -180,7 +183,7 @@ class Lend():
                     "Description": "Order has been reported to inventory"
                     },
                 5: {
-                    "Status": "Enroute to deliver",
+                    "Status": "Out for deliver",
                     "Description": "Your book is on the way back to you"
                     },
                 6: {
