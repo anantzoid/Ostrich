@@ -128,7 +128,16 @@ class Search():
         resp = requests.get(string.rstrip(self.es_url[0], '/')+'/'+self.query)
         return resp.text
 
-    
+    @staticmethod
+    def reportFail(user_id, q):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        q = q.replace('"',"'")
+        cursor.execute("""INSERT INTO search_fails (user_id, query) VALUES (%d,"%s")
+        """ %(user_id, q))
+        conn.commit()
+        return
+
     '''
         MySQL searches
     '''
