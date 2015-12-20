@@ -110,9 +110,18 @@ class Utils():
         if next_slots:
             min_next_slot = min(next_slots, key=itemgetter('diff'))
             return min_next_slot['slot_id']
-        
         return 1
 
+    @staticmethod
+    def getNextTimeslots(start_time, timeslots, num):
+        start_time = int(start_time.split(':')[0])
+        all_starttime = [(int(ts['start_time'].split(':')[0]), ts) for ts in timeslots]
+        all_starttime = sorted(all_starttime, key=itemgetter(0))
+        slot_index = [i for i,ts in enumerate(all_starttime) if ts[0] == start_time][0]
+        next_slot1 =  all_starttime[(slot_index+1)%len(all_starttime)][1]
+        next_slot2 =  all_starttime[(slot_index+2)%len(all_starttime)][1]
+        return [next_slot1, next_slot2]
+        
 
     @staticmethod
     def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):

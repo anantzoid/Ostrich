@@ -189,7 +189,7 @@ def requestItem():
 '''
 @webapp.route('/getTimeSlot')
 def getTimeSlot():
-    return jsonify(time_slots=Order.getTimeSlot())
+    return jsonify(time_slots=Order.getTimeSlotsForOrder())
 
 '''
     Test API calls

@@ -312,6 +312,28 @@ class Order():
         else:
             return False
 
+    @staticmethod
+    def getTimeSlotsForOrder():
+        next_timeslotid = Utils.getDefaultTimeSlot()
+
+        all_timeslots = Order.getTimeSlot()
+        for ts in all_timeslots:
+            if ts['slot_id'] == next_timeslotid:
+                next_timeslot = ts
+                break
+        order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
+
+        # Mark day
+        for ts in order_timeslots:
+            if int(ts['start_time'].split(":")[0]) - datetime.now().hour > 0:
+                day = 'Today'
+            else:
+                day = 'Tomorrow'
+            #Format Timeslots
+            format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M %p")
+            format_end_time = datetime.strptime(ts['end_time'],"%H:%M:%S").strftime("%I:%M %p")
+            ts['formatted'] = day+' '+format_start_time+' to '+format_end_time
+        return order_timeslots
 
     @staticmethod
     def getOrderStatusDetails(status_id):
