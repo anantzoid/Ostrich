@@ -323,12 +323,20 @@ class Order():
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
 
+
         # Mark day
-        for ts in order_timeslots:
-            if int(ts['start_time'].split(":")[0]) - int(next_timeslot['start_time'].split(":")[0]) >= 0:
-                day = 'Today'
+        for i,ts in enumerate(order_timeslots):
+            if i == 0:
+                if int(ts['start_time'].split(":")[0]) - int(datetime.now().hour) > 0:
+                    start_day = 'Today'
+                else:
+                    start_day = 'Tomorrow'
+                day = start_day
             else:
-                day = 'Tomorrow'
+                if int(ts['start_time'].split(":")[0]) - int(next_timeslot['start_time'].split(":")[0]) >= 0:
+                    day = start_day
+                else:
+                    day = 'Tomorrow'
             #Format Timeslots
             format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M %p")
             format_end_time = datetime.strptime(ts['end_time'],"%H:%M:%S").strftime("%I:%M %p")

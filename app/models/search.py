@@ -55,7 +55,7 @@ class Search():
                     "query": {
                         "function_score": {
                             "query": {
-                                "term": {
+                                "match": {
                                     "categories": self.query
                                     }
                                 },
@@ -66,13 +66,11 @@ class Search():
         else:
             data = {
                     "query": {
-                        "term": {
+                        "match": {
                             "categories": self.query
                             }
                         }
                     }
-
-
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):

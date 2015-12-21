@@ -52,20 +52,5 @@ def searchFail():
     Search.reportFail(user_id, q, q_type)
     return jsonify(status='true')
 
-@webapp.route('/sqlsearch', methods=['GET'])
-def search():
-    q = request.args.get('q')
-    page = int(request.args.get('page')) if 'page' in request.args else 1
-
-    if 'type' in request.args:
-        qtype = request.args.get('type')
-        results = Search.searchQueryByType(q, qtype, page) 
-    else:
-        results = Search.searchQuery(q, page) 
-
-    if len(results) == 1:
-        return jsonify(results[0])
-    else:
-        return json.dumps(results)
-
+#@webapp.route('/recommended', methods=['GET'])
 
