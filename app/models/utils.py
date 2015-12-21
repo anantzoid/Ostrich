@@ -1,6 +1,7 @@
 import datetime
 import random
 import string
+import pytz
 from operator import itemgetter
 from app import webapp
 from app import mysql
@@ -67,7 +68,7 @@ class Utils():
         # Else, look for nearest next time slot.
         # Return 1st time slot of day by default
 
-        current_timestamp = datetime.datetime.now()
+        current_timestamp = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
         next_timestamp = str(next_timestamp.time())
         next_timestamp = datetime.datetime.strptime(next_timestamp.split(".")[0], '%H:%M:%S')
