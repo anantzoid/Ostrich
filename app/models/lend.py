@@ -158,7 +158,8 @@ class Lend():
                 "notification_id": notification_id,
                 "entity_id": lender_id,
                 "title": status_info["Status"],
-                "message": status_info["Description"] 
+                "message": status_info["Description"],
+                "expanded_text": status_info["Description"] 
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
         return 

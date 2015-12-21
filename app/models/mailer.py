@@ -5,10 +5,10 @@ from app import webapp
 class Mailer():
     @staticmethod
     def excessOrder(user_id, item_id):
-        return
-        #TODO
-        email  = Message("Excess Order Request", sender='anant718@gmail.com',
-                recipients=['anant718@gmail.com'])
+        subject = "Excess Order Request"
+        email  = Message(subject, 
+                sender='contact@ostrichapp.in',
+                recipients=['contact@ostrichapp.in'])
         email.body = "%d Tried to order Item %d" %(user_id, item_id)
-        with webapp.app_context():
-            mail.send(email)
+        mail.send(email)
+        return True

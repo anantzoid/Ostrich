@@ -99,7 +99,8 @@ class Order():
                     "notification_id": notification_id,
                     "entity_id": self.order_id,
                     "title": status_info["Status"],
-                    "message": status_info["Description"]
+                    "message": status_info["Description"],
+                    "expanded_text": status_info["Description"] 
                 }
 
         if user is None:

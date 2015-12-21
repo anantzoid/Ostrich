@@ -8,12 +8,12 @@ webapp = Flask(__name__)
 
 mysql = MySQL()
 cors = CORS(webapp)
-mail = Mail(webapp)
 
 webapp.config.from_pyfile('/etc/app_config.cfg', silent=True)
 
 #initialize global objects of libraries
 mysql.init_app(webapp)
+mail = Mail(webapp)
 
 import app.views
 import app.models
