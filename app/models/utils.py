@@ -59,14 +59,10 @@ class Utils():
 
     @staticmethod
     def getDefaultTimeSlot():
-        # Gets best time slot nearest to the next 6 hours
-        # Logic:
-        # Calculate the timestamp 6 hours from now
-        # Checks if it lies in any given time slots
-        # Calcualtes diff between all end times to get the nearest past time
-        # slot. If it's less than 30 minutes, choose that time slot.
-        # Else, look for nearest next time slot.
-        # Return 1st time slot of day by default
+        # Get diff all time slots w.r.t to the next 6th hour
+        # Check if hour lies within any timeslot
+        # check for nearest end time and start time
+        # Return the closer option
 
         current_timestamp = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
@@ -118,6 +114,8 @@ class Utils():
 
     @staticmethod
     def getNextTimeslots(start_time, timeslots, num):
+        # Sort all start times
+        # Find start_time in the sorted list and return the next 2 consecutive ids
         start_time = int(start_time.split(':')[0])
         all_starttime = [(int(ts['start_time'].split(':')[0]), ts) for ts in timeslots]
         all_starttime = sorted(all_starttime, key=itemgetter(0))

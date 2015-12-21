@@ -315,7 +315,6 @@ class Order():
     @staticmethod
     def getTimeSlotsForOrder():
         next_timeslotid = Utils.getDefaultTimeSlot()
-
         all_timeslots = Order.getTimeSlot()
         for ts in all_timeslots:
             if ts['slot_id'] == next_timeslotid:
@@ -323,8 +322,8 @@ class Order():
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
 
-
         # Mark day
+        # Get day of first time slot and the rest will follow suit
         for i,ts in enumerate(order_timeslots):
             if i == 0:
                 if int(ts['start_time'].split(":")[0]) - int(datetime.now().hour) > 0:
@@ -337,10 +336,19 @@ class Order():
                     day = start_day
                 else:
                     day = 'Tomorrow'
+
             #Format Timeslots
-            format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M %p")
+            format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")
+            if ":00" in format_start_time:
+                format_start_time = format_start_time.replace(":00","")
+            format_start_time = format_start_time.strip("0")
+
             format_end_time = datetime.strptime(ts['end_time'],"%H:%M:%S").strftime("%I:%M %p")
-            ts['formatted'] = day+' '+format_start_time+' to '+format_end_time
+            if ":00" in format_end_time:
+                format_end_time = format_end_time.replace(":00","")
+            format_end_time = format_end_time.strip("0")
+
+            ts['formatted'] = day+' '+format_start_time+' - '+format_end_time
         return order_timeslots
 
     @staticmethod
