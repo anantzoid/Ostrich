@@ -43,11 +43,11 @@ def getCategories():
     categories = Search.getSearchCategories()
     return json.dumps(categories)
 
-@webapp.route('/searchFail', methods=['GET'])
+@webapp.route('/searchFail', methods=['POST'])
 def searchFail():
-    user_id = Utils.getParam(request.args, 'user_id', 'int')
-    q = Utils.getParam(request.args, 'q')
-    q_type = Utils.getParam(request.args,'type')
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    q = Utils.getParam(request.form, 'q')
+    q_type = Utils.getParam(request.form,'type')
     
     Search.reportFail(user_id, q, q_type)
     return jsonify(status='true')

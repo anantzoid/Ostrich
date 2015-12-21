@@ -273,20 +273,20 @@ class Order():
         else:
             order_data['order_return'] = order_info['order_return']
        
-        if 'delivery_slot' in order_data:
-            if not order_data['delivery_slot'].isdigit():
+        if 'pickup_slot' in order_data:
+            if not order_data['pickup_slot'].isdigit():
                 return False
             else:
-                order_data['delivery_slot'] = int(order_data['delivery_slot'])
+                order_data['pickup_slot'] = int(order_data['pickup_slot'])
                 slot_exists = False
                 for slot in Order.getTimeSlot():
-                    if slot['slot_id'] == order_data['delivery_slot']:
+                    if slot['slot_id'] == order_data['pickup_slot']:
                         slot_exists = True
                         break
                 if not slot_exists:
                     return False
         else:
-            order_data['delivery_slot'] = order_info['delivery_slot']
+            order_data['pickup_slot'] = order_info['pickup_slot']
        
         # NOTE Future generic incomplete code. Remove else part when using this
         '''
@@ -304,14 +304,15 @@ class Order():
         conn = mysql.connect()
         update_cursor = conn.cursor()
         update_cursor.execute("""UPDATE orders SET order_return = '%s',
-                delivery_slot = %d WHERE
+                pickup_slot = %d WHERE
                 order_id = %d""" %(order_data['order_return'],
-                order_data['delivery_slot'], self.order_id))
+                order_data['pickup_slot'], self.order_id))
         conn.commit()
         if update_cursor.rowcount:
             return True
         else:
             return False
+
 
     @staticmethod
     def getTimeSlotsForOrder():
