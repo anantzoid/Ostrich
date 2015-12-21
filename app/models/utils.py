@@ -69,6 +69,8 @@ class Utils():
 
         current_timestamp = datetime.datetime.now()
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
+        next_timestamp = str(next_timestamp.time())
+        next_timestamp = datetime.datetime.strptime(next_timestamp.split(".")[0], '%H:%M:%S')
       
         from app.models import Order
         # time_slots = Order.getTimeSlot()
@@ -110,6 +112,7 @@ class Utils():
         if next_slots:
             min_next_slot = min(next_slots, key=itemgetter('diff'))
             return min_next_slot['slot_id']
+       
         return 1
 
     @staticmethod

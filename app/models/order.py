@@ -325,7 +325,7 @@ class Order():
 
         # Mark day
         for ts in order_timeslots:
-            if int(ts['start_time'].split(":")[0]) - datetime.now().hour > 0:
+            if int(ts['start_time'].split(":")[0]) - int(next_timeslot['start_time'].split(":")[0]) >= 0:
                 day = 'Today'
             else:
                 day = 'Tomorrow'
