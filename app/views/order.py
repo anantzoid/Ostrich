@@ -144,8 +144,7 @@ def editOrderDetails():
     order = Order(order_id)
     status = order.editOrderDetails(order_data)
     if status:
-        response['status'] = 'True'
-        return jsonify(response)
+        return jsonify(order.getOrderInfo())
     else:
         return Utils.errorResponse(response)
 

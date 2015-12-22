@@ -14,14 +14,15 @@ class Order():
         self.order_id = order_id
 
     def getOrderInfo(self):
-        # TODO concatnate list of inv_id and item_id, else this will have
-        # multiple rows
+        # TODO concatnate list of inv_id and item_id when,
+        # when going gor mulitple items in same order
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("SELECT o.*, oi.* \
                 FROM orders o \
                 INNER JOIN order_history oi ON o.order_id = oi.order_id \
                 WHERE o.order_id = %d" %(self.order_id))
         order_info = Utils.fetchOneAssoc(obj_cursor)
+        order_info['item'] = Item(order_info['item_id']).getObj()
         return order_info
 
     @staticmethod
