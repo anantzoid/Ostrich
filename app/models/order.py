@@ -46,7 +46,7 @@ class Order():
                 default = Utils.getDefaultTimeSlot()))
 
         #TODO calc total amount
-        order_data['order_amount'] = 0 
+        order_data['order_amount'] = 30 
 
         #check order validity
         # TODO check if item exists
@@ -87,7 +87,20 @@ class Order():
 
         #TODO call roadrunnr api
         order.sendOrderNotification(1, user)
+        Order.notifyAdmin()
         return response 
+
+    @staticmethod
+    def notifyAdmin():
+        notification_data = {
+                "notification_id":1,
+                "title": "ALERT!! Order has been placed",
+                }
+        for u_id in [54, 52]:
+            user = User(u_id,'user_id')
+            Notifications(user.gcm_id).sendNotification(notification_data)
+        return True
+
 
     def sendOrderNotification(self, status_id, user=None):
         order_info = self.getOrderInfo()
@@ -183,7 +196,7 @@ class Order():
         if webapp.config['USER_BOOKS_LIMIT']:
             user_orders = user.getAllOrders()
             if (len(user_orders['ordered']) + len(user_orders['reading'])) >= 2:
-                Mailer.excessOrder(user.user_id, order_data['item_id'])
+                #Mailer.excessOrder(user.user_id, order_data['item_id'])
                 return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
 
         # Wallet validity 

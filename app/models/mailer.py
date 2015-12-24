@@ -5,6 +5,8 @@ from app import webapp
 class Mailer():
     @staticmethod
     def excessOrder(user_id, item_id):
+
+
         subject = "Excess Order Request"
         email  = Message(subject, 
                 sender='contact@ostrichapp.in',
