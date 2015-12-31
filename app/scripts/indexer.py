@@ -22,11 +22,12 @@ class Indexer():
 
     def getAllDataFromDB(self, query_condition='', limit=''):
 
-        search_query = """SELECT i.*,
+        search_query = """SELECT i.item_id, i.item_name, i.author, i.price,
+        i.ratings, i.num_ratings, i.num_reviews, i.img_small,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
         INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
         ic.item_id = i.item_id) AS categories
-        FROM items i"""
+        FROM items i WHERE i.active=1"""
 
         if query_condition:
             search_query += query_condition

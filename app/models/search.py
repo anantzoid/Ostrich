@@ -128,7 +128,7 @@ class Search():
 
     @staticmethod
     def getSearchCategories():
-        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classic', 'Comics', 'Indian Writing', 'Inspiration', 'Thriller', 'Mind Body & Spirit']
+        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Comics', 'Inspirational', 'Thriller']
         return categories
 
     @staticmethod
