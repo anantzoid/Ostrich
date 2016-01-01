@@ -206,6 +206,7 @@ def pushNotification():
 @webapp.route('/deleteOrder', methods=['POST'])
 def deleteOrder():
     Order.deleteOrder(int(request.form['order_id']))
+    return jsonify(status=True)
 
 @webapp.route('/nextTime')
 def nextTime():
