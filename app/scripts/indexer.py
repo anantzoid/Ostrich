@@ -47,6 +47,7 @@ class Indexer():
             else:
                 record['categories'] = []
             record = self.fetchItemProperties(record)
+            record = self.extendItemProperties(record)
            
             record = self.handleUnicode(record)
             self.indexItemObject(record)
@@ -62,6 +63,19 @@ class Indexer():
         for prop in isbn_data:
             item['isbn_10'].append(prop[0])
             item['isbn_13'].append(prop[1])
+        return item
+
+    def extendItemProperties(self, item):
+        item['num_ratings_int'] = 0
+        item['num_reviews_int'] = 0
+
+        if item['num_ratings']:
+            item['num_ratings_int'] = int(item['num_ratings'].replace(',',''))
+
+        if item['num_reviews']:
+            item['num_reviews_int'] = int(item['num_reviews'].replace(',',''))
+
+        #TODO item_name_prettify
 
         return item
 

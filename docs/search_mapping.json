@@ -31,17 +31,31 @@
             }
           }
         },
+        "item_name_pretty":{
+            "type": "string",
+            "include_in_all": false
+        },
         "num_ratings": {
           "type": "string"
+        },
+        "num_ratings_int": {
+            "type":"integer",
+            "null_value": 0
         },
         "num_reviews":{
             "type": "string"
         },
+        "num_reviews_int": {
+            "type":"integer",
+            "null_value": 0
+        },
         "price": {
-          "type": "float"
+          "type": "float",
+          "include_in_all": false
         },
         "ratings": {
-          "type": "float"
+          "type": "float",
+          "null_value": 0
         }
       }
     }
