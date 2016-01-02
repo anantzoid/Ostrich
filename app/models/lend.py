@@ -184,7 +184,7 @@ class Lend():
                     "Description": "Order has been reported to inventory"
                     },
                 5: {
-                    "Status": "Out for deliver",
+                    "Status": "Out for pickup",
                     "Description": "Your book is on the way back to you"
                     },
                 6: {
