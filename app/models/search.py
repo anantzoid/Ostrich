@@ -10,12 +10,12 @@ class Search():
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.query = query
-        self.index = 'items'
+        self.index = 'items_alias'
         self.size = size
-        self.switchToRating = False
+        self.switchToRating = True
         self.relevance_functions = [{
                 "field_value_factor": {
-                    "field": "num_ratings"
+                    "field": "num_ratings_int"
                     }
                 }]
 
