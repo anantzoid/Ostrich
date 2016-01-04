@@ -5,8 +5,6 @@ from app import webapp
 class Mailer():
     @staticmethod
     def excessOrder(user_id, item_id):
-
-
         subject = "Excess Order Request"
         email  = Message(subject, 
                 sender='contact@ostrichapp.in',
@@ -14,3 +12,13 @@ class Mailer():
         email.body = "%d Tried to order Item %d" %(user_id, item_id)
         mail.send(email)
         return True
+
+    @staticmethod
+    def genericMailer(mail_obj):
+        email = Message(mail_obj['subject'],
+                    sender='contact@ostrichapp.in',
+                    recipients=['contact@ostrichapp.in'])
+        email.body = mail_obj['body']
+        mail.send(email)
+        return True
+        

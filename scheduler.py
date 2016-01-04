@@ -24,3 +24,10 @@ def pickupTimeSlot():
     from app.scripts.pickup_timeslot import pickupTimeslot
     pickupTimeslot()
 
+'''
+    Run everyday at 7am to show all pickups/deliveries for the day
+'''
+@periodic_task(run_every=(crontab(hour="7", minute="0")))
+def pickupSchedule():
+    from app.scripts.pickup_schedule import pickupSchedule
+    pickupSchedule()

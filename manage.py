@@ -5,7 +5,8 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    print "yayay"
+    from app.scripts.pickup_schedule import pickupSchedule
+    pickupSchedule()
 
 @manager.command
 def indexer():
