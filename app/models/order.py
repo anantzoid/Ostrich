@@ -41,7 +41,7 @@ class Order():
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
-                default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], 15))
+                default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], webapp.config['DEFAULT_RETURN_DAYS']))
         order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
                 default = Utils.getDefaultTimeSlot()))
 

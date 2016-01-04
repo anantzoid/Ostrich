@@ -141,6 +141,28 @@ class Search():
         conn.commit()
         return
 
+    def mostRecommended(self):
+        self.query = [1, 9, 16, 4026, 4603, 4051, 347, 311, 323, 133]
+        item_ids = { "ids": self.query }
+        reco_list = []
+        docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
+        if 'docs' in docs:
+            for doc in docs['docs']:
+                reco_list.append(doc['_source'])
+    
+        return reco_list
+
+    def mostSearched(self):
+        self.query = [3963, 66, 299, 5672, 10, 143]
+        item_ids = { "ids": self.query }
+        most_searched = []
+        docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
+        if 'docs' in docs:
+            for doc in docs['docs']:
+                most_searched.append(doc['_source'])
+        return most_searched
+
+
     '''
         MySQL searches
     '''
