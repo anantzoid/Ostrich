@@ -142,7 +142,7 @@ class Search():
         return
 
     def mostRecommended(self):
-        self.query = [1, 9, 16, 4026, 4603, 4051, 347, 311, 323, 133]
+        self.query = [1, 9, 16, 4026, 4603, 4051, 347, 311, 410, 133]
         item_ids = { "ids": self.query }
         reco_list = []
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
