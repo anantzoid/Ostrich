@@ -281,7 +281,7 @@ class Order():
         if 'order_return' in order_data:
             old_order_return = datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
             new_order_return = datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
-            diff = new_order_return - old_order_return 
+            diff = old_order_return - new_order_return 
             if diff.days <= 0:
                 return False
         else:

@@ -3,7 +3,7 @@ from app.models import Search, Order, User
 from flask import jsonify, request
 
 @webapp.route('/getData')
-def getData():
+def startSession():
     data = {
         'recommendations': Search([]).mostRecommended(),
         'most_searched': Search([]).mostSearched(),
