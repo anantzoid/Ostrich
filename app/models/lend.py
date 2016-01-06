@@ -1,3 +1,4 @@
+from app import webapp
 from app import mysql
 from app.models import User
 from app.models import Utils
@@ -67,7 +68,7 @@ class Lend():
         # Give 50 credits to lender irrepective of days lent
         user = User(lend_data['user_id'], 'user_id') 
         Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
-                lend_data['inventory_id'], 50) 
+                lend_data['inventory_id'], webapp.config['DEFAULT_RENTAL_CREDIT']) 
        
         Lend.sendLendNotification(status_id=1,user=user)
         return {'inventory_id': lend_data['inventory_id'], 'lender_id':

@@ -148,18 +148,20 @@ class Search():
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
         if 'docs' in docs:
             for doc in docs['docs']:
-                reco_list.append(doc['_source'])
+                if '_source' in doc:
+                    reco_list.append(doc['_source'])
     
         return reco_list
 
     def mostSearched(self):
-        self.query = [3963, 66, 299, 5672, 10, 143, 1096]
+        self.query = [3963, 66, 299, 644, 10, 143, 1096]
         item_ids = { "ids": self.query }
         most_searched = []
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
         if 'docs' in docs:
             for doc in docs['docs']:
-                most_searched.append(doc['_source'])
+                if '_source' in doc:
+                    most_searched.append(doc['_source'])
         return most_searched
 
 

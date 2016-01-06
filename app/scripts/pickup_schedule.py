@@ -37,7 +37,7 @@ def pickupSchedule():
         pickups = json.dumps({'orders': order_list}, indent=4)
         Mailer.genericMailer({'subject':'Pickups for '+date, 'body': pickups})
 
-
+    '''
     # Rentals delivery
     rental_list = []
     cursor = mysql.connect().cursor()
@@ -79,5 +79,5 @@ def pickupSchedule():
     if rental_list:
         deliveries = json.dumps({'rentals': rental_list}, indent=4)
         Mailer.genericMailer({'subject':'Rental deliveries for '+date, 'body': deliveries})
-
+    '''
     return None
