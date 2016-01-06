@@ -123,7 +123,20 @@ class Utils():
         next_slot1 =  all_starttime[(slot_index+1)%len(all_starttime)][1]
         next_slot2 =  all_starttime[(slot_index+2)%len(all_starttime)][1]
         return [next_slot1, next_slot2]
-        
+    
+    @staticmethod
+    def formatTimeSlot(ts):
+        format_start_time = datetime.datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")
+        if ":00" in format_start_time:
+            format_start_time = format_start_time.replace(":00","")
+        format_start_time = format_start_time.strip("0")
+
+        format_end_time = datetime.datetime.strptime(ts['end_time'],"%H:%M:%S").strftime("%I:%M %p")
+        if ":00" in format_end_time:
+            format_end_time = format_end_time.replace(":00","")
+        format_end_time = format_end_time.strip("0")
+
+        return format_start_time+' - '+format_end_time
 
     @staticmethod
     def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):

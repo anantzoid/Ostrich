@@ -178,7 +178,7 @@ class User(Prototype):
                 WHERE user_id = %d""" % (self.user_id))
         for order_id in orders_cursor.fetchall():
             order = Order(int(order_id[0]))
-            order_info = order.getOrderInfo()
+            order_info = order.getOrderInfo(formatted=True)
             #TODO item_id will be list in future
             order_info['items'] = [Item(int(order_info['item_id'])).getObj()]
             order_info['address'] = User.getUserAddress(order_info['address_id']) 
@@ -196,17 +196,23 @@ class User(Prototype):
         return order_statuses
 
     def getAllRentals(self):
+        from app.models import Order 
         inv_cursor = mysql.connect().cursor()
-        inv_cursor.execute("""SELECT *
-                FROM inventory
-                WHERE inventory_id IN (SELECT inventory_id
-                FROM lenders WHERE user_id = %d )"""%(self.user_id))
+        inv_cursor.execute("""SELECT i.*, l.*
+                FROM inventory i
+                INNER JOIN lenders l ON l.inventory_id = i.inventory_id
+                WHERE l. user_id = %d"""%(self.user_id))
         num_items = inv_cursor.rowcount
         inv_items = []
         for slot in range(num_items):
             inv_info = Utils.fetchOneAssoc(inv_cursor)
             inv_info['items'] = [Item(int(inv_info['item_id'])).getObj()]
+            all_timeslots = Order.getTimeSlot()
+            ts = [_ for _ in all_timeslots if _['slot_id'] == inv_info['pickup_slot']][0]
+            inv_info['pickup_time'] = Utils.formatTimeSlot(ts)
+
             inv_items.append(inv_info)
+
        
         rental_statses = {"rentals":[], "rental_history": []}
         current_timestamp = datetime.now() 

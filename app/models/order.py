@@ -13,7 +13,7 @@ class Order():
     def __init__(self, order_id):
         self.order_id = order_id
 
-    def getOrderInfo(self):
+    def getOrderInfo(self, **kwargs):
         # TODO concatnate list of inv_id and item_id when,
         # when going gor mulitple items in same order
         obj_cursor = mysql.connect().cursor()
@@ -23,6 +23,11 @@ class Order():
                 WHERE o.order_id = %d" %(self.order_id))
         order_info = Utils.fetchOneAssoc(obj_cursor)
         order_info['item'] = Item(order_info['item_id']).getObj()
+
+        if 'formatted' in kwargs:
+            ts = [_ for _ in Order.getTimeSlot() if _['slot_id'] == order_info['pickup_slot']][0]
+            order_info['pickup_time'] = Utils.formatTimeSlot(ts)
+
         return order_info
 
     @staticmethod
@@ -354,17 +359,8 @@ class Order():
                     day = 'Tomorrow'
 
             #Format Timeslots
-            format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")
-            if ":00" in format_start_time:
-                format_start_time = format_start_time.replace(":00","")
-            format_start_time = format_start_time.strip("0")
-
-            format_end_time = datetime.strptime(ts['end_time'],"%H:%M:%S").strftime("%I:%M %p")
-            if ":00" in format_end_time:
-                format_end_time = format_end_time.replace(":00","")
-            format_end_time = format_end_time.strip("0")
-
-            ts['formatted'] = day+' '+format_start_time+' - '+format_end_time
+            formatted_time = Utils.formatTimeSlot(ts)
+            ts['formatted'] = day+' '+formatted_time
         return order_timeslots
 
     @staticmethod
