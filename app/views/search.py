@@ -60,3 +60,8 @@ def recommended():
 def mostSearched():
     return Search([]).mostSearched()
 
+@webapp.route('/removeItem')
+def removeItem():
+    item_id = int(request.args.get('item_id'))
+    Item.removeItem(item_id)
+    return jsonify({'status': 'True'})

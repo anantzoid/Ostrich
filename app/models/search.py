@@ -117,6 +117,9 @@ class Search():
 
         return final_search_results
 
+    def unindexItem(self):
+        self.es.delete(index=self.index,doc_type='item',id=self.query,refresh=True)
+        return True
 
     '''
         To call other ES apis directly

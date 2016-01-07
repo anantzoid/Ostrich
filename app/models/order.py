@@ -101,7 +101,7 @@ class Order():
                 "notification_id":1,
                 "title": "ALERT!! Order has been placed",
                 }
-        for u_id in [54, 52]:
+        for u_id in [1,2,3]:
             user = User(u_id,'user_id')
             Notifications(user.gcm_id).sendNotification(notification_data)
         return True

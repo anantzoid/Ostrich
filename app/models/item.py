@@ -49,3 +49,13 @@ class Item(Prototype):
         store_request_cursor.close()
 
         return True
+
+    @staticmethod
+    def removeItem(item_id):
+        from app.models import Search
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE items SET active = 0 WHERE item_id = %s""",(item_id,))
+        conn.commit()
+        Search(item_id).unindexItem() 
+
