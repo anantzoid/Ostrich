@@ -1,3 +1,4 @@
+from flask import render_template
 from flask_mail import Message
 from app import mail
 from app import webapp
@@ -22,3 +23,20 @@ class Mailer():
         mail.send(email)
         return True
         
+
+    @staticmethod
+    def welcomeMailer(user):
+        if user.name:
+            name = user.name.split(" ")[0]
+            if len(name) <=3:
+                name = user.name
+        else:
+            name = 'there'
+        name = name.capitalize()
+
+        email = Message('Welcome to Ostrich!',
+                    sender='contact@ostrichapp.in',
+                    recipients=[user.email])
+        email.html = render_template('welcome.html', name=name)
+        mail.send(email)
+        return True

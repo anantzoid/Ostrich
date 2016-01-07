@@ -5,8 +5,8 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.scripts.pickup_schedule import pickupSchedule
-    pickupSchedule()
+    from app.models import User,Mailer
+    Mailer.welcomeMailer(User(1))
 
 @manager.command
 def indexer():

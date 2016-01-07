@@ -1,7 +1,7 @@
 from app import mysql
 from datetime import datetime
 from app import webapp
-from app.models import Prototype, Item, Utils, Wallet
+from app.models import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import datetime
@@ -92,6 +92,9 @@ class User(Prototype):
         # Free 200 credits on signup
         if not webapp.config['APP_INVITE']:
             Wallet.creditTransaction(user.wallet_id, user.user_id, 'signup', user.user_id)
+
+        # Welcome Mail
+        Mailer.welcomeMailer(user)
 
         return {'user': user.getObj()}
 

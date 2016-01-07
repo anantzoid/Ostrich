@@ -92,7 +92,7 @@ class Order():
 
         #TODO call roadrunnr api
         order.sendOrderNotification(1, user)
-        Order.notifyAdmin(user['user_id'])
+        Order.notifyAdmin(user.user_id)
         return response 
 
     @staticmethod
