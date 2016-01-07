@@ -275,7 +275,7 @@ class Order():
         update_cursor.close()
         if status_id in [3, 4, 5, 6]:
             self.sendOrderNotification(status_id) 
-        return True
+        return self.getOrderInfo() 
 
     def editOrderDetails(self, order_data):
         # order_return validity

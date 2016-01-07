@@ -121,8 +121,8 @@ def updateOrderStatus():
     
     if order_type == 'borrow':
         if Order.getOrderStatusDetails(status_id):
-            Order(order_id).updateOrderStatus(status_id)
-            return jsonify({'status': 'true'})
+            order_info = Order(order_id).updateOrderStatus(status_id)
+            return jsonify({'order': order_info})
     else:
         if Lend.updateLendStatus(order_id, status_id):
             return jsonify({'status':'true'})
