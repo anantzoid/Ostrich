@@ -12,7 +12,7 @@ class Search():
         self.query = query
         self.index = 'items_alias'
         self.size = size
-        self.switchToRating = True
+        self.switchToRating = False
         self.relevance_functions = [{
                 "field_value_factor": {
                     "field": "num_ratings_int"
