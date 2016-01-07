@@ -92,16 +92,19 @@ class Order():
 
         #TODO call roadrunnr api
         order.sendOrderNotification(1, user)
-        Order.notifyAdmin()
+        Order.notifyAdmin(user['user_id'])
         return response 
 
     @staticmethod
-    def notifyAdmin():
+    def notifyAdmin(user_id):
         notification_data = {
                 "notification_id":1,
                 "title": "ALERT!! Order has been placed",
                 }
-        for u_id in [1,2,3]:
+        admins = [1,5,6]
+        if user_id in admins:
+            return
+        for u_id in admins:
             user = User(u_id,'user_id')
             Notifications(user.gcm_id).sendNotification(notification_data)
         return True
