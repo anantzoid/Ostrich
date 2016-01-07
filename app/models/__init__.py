@@ -10,3 +10,4 @@ from user import *
 from order import *
 from lend import *
 from search import *
+from admin import *
