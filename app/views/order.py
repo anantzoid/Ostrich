@@ -99,37 +99,6 @@ def orderStatus():
     else:
         return Utils.errorResponse(response)
 
-'''
-    Update status of order in various status
-    Statuses defined in getOrderStatusDetails method in order model
-    @params
-    order_id, status_id
-
-'''
-@webapp.route('/updateOrderStatus', methods=['POST'])
-def updateOrderStatus():
-    response = {'status': 'false', 'message': 'Wrong Status Id'}
-
-    order_id = Utils.getParam(request.form, 'order_id', 'int')
-    status_id = Utils.getParam(request.form, 'status_id', 'int')
-    order_type = Utils.getParam(request.form, 'order_type')
-    # Asking for user_id to double check
-    if not(order_id and status_id):
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
-    if order_type not in ['borrow', 'lend']:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
-    
-    if order_type == 'borrow':
-        if Order.getOrderStatusDetails(status_id):
-            order_info = Order(order_id).updateOrderStatus(status_id)
-            return jsonify({'order': order_info})
-    else:
-        if Lend.updateLendStatus(order_id, status_id):
-            return jsonify({'status':'true'})
-            
-    return Utils.errorResponse(response)
-
-
 @webapp.route('/editOrderDetails', methods=['POST'])
 def editOrderDetails():
     response = {'status': 'False'}
