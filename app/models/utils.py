@@ -65,12 +65,16 @@ class Utils():
         # Return the closer option
 
         current_timestamp = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
+        # NOTE temp workaround
+        # making next timestamp to nextday afternoon if the order is made latenight
+        if current_timestamp.hour > 21:
+            return 2 
+
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
         next_timestamp = str(next_timestamp.time())
         next_timestamp = datetime.datetime.strptime(next_timestamp.split(".")[0], '%H:%M:%S')
       
         from app.models import Order
-        # time_slots = Order.getTimeSlot()
         time_slots_dirty = Order.getTimeSlot()
         for slot in time_slots_dirty:
             slot['start_time'] = datetime.datetime.strptime(slot['start_time'], '%H:%M:%S')
