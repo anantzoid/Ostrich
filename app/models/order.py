@@ -101,7 +101,7 @@ class Order():
                 "notification_id":1,
                 "title": "ALERT!! Order has been placed",
                 }
-        admins = [1,5,6]
+        admins = [1,5,6,8]
         if user_id in admins:
             return
         for u_id in admins:
