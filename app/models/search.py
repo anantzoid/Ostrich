@@ -157,7 +157,7 @@ class Search():
         return reco_list
 
     def mostSearched(self):
-        self.query = [3963, 66, 299, 287, 644, 10, 143]
+        self.query = [3963, 66, 299, 287, 644, 51, 143]
         item_ids = { "ids": self.query }
         most_searched = []
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)

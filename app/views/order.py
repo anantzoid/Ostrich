@@ -202,12 +202,3 @@ def pushNotification():
     notification_data = json.loads(str(request.form['data']))
     status = Notifications(temp_gcm_id).sendNotification(notification_data)
     return jsonify(status)
-
-@webapp.route('/deleteOrder', methods=['POST'])
-def deleteOrder():
-    Order.deleteOrder(int(request.form['order_id']))
-    return jsonify(status=True)
-
-@webapp.route('/nextTime')
-def nextTime():
-    return jsonify(Utils.getDefaultTimeSlot(request.args['time']))

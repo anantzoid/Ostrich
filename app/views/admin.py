@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Admin
+from app.models import Admin, Item, Order
 #from flask import request, jsonify
 from flask.ext.jsonpify import jsonify
 
@@ -22,3 +22,16 @@ def setInventoryData():
 def getCurrentRentals():
     current_rentals = Admin.getCurrentRentals()
     return jsonify(orders=current_rentals)
+
+@webapp.route('/removeItem')
+def removeItem():
+    item_id = int(request.args.get('item_id'))
+    Item.removeItem(item_id)
+    return jsonify({'status': 'True'})
+
+@webapp.route('/deleteOrder', methods=['POST'])
+def deleteOrder():
+    Order.deleteOrder(int(request.form['order_id']))
+    return jsonify(status=True)
+
+
