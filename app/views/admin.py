@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Admin, Item, Order, Utils
+from app.models import Admin, Item, Order, Utils, Lend
 from flask import request
 from flask.ext.jsonpify import jsonify
 

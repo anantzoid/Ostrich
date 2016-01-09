@@ -8,6 +8,6 @@ from notifications import *
 from item import *
 from user import *
 from order import *
-from admin import *
 from lend import *
 from search import *
+from admin import *
