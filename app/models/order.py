@@ -351,11 +351,11 @@ class Order():
                     start_day = 'Tomorrow'
                 day = start_day
             else:
-                if int(ts['start_time'].split(":")[0]) - int(next_timeslot['start_time'].split(":")[0]) >= 0:
+                if int(ts['start_time'].split(":")[0]) - int(order_timeslots[i-1]['start_time'].split(":")[0]) >= 0:
                     day = start_day
                 else:
-                    day = 'Tomorrow'
-
+                    day = Utils.fetchNextDayVerbose(start_day)
+                start_day = day
             #Format Timeslots
             formatted_time = Utils.formatTimeSlot(ts)
             ts['formatted'] = day+' '+formatted_time
