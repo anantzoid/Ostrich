@@ -118,7 +118,10 @@ class Search():
         return final_search_results
 
     def unindexItem(self):
-        self.es.delete(index=self.index,doc_type='item',id=self.query,refresh=True)
+        try:
+            self.es.delete(index=self.index,doc_type='item',id=self.query,refresh=True)
+        except Exception,err:
+            print str(err)
         return True
 
     '''

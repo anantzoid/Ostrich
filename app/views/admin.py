@@ -25,8 +25,9 @@ def getCurrentRentals():
 
 @webapp.route('/removeItem')
 def removeItem():
-    item_id = int(request.args.get('item_id'))
-    Item.removeItem(item_id)
+    item_ids = [int(_) for _ in request.args.get('item_id').split(",")]
+    for item_id in item_ids:
+        Item.removeItem(item_id)
     return jsonify({'status': 'True'})
 
 @webapp.route('/deleteOrder', methods=['POST'])
