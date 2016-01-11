@@ -44,7 +44,8 @@ class Order():
                 default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], webapp.config['DEFAULT_RETURN_DAYS']))
         order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
                 default = Utils.getDefaultTimeSlot()))
-
+        order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', order_data['order_placed'])
+        
         #TODO calc total amount
         order_data['order_amount'] = 30 
 
@@ -62,15 +63,17 @@ class Order():
         insert_data_cursor.execute("""INSERT INTO orders (user_id, 
                 address_id, 
                 order_placed, 
-                order_return, 
+                order_return,
+                delivery_date,
                 delivery_slot, 
                 pickup_slot, 
                 payment_mode) 
-                VALUES(%d, %d, '%s', '%s', %d, %d, '%s')"""  
-                %(order_data['user_id'], 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""  
+                ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
                     order_data['order_return'], 
+                    order_data['delivery_date'], 
                     order_data['delivery_slot'], 
                     order_data['delivery_slot'], 
                     order_data['payment_mode']))

@@ -3,7 +3,7 @@ from app import webapp
 
 class Notifications():
     def __init__(self, gcm_id):
-        self.gcm_id = gcm_id.split(",")
+        self.gcm_id = gcm_id.split(",") if gcm_id else 0
         self.gcm = GCM(webapp.config['GCM_API_KEY'])
         self.is_enabled = webapp.config['NOTIFICATIONS_ENABLED']
 
