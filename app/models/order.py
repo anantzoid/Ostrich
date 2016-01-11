@@ -1,11 +1,6 @@
 from app import mysql
 from app import webapp
-from app.models import User
-from app.models import Item
-from app.models import Utils
-from app.models import Wallet
-from app.models import Mailer
-from app.models import Notifications
+from app.models import *
 from datetime import datetime
 import json
 

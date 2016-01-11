@@ -67,8 +67,7 @@ class Utils():
         current_timestamp = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
-
-        if current_timestamp.hour >= 20:
+        if current_timestamp.hour >= 20 or current_timestamp.hour <= 6:
             return 2 
 
         next_timestamp = current_timestamp + datetime.timedelta(hours=6)
