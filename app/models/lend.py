@@ -1,10 +1,7 @@
 from app import webapp
 from app import mysql
-from app.models import User
-from app.models import Utils
-from app.models import Wallet
-from app.models import Mailer
-from app.models import Notifications
+from app.models import *
+from app.scripts import Indexer
 import json
 
 
@@ -130,9 +127,16 @@ class Lend():
             inventory_id = (SELECT inventory_id FROM lenders WHERE lender_id = %d)"""
             %(lender_id))
             conn.commit()
-            
+        
         if status_id in [2,5,6]:
             Lend.sendLendNotification(lender_id, status_id)
+        if status_id in [3,5]:
+            cursor.execute("""SELECT iv.item_id FROM
+                lenders l INNER JOIN inventory iv ON l.inventory_id=iv.inventory_id
+                WHERE l.lender_id = %s""",(lender_id,))
+            item_id = cursor.fetchone()
+            if item_id and item_id[0]:
+                Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id[0]))
         return True
 
     @staticmethod

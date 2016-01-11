@@ -20,7 +20,7 @@ class Indexer():
             print >>self.err_log, str(e)+","+ str(data['item_id'])
             print str(e), data['item_id']
 
-    def getAllDataFromDB(self, query_condition='', limit=''):
+    def indexItems(self, query_condition='', limit=''):
 
         search_query = """SELECT i.item_id, i.item_name, i.author, i.price,
         i.ratings, i.num_ratings, i.num_reviews, i.img_small,
@@ -55,14 +55,24 @@ class Indexer():
     def fetchItemProperties(self, item):
         item['isbn_10'] = []
         item['isbn_13'] = []
+        item['in_stock'] = 0
 
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT isbn_10, isbn_13 FROM item_isbn WHERE item_id = %d"""
-                %(item['item_id']))
+        cursor.execute("""SELECT isbn_10, isbn_13 FROM item_isbn WHERE item_id = %s""",
+                (item['item_id'],))
         isbn_data = cursor.fetchall()
         for prop in isbn_data:
-            item['isbn_10'].append(prop[0])
-            item['isbn_13'].append(prop[1])
+            if prop[0] is not None:
+                item['isbn_10'].append(prop[0])
+            if prop[1] is not None:
+                item['isbn_13'].append(prop[1])
+
+        cursor.execute("""SELECT COUNT(*) FROM inventory WHERE item_id = %s
+            AND in_stock = 1""",(item['item_id'],))
+        stock = cursor.fetchone()
+        if stock and int(stock[0]) > 0:
+            item['in_stock'] = 1
+
         return item
 
     def extendItemProperties(self, item):

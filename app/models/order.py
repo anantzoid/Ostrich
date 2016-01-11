@@ -1,6 +1,7 @@
 from app import mysql
 from app import webapp
 from app.models import *
+from app.scripts import Indexer
 from datetime import datetime
 import json
 
@@ -147,6 +148,7 @@ class Order():
             update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
                     inventory_id = %d" % (inventory_item['inventory_id']))
             connect.commit()
+            Indexer().indexItems(query_condition=' AND i.item_id='+str(inventory_item['item_id']))
             update_stock_cursor.close()
 
 
@@ -175,7 +177,7 @@ class Order():
 
             if inv_items: 
                 inventory_ids.append({
-                    'inventory_id': item_selected[0],
+                    'inventory_id': inv_items[0][0],
                     'item_id': item_id
                     })
             else:
@@ -190,7 +192,7 @@ class Order():
                     'inventory_id': new_inv_id,
                     'item_id': item_id
                     })
-
+    
         return inventory_ids
 
     @staticmethod
@@ -276,6 +278,8 @@ class Order():
         update_cursor.close()
         if status_id in [3, 4, 5, 6]:
             self.sendOrderNotification(status_id) 
+        elif status_id == 7:
+            Indexer().indexItems(query_condition=' AND i.item_id='+str(self.getOrderInfo()['item_id']))
         return self.getOrderInfo() 
 
     def editOrderDetails(self, order_data):

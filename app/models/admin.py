@@ -63,8 +63,6 @@ class Admin():
             order_info['address'] = user.getUserAddress(order_info['address_id']) 
 
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
-            # order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
-
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
                     'status_id': next_order_status, 
@@ -82,7 +80,7 @@ class Admin():
     @staticmethod
     def getItemDetail(inventory_id):
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT iv.price, iv.item_condition, ii.*
+        cursor.execute("""SELECT iv.price, iv.item_condition, iv.source, ii.*
             FROM inventory iv 
             LEFT JOIN item_isbn ii ON ii.isbn_13 = iv.isbn_13
             WHERE iv.inventory_id = %d""" %(inventory_id))
@@ -133,9 +131,10 @@ class Admin():
                 inv_insert_data['binding_type']))
 
             conn.commit()
-        cursor.execute("""UPDATE inventory SET isbn_13 = %s, price = %s, item_condition = %s
+        cursor.execute("""UPDATE inventory SET isbn_13 = %s, price = %s, item_condition = %s, source = %s
                 WHERE inventory_id = %s""",
-                (inv_insert_data['isbn_13'], inv_insert_data['price'], inv_insert_data['item_condition'], inv_insert_data['inventory_id']))
+                (inv_insert_data['isbn_13'], inv_insert_data['price'], 
+                inv_insert_data['item_condition'], inv_insert_data['source'], inv_insert_data['inventory_id']))
         conn.commit() 
         return True            
 
