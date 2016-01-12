@@ -23,6 +23,11 @@ def getCurrentRentals():
     current_rentals = Admin.getCurrentRentals()
     return jsonify(orders=current_rentals)
 
+@webapp.route('/getPickups')
+def getPickups():
+    pickups = Admin.getPickups()
+    return jsonify(orders=pickups)
+
 @webapp.route('/removeItem')
 def removeItem():
     item_ids = [int(_) for _ in request.args.get('item_id').split(",")]

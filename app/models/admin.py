@@ -1,23 +1,27 @@
 from app import mysql
 from app.models import *
+import time
 
 class Admin():
     @staticmethod
-    def getCurrentRentals():
+    def getCurrentRentals(returns=False):
         rental_list = []
         cursor = mysql.connect().cursor()
+        date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
+        query_condition = 'l.status_id >= 4 AND l.status_id < 6 AND DATE(l.delivery_date)='+date if returns else 'l.status_id < 4'
         cursor.execute("""SELECT l.lender_id,
             u.name, u.phone,
             ua.address,
             i.item_id, i.item_name, i.author,
             l.status_id, l.pickup_date, l.pickup_slot,
+            l.delivery_date, l.delivery_slot, l.order_placed,
             iv.inventory_id
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
             INNER JOIN inventory iv ON iv.inventory_id = l.inventory_id
             INNER JOIN items i ON i.item_id = iv.item_id
-            WHERE l.status_id < 4""")
+            WHERE """+query_condition)
         raw_data = cursor.fetchall()
         rental_list = []
         all_time_slots = Order.getTimeSlot()
@@ -34,23 +38,28 @@ class Admin():
                     'item_name': row[5],
                     'author': row[6]
                     }
-            rental['order_placed'] = row[8] 
             next_order_status = int(row[7])+1
             rental['change_status'] = {
                     'status_id': next_order_status, 
                     'status': Lend.getLendStatusDetails(next_order_status)['Status']
                     }
             rental['order_status'] = Lend.getLendStatusDetails(row[7])['Status']
-            rental['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == row[9]][0]
-            rental['inventory_id'] = row[10]
+            rental['pickup_date'] = str(row[8]) 
+            rental['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == row[9]][0]
+            rental['delivery_date'] = str(row[10])
+            rental['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == row[11]][0]
+            rental['order_placed'] = str(row[12]) 
+            rental['inventory_id'] = row[13]
             rental_list.append(rental)
         return rental_list
 
     @staticmethod
-    def getCurrentOrders():
+    def getCurrentOrders(pickups=False):
         order_list = []
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT order_id FROM orders WHERE order_status < 4""")
+        date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
+        query_condition = 'order_status >= 4 AND order_status < 7 AND DATE(order_return)='+date if pickups else 'order_status < 4'
+        cursor.execute("""SELECT order_id FROM orders WHERE """+query_condition)
         order_ids = cursor.fetchall()
         all_time_slots = Order.getTimeSlot()
 
@@ -63,6 +72,8 @@ class Admin():
             order_info['address'] = user.getUserAddress(order_info['address_id']) 
 
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
+            order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
+
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
                     'status_id': next_order_status, 
@@ -72,10 +83,28 @@ class Admin():
 
             # check if item is in inventory
             cursor.execute("""SELECT isbn_13 FROM inventory WHERE inventory_id = %d"""%(order_info['inventory_id']))
-            order_info['isbn_13'] = cursor.fetchone()[0]
+            isbn = cursor.fetchone()
+            if isbn:
+                order_info['isbn_13'] = isbn[0]
             order_list.append(order_info)
 
         return order_list
+
+    @staticmethod
+    def getPickups():
+        orders_list = Admin.getCurrentOrders(pickups=True)
+        for i,order in enumerate(orders_list):
+            orders_list[i]['order_type'] = 'borrow'
+            orders_list[i]['scheduled_date'] = order['order_return']
+            orders_list[i]['scheduled_slot'] = order['pickup_slot']
+        
+        rental_list = Admin.getCurrentRentals(returns=True)
+        for i,rental in enumerate(rental_list):
+            rental_list[i]['order_type'] = 'lend'
+            rental_list[i]['scheduled_date'] = rental['delivery_date']
+            rental_list[i]['scheduled_slot'] = rental['delivery_slot']
+            
+        return orders_list+rental_list
 
     @staticmethod
     def getItemDetail(inventory_id):

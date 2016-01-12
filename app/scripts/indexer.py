@@ -10,14 +10,14 @@ class Indexer():
         self.es = Elasticsearch(self.es_url)
         self.es_index = 'items'
         self.es_doctype = 'item'
-        self.err_log = open('es_err.log','w')
+        #self.err_log = open('es_err.log','w')
  
     def indexItemObject(self, data):
         try:
             resp = self.es.index(index=self.es_index, doc_type=self.es_doctype,
                     id=data['item_id'], body=data, refresh=True)
         except Exception, e:
-            print >>self.err_log, str(e)+","+ str(data['item_id'])
+            #print >>self.err_log, str(e)+","+ str(data['item_id'])
             print str(e), data['item_id']
 
     def indexItems(self, query_condition='', limit=''):

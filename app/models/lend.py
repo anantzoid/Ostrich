@@ -193,7 +193,7 @@ class Lend():
                     "Description": "Your book is on the way back to you"
                     },
                 6: {
-                    "Status": "Picked Up",
+                    "Status": "Returned",
                     "Description": "Thank you for lending your book"
                     }
                 }
