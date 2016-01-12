@@ -69,7 +69,7 @@ class Admin():
 
             user = User(order_info['user_id'])
             order_info['user'] = user.getObj()
-            order_info['address'] = user.getUserAddress(order_info['address_id']) 
+            order_info['address'] = user.getAddressInfo(order_info['address_id']) 
 
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]

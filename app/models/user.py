@@ -105,18 +105,25 @@ class User(Prototype):
         address = Utils.getParam(address_obj, 'address')
         lat = Utils.getParam(address_obj, 'latitude')
         lng = Utils.getParam(address_obj, 'longitude')
+        
+        #V2 information
+        description = Utils.getParam(address_obj, 'description')
+        locality = Utils.getParam(address_obj, 'locality')
+        landmark = Utils.getParam(address_obj, 'landmark')
+        
 
         conn = mysql.connect()
         insert_add_cursor = conn.cursor()
 
         if mode == 'insert':
-            insert_add_cursor.execute("INSERT INTO user_addresses (user_id, address, \
-                    latitude, longitude) VALUES (%d, '%s', '%s', '%s')" % (self.user_id, \
-                    address, lat, lng))
+            insert_add_cursor.execute("""INSERT INTO user_addresses 
+            (user_id, address, description, locality, landmark, latitude, longitude) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+            (self.user_id, address, description, locality, landmark, lat, lng))
         elif mode == 'edit' and address_id:
-            insert_add_cursor.execute("UPDATE user_addresses SET address = '%s', \
-                    latitude = '%s', longitude = '%s' WHERE address_id = %d" % \
-                    (address, lat, lng, address_id))
+            insert_add_cursor.execute("""UPDATE user_addresses SET address = %s,
+            description = %s, landmark = %s, latitude = %s, longitude = %s 
+            WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id))
         conn.commit()
        
         #TODO test this for edit address
@@ -149,7 +156,7 @@ class User(Prototype):
         return True
 
     @staticmethod
-    def getUserAddress(address_id):
+    def getAddressInfo(address_id):
         address_cusor = mysql.connect().cursor()
         address_cusor.execute("""SELECT 
                 address_id,
@@ -184,7 +191,7 @@ class User(Prototype):
             order_info = order.getOrderInfo(formatted=True)
             #TODO item_id will be list in future
             order_info['items'] = [Item(int(order_info['item_id'])).getObj()]
-            order_info['address'] = User.getUserAddress(order_info['address_id']) 
+            order_info['address'] = User.getAddressInfo(order_info['address_id']) 
             order_list.append(order_info)
         
         order_statuses = {"ordered":[], "reading":[], "previous":[]}
