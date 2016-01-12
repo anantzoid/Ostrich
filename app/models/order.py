@@ -199,6 +199,15 @@ class Order():
     def isUserValidForOrder(user, order_data):
         if user.getObj() is None:
             return {'message': 'User does not exist'}
+        
+        # IF the user is already possessing the book
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT COUNT(*) FROM orders o
+            INNER JOIN order_history oh ON oh.order_id=o.order_id
+            WHERE o.user_id = %s AND  oh.item_id = %s AND o.order_status < 5""",
+            (user.user_id, order_data['item_id']))
+        if cursor.fetchone()[0]:
+            return {'message': 'Already ordered'}
 
         # User can only own 2 book @ a time
         if webapp.config['USER_BOOKS_LIMIT']:
