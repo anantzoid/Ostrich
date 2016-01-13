@@ -10,7 +10,7 @@ class Search():
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.query = query
-        self.index = 'items_alias'
+        self.index = 'items_1301'
         self.size = size
         self.switchToRating = False
         self.relevance_functions = [{
@@ -47,30 +47,34 @@ class Search():
 
 
     def categorySearch(self, page=0):
-        # NOTE temp. Figure out why it only searches for lower case
-        self.query = self.query.lower()
 
-        if self.switchToRating:
-            data = {
-                    "query": {
-                        "function_score": {
-                            "query": {
-                                "match": {
-                                    "categories": self.query
+        data = {
+                "query": {
+                    "function_score": {
+                        "query":{
+                            "match": {
+                                "categories": self.query
+                                }
+                            },
+                        "functions": [
+                            {
+                                "field_value_factor": {
+                                    "field": "num_ratings_int",
+                                    "modifier":"sqrt"
                                     }
                                 },
-                            "functions": self.relevance_functions
-                            }
+                            {
+                                "filter":{"term":{"in_stock":1}},
+                                "field_value_factor": {
+                                    "field": "in_stock",
+                                    "factor": 1.2
+                                    }
+                                }
+                            ]
                         }
                     }
-        else:
-            data = {
-                    "query": {
-                        "match": {
-                            "categories": self.query
-                            }
-                        }
-                    }
+                }
+
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
