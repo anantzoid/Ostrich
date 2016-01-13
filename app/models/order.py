@@ -425,12 +425,18 @@ class Order():
         if order_info is None:
             return {'status':'false'}
 
+
         delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
         order_id = %d""" %(order_id))
         inventory_id = delete_cursor.fetchone()[0]
 
+        admins = [1,5,6,8,9]
+        q_cond = """ """
+        if order_info['user_id'] not in admins:
+            q_cond = """ AND fetched = 0"""
+
         delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
-        """+ str(inventory_id) +""" AND fetched = 0""") 
+        """+ str(inventory_id) + q_cond) 
         conn.commit()
         
         delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \

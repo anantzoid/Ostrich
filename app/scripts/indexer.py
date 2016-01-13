@@ -5,10 +5,10 @@ from app.models import Utils
 import unicodedata
 
 class Indexer():
-    def __init__(self):
+    def __init__(self, index='items'):
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
-        self.es_index = 'items'
+        self.es_index = index
         self.es_doctype = 'item'
         #self.err_log = open('es_err.log','w')
  
