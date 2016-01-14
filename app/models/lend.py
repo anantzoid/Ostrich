@@ -68,6 +68,7 @@ class Lend():
                 lend_data['inventory_id'], webapp.config['DEFAULT_RENTAL_CREDIT']) 
        
         Lend.sendLendNotification(status_id=1,user=user)
+        Utils.notifyAdmin(user.user_id, 'Lend')
         return {'inventory_id': lend_data['inventory_id'], 'lender_id':
                 lend_data['lender_id']}
 

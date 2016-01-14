@@ -159,3 +159,21 @@ class Utils():
     @staticmethod
     def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):
        return make_response(jsonify(response_object), error_code) 
+
+    @staticmethod
+    def notifyAdmin(user_id, o_type):
+        from app.models import User, Notifications
+        notification_data = {
+                "notification_id":1,
+                "title": "ALERT!! "+o_type+" has been placed",
+                }
+        admins = [1,5,6,8,9]
+        if user_id in admins:
+            return
+        for u_id in admins:
+            user = User(u_id,'user_id')
+            Notifications(user.gcm_id).sendNotification(notification_data)
+        return True
+
+
+
