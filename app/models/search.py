@@ -37,7 +37,6 @@ class Search():
 
 
     def basicSearch(self, page=0):
-        
         phrase_results = self.matchPhrase(page)
         # TODO search fails
 
@@ -47,7 +46,6 @@ class Search():
             phrase_results['items'].extend(queried_results['items'])
             phrase_results['total'] += queried_results['total']
         return phrase_results
-
 
     def matchPhrase(self, page):
         data = self.search_query 
@@ -60,9 +58,7 @@ class Search():
                             "query": {"query_string": {"query": self.query}},
                             "filter": {"bool": {"must_not":{"ids":{"values": filter_ids}}}}
                         }}
-
         return self.executeSearch(data, page)
-
 
     def categorySearch(self, page=0):
         data = self.search_query 
@@ -78,7 +74,6 @@ class Search():
                     }
                 } 
         return self.executeSearch(data, page)
-
 
     def executeSearch(self, data, page):
         search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
@@ -113,7 +108,7 @@ class Search():
 
     @staticmethod
     def getSearchCategories():
-        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Comics', 'Inspirational', 'Thriller']
+        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational', 'Thriller']
         return categories
 
     @staticmethod
@@ -127,6 +122,7 @@ class Search():
         return
 
     def mostRecommended(self):
+        #TODO add more
         self.query = [4648, 9, 16, 4026, 4603, 4051, 347, 311, 87, 133]
         item_ids = { "ids": self.query }
         reco_list = []
