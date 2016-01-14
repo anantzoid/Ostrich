@@ -49,12 +49,12 @@ class Search():
 
     def matchPhrase(self, page):
         data = self.search_query 
-        data["query"] = {"match_phrase": {"item_name": self.query}} 
+        data["query"]["function_score"]["query"] = {"match_phrase": {"item_name": self.query}} 
         return self.executeSearch(data, page)
 
     def queryMatch(self, page, filter_ids):
         data = self.search_query 
-        data["query"] = {"filtered": {
+        data["query"]["function_score"]["query"] = {"filtered": {
                             "query": {"query_string": {"query": self.query}},
                             "filter": {"bool": {"must_not":{"ids":{"values": filter_ids}}}}
                         }}
@@ -63,9 +63,8 @@ class Search():
 
 
     def categorySearch(self, page=0):
-
         data = self.search_query 
-        data["query"] = {"match": {"categories": self.query}} 
+        data["query"]["function_score"]["query"] = {"match": {"categories": self.query}} 
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
