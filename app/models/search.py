@@ -12,48 +12,70 @@ class Search():
         self.query = query
         self.index = 'items_1301'
         self.size = size
-        self.switchToRating = False
-        self.relevance_functions = [{
-                "field_value_factor": {
-                    "field": "num_ratings_int"
+        self.search_query = {
+                "query": {
+                    "function_score": {
+                        "query": "",
+                        "functions": [
+                            {
+                                "field_value_factor": {
+                                    "field": "num_ratings_int",
+                                    "modifier":"sqrt"
+                                    }
+                                },
+                            {
+                                "filter":{"term":{"in_stock":1}},
+                                "field_value_factor": {
+                                    "field": "in_stock",
+                                    "factor": 1.2
+                                    }
+                                }
+                            ]
+                        }
                     }
-                }]
+                }
 
 
     def basicSearch(self, page=0):
-        if self.switchToRating:
-            data = {
-                    "query": {
-                        "function_score": {
-                            "query": {
-                                "query_string": {
-                                    "query": self.query
-                                    }
-                                },
-                            "functions": self.relevance_functions
-                            }
-                        }
-                    }
-        else:
-            data = {
-                    "query": {
-                        "query_string": {
-                            "query": self.query
-                            }
-                        }
-                    }
+        
+        phrase_results = self.matchPhrase(page)
+        if len(phrase_results['items']) < 10 and len(phrase_results['items']) > 1:
+            filter_ids = [_['item_id'] for _ in phrase_results['items']]
+            queried_results = self.queryMatch(page, filter_ids)
+            phrase_results['items'].extend(queried_results['items'])
+            phrase_results['total'] += queried_results['total']
+        return phrase_results
+
+
+    def matchPhrase(self, page):
+        data = self.search_query 
+        data["query"] = {"match_phrase": {"item_name": self.query}} 
+        return self.executeSearch(data, page)
+
+    def queryMatch(self, page, filter_ids):
+        data = self.search_query 
+        data["query"] = {"filtered": {
+                            "query": {"query_string": {"query": self.query}},
+                            "filter": {"bool": {"must_not":{"ids":{"values": filter_ids}}}}
+                        }}
 
         return self.executeSearch(data, page)
 
 
     def categorySearch(self, page=0):
 
+        data = self.search_query 
+        data["query"] = {"match": {"categories": self.query}} 
+        return self.executeSearch(data, page)
+
+    def isbnSearch(self, page=0):
         data = {
                 "query": {
                     "function_score": {
                         "query":{
-                            "match": {
-                                "categories": self.query
+                            "multi_match": {
+                                "query": self.query,
+                                "fields": ["isbn_10", "isbn_13"]
                                 }
                             },
                         "functions": [
@@ -74,33 +96,6 @@ class Search():
                         }
                     }
                 }
-
-        return self.executeSearch(data, page)
-
-    def isbnSearch(self, page=0):
-        if self.switchToRating:
-            data = {
-                    "query": {
-                        "function_score": {
-                            "query": {
-                                "multi_match": {
-                                    "query": self.query,
-                                    "fields":["isbn_10", "isbn_13"]
-                                    }
-                                }
-                            },
-                        "functions": self.relevance_functions
-                        }
-                    }
-        else:
-            data = {
-                    "query": {
-                        "multi_match": {
-                            "query": self.query,
-                            "fields":["isbn_10", "isbn_13"]
-                            }
-                        }
-                    }
 
         return self.executeSearch(data, page)
 
