@@ -35,6 +35,10 @@
             "type": "string",
             "include_in_all": false
         },
+        "categories": {
+            "type": "string",
+            "index": "not_analyzed"
+        },
         "num_ratings": {
           "type": "string"
         },

@@ -11,7 +11,7 @@ def hello():
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    Indexer().getAllDataFromDB(query_condition=' and i.item_id>958')
+    Indexer('items_1302_1').indexItems(query_condition=' AND (i.item_id = 1 OR i.item_id=79)')
 
 if __name__ == "__main__":
     manager.run()
