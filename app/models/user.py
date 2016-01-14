@@ -86,10 +86,10 @@ class User(Prototype):
         user = User(user_id, 'user_id')
 
         if address: 
-            address_id = user.addAddress(address)
+            user.addAddress(address)
         user.data['invite_code'] = user.setInviteCode()
 
-        # Free 200 credits on signup
+        # Free credits on signup
         if not webapp.config['APP_INVITE']:
             Wallet.creditTransaction(user.wallet_id, user.user_id, 'signup', user.user_id)
 
@@ -100,37 +100,40 @@ class User(Prototype):
 
 
     def addAddress(self, address, mode='insert'):
-        address_obj = address if isinstance(address, dict) else json.loads(address) 
-        address_id = Utils.getParam(address_obj, 'address_id')
-        address = Utils.getParam(address_obj, 'address')
-        lat = Utils.getParam(address_obj, 'latitude')
-        lng = Utils.getParam(address_obj, 'longitude')
+        address = json.loads(address)
+        if isinstance(address, dict):
+            address = [address]
+
+        address_ids = []
+        for address_obj in address:
+            address_id = Utils.getParam(address_obj, 'address_id')
+            address = Utils.getParam(address_obj, 'address')
+            lat = Utils.getParam(address_obj, 'latitude')
+            lng = Utils.getParam(address_obj, 'longitude')
+            
+            #V2 information
+            description = Utils.getParam(address_obj, 'description')
+            locality = Utils.getParam(address_obj, 'locality')
+            landmark = Utils.getParam(address_obj, 'landmark')
+
+            conn = mysql.connect()
+            insert_add_cursor = conn.cursor()
+
+            if mode == 'insert':
+                insert_add_cursor.execute("""INSERT INTO user_addresses 
+                (user_id, address, description, locality, landmark, latitude, longitude) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s)""",
+                (self.user_id, address, description, locality, landmark, lat, lng))
+            elif mode == 'edit' and address_id:
+                insert_add_cursor.execute("""UPDATE user_addresses SET address = %s,
+                description = %s, landmark = %s, latitude = %s, longitude = %s 
+                WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id))
+            conn.commit()
         
-        #V2 information
-        description = Utils.getParam(address_obj, 'description')
-        locality = Utils.getParam(address_obj, 'locality')
-        landmark = Utils.getParam(address_obj, 'landmark')
-        
+            address_ids.append(int(insert_add_cursor.lastrowid))
+            insert_add_cursor.close()
 
-        conn = mysql.connect()
-        insert_add_cursor = conn.cursor()
-
-        if mode == 'insert':
-            insert_add_cursor.execute("""INSERT INTO user_addresses 
-            (user_id, address, description, locality, landmark, latitude, longitude) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-            (self.user_id, address, description, locality, landmark, lat, lng))
-        elif mode == 'edit' and address_id:
-            insert_add_cursor.execute("""UPDATE user_addresses SET address = %s,
-            description = %s, landmark = %s, latitude = %s, longitude = %s 
-            WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id))
-        conn.commit()
-       
-        #TODO test this for edit address
-        address_id = int(insert_add_cursor.lastrowid)
-        insert_add_cursor.close()
-
-        return address_id
+        return address_ids
 
 
     def editDetails(self, user_data):
@@ -151,7 +154,7 @@ class User(Prototype):
         edit_user_cursor.close()
 
         if address: 
-            address_id = self.addAddress(address, mode='edit')
+            self.addAddress(address, mode='edit')
 
         return True
 
@@ -170,13 +173,10 @@ class User(Prototype):
 
 
     def validateUserAddress(self, address_obj):
-        address_valid = False
         for address in self.address:
             if address['address_id'] == address_obj['address_id']:
-                address_valid = True
-                if address['address'] != address_obj['address']:
-                    self.editDetails({'address': address_obj})
-        return address_valid
+                return True
+        return False
 
 
     def getAllOrders(self):
