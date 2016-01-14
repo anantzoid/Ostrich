@@ -95,6 +95,15 @@ class User(Prototype):
 
         # Welcome Mail
         Mailer.welcomeMailer(user)
+       
+        notification_data = {
+                "notification_id": 100,
+                "title": "Your wallet has been recharged!",
+                "message": "Read first 3 books at no cost",
+                "expanded_text": "You’ve earned 100 credits as an early sign up bonus. You can use these credits to order books for free!" 
+                }
+
+        Notifications(user.gcm_id).sendNotification(notification_data)
 
         return {'user': user.getObj()}
 

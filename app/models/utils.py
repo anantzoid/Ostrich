@@ -68,7 +68,7 @@ class Utils():
 
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
-        if current_timestamp.hour >= 20 or current_timestamp.hour <= 6:
+        if current_timestamp.hour >= 19 or current_timestamp.hour < 6:
             return 2 
 
         next_timestamp = current_timestamp + timedelta(hours=6)
