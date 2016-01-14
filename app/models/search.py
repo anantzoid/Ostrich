@@ -1,6 +1,6 @@
 from app import mysql
 from app import webapp
-from app.models import Item
+from app.models import Item, Mailer
 from elasticsearch import Elasticsearch
 import requests
 import string
@@ -39,6 +39,8 @@ class Search():
     def basicSearch(self, page=0):
         
         phrase_results = self.matchPhrase(page)
+        # TODO search fails
+
         if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
             queried_results = self.queryMatch(page, filter_ids)
@@ -68,34 +70,13 @@ class Search():
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
-        data = {
-                "query": {
-                    "function_score": {
-                        "query":{
-                            "multi_match": {
-                                "query": self.query,
-                                "fields": ["isbn_10", "isbn_13"]
-                                }
-                            },
-                        "functions": [
-                            {
-                                "field_value_factor": {
-                                    "field": "num_ratings_int",
-                                    "modifier":"sqrt"
-                                    }
-                                },
-                            {
-                                "filter":{"term":{"in_stock":1}},
-                                "field_value_factor": {
-                                    "field": "in_stock",
-                                    "factor": 1.2
-                                    }
-                                }
-                            ]
-                        }
+        data = self.search_query 
+        data["query"]["function_score"]["query"] = {
+                "multi_match": {
+                    "query": self.query,
+                    "fields": ["isbn_10", "isbn_13"]
                     }
-                }
-
+                } 
         return self.executeSearch(data, page)
 
 
