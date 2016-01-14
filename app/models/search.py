@@ -39,7 +39,7 @@ class Search():
     def basicSearch(self, page=0):
         
         phrase_results = self.matchPhrase(page)
-        if len(phrase_results['items']) < 10 and len(phrase_results['items']) > 1:
+        if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
             queried_results = self.queryMatch(page, filter_ids)
             phrase_results['items'].extend(queried_results['items'])
