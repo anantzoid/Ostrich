@@ -119,6 +119,8 @@ class User(Prototype):
         description = Utils.getParam(address_obj, 'description')
         locality = Utils.getParam(address_obj, 'locality')
         landmark = Utils.getParam(address_obj, 'landmark')
+        is_valid = Utils.getParam(address_obj, 'is_valid')
+        delivery_message = Utils.getParam(address_obj, 'delivery_message')
         
 
         conn = mysql.connect()
@@ -126,13 +128,13 @@ class User(Prototype):
 
         if mode == 'insert':
             insert_add_cursor.execute("""INSERT INTO user_addresses 
-            (user_id, address, description, locality, landmark, latitude, longitude) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s)""",
-            (self.user_id, address, description, locality, landmark, lat, lng))
+            (user_id, address, description, locality, landmark, latitude, longitude, is_valid, delivery_message) 
+            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+            (self.user_id, address, description, locality, landmark, lat, lng, is_valid, delivery_message))
         elif mode == 'edit' and address_id:
             insert_add_cursor.execute("""UPDATE user_addresses SET address = %s,
-            description = %s, landmark = %s, latitude = %s, longitude = %s 
-            WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id))
+            description = %s, landmark = %s, latitude = %s, longitude = %s, is_valid=%s, delivery_message=%s 
+            WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id, is_valid, delivery_message))
         conn.commit()
        
         #TODO test this for edit address
