@@ -47,6 +47,7 @@ class User(Prototype):
     @staticmethod
     def createUser(user_data):
        
+        conn = mysql.connect()
         #TODO place order type validation
         username = user_data['username'] if 'username' in user_data else ''
         password = user_data['password'] if 'password' in user_data else ''
@@ -65,7 +66,6 @@ class User(Prototype):
 
         
         if email:
-            conn = mysql.connect()
             check_email_cursor = conn.cursor()
             check_email_cursor.execute("SELECT user_id FROM users WHERE email = '%s'" %(email))
             user_exists_id = check_email_cursor.fetchone()
@@ -182,10 +182,14 @@ class User(Prototype):
 
 
     def validateUserAddress(self, address_obj):
+        address_valid = False
         for address in self.address:
             if address['address_id'] == address_obj['address_id']:
-                return True
-        return False
+                address_valid = True
+                # Backsupport
+                if 'address' in address_obj:
+                    self.editDetails({'address': json.dumps(address_obj)})
+        return address_valid
 
 
     def getAllOrders(self):

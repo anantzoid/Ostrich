@@ -29,7 +29,7 @@ class Order():
     @staticmethod
     def placeOrder(order_data):
        
-        order_fields = ['item_id', 'user_id', 'address_id']
+        order_fields = ['item_id', 'user_id']
         for key in order_fields:
             if key not in order_data.keys():
                 return {'message': 'Required params missing'}
@@ -37,7 +37,14 @@ class Order():
                 return {'message': 'Wrong param value'}
             else:
                 order_data[key] = int(order_data[key])
-        
+       
+        if 'address_id' in order_data:
+            order_data['address'] = {}
+            order_data['address']['address_id'] = int(order_data['address_id'])
+        else:
+            order_data['address'] = json.loads(order_data['address'])
+            
+
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
@@ -71,7 +78,7 @@ class Order():
                 payment_mode) 
                 VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
-                    order_data['address_id'], 
+                    order_data['address']['address_id'], 
                     order_data['order_placed'], 
                     order_data['order_return'], 
                     order_data['delivery_date'], 
@@ -206,7 +213,7 @@ class Order():
             return {'message': 'Not enough balance in wallet'}
 
         # Since Address is editable before placing order
-        if not user.validateUserAddress(order_data['address_id']):
+        if not user.validateUserAddress(order_data['address']):
             return {'message': 'Address not associated'}
 
         return None
