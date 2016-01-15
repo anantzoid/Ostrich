@@ -49,7 +49,7 @@ def fetchUser():
         name
         phone
         email
-        address: list of address objects (check below)
+        address: object(check below)
         google_id: user's google+ id on google signup
         gcm_id: google cloud messaging id for notifications
         
@@ -105,7 +105,7 @@ def addAddress():
     if address_id:
         response = {
                 'status': 'True',
-                'address_id': address_id[0]
+                'address_id': address_id
                 }
         return jsonify(response)
     else:
