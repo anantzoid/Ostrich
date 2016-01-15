@@ -29,15 +29,22 @@ class Order():
     @staticmethod
     def placeOrder(order_data):
        
-        order_fields = ['item_id', 'user_id', 'address']
+        order_fields = ['item_id', 'user_id']
         for key in order_fields:
             if key not in order_data.keys():
                 return {'message': 'Required params missing'}
-            elif not order_data[key]:
+            elif not order_data[key] or not order_data[key].isdigit():
                 return {'message': 'Wrong param value'}
             else:
-                order_data[key] = int(order_data[key]) if key != 'address' else json.loads(order_data[key])
-        
+                order_data[key] = int(order_data[key])
+       
+        if 'address_id' in order_data:
+            order_data['address'] = {}
+            order_data['address']['address_id'] = int(order_data['address_id'])
+        else:
+            order_data['address'] = json.loads(order_data['address'])
+            
+
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
