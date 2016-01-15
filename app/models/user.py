@@ -119,8 +119,8 @@ class User(Prototype):
         description = Utils.getParam(address_obj, 'description')
         locality = Utils.getParam(address_obj, 'locality')
         landmark = Utils.getParam(address_obj, 'landmark')
-        is_valid = Utils.getParam(address_obj, 'is_valid')
-        delivery_message = Utils.getParam(address_obj, 'delivery_message')
+        is_valid = Utils.getParam(address_obj, 'is_valid', default=1)
+        delivery_message = Utils.getParam(address_obj, 'delivery_message', default=None)
         
 
         conn = mysql.connect()
