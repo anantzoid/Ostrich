@@ -48,11 +48,11 @@ class Order():
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
-        order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
-                default = Utils.getDefaultReturnTimestamp(order_data['order_placed'], webapp.config['DEFAULT_RETURN_DAYS']))
         order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
                 default = Utils.getDefaultTimeSlot()))
-        order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', order_data['order_placed'])
+        order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
+        order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
+                default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
         
         #TODO calc total amount
         order_data['order_amount'] = 30 
@@ -417,7 +417,6 @@ class Order():
         if order_info is None:
             return {'status':'false'}
 
-
         delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
         order_id = %d""" %(order_id))
         inventory_id = delete_cursor.fetchone()[0]
@@ -437,4 +436,5 @@ class Order():
         conn.commit()
         delete_cursor.close()
         return {'status':'true'}
+
 

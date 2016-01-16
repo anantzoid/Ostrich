@@ -203,3 +203,28 @@ class Lend():
             return status_info[status_id]
         else: 
             return False
+
+
+    @staticmethod
+    def deleteRental(lender_id):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        cursor.execute("""SELECT user_id, inventory_id FROM lenders WHERE lender_id= %s""",
+        (lender_id,))
+        (user_id, inventory_id) = cursor.fetchone()
+        if not user_id:
+            return {'status':'false'}
+
+        cursor.execute("""DELETE FROM inventory WHERE inventory_id = %s""",
+        (inventory_id,))
+        conn.commit()
+
+        cursor.execute("""DELETE FROM lenders WHERE lender_id = %s""", (lender_id,))
+        conn.commit()
+
+        user = User(user_id) 
+        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, webapp.config['DEFAULT_RENTAL_CREDIT'])
+        
+        return {'status':'true'}
+        

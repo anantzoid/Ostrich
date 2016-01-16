@@ -42,6 +42,13 @@ def deleteOrder():
         Order.deleteOrder(order)
     return jsonify(status=True)
 
+@webapp.route('/deleteRental', methods=['POST'])
+def deleteRentals():
+    lenders = [int(_) for _ in request.form['order_id'].split(",")]
+    for lender_id in lenders:
+        Lend.deleteRental(lender_id)
+    return jsonify(status=True)
+
 '''
     Update status of order in various status
     Statuses defined in getOrderStatusDetails method in order model

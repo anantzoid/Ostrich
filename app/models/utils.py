@@ -167,7 +167,7 @@ class Utils():
                 "notification_id":1,
                 "title": "ALERT!! "+o_type+" has been placed",
                 }
-        admins = [1,5,6,8,9]
+        admins = [1,5,6,8,9,27,28]
         if user_id in admins:
             return
         for u_id in admins:
