@@ -187,7 +187,7 @@ class User(Prototype):
             if address['address_id'] == address_obj['address_id']:
                 address_valid = True
                 # Backsupport
-                if 'address' in address_obj and 'address' in address_obj:
+                if 'address' in address_obj and address['address'] != address_obj['address']:
                     self.editDetails({'address': json.dumps(address_obj)})
         return address_valid
 
