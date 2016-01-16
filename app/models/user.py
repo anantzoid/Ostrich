@@ -9,7 +9,18 @@ from datetime import datetime
 class User(Prototype):
     def __init__(self, user_id, login_type='user_id'):
         self.getData(user_id, login_type)
-   
+        self.available_areas = {"indiranagar":6,
+                                "indira nagar":6,
+                                "koramangala":6,
+                                "domlur":6,
+                                "kodihalli":6,
+                                "binnamangala":6,
+                                "doopanahalli":6,
+                                "adugodi":6,
+                                "embassy golflinks":6,
+                                "embassy golf links":6,
+                                "challaghatta":6}
+
     def getData(self, user_id, login_type):
 
         get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
@@ -42,7 +53,6 @@ class User(Prototype):
         if not user_obj:
             user_obj = None
         return user_obj
-
 
     @staticmethod
     def createUser(user_data):
@@ -170,12 +180,7 @@ class User(Prototype):
     @staticmethod
     def getAddressInfo(address_id):
         address_cusor = mysql.connect().cursor()
-        address_cusor.execute("""SELECT 
-                address_id,
-                latitude,
-                longitude,
-                address
-                FROM user_addresses
+        address_cusor.execute("""SELECT * FROM user_addresses
                 WHERE address_id = %d""" %(address_id))
         address_obj = Utils.fetchOneAssoc(address_cusor)
         return address_obj
@@ -191,10 +196,26 @@ class User(Prototype):
                     self.editDetails({'address': json.dumps(address_obj)})
         return address_valid
 
+
+    def getOrderSlots(self):
+        from app.models import Order
+        time_slots = {}
+
+        for i,address in enumerate(self.address):
+            interval = 0
+            local_address = address['address'] if ('address' in address and address['address']) else address['locality']
+            for area in self.available_areas.keys():
+                if area in local_address.lower():
+                    interval = self.available_areas[area]
+                    break
+            if interval:
+                if interval not in time_slots:
+                    time_slots[interval] = Order.getTimeSlotsForOrder(interval)
+                self.address[i]['time_slot'] = time_slots[interval]
+
     @staticmethod
     def validateLocality(locality):
-        available_areas = ["indiranagar", "indira nagar", "koramangala", "domlur", "kodihalli", "binnamangala", "doopanahalli", "adugodi", "embassy golflinks", "embassy golf links", "challaghatta"]
-        for area in available_areas:
+        for area in self.available_areas.keys():
             if area in locality.lower():
                 response =  {"is_valid": 1, "delivery_message":"", "validated_locality":area}
                 if area == "indira nagar":

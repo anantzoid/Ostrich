@@ -58,7 +58,7 @@ class Utils():
         return order_return
 
     @staticmethod
-    def getDefaultTimeSlot():
+    def getDefaultTimeSlot(interval=6):
         # Get diff all time slots w.r.t to the next 6th hour
         # Check if hour lies within any timeslot
         # check for nearest end time and start time
@@ -71,7 +71,7 @@ class Utils():
         if current_timestamp.hour >= 19 or current_timestamp.hour < 6:
             return 2 
 
-        next_timestamp = current_timestamp + timedelta(hours=6)
+        next_timestamp = current_timestamp + timedelta(hours=interval)
         next_timestamp = str(next_timestamp.time())
         next_timestamp = datetime.strptime(next_timestamp.split(".")[0], '%H:%M:%S')
       

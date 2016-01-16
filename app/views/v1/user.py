@@ -37,6 +37,7 @@ def fetchUser():
 
     user = User(social_id, source) 
     if user.getObj() is not None:
+        user.getOrderSlots()
         return jsonify(user.getObj())
     else:
         return Utils.errorResponse(response)
@@ -104,11 +105,8 @@ def addAddress():
 
     address_id = user.addAddress(address)
     if address_id:
-        response = {
-                'status': 'True',
-                'address_id': address_id[0]
-                }
-        return jsonify(response)
+        user.getOrderSlots()
+        return jsonify(user=user.getObj())
     else:
         return Utils.errorResponse(response)
 

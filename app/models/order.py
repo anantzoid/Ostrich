@@ -338,10 +338,9 @@ class Order():
         else:
             return False
 
-
     @staticmethod
-    def getTimeSlotsForOrder():
-        next_timeslotid = Utils.getDefaultTimeSlot()
+    def getTimeSlotsForOrder(interval=6):
+        next_timeslotid = Utils.getDefaultTimeSlot(interval)
         all_timeslots = Order.getTimeSlot()
         for ts in all_timeslots:
             if ts['slot_id'] == next_timeslotid:
