@@ -6,12 +6,14 @@ import requests
 import string
 
 class Search():
-    def __init__(self, query, size=20):
+    def __init__(self, query, user_id, flow, size=20):
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.query = query
-        self.index = 'items_1301'
+        self.index = 'items_alias'
         self.size = size
+        self.user_id = user_id
+        self.flow = flow
         self.search_query = {
                 "query": {
                     "function_score": {
@@ -38,7 +40,12 @@ class Search():
 
     def basicSearch(self, page=0):
         phrase_results = self.matchPhrase(page)
-        # TODO search fails
+        
+        if len(phrase_results['items']) == 0:
+            self.reportFail('free')
+            #TODO channel to Slack
+            Mailer.genericMailer({'subject': '!SEARCH FAIL: '+self.query,
+                'body': 'Made by user_id: '+ str(self.user_id)}) 
 
         if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
@@ -111,13 +118,11 @@ class Search():
         categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational', 'Thriller']
         return categories
 
-    @staticmethod
-    def reportFail(user_id, q, q_type):
+    def reportFail(self, q_type):
         conn = mysql.connect()
         cursor = conn.cursor()
-        q = q.replace('"',"'")
-        cursor.execute("""INSERT INTO search_fails (user_id, query, type) VALUES (%d,"%s","%s")
-        """ %(user_id, q, q_type))
+        cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow) VALUES (%s,%s,%s,%s)""",
+            (self.user_id, self.query, q_type, self.flow))
         conn.commit()
         return
 

@@ -164,7 +164,7 @@ class Utils():
     def notifyAdmin(user_id, o_type):
         from app.models import User, Notifications
         notification_data = {
-                "notification_id":1,
+                "notification_id":200,
                 "title": "ALERT!! "+o_type+" has been placed",
                 }
         admins = [1,5,6,8,9,27,28]
