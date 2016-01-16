@@ -191,6 +191,22 @@ class User(Prototype):
                     self.editDetails({'address': json.dumps(address_obj)})
         return address_valid
 
+    @staticmethod
+    def validateLocality(locality):
+        available_areas = ["indiranagar", "indira nagar", "koramangala", "domlur", "kodihalli", "binnamangala", "doopanahalli", "adugodi", "embassy golflinks", "embassy golf links", "challaghatta"]
+        for area in available_areas:
+            if area in locality.lower():
+                response =  {"is_valid": 1, "delivery_message":"", "validated_locality":area}
+                if area == "indira nagar":
+                    response["validated_locality"] = "indiranagar"
+                elif area == "kodihalli":
+                    response["validated_locality"] = "indiranagar"
+                elif area == "adugodi":
+                    response["validated_locality"] = "koramangala"
+                return response
+
+        response =  {"is_valid": 0, "delivery_message":"Out of Delivery Area", "validated_locality":""}
+        return response
 
     def getAllOrders(self):
         from app.models import Order 

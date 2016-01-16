@@ -1,6 +1,7 @@
 from app import webapp
 from app.models import User, Utils
 from flask import request, jsonify
+import json
 
 @webapp.route('/preregister', methods=['POST'])
 def preregister():
@@ -110,7 +111,17 @@ def addAddress():
         return jsonify(response)
     else:
         return Utils.errorResponse(response)
-        
+
+@webapp.route('/validateLocality', methods=['POST'])
+def validateLocality():
+    locality = Utils.getParam(request.form, 'locality', '')
+    if not locality:
+        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+
+    response = User.validateLocality(locality)
+    return json.dumps(response)
+
+
 '''
     Edit details of a user
     @params
