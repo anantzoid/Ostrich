@@ -21,8 +21,7 @@ class Order():
         order_info['item'] = Item(order_info['item_id']).getObj()
 
         if 'formatted' in kwargs:
-            ts = [_ for _ in Order.getTimeSlot() if _['slot_id'] == order_info['pickup_slot']][0]
-            order_info['pickup_time'] = Utils.formatTimeSlot(ts)
+            order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
 
         return order_info
 
@@ -243,9 +242,11 @@ class Order():
 
    
     @staticmethod    
-    def getTimeSlot():
+    def getTimeSlot(slot_id=None, active=0):
+        query_cond = " WHERE active = 1" if active else ""
+
         time_slot_cursor = mysql.connect().cursor()
-        time_slot_cursor.execute("SELECT * FROM time_slots")
+        time_slot_cursor.execute("SELECT * FROM time_slots" + query_cond)
         num_slots = time_slot_cursor.rowcount
 
         time_slots = []
@@ -253,6 +254,8 @@ class Order():
             time_slots.append(Utils.fetchOneAssoc(time_slot_cursor))
 
         time_slot_cursor.close()
+        if slot_id:
+            time_slots = [_ for _ in time_slots if _['slot_id'] == slot_id][0]
         return time_slots
 
     def updateOrderStatus(self, status_id):
@@ -341,32 +344,13 @@ class Order():
     @staticmethod
     def getTimeSlotsForOrder(interval=6):
         next_timeslotid = Utils.getDefaultTimeSlot(interval)
-        all_timeslots = Order.getTimeSlot()
+        all_timeslots = Order.getTimeSlot(active=1)
         for ts in all_timeslots:
             if ts['slot_id'] == next_timeslotid:
                 next_timeslot = ts
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
-
-        # Mark day
-        # Get day of first time slot and the rest will follow suit
-        for i,ts in enumerate(order_timeslots):
-            if i == 0:
-                if int(ts['start_time'].split(":")[0]) - int(datetime.now().hour) > 0:
-                    start_day = 'Today'
-                else:
-                    start_day = 'Tomorrow'
-                day = start_day
-            else:
-                if int(ts['start_time'].split(":")[0]) - int(order_timeslots[i-1]['start_time'].split(":")[0]) >= 0:
-                    day = start_day
-                else:
-                    day = Utils.fetchNextDayVerbose(start_day)
-                start_day = day
-            #Format Timeslots
-            formatted_time = Utils.formatTimeSlot(ts)
-            ts['formatted'] = day+' '+formatted_time
-        return order_timeslots
+        return Utils.formatTimeSlots(order_timeslots)
 
     @staticmethod
     def getOrderStatusDetails(status_id):

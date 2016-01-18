@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 import random
 import string
 import pytz
+import copy
 from operator import itemgetter
 from app import webapp
 from app import mysql
@@ -76,7 +77,7 @@ class Utils():
         next_timestamp = datetime.strptime(next_timestamp.split(".")[0], '%H:%M:%S')
       
         from app.models import Order
-        time_slots_dirty = Order.getTimeSlot()
+        time_slots_dirty = Order.getTimeSlot(active=1)
         for slot in time_slots_dirty:
             slot['start_time'] = datetime.strptime(slot['start_time'], '%H:%M:%S')
             slot['end_time'] = datetime.strptime(slot['end_time'], '%H:%M:%S')
@@ -115,7 +116,7 @@ class Utils():
             min_next_slot = min(next_slots, key=itemgetter('diff'))
             return min_next_slot['slot_id']
        
-        return 1
+        return 2
 
     @staticmethod
     def getNextTimeslots(start_time, timeslots, num):
@@ -131,6 +132,33 @@ class Utils():
         return next_slots
    
     @staticmethod
+    def formatTimeSlots(order_timeslots):
+        # Mark day
+        # Get day of first time slot and the rest will follow suit
+        new_timeslots = []
+        for i,ts in enumerate(order_timeslots):
+            if i == 0:
+                if int(ts['start_time'].split(":")[0]) - int(datetime.now().hour) > 0:
+                    start_day = 'Today'
+                else:
+                    start_day = 'Tomorrow'
+                day = start_day
+            else:
+                if int(ts['start_time'].split(":")[0]) - int(order_timeslots[i-1]['start_time'].split(":")[0]) >= 0:
+                    day = start_day
+                else:
+                    day = Utils.fetchNextDayVerbose(start_day)
+                start_day = day
+
+            # Format Timeslots
+            formatted_time = Utils.cleanTimeSlot(ts)
+            ts['formatted'] = day+' '+formatted_time
+
+            # NOTE creating a new object to avoid pass-by-reference
+            new_timeslots.append(copy.copy(ts))
+        return new_timeslots
+
+    @staticmethod
     def fetchNextDayVerbose(day):
         if day == 'Today':
             return 'Tomorrow'
@@ -143,7 +171,7 @@ class Utils():
             return days[days.index(day)+1]
 
     @staticmethod
-    def formatTimeSlot(ts):
+    def cleanTimeSlot(ts):
         format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")
         if ":00" in format_start_time:
             format_start_time = format_start_time.replace(":00","")

@@ -19,7 +19,12 @@ class User(Prototype):
                                 "adugodi":6,
                                 "embassy golflinks":6,
                                 "embassy golf links":6,
-                                "challaghatta":6}
+                                "challaghatta":6,
+                                "hsr": "1 day",
+                                "btm": "1 day",
+                                "madiwala": "1 day",
+                                "jakkasandra": "2 day",
+                                "victoria road": "1 day"}
 
     def getData(self, user_id, login_type):
 
@@ -210,14 +215,18 @@ class User(Prototype):
                     break
             if interval:
                 if interval not in time_slots:
-                    time_slots[interval] = Order.getTimeSlotsForOrder(interval)
+                    if interval == "1 day":
+                        formatted_time = Utils.cleanTimeSlot(Order.getTimeSlot(2))
+                        time_slots[interval] = 'Tommorrow '+formatted_time
+                    elif isinstance(interval, int):
+                        time_slots[interval] = Order.getTimeSlotsForOrder(interval)
                 self.address[i]['time_slot'] = time_slots[interval]
 
     @staticmethod
     def validateLocality(locality):
         for area in self.available_areas.keys():
             if area in locality.lower():
-                response =  {"is_valid": 1, "delivery_message":"", "validated_locality":area}
+                response =  {"is_valid": 1, "delivery_message":"Delivery Available", "validated_locality":area}
                 if area == "indira nagar":
                     response["validated_locality"] = "indiranagar"
                 elif area == "kodihalli":
@@ -269,8 +278,7 @@ class User(Prototype):
             inv_info['items'] = [Item(int(inv_info['item_id'])).getObj()]
             all_timeslots = Order.getTimeSlot()
             ts = [_ for _ in all_timeslots if _['slot_id'] == inv_info['pickup_slot']][0]
-            inv_info['pickup_time'] = Utils.formatTimeSlot(ts)
-
+            inv_info['pickup_time'] = Utils.cleanTimeSlot(ts)
             inv_items.append(inv_info)
 
        
