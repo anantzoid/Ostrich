@@ -193,7 +193,7 @@ class User(Prototype):
                 address_valid = True
                 # Backsupport
                 if 'address' in address_obj and address['address'] != address_obj['address']:
-                    self.editDetails({'address': json.dumps(address_obj)})
+                    self.addAddress(address, mode='insert')
         return address_valid
 
 
