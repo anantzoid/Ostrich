@@ -129,7 +129,7 @@ class Search():
 
     def mostRecommended(self):
         #TODO add more
-        self.query = [4648, 9, 16, 4026, 4603, 4051, 347, 311, 87, 133]
+        self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
         item_ids = { "ids": self.query }
         reco_list = []
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)
@@ -141,7 +141,7 @@ class Search():
         return reco_list
 
     def mostSearched(self):
-        self.query = [3963, 66, 299, 287, 644, 51, 143]
+        self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
         item_ids = { "ids": self.query }
         most_searched = []
         docs = self.es.mget(index=self.index, doc_type='item', body=item_ids)

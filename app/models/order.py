@@ -420,10 +420,7 @@ class Order():
         order_id = %d""" %(order_id))
         inventory_id = delete_cursor.fetchone()[0]
 
-        admins = [1,5,6,8,9]
-        q_cond = """ """
-        if order_info['user_id'] not in admins:
-            q_cond = """ AND fetched = 0"""
+        q_cond = """ AND fetched = 1"""
 
         delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
         """+ str(inventory_id) + q_cond) 
