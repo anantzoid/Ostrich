@@ -160,12 +160,14 @@ class Lend():
         notification_id = 1
         if status_id == 6:
             notification_id = 4
+
+        expanded_text = status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"] 
         notification_data = {
                 "notification_id": notification_id,
                 "entity_id": lender_id,
                 "title": status_info["Status"],
                 "message": status_info["Description"],
-                "expanded_text": status_info["Description"] 
+                "expanded_text": expanded_text 
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
         return 
@@ -195,7 +197,8 @@ class Lend():
                     },
                 6: {
                     "Status": "Returned",
-                    "Description": "Thank you for lending your book"
+                    "Description": "Thanks for sharing your book",
+                    "expanded_text": "Your book can mean a world to someone"
                     }
                 }
 
