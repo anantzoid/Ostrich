@@ -44,7 +44,7 @@ class Utils():
 
     @staticmethod
     def getCurrentTimestamp():
-        current_timestamp = datetime.now()
+        current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
         order_placed = str(current_timestamp).split('.')[0]
         return order_placed
 
@@ -66,6 +66,7 @@ class Utils():
         # Return the closer option
 
         current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
+        current_timestamp = datetime(2016,01,19,03,00,00)
 
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
@@ -138,7 +139,7 @@ class Utils():
         new_timeslots = []
         for i,ts in enumerate(order_timeslots):
             if i == 0:
-                if int(ts['start_time'].split(":")[0]) - int(datetime.now().hour) > 0:
+                if int(ts['start_time'].split(":")[0]) - int(datetime.now(pytz.timezone('Asia/Calcutta')).hour) > 0:
                     start_day = 'Today'
                 else:
                     start_day = 'Tomorrow'
@@ -163,7 +164,7 @@ class Utils():
         if day == 'Today':
             return 'Tomorrow'
         elif day == 'Tomorrow':
-            current_timestamp = datetime.now()
+            current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
             day_after_tomo = current_timestamp + timedelta(days=2)
             return day_after_tomo.strftime("%A")
         else:

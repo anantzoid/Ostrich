@@ -4,6 +4,7 @@ from app import webapp
 from app.models import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
+import pytz
 from datetime import datetime
 
 class User(Prototype):
@@ -283,7 +284,7 @@ class User(Prototype):
 
        
         rental_statses = {"rentals":[], "rental_history": []}
-        current_timestamp = datetime.now() 
+        current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta')) 
         for item in inv_items:
             date_removed = datetime.strptime(item['date_removed'], "%Y-%m-%d %H:%M:%S")
             diff = current_timestamp - date_removed
@@ -332,7 +333,7 @@ class User(Prototype):
         #TODO validity referent and referrer are not same, but the 5 minute check will handle that now
         #TODO replace time check with caching on signup
         user_created_datetime = datetime.strptime(self.date_created, '%Y-%m-%d %H:%M:%S')
-        timedelta = datetime.now() - user_created_datetime
+        timedelta = datetime.now(pytz.timezone('Asia/Calcutta')) - user_created_datetime
         if timedelta.seconds > 300:
             return False
         else:
