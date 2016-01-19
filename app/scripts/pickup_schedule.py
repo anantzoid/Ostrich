@@ -1,5 +1,6 @@
 import json
 from app import mysql
+from app import webapp
 from app.models import Utils
 from app.models import Mailer
 from app.models import Order
@@ -35,7 +36,9 @@ def pickupSchedule():
     
     if order_list:
         pickups = json.dumps({'orders': order_list}, indent=4)
-        Mailer.genericMailer({'subject':'Pickups for '+date, 'body': pickups})
+        # To get the celery app variables
+        with webapp.test_request_context():
+            Mailer.genericMailer({'subject':'Pickups for '+date, 'body': pickups})
 
     '''
     # Rentals delivery
