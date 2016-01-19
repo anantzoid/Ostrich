@@ -6,26 +6,27 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import pytz
 from datetime import datetime
+available_areas = {"indiranagar":6,
+                    "indira nagar":6,
+                    "koramangala":6,
+                    "domlur":6,
+                    "kodihalli":6,
+                    "binnamangala":6,
+                    "doopanahalli":6,
+                    "adugodi":6,
+                    "embassy golflinks":6,
+                    "embassy golf links":6,
+                    "challaghatta":6,
+                    "hsr": "1 day",
+                    "btm": "1 day",
+                    "madiwala": "1 day",
+                    "jakkasandra": "2 day",
+                    "victoria road": "1 day"}
+
 
 class User(Prototype):
     def __init__(self, user_id, login_type='user_id'):
         self.getData(user_id, login_type)
-        self.available_areas = {"indiranagar":6,
-                                "indira nagar":6,
-                                "koramangala":6,
-                                "domlur":6,
-                                "kodihalli":6,
-                                "binnamangala":6,
-                                "doopanahalli":6,
-                                "adugodi":6,
-                                "embassy golflinks":6,
-                                "embassy golf links":6,
-                                "challaghatta":6,
-                                "hsr": "1 day",
-                                "btm": "1 day",
-                                "madiwala": "1 day",
-                                "jakkasandra": "2 day",
-                                "victoria road": "1 day"}
 
     def getData(self, user_id, login_type):
 
@@ -210,9 +211,9 @@ class User(Prototype):
         for i,address in enumerate(self.address):
             interval = 0
             local_address = address['address'] if ('address' in address and address['address']) else address['locality']
-            for area in self.available_areas.keys():
+            for area in available_areas.keys():
                 if area in local_address.lower():
-                    interval = self.available_areas[area]
+                    interval = available_areas[area]
                     break
             if interval:
                 if interval not in time_slots:
@@ -225,7 +226,7 @@ class User(Prototype):
 
     @staticmethod
     def validateLocality(locality):
-        for area in self.available_areas.keys():
+        for area in available_areas.keys():
             if area in locality.lower():
                 response =  {"is_valid": 1, "delivery_message":"Delivery Available", "validated_locality":area}
                 if area == "indira nagar":
