@@ -57,10 +57,10 @@ def searchFail():
 
 @webapp.route('/recommended', methods=['GET'])
 def recommended():
-    return Search([]).mostRecommended() 
+    return json.dumps(Search([]).mostRecommended())
 
 @webapp.route('/mostSearched', methods=['GET'])
 def mostSearched():
-    return Search([]).mostSearched()
+    return json.dumps(Search([]).mostSearched())
 
 

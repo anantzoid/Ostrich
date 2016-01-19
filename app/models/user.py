@@ -211,8 +211,8 @@ class User(Prototype):
     def getOrderSlots(self):
         from app.models import Order
         time_slots = {}
-
-        for i,address in enumerate(self.address):
+        address = self.address if self.address else []
+        for i,address in enumerate(address):
             interval = 0
             local_address = address['address'] if ('address' in address and address['address']) else address['locality']
             for area in available_areas.keys():
@@ -289,7 +289,7 @@ class User(Prototype):
 
        
         rental_statses = {"rentals":[], "rental_history": []}
-        current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta')) 
+        current_timestamp = datetime.now() 
         for item in inv_items:
             date_removed = datetime.strptime(item['date_removed'], "%Y-%m-%d %H:%M:%S")
             diff = current_timestamp - date_removed
