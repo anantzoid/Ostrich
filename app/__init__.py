@@ -20,4 +20,6 @@ import app.models
 
 @webapp.route('/')
 def hello():
+    from flask import render_template
+    return render_template('welcome.html')
     return 'Index Page'

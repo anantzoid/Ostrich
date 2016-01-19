@@ -15,7 +15,7 @@ class Admin():
             i.item_id, i.item_name, i.author,
             l.status_id, l.pickup_date, l.pickup_slot,
             l.delivery_date, l.delivery_slot, l.order_placed,
-            iv.inventory_id
+            iv.inventory_id, u.email
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
@@ -30,7 +30,8 @@ class Admin():
             rental['order_id'] = row[0]
             rental['user'] = {
                     'name': row[1],
-                    'phone': row[2]
+                    'phone': row[2],
+                    'email': row[14]
                     }
             rental['address'] = {'address': row[3]}
             rental['item'] = {
