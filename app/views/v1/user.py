@@ -117,7 +117,7 @@ def validateLocality():
         return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
     response = User.validateLocality(locality)
-    return json.dumps(response)
+    return jsonify(response)
 
 
 '''
