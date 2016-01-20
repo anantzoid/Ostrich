@@ -2,3 +2,4 @@
 *.swp
 *.swo
 .htaccess
+.DS_Store

@@ -5,7 +5,7 @@ from app.models import Utils
 import unicodedata
 
 class Indexer():
-    def __init__(self, index='items'):
+    def __init__(self, index='items_alias'):
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.es_index = index

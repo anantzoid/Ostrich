@@ -6,12 +6,12 @@ manager = Manager(webapp)
 @manager.command
 def hello():
     from app.models import User,Mailer
-    Mailer.welcomeMailer(User(38))
+    Mailer.welcomeMailer(User(1))
 
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    Indexer('items_1302_1').indexItems(query_condition=' AND (i.item_id = 1 OR i.item_id=79)')
+    Indexer().indexItems(query_condition=' AND (i.item_id = 1 OR i.item_id=79)')
 
 if __name__ == "__main__":
     manager.run()

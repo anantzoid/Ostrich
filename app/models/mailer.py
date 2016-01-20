@@ -34,6 +34,6 @@ class Mailer():
 
         email = Message('Welcome to Ostrich!',
                     recipients=[user.email])
-        email.html = render_template('welcome.html', name=name)
+        email.html = render_template('mailers/inlined/welcome.html', name=name)
         mail.send(email)
         return True
