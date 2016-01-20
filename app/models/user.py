@@ -5,7 +5,7 @@ from app.models import *
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
 import pytz
-from datetime import datetime
+
 available_areas = {"indiranagar":6,
                     "indira nagar":6,
                     "koramangala":6,
@@ -214,6 +214,8 @@ class User(Prototype):
         address = self.address if self.address else []
         for i,address in enumerate(address):
             interval = 0
+
+            # Backsupport
             local_address = address['address'] if ('address' in address and address['address']) else address['locality']
             for area in available_areas.keys():
                 if area in local_address.lower():
@@ -222,8 +224,10 @@ class User(Prototype):
             if interval:
                 if interval not in time_slots:
                     if interval == "1 day":
-                        formatted_time = Utils.cleanTimeSlot(Order.getTimeSlot(2))
-                        time_slots[interval] = 'Tommorrow '+formatted_time
+                        time_slot = Order.getTimeSlot(2)
+                        #TODO change to today afteer 12am
+                        time_slot['formatted'] = 'Tommorrow '+Utils.cleanTimeSlot(time_slot)
+                        time_slots[interval] = [time_slot]
                     elif isinstance(interval, int):
                         time_slots[interval] = Order.getTimeSlotsForOrder(interval)
                 self.address[i]['time_slot'] = time_slots[interval]

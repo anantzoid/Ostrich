@@ -1,9 +1,15 @@
 from flask import render_template
 from flask_mail import Message
+from threading import Thread
 from app import mail
 from app import webapp
 
 class Mailer():
+    @staticmethod
+    def send_async_mail(webapp, email):
+        with webapp.app_context():
+            mail.send(email)
+
     @staticmethod
     def excessOrder(user_id, item_id):
         subject = "Excess Order Request"
@@ -35,5 +41,6 @@ class Mailer():
         email = Message('Welcome to Ostrich!',
                     recipients=[user.email])
         email.html = render_template('mailers/inlined/welcome.html', name=name)
-        mail.send(email)
+        thr = Thread(target=Mailer.send_async_mail, args=[webapp, email])
+        thr.start()
         return True
