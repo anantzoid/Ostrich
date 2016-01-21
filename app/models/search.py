@@ -42,10 +42,9 @@ class Search():
         phrase_results = self.matchPhrase(page)
         
         if len(phrase_results['items']) == 0:
-            self.reportFail('free')
+            self.reportFail('phrase_match')
             #TODO channel to Slack
-            if self.user_id:
-                Mailer.genericMailer({'subject': '!SEARCH FAIL: '+self.query,
+            Mailer.genericMailer({'subject': '!SEARCH FAIL: '+self.query,
                     'body': 'Made by user_id: '+ str(self.user_id)}) 
 
         if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:

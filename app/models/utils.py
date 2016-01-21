@@ -66,7 +66,6 @@ class Utils():
         # Return the closer option
 
         current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
-        current_timestamp = datetime(2016,01,19,03,00,00)
 
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight

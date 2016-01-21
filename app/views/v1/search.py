@@ -21,12 +21,12 @@ def searchString():
     query = Utils.getParam(request.args, 'q') 
     page = Utils.getParam(request.args, 'page', var_type='int', default=1)
     search_type = Utils.getParam(request.args, 'type', default='free')
-    user_id = Utils.getParam(request.args, 'user_id', 'int')
+    user_id = Utils.getParam(request.args, 'userId', 'int')
     flow = Utils.getParam(request.args, 'flow', default='borrow')
 
     if not query:
         return jsonify(response), webapp.config['HTTP_STATUS_CODE_DATA_MISSING']
-
+    
     search = Search(query, user_id, flow)
     if search_type == 'free':
         results = search.basicSearch(page=page-1)
