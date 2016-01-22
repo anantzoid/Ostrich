@@ -26,10 +26,9 @@ class Mailer():
         email.body = mail_obj['body']
         mail.send(email)
         return True
-        
 
     @staticmethod
-    def welcomeMailer(user):
+    def getUserName(user):
         if user.name:
             name = user.name.split(" ")[0]
             if len(name) <=3:
@@ -37,10 +36,25 @@ class Mailer():
         else:
             name = 'there'
         name = name.capitalize()
+        return name
 
+
+    @staticmethod
+    def welcomeMailer(user):
+        name = Mailer.getUserName(user)
         email = Message('Welcome to Ostrich!',
                     recipients=[user.email])
         email.html = render_template('mailers/inlined/welcome.html', name=name)
+        thr = Thread(target=Mailer.send_async_mail, args=[webapp, email])
+        thr.start()
+        return True
+
+    @staticmethod
+    def thankyou(user):
+        name = Mailer.getUserName(user)
+        email = Message('Thank you for offering your book.',
+                    recipients=[user.email])
+        email.html = render_template('mailers/inlined/thank_you.html', name=name)
         thr = Thread(target=Mailer.send_async_mail, args=[webapp, email])
         thr.start()
         return True

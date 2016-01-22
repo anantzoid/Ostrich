@@ -1,6 +1,7 @@
 from gcm import GCM
 from app import webapp
 from app import mysql 
+import json
 
 class Notifications():
     def __init__(self, gcm_id):
@@ -26,8 +27,9 @@ class Notifications():
                 "search_intention": flow
                 }
         response = self.sendNotification(data)
-        conn = mysql.connect()
-        cursor = conn.cursor()
-        cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s"""
-                ,(response, fail_id))
-        conn.commit()
+        if 'success' in response:
+            conn = mysql.connect()
+            cursor = conn.cursor()
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s"""
+                    ,(json.dumps(response['success']), fail_id))
+            conn.commit()

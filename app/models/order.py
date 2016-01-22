@@ -357,7 +357,7 @@ class Order():
         status_info = {
                 1: {
                     "Status": "Order placed",
-                    "Description": "Your order has been confirmed"
+                    "Description": "Your order has been confirmed. The book will reach you soon."
                     },
                 2: {
                     "Status": "Picked up",
@@ -365,18 +365,18 @@ class Order():
                     },
                 3: {
                     "Status": "Out for Delivery",
-                    "Description": "Your order is on the way"
+                    "Description": "Your book is on the way"
                     },
                 4: {
-                    "Status": "Delivered",
-                    "Description": "Your order has been delivered"
+                    "Status": "Your book has been Delivered",
+                    "Description": "Enjoy reading your book and don't forget to rate it."
                     },
                 5: {
                     "Status": "Out for pickup",
                     "Description": "We're on our way to pickup the book"
                     },
                 6: {
-                    "Status": "Picked up",
+                    "Status": "We've picked up the book",
                     "Description": "Thank you for ordering with us. We hope you enjoyed your book."
                     },
                 7: {

@@ -15,7 +15,8 @@ class Admin():
             i.item_id, i.item_name, i.author,
             l.status_id, l.pickup_date, l.pickup_slot,
             l.delivery_date, l.delivery_slot, l.order_placed,
-            iv.inventory_id, u.email
+            iv.inventory_id, u.email,
+            ua.description, ua.locality, ua.landmark
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
@@ -33,7 +34,12 @@ class Admin():
                     'phone': row[2],
                     'email': row[14]
                     }
-            rental['address'] = {'address': row[3]}
+            rental['address'] = {
+                    'address': row[3],
+                    'description': row[15],
+                    'locality': row[16],
+                    'landmark': row[17]
+                    }
             rental['item'] = {
                     'item_id': row[4],
                     'item_name': row[5],
@@ -71,7 +77,6 @@ class Admin():
             user = User(order_info['user_id'])
             order_info['user'] = user.getObj()
             order_info['address'] = user.getAddressInfo(order_info['address_id']) 
-
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
 

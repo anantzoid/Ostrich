@@ -6,7 +6,7 @@ manager = Manager(webapp)
 @manager.command
 def hello():
     from app.models import User,Mailer
-    Mailer.welcomeMailer(User(1))
+    Mailer.thankyou(User(1))
 
 @manager.command
 def indexer():

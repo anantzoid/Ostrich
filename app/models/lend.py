@@ -118,26 +118,32 @@ class Lend():
         conn.commit()
 
         if status_id == 3:
+            cursor.execute("""SELECT l.inventory_id, l.user_id, iv.item_id 
+                FROM lenders l 
+                INNER JOIN inventory iv ON iv.inventory_id = l.inventory_id
+                WHERE l.lender_id = %s""",(lender_id,))
+            data = cursor.fetchone()
+
             cursor.execute("""UPDATE inventory SET in_stock = 1, fetched = 1 WHERE
-            inventory_id = (SELECT inventory_id FROM lenders WHERE lender_id = %d)"""
-            %(lender_id))
+            inventory_id = %s""",(data[0],))
             conn.commit()
 
+            Indexer().indexItems(query_condition=' AND i.item_id='+str(data[2]))
+
+            # Mailer
+            Mailer.thankyou(User(data[1]))
+
+        '''
+        NOTE Later
         if status_id == 5:
             cursor.execute("""UPDATE inventory SET in_stock = 0 WHERE
             inventory_id = (SELECT inventory_id FROM lenders WHERE lender_id = %d)"""
             %(lender_id))
             conn.commit()
-        
-        if status_id in [2,5,6]:
+        '''
+
+        if status_id in [1,2,3]:
             Lend.sendLendNotification(lender_id, status_id)
-        if status_id in [3,5]:
-            cursor.execute("""SELECT iv.item_id FROM
-                lenders l INNER JOIN inventory iv ON l.inventory_id=iv.inventory_id
-                WHERE l.lender_id = %s""",(lender_id,))
-            item_id = cursor.fetchone()
-            if item_id and item_id[0]:
-                Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id[0]))
         return True
 
     @staticmethod
@@ -173,9 +179,10 @@ class Lend():
 
     @staticmethod
     def getLendStatusDetails(status_id):
+        # NOTE 5,6 are not used now as book is not returned
         status_info = {
                 1: {
-                    "Status": "Order Placed",
+                    "Status": "Request Received",
                     "Description": "Your request has been received successfully"
                     },
                 2: {
@@ -183,8 +190,8 @@ class Lend():
                     "Description": "We're on our way to pickup the book"
                     },
                 3: {
-                    "Status": "Picked up",
-                    "Description": "Order has been picked up from the user"
+                    "Status": "Thanks for sharing your book",
+                    "Description": "Your book can mean a world to someone"
                     },
                 4: {
                     "Status": "Delivered",
@@ -197,7 +204,6 @@ class Lend():
                 6: {
                     "Status": "Returned",
                     "Description": "Thanks for sharing your book",
-                    "expanded_text": "Your book can mean a world to someone"
                     }
                 }
 
