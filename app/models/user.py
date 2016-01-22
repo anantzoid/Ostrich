@@ -3,26 +3,9 @@ from datetime import datetime
 from app import webapp
 from app.models import *
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 import json
 import pytz
-
-available_areas = {"indiranagar":6,
-                    "indira nagar":6,
-                    "koramangala":6,
-                    "domlur":6,
-                    "kodihalli":6,
-                    "binnamangala":6,
-                    "doopanahalli":6,
-                    "adugodi":6,
-                    "embassy golflinks":6,
-                    "embassy golf links":6,
-                    "challaghatta":6,
-                    "hsr": "1 day",
-                    "btm": "1 day",
-                    "madiwala": "1 day",
-                    "jakkasandra": "2 day",
-                    "victoria road": "1 day"}
-
 
 class User(Prototype):
     def __init__(self, user_id, login_type='user_id'):
@@ -121,7 +104,6 @@ class User(Prototype):
                 }
 
         Notifications(user.gcm_id).sendNotification(notification_data)
-
         return {'user': user.getObj()}
 
 
@@ -167,7 +149,6 @@ class User(Prototype):
 
 
     def editDetails(self, user_data):
-    
         username = user_data['username'] if 'username' in user_data else self.username
         name = user_data['name'] if 'name' in user_data else self.name
         phone = user_data['phone'] if 'phone' in user_data else self.phone
@@ -207,18 +188,53 @@ class User(Prototype):
                     self.addAddress(address, mode='insert')
         return address_valid
 
+    def getOrderSlotsNew(self):
+        from app.models import Order
+        time_slots = {}
+        address = self.address if self.address else []
+        available_areas = Order.getAreasForOrder()
+        for i,address in enumerate(address):
+            selected_area = {}
+            self.address[i]['time_slot'] = []
+
+            for area in available_areas:
+                if area in address['locality'].lower():
+                    selected_area = available_areas[area]
+                    break
+
+            if selected_area:
+                if selected_area['area_id'] not in time_slots:
+                    if selected_area['hours']:
+                        time_slots[selected_area['area_id']] = Order.getTimeSlotsForOrder(selected_area['hours'])
+                    elif selected_area['day']:
+                        dates = []
+                        prev_date = datetime.now(pytz.timezone('Asia/Calcutta'))
+                        while len(dates) <= 4:
+                            prev_date = prev_date + timedelta(days=selected_area['day'])
+                            dates.append(prev_date.strftime("%A"))
+                        
+                        if selected_area['day'] == 1:
+                            dates[0] = "Tommorrow"
+
+                        time_slots[selected_area['area_id']] = []
+                        for date in dates:
+                            ts = Order.getTimeSlot(selected_area['slot'])
+                            ts['formatted'] = date+' '+Utils.cleanTimeSlot(ts)
+                            time_slots[selected_area['area_id']].append(ts)
+
+                self.address[i]['time_slot'] = time_slots[selected_area['area_id']]
+         
 
     def getOrderSlots(self):
         from app.models import Order
         time_slots = {}
         address = self.address if self.address else []
+        available_areas = Order.getAreasForOrder()
         for i,address in enumerate(address):
             interval = 0
 
-            # Backsupport
-            local_address = address['address'] if ('address' in address and address['address']) else address['locality']
             for area in available_areas.keys():
-                if area in local_address.lower():
+                if area in address['locality'].lower():
                     interval = available_areas[area]
                     break
             if interval:
@@ -234,15 +250,14 @@ class User(Prototype):
 
     @staticmethod
     def validateLocality(locality):
-        for area in available_areas.keys():
+        from app.models import Order
+        available_areas = Order.getAreasForOrder()
+        response =  {"is_valid": 1, "delivery_message":"Delivery Available"}
+        for area in available_areas:
             if area in locality.lower():
-                response =  {"is_valid": 1, "delivery_message":"Delivery Available", "validated_locality":area}
-                if area == "indira nagar":
-                    response["validated_locality"] = "indiranagar"
-                elif area == "kodihalli":
-                    response["validated_locality"] = "indiranagar"
-                elif area == "adugodi":
-                    response["validated_locality"] = "koramangala"
+                response["validated_locality"] = area
+                if available_areas[area]['alias_id']:
+                    response["validated_locality"] = [_ for _ in available_areas if available_areas[_]['area_id'] == available_areas[area]['alias_id']][0]
                 return response
 
         response =  {"is_valid": 0, "delivery_message":"Out of Delivery Area", "validated_locality":""}
