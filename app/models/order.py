@@ -342,6 +342,18 @@ class Order():
             return False
 
     @staticmethod
+    def getAreasForOrder():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM areas WHERE active=1""")
+        num_areas = cursor.rowcount
+        
+        areas = {}
+        for area in range(num_areas):
+            area_data = Utils.fetchOneAssoc(cursor)
+            areas[area_data['name']] = area_data
+        return areas
+
+    @staticmethod
     def getTimeSlotsForOrder(interval=6):
         next_timeslotid = Utils.getDefaultTimeSlot(interval)
         all_timeslots = Order.getTimeSlot(active=1)

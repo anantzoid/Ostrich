@@ -37,7 +37,7 @@ def fetchUser():
 
     user = User(social_id, source) 
     if user.getObj() is not None:
-        user.getOrderSlots()
+        user.getOrderSlotsNew()
         return jsonify(user.getObj())
     else:
         return Utils.errorResponse(response)
