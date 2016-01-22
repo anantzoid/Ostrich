@@ -194,7 +194,7 @@ class User(Prototype):
         address_cusor.execute("""SELECT * FROM user_addresses
                 WHERE address_id = %d""" %(address_id))
         address_obj = Utils.fetchOneAssoc(address_cusor)
-        return address_obj
+        return address_obj if address_obj else {}
 
 
     def validateUserAddress(self, address_obj):

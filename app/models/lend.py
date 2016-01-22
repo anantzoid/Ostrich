@@ -130,8 +130,9 @@ class Lend():
 
             Indexer().indexItems(query_condition=' AND i.item_id='+str(data[2]))
 
+            user = User(data[1])
             # Mailer
-            Mailer.thankyou(User(data[1]))
+            Mailer.thankyou(user)
 
         '''
         NOTE Later
@@ -143,7 +144,7 @@ class Lend():
         '''
 
         if status_id in [1,2,3]:
-            Lend.sendLendNotification(lender_id, status_id)
+            Lend.sendLendNotification(lender_id, status_id, user)
         return True
 
     @staticmethod
