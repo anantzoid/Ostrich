@@ -214,6 +214,7 @@ class User(Prototype):
         address = self.address if self.address else []
         for i,address in enumerate(address):
             interval = 0
+            self.address[i]['time_slots'] = []
 
             # Backsupport
             local_address = address['address'] if ('address' in address and address['address']) else address['locality']
