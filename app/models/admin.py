@@ -1,4 +1,5 @@
 from app import mysql
+from app import webapp
 from app.models import *
 from app.scripts import Indexer
 import urlparse
@@ -8,6 +9,7 @@ import re
 import os
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
+from pymongo import MongoClient
 
 class Admin():
     @staticmethod
@@ -250,4 +252,12 @@ class Admin():
             conn.commit()
 
         Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id))
+    
+        client =  MongoClient(webapp.config['MONGO_DB'])
+        db = client.ostrich
+        final_data = data['goodreads']
+        final_data.update(data['amazon'])
+        final_data['_id'] = int(item_id)
+        db.items.insert_one(final_data)
+
         return True
