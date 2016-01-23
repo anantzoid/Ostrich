@@ -37,7 +37,8 @@ def searchString():
     elif search_type == 'custom':
         results = search.customQuery()
         return results
-
+    #log
+    Search.logSearch({_:request.args.get(_) for _ in request.args})
     return jsonify(results)
 
 @webapp.route('/getCategories')

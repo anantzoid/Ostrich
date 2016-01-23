@@ -50,6 +50,7 @@ class Mailer():
         return True
 
     @staticmethod
+    #TODO substitue @sync
     def thankyou(user):
         name = Mailer.getUserName(user)
         email = Message('Thank you for offering your book.',
