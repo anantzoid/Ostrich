@@ -38,7 +38,9 @@ def searchString():
         results = search.customQuery()
         return results
     #log
-    Search.logSearch({_:request.args.get(_) for _ in request.args})
+    if user_id not in Utils.getAdmins():
+        Search.logSearch({_:request.args.get(_) for _ in request.args})
+
     return jsonify(results)
 
 @webapp.route('/getCategories')
