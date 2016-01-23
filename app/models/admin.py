@@ -1,6 +1,13 @@
 from app import mysql
 from app.models import *
+from app.scripts import Indexer
+import urlparse
+import requests
 import time
+import re
+import os
+from boto.s3.connection import S3Connection
+from boto.s3.key import Key
 
 class Admin():
     @staticmethod
@@ -173,3 +180,74 @@ class Admin():
         conn.commit() 
         return True            
 
+    @staticmethod
+    def insertItem(data):        
+        conn = mysql.connect()
+        cursor = conn.cursor()
+    
+        price = data['amazon']['offer_price'] if data['amazon']['offer_price'] else data['amazon']['list_price']
+        price = re.sub('\..*$', '', price)
+
+        cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
+        num_ratings, num_reviews, language) VALUES
+        (%s,%s,%s,%s,%s,%s,%s)""",
+        (data['amazon']['title'],
+        price,
+        data['goodreads']['author'],
+        data['goodreads']['avg_rating'],
+        data['goodreads']['num_rating'],
+        data['goodreads']['num_review'],
+        data['goodreads']['language']
+        ))
+        conn.commit()
+        item_id = cursor.lastrowid
+
+        cursor.execute("""INSERT INTO item_isbn (item_id, isbn_10,isbn_13, 
+        num_pages, binding_type) VALUES 
+        (%s,%s,%s,%s,%s)""",
+        (item_id,
+            data['amazon']['isbn10'],
+            data['amazon']['isbn13'],
+            data['goodreads']['num_page'],
+            data['goodreads']['bind_type']))
+        conn.commit()
+
+        for isbn in data['goodreads']['isbns']:
+            cursor.execute("""INSERT INTO item_isbn (item_id, isbn_13) VALUES (%s, %s)""",
+                (item_id, isbn))
+            conn.commit()
+
+        global_categories = {}
+        for genres in data['goodreads']['genres']:
+            for genre in genres[0].split(","):
+                if genre not in global_categories:
+                    cursor.execute("""SELECT category_id FROM categories WHERE category_name = %s""",(genre,))
+                    cat_id = cursor.fetchone()
+                    if cat_id:
+                        global_categories[genre] = cat_id[0]
+                        cursor.execute("""INSERT INTO items_categories (item_id, category_id)
+                        VALUES (%s, %s)""",(item_id, global_categories[genre]))
+                conn.commit()
+
+        s3conn = S3Connection('AKIAIN4EU63OJMW63H6A', 'k97pZ8rmwkqLdeW+L4QOIKrCDIg3YR/uY/BifLU3')
+        bucket = s3conn.get_bucket('ostrich-catalog')
+        basepath = 'images/'
+
+        url = data['amazon']['img_small']
+        parsed = urlparse.urlparse(url)
+        ext =  os.path.splitext(parsed.path)[1]
+        path = basepath + str(item_id) + ext
+
+        r = requests.get(url)
+        if r.status_code >= 200 and r.status_code <300:
+            content = r.content
+            key = Key(bucket)
+            key.key = path
+            key.set_contents_from_string(content)
+
+            cursor.execute("""UPDATE items SET img_small = %s WHERE item_id = %s""",
+                    (path, item_id))
+            conn.commit()
+
+        Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id))
+        return True

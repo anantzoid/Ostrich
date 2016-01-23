@@ -178,6 +178,7 @@ class GoodreadsCrawler():
         alt_title = ''
         series = ''
         awards = ''
+        isbns = []
         other_meta_key = soup.findAll("div",{"class":"infoBoxRowTitle"})
         other_meta_value = soup.findAll("div",{"class":"infoBoxRowItem"})
         for i, key in enumerate(other_meta_key):
@@ -197,7 +198,9 @@ class GoodreadsCrawler():
                 series  = other_meta_value[i].text.replace('\n','').strip()
             elif key.text == "Literary Awards":
                 awards  = other_meta_value[i].text.replace('\n','').strip()
-            
+            elif "Other Editions" in key.text:
+                anchor = key.find('a')
+                isbns = self.getOtherISBNs(anchor.attrs['href'])
     
         # Book Binding
         bind_type = soup.find("span", {"itemprop":"bookFormatType"})    
@@ -253,6 +256,27 @@ class GoodreadsCrawler():
             'alt_title':  alt_title,
             'series':     series,
             'awards':     awards,
-            'genres':     genres
+            'genres':     genres,
+            'isbns':     isbns
         }
         return data
+
+    def getOtherISBNs(self, url):
+        url = self.base_url+url
+        resp = requests.get(url)
+        if resp.status_code != 200:
+            return []
+        sub_soup = BeautifulSoup(resp.text, "html.parser")
+        details = sub_soup.findAll('div', {'class':'moreDetails'})
+        isbns = []
+        for detail in details:
+            if len(isbns) <= 5:
+                values = detail.findAll('div', {'class': 'dataValue'})
+                for value in values:
+                    if 'ISBN13' in value.text:
+                        find_isbn = re.search('\(ISBN13: (.*)\)', value.text) 
+                        if find_isbn:
+                            isbns.append(find_isbn.group(1))
+            else:
+                break
+        return isbns

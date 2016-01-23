@@ -6,9 +6,9 @@ manager = Manager(webapp)
 @manager.command
 def hello():
     from app.models import AmazonCrawler, GoodreadsCrawler
-    data = AmazonCrawler(url='http://www.amazon.in/Our-Impossible-Love-Durjoy-Datta/dp/0143424610/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=1453484827&sr=1-1').crawlPage()
+    data = AmazonCrawler(url='http://www.amazon.in/dp/0670921602').crawlPage()
     print data
-    gr_data = GoodreadsCrawler(isbn=data['isbn13'],title='Our Impossible Love').startCrawl()
+    gr_data = GoodreadsCrawler(isbn=data['isbn13']).startCrawl()
     if 'status' in gr_data and gr_data['status'] == 'error':
         gr_data = GoodreadsCrawler(isbn=data['isbn10']).startCrawl()
     print gr_data

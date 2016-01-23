@@ -84,10 +84,11 @@ def crawlItem():
     amzn_url = Utils.getParam(request.args, 'url')
     book_data = {'amazon': {}, 'goodreads': {}}
     book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
-    book_data['goodreads'] = GoodreadsCrawler(isbn=data['isbn13']).startCrawl()
-    if 'status' in gr_data and gr_data['status'] == 'error':
-        book_data['goodreads'] = GoodreadsCrawler(isbn=data['isbn10']).startCrawl()
-        if 'status' in gr_data and gr_data['status'] == 'error':
-            book_data['goodreads'] = GoodreadsCrawler(title=data['title']).startCrawl()
-
+    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn13']).startCrawl()
+    if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
+        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn10']).startCrawl()
+        if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
+            book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
+    
+    Admin.insertItem(book_data)
     return jsonify(book_data) 
