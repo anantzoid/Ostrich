@@ -214,7 +214,7 @@ class User(Prototype):
                             dates.append(prev_date.strftime("%A"))
                         
                         if selected_area['day'] == 1:
-                            dates[0] = "Tommorrow"
+                            dates[0] = "Tomorrow"
 
                         time_slots[selected_area['area_id']] = []
                         for date in dates:
