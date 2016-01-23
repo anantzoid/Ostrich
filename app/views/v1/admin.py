@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Admin, Item, Order, Utils, Lend
+from app.models import *
 from flask import request
 from flask.ext.jsonpify import jsonify
 
@@ -79,5 +79,15 @@ def updateOrderStatus():
             
     return Utils.errorResponse(response)
 
+@webapp.route('/crawl')
+def crawlItem():
+    amzn_url = Utils.getParam(request.args, 'url')
+    book_data = {'amazon': {}, 'goodreads': {}}
+    book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
+    book_data['goodreads'] = GoodreadsCrawler(isbn=data['isbn13']).startCrawl()
+    if 'status' in gr_data and gr_data['status'] == 'error':
+        book_data['goodreads'] = GoodreadsCrawler(isbn=data['isbn10']).startCrawl()
+        if 'status' in gr_data and gr_data['status'] == 'error':
+            book_data['goodreads'] = GoodreadsCrawler(title=data['title']).startCrawl()
 
-
+    return jsonify(book_data) 
