@@ -5,8 +5,13 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.models import User,Mailer
-    Mailer.thankyou(User(1))
+    from app.models import AmazonCrawler, GoodreadsCrawler
+    data = AmazonCrawler(url='http://www.amazon.in/Our-Impossible-Love-Durjoy-Datta/dp/0143424610/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=1453484827&sr=1-1').crawlPage()
+    print data
+    gr_data = GoodreadsCrawler(isbn=data['isbn13'],title='Our Impossible Love').startCrawl()
+    if 'status' in gr_data and gr_data['status'] == 'error':
+        gr_data = GoodreadsCrawler(isbn=data['isbn10']).startCrawl()
+    print gr_data
 
 @manager.command
 def indexer():

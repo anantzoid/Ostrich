@@ -11,3 +11,4 @@ from order import *
 from lend import *
 from search import *
 from admin import *
+from crawler import *
