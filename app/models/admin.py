@@ -17,7 +17,7 @@ class Admin():
         rental_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'l.status_id >= 4 AND l.status_id < 6 AND DATE(l.delivery_date)='+date if returns else 'l.status_id < 4'
+        query_condition = 'l.status_id >= 4 AND l.status_id < 6 ORDER BY l.delivery_date ASC' if returns else 'l.status_id < 4'
         cursor.execute("""SELECT l.lender_id,
             u.name, u.phone,
             ua.address,
@@ -74,7 +74,7 @@ class Admin():
         order_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'order_status >= 4 AND order_status < 7 AND DATE(order_return)='+date if pickups else 'order_status < 4'
+        query_condition = 'order_status >= 4 AND order_status < 7 ORDER BY order_return ASC' if pickups else 'order_status < 4'
         cursor.execute("""SELECT order_id FROM orders WHERE """+query_condition)
         order_ids = cursor.fetchall()
         all_time_slots = Order.getTimeSlot()

@@ -37,6 +37,9 @@ def searchString():
     elif search_type == 'custom':
         results = search.customQuery()
         return results
+    #log
+    if user_id not in Utils.getAdmins():
+        Search.logSearch({_:request.args.get(_) for _ in request.args})
 
     return jsonify(results)
 

@@ -13,6 +13,10 @@ Generic helpers
 '''
 class Utils():
     @staticmethod
+    def getAdmins():
+        return [1,5,6,8,9,27,28]
+
+    @staticmethod
     def fetchOneAssoc(cursor):
         data = cursor.fetchone()
         if data == None :
@@ -195,13 +199,12 @@ class Utils():
                 "notification_id":200,
                 "title": "ALERT!! "+o_type+" has been placed",
                 }
-        admins = [1,5,6,8,9,27,28]
+        admins = Utils.getAdmins()
         if user_id in admins:
             return
         for u_id in admins:
             user = User(u_id,'user_id')
             Notifications(user.gcm_id).sendNotification(notification_data)
         return True
-
 
 

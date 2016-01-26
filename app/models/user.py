@@ -175,7 +175,7 @@ class User(Prototype):
         address_cusor.execute("""SELECT * FROM user_addresses
                 WHERE address_id = %d""" %(address_id))
         address_obj = Utils.fetchOneAssoc(address_cusor)
-        return address_obj
+        return address_obj if address_obj else {}
 
 
     def validateUserAddress(self, address_obj):
@@ -185,7 +185,7 @@ class User(Prototype):
                 address_valid = True
                 # Backsupport
                 if 'address' in address_obj and address['address'] != address_obj['address']:
-                    self.addAddress(address, mode='insert')
+                    self.addAddress(json.dumps(address), mode='insert')
         return address_valid
 
     def getOrderSlotsNew(self):
@@ -214,7 +214,7 @@ class User(Prototype):
                             dates.append(prev_date.strftime("%A"))
                         
                         if selected_area['day'] == 1:
-                            dates[0] = "Tommorrow"
+                            dates[0] = "Tomorrow"
 
                         time_slots[selected_area['area_id']] = []
                         for date in dates:
@@ -232,6 +232,7 @@ class User(Prototype):
         available_areas = Order.getAreasForOrder()
         for i,address in enumerate(address):
             interval = 0
+            self.address[i]['time_slots'] = []
 
             for area in available_areas.keys():
                 if area in address['locality'].lower():

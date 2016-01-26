@@ -1,7 +1,10 @@
 from app import mysql
 from app import webapp
 from app.models import Item, Mailer
+from app.decorators import async
 from elasticsearch import Elasticsearch
+from pymongo import MongoClient
+from datetime import datetime
 import requests
 import string
 
@@ -150,9 +153,16 @@ class Search():
                     most_searched.append(doc['_source'])
         return most_searched
 
+    @staticmethod
+    @async
+    def  logSearch(data):
+        data['timestamp'] = str(datetime.now()).split(".")[0] 
+        client = MongoClient(webapp.config['MONGO_DB'])
+        db = client.ostrich
+        db.search_log.insert_one(data)
 
     '''
-        MySQL searches
+        Legacy MySQL searches
     '''
     @staticmethod
     def searchQuery(q, page=1):
