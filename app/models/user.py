@@ -185,7 +185,7 @@ class User(Prototype):
                 address_valid = True
                 # Backsupport
                 if 'address' in address_obj and address['address'] != address_obj['address']:
-                    self.addAddress(address, mode='insert')
+                    self.addAddress(json.dumps(address), mode='insert')
         return address_valid
 
     def getOrderSlotsNew(self):
