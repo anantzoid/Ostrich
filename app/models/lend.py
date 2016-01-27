@@ -41,6 +41,8 @@ class Lend():
         user = User(lend_data['user_id'], 'user_id')
         if not user.validateUserAddress(lend_data['address']):
             return {'message': 'Address not associated'}
+        if not Lend.isUserValidForLending(lend_data):
+            return {'message': 'You cannot offer the borrowed book'}
 
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()
@@ -62,8 +64,6 @@ class Lend():
             Lend.rollbackLend(lend_data['inventory_id'])
             return {}
 
-        # Give 50 credits to lender irrepective of days lent
-        user = User(lend_data['user_id'], 'user_id') 
         Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
                 lend_data['inventory_id'], webapp.config['DEFAULT_RENTAL_CREDIT']) 
        
@@ -71,6 +71,17 @@ class Lend():
         Utils.notifyAdmin(user.user_id, 'Lend')
         return {'inventory_id': lend_data['inventory_id'], 'lender_id':
                 lend_data['lender_id']}
+
+    @staticmethod
+    def isUserValidForLending(lend_data):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT COUNT (*) FROM orders WHERE item_id = %s AND
+            user_id = %s AND order_status < 7""", 
+            (lend_data['item_id'], lend_data['user_id']))  
+        exists = cursor.fetch_one()[0]
+        if exists:
+            return False
+        return True
 
     @staticmethod    
     def addLender(lend_data):
@@ -213,6 +224,7 @@ class Lend():
         else: 
             return False
 
+    
 
     @staticmethod
     def deleteRental(lender_id):
