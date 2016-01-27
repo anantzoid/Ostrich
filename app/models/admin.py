@@ -213,7 +213,7 @@ class Admin():
             data['goodreads']['num_page'],
             data['goodreads']['bind_type']))
         conn.commit()
-
+        
         for isbn in data['goodreads']['isbns']:
             cursor.execute("""INSERT INTO item_isbn (item_id, isbn_13) VALUES (%s, %s)""",
                 (item_id, isbn))

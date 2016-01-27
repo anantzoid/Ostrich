@@ -50,14 +50,14 @@ class AmazonCrawler():
 
         data = {
             'title': title,
-            'isbn13': isbn13,
-            'isbn10': isbn10,
+            'isbn_13': isbn13,
+            'isbn_10': isbn10,
             'offer_price': offer_price,
             'list_price': striked_price,
             'img_small': img_small,
             'img_large': img_large,
             'rating': rating,
-            'num_ratings': num_reviews
+            'amzn_num_ratings': num_reviews
         }
         return data
 
@@ -239,12 +239,14 @@ class GoodreadsCrawler():
         pub_details = handleUnicode(pub_details)
         series = handleUnicode(series)
         awards = handleUnicode(awards)
+        if isbn_13 in isbns:
+            isbns.remove(isbn_13)
 
         data = {         
             'title': title,
             'author': author,
             'avg_rating': avg_rating,
-            'num_rating': num_rating,
+            'num_ratings': num_rating,
             'num_review': num_review,
             'isbn_10':    isbn_10,
             'isbn_13':    isbn_13,

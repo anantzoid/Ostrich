@@ -14,7 +14,7 @@ def startSession():
         'most_searched': Search([]).mostSearched(),
         'categories': Search.getSearchCategories(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
-        'reading_multiplier': 1,
+        'reading_multiplier': 1.43,
         'time_slots': Order.getTimeSlotsForOrder(),
         'user_model': None
     }
