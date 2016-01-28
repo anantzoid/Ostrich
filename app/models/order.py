@@ -198,18 +198,28 @@ class Order():
             WHERE o.user_id = %s AND  oh.item_id = %s AND o.order_status < 5""",
             (user.user_id, order_data['item_id']))
         if cursor.fetchone()[0]:
-            return {'message': 'Already ordered'}
+            return ({
+                'title': 'Book already ordered',
+                'message': 'It seems you already have this book with you right now, provided by Ostrich. You can check it in "My Orders" tab.'}, 
+                'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # User can only own 2 book @ a time
         if webapp.config['USER_BOOKS_LIMIT']:
             user_orders = user.getAllOrders()
             if (len(user_orders['ordered']) + len(user_orders['reading'])) >= 2:
+                #TODO enable this
                 #Mailer.excessOrder(user.user_id, order_data['item_id'])
-                return {'message': 'Already rented maximum books. We\'ll contact you shortly.'}
+                return ({
+                    'title': 'Already rented maximum books',
+                    'message': 'Currently, we have a certain limit to the number of books that the user can have at one time. We\'ll contact you shortly to clarify your requirements.'}, 
+                    'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Wallet validity 
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
-            return {'message': 'Not enough balance in wallet'}
+            return ({
+                'title': 'Not enough credits in account',
+                'message': 'You can redeem your credits by referring the app to your friends directly, or sharing your referral code with them.'}, 
+                'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Since Address is editable before placing order
         if not user.validateUserAddress(order_data['address']):

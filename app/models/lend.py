@@ -42,7 +42,10 @@ class Lend():
         if not user.validateUserAddress(lend_data['address']):
             return {'message': 'Address not associated'}
         if not Lend.isUserValidForLending(lend_data):
-            return {'message': 'You cannot offer the borrowed book'}
+            return ({
+                'title': 'You cannot offer the borrowed book',
+                'message': 'It seems you have reading this book right now, provided by Ostrich. You can\'t offer this book. Please try offering some other book'},
+                'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         conn = mysql.connect()
         set_lend_cursor = conn.cursor()

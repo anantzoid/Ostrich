@@ -34,9 +34,11 @@ def OrderItem():
         order_placed['status'] = 'True'
         return jsonify(order_placed)
     else:
-        order_placed['status'] = 'False'
-        return Utils.errorResponse(order_placed)
-
+        if isinstance(order_placed, dict):
+            return Utils.errorResponse(order_placed)
+        else:
+            return Utils.errorResponse(order_placed[0], order_placed[1])
+            
 
 '''
     Put an item on rent
@@ -63,7 +65,10 @@ def lendItem():
     if 'inventory_id' in lend_info and lend_info['inventory_id']:
         return jsonify(lend_info)
     else:
-        return Utils.errorResponse(lend_info)
+        if isinstance(order_placed, dict):
+            return Utils.errorResponse(lend_info)
+        else:
+            return Utils.errorResponse(lend_info[0], lend_info[1])
 
 '''
     Get the status of a current order

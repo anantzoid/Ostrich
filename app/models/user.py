@@ -73,7 +73,7 @@ class User(Prototype):
 
             if user_exists_id and len(user_exists_id):
                 user_exists = User(int(user_exists_id[0]), 'user_id')
-                return {'message': 'Email exists', 'user': user_exists.getObj()} 
+                return {'message': 'Email already exists', 'user': user_exists.getObj()} 
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("INSERT INTO users (username, password, name, \

@@ -189,8 +189,8 @@ class Utils():
         return format_start_time+' - '+format_end_time
 
     @staticmethod
-    def errorResponse(response_object, error_code=webapp.config['HTTP_STATUS_CODE_ERROR']):
-       return make_response(jsonify(response_object), error_code) 
+    def errorResponse(response_object, error_code='HTTP_STATUS_CODE_SERVER_ERROR'):
+        return make_response(jsonify(response_object), webapp.config[error_code]) 
 
     @staticmethod
     def notifyAdmin(user_id, o_type):

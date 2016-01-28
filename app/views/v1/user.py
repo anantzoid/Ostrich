@@ -28,12 +28,12 @@ def fetchUser():
     social_id = Utils.getParam(request.form, 'id') 
     if not social_id:
         response['message'] = 'Social ID missing'
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response)
 
     source = Utils.getParam(request.form, 'source') 
     if not source:
         response['message'] = 'Login source missing'
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response)
 
     user = User(social_id, source) 
     if user.getObj() is not None:
