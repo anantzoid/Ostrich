@@ -84,9 +84,9 @@ def crawlItem():
     amzn_url = Utils.getParam(request.args, 'url')
     book_data = {'amazon': {}, 'goodreads': {}}
     book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
-    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn13']).startCrawl()
+    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_13']).startCrawl()
     if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn10']).startCrawl()
+        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
             book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
     

@@ -197,7 +197,7 @@ class Admin():
         price,
         data['goodreads']['author'],
         data['goodreads']['avg_rating'],
-        data['goodreads']['num_rating'],
+        data['goodreads']['num_ratings'],
         data['goodreads']['num_review'],
         data['goodreads']['language']
         ))
@@ -208,8 +208,8 @@ class Admin():
         num_pages, binding_type) VALUES 
         (%s,%s,%s,%s,%s)""",
         (item_id,
-            data['amazon']['isbn10'],
-            data['amazon']['isbn13'],
+            data['amazon']['isbn_10'],
+            data['amazon']['isbn_13'],
             data['goodreads']['num_page'],
             data['goodreads']['bind_type']))
         conn.commit()
