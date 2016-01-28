@@ -233,7 +233,7 @@ class Admin():
 
         s3conn = S3Connection('AKIAIN4EU63OJMW63H6A', 'k97pZ8rmwkqLdeW+L4QOIKrCDIg3YR/uY/BifLU3')
         bucket = s3conn.get_bucket('ostrich-catalog')
-        basepath = 'images/'
+        basepath = webapp.config['S3_IMAGE_BUCKET']
 
         url = data['amazon']['img_small']
         parsed = urlparse.urlparse(url)
