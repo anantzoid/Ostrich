@@ -78,10 +78,12 @@ class Lend():
     @staticmethod
     def isUserValidForLending(lend_data):
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT COUNT (*) FROM orders WHERE item_id = %s AND
-            user_id = %s AND order_status < 7""", 
+        cursor.execute("""SELECT COUNT(*) FROM orders o
+            INNER JOIN order_history oh ON oh.order_id = o.order_id
+            WHERE oh.item_id = %s AND
+            o.user_id = %s AND o.order_status < 7""", 
             (lend_data['item_id'], lend_data['user_id']))  
-        exists = cursor.fetch_one()[0]
+        exists = cursor.fetchone()[0]
         if exists:
             return False
         return True

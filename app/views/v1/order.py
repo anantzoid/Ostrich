@@ -65,7 +65,7 @@ def lendItem():
     if 'inventory_id' in lend_info and lend_info['inventory_id']:
         return jsonify(lend_info)
     else:
-        if isinstance(order_placed, dict):
+        if isinstance(lend_info, dict):
             return Utils.errorResponse(lend_info)
         else:
             return Utils.errorResponse(lend_info[0], lend_info[1])
