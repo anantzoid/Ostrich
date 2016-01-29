@@ -193,11 +193,12 @@ class Utils():
         return make_response(jsonify(response_object), webapp.config[error_code]) 
 
     @staticmethod
-    def notifyAdmin(user_id, o_type):
+    def notifyAdmin(user_id, message):
         from app.models import User, Notifications
+        notif_message = "ALERT!! "+message+" has been placed" if message in ["Orders", "Lend"] else message
         notification_data = {
                 "notification_id":200,
-                "title": "ALERT!! "+o_type+" has been placed",
+                "title": notif_message
                 }
         admins = Utils.getAdmins()
         if user_id in admins:
