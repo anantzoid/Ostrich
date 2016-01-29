@@ -3,6 +3,7 @@ from app import webapp
 from app.models import *
 from app.scripts import Indexer
 from datetime import datetime
+from app.decorators import async
 import json
 
 class Order():
@@ -303,11 +304,19 @@ class Order():
             return False
 
         if 'order_return' in order_data:
+            ''''
             old_order_return = datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
             new_order_return = datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
             diff = new_order_return - old_order_return
-            if diff.days <= 0:
-                return False
+            #if diff.days <= 0:
+            #TODO send notification
+            '''
+
+            if 'extend_charges' not in order_data:
+                order_data['charge'] = order_info['charge']
+            else:
+                order_data['charge'] = order_data['extend_charges']
+                
         else:
             order_data['order_return'] = order_info['order_return']
        
@@ -326,30 +335,31 @@ class Order():
         else:
             order_data['pickup_slot'] = order_info['pickup_slot']
        
-        # NOTE Future generic incomplete code. Remove else part when using this
-        '''
-        edit_query_string = []
-        for data in order_data.keys():
-            if data != 'order_id':
-                format_value = "'%s'" if isinstance(order_data[data], 'str') else "%d"
-                edit_query_string.append(data+" = "+format_value)
-        if not edit_query_string:
-            return False
-        else:
-            edit_query_string ", ".join(edit_query_string)
-        '''
-
         conn = mysql.connect()
         update_cursor = conn.cursor()
-        update_cursor.execute("""UPDATE orders SET order_return = '%s',
-                pickup_slot = %d WHERE
-                order_id = %d""" %(order_data['order_return'],
-                order_data['pickup_slot'], self.order_id))
+        update_cursor.execute("""UPDATE orders SET order_return = %s,
+                pickup_slot = %s, charge = %s WHERE
+                order_id = %s""", (order_data['order_return'],
+                order_data['pickup_slot'], order_data['charge'], self.order_id))
         conn.commit()
         if update_cursor.rowcount:
-            return True
+            status =  True
         else:
-            return False
+            status =  False
+
+        self.logEditOrderDetails(order_data, order_info)
+        return status
+
+    @async
+    def logEditOrderDetails(self, order_data, order_info):
+        conn = mysql.connect()
+        update_cursor = conn.cursor()
+        for key in ['order_return', 'pickup_slot', 'charge']:
+            if order_data[key] != order_info[key]:
+                update_cursor.execute("""INSERT INTO edit_order_log (order_id, 
+                `key`, old_value, new_value) VALUES (%s, %s, %s, %s)""",
+                (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
+                conn.commit()
 
     @staticmethod
     def getAreasForOrder():
