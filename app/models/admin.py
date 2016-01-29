@@ -260,4 +260,4 @@ class Admin():
         final_data['_id'] = int(item_id)
         db.items.insert_one(final_data)
 
-        return True
+        return final_data

@@ -90,5 +90,9 @@ def crawlItem():
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
             book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
     
-    Admin.insertItem(book_data)
-    return jsonify(book_data) 
+    final_data = Admin.insertItem(book_data)
+    return jsonify(final_data) 
+
+@webapp.route('/getContent')
+def getContent():
+    return jsonify(Search().getContentData())

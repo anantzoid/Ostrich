@@ -5,13 +5,11 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.models import AmazonCrawler, GoodreadsCrawler
-    data = AmazonCrawler(url='http://www.amazon.in/dp/0670921602').crawlPage()
-    print data
-    gr_data = GoodreadsCrawler(isbn=data['isbn13']).startCrawl()
-    if 'status' in gr_data and gr_data['status'] == 'error':
-        gr_data = GoodreadsCrawler(isbn=data['isbn10']).startCrawl()
-    print gr_data
+    from pymongo import MongoClient
+    client = MongoClient(webapp.config['MONGO_DB'])
+    db = client.ostrich
+    print [_ for _ in db.content.find()]
+    return False
 
 @manager.command
 def indexer():
