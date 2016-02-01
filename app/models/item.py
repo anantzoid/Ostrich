@@ -35,11 +35,15 @@ class Item(Prototype):
         else:
             isbn = 'ISBN_13'
         '''
-
+        title = Utils.getParam(request.form, 'title')
+        author = Utils.getParam(request.form, 'author')
+        user_id = Utils.getParam(request.form, 'user_id')
+        query = Utils.getParam(request.form, 'related_search')
+    
         conn = mysql.connect()
         store_request_cursor = conn.cursor()
-        store_request_cursor.execute("""INSERT INTO item_requests (title, author, user_id) VALUES 
-                (%s, %s, %s)""",(title, author, user_id))
+        store_request_cursor.execute("""INSERT INTO item_requests (title, author, user_id, query) VALUES 
+                (%s, %s, %s, %s)""",(title, author, user_id, query))
         conn.commit()
         insert_id = store_request_cursor.lastrowid
         

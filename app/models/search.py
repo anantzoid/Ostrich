@@ -129,7 +129,7 @@ class Search():
         conn.commit()
         return
 
-    def getContentData(self):
+    def getContentData(self, key=None):
         client = MongoClient(webapp.config['MONGO_DB'])
         db = client.ostrich
         refined_content = []
@@ -144,11 +144,13 @@ class Search():
                 content['items'] = item_list
                 content['_id'] = str(content['_id'])
                 refined_content.append(content)
-        return refined_content
+        if not key:
+            return refined_content
+        else:
+            return [_ for _ in refined_content if _['key'] == key][0]
 
 
     def mostRecommended(self):
-        #TODO add more
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
         item_ids = { "ids": self.query }
         reco_list = []

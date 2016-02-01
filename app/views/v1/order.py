@@ -146,10 +146,7 @@ def requestItem():
     #if not(item_name and item_type and item_id):
     #    return Utils.errorResponse({'status': 'False'}, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
-    title = Utils.getParam(request.form, 'title')
-    author = Utils.getParam(request.form, 'author')
-    user_id = Utils.getParam(request.form, 'user_id')
-    Item.storeItemRequest(title, author, user_id)
+    Item.storeItemRequest(request.form)
 
     return jsonify(status='True')
 
