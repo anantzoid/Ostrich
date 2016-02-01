@@ -311,15 +311,14 @@ class Order():
             #if diff.days <= 0:
             #TODO send notification
             '''
-
-            if 'extend_charges' not in order_data:
-                order_data['charge'] = order_info['charge']
-            else:
-                order_data['charge'] = order_data['extend_charges']
-                
         else:
             order_data['order_return'] = order_info['order_return']
        
+        if 'extend_charges' not in order_data:
+            order_data['charge'] = order_info['charge']
+        else:
+            order_data['charge'] = order_data['extend_charges']
+
         if 'pickup_slot' in order_data:
             if not order_data['pickup_slot'].isdigit():
                 return False

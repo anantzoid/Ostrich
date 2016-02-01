@@ -46,7 +46,8 @@ class AmazonCrawler():
         num_reviews = response.find("a", {"class": "a-link-emphasis a-nowrap"})
         if num_reviews:
             num_reviews = re.search('\d+',num_reviews.text)
-            num_reviews = num_reviews.group(0)
+            if num_reviews:
+                num_reviews = num_reviews.group(0)
 
         data = {
             'title': title,

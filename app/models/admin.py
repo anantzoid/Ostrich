@@ -10,6 +10,7 @@ import os
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from pymongo import MongoClient
+from bson import ObjectId
 
 class Admin():
     @staticmethod
@@ -261,3 +262,18 @@ class Admin():
         db.items.insert_one(final_data)
 
         return final_data
+
+    @staticmethod
+    def savePanelData(data):
+        client =  MongoClient(webapp.config['MONGO_DB'])
+        db = client.ostrich
+        panel_data = {
+            'title': data['title'],
+            'items': data['items'].split(',') 
+        }
+        print db.content.update_one(
+                {'_id': ObjectId(data['_id'])},
+                {'$set': panel_data}
+                )
+        return True
+

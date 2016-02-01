@@ -14,7 +14,7 @@ Generic helpers
 class Utils():
     @staticmethod
     def getAdmins():
-        return [1,5,6,8,9,27,28]
+        return [1,5,6,8,9,27,28,0]
 
     @staticmethod
     def fetchOneAssoc(cursor):

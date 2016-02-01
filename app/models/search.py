@@ -1,6 +1,6 @@
 from app import mysql
 from app import webapp
-from app.models import Item, Mailer
+from app.models import *
 from app.decorators import async
 from elasticsearch import Elasticsearch
 from pymongo import MongoClient
@@ -133,7 +133,7 @@ class Search():
         client = MongoClient(webapp.config['MONGO_DB'])
         db = client.ostrich
         refined_content = []
-        
+         
         for content in db.content.find():
             docs = self.es.mget(index=self.index, doc_type='item', body={"ids":content['items']})
             item_list = []

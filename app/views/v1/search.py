@@ -1,6 +1,7 @@
 from app import webapp
 from app.models import Search , Utils
 from flask import request, jsonify
+from flask.ext.jsonpify import jsonify as jsonp
 import json
 
 
@@ -41,7 +42,7 @@ def searchString():
     if user_id not in Utils.getAdmins():
         Search.logSearch({_:request.args.get(_) for _ in request.args})
 
-    return jsonify(results)
+    return jsonify(results) if flow != 'admin' else jsonp(results)
 
 @webapp.route('/getCategories')
 def getCategories():

@@ -96,3 +96,8 @@ def crawlItem():
 @webapp.route('/getContent')
 def getContent():
     return jsonify(Search().getContentData())
+
+@webapp.route('/saveContent')
+def saveContent():
+    Admin.savePanelData(request.args)
+    return jsonify(status=True)
