@@ -136,17 +136,20 @@ def editOrderDetails():
 '''
 @webapp.route('/requestItem', methods=['POST'])
 def requestItem():
-    item_type = Utils.getParam(request.form, 'item_type')
+    #item_type = Utils.getParam(request.form, 'item_type')
     
     # ISBN in case of books
     #TODO look into this for genericity
-    item_id = Utils.getParam(request.form, 'item_id')
-    item_name = Utils.getParam(request.form, 'item_name')
+    #item_id = Utils.getParam(request.form, 'item_id')
+    #item_name = Utils.getParam(request.form, 'item_name')
 
-    if not(item_name and item_type and item_id):
-        return Utils.errorResponse({'status': 'False'}, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+    #if not(item_name and item_type and item_id):
+    #    return Utils.errorResponse({'status': 'False'}, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
 
-    Item.storeItemRequest(item_type, item_id, item_name)
+    title = Utils.getParam(request.form, 'title')
+    author = Utils.getParam(request.form, 'author')
+    user_id = Utils.getParam(request.form, 'user_id')
+    Item.storeItemRequest(title, author, user_id)
 
     return jsonify(status='True')
 

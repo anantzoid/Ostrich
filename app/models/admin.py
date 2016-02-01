@@ -191,6 +191,10 @@ class Admin():
         price = data['amazon']['offer_price'] if data['amazon']['offer_price'] else data['amazon']['list_price']
         price = re.sub('\..*$', '', price)
 
+        cursor.execute("""SELECT item_name, author FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
+        match = cursor.fetchone()
+        if match:
+            return False
         cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
         num_ratings, num_reviews, language) VALUES
         (%s,%s,%s,%s,%s,%s,%s)""",
@@ -230,6 +234,7 @@ class Admin():
                         global_categories[genre] = cat_id[0]
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
                         VALUES (%s, %s)""",(item_id, global_categories[genre]))
+                    #TODO insert category if not exists
                 conn.commit()
 
         s3conn = S3Connection('AKIAIN4EU63OJMW63H6A', 'k97pZ8rmwkqLdeW+L4QOIKrCDIg3YR/uY/BifLU3')
