@@ -105,8 +105,10 @@ def addAddress():
 
     address_id = user.addAddress(address)
     if address_id:
+        user = User(user_id, 'user_id')
         user.getOrderSlotsNew()
-        return jsonify(user=user.getObj())
+        address_obj = [_ for _ in user.address if _['address_id'] == address_id[0]][0]
+        return jsonify(address_obj)
     else:
         return Utils.errorResponse(response)
 
