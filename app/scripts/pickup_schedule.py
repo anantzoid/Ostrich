@@ -38,8 +38,8 @@ def pickupSchedule():
         pickups = json.dumps({'orders': order_list}, indent=4)
         # To get the celery app variables
         with webapp.test_request_context():
-            Mailer.genericMailer({'subject':'Pickups for '+date, 'body': pickups})
-        Utils.notifyAdmin(0, "PICKUPS DUE TODAY!!")
+            Mailer.genericMailer({'subject':'Pickups for '+date, 'body': 'Check dashboard for more info'})
+        Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
 
     '''
     # Rentals delivery

@@ -51,12 +51,15 @@ def getCategories():
 
 @webapp.route('/searchFail', methods=['POST'])
 def searchFail():
+    #NOTE deprecated. Done directly from backend
+    return jsonify(status='true')
+    
     user_id = Utils.getParam(request.form, 'user_id', 'int')
     q = Utils.getParam(request.form, 'q')
     q_type = Utils.getParam(request.form,'type')
     flow = Utils.getParam(request.form, 'flow', default='borrow')
     
-    Search(q, user_id, flow).reportFail(q_type)
+    Search(q, user_id, flow).reportFail(True,True,q_type)
     return jsonify(status='true')
 
 @webapp.route('/recommended', methods=['GET'])

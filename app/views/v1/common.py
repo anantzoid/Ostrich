@@ -10,11 +10,11 @@ def startSession():
             return jsonify({'debug':'True', 'ip': '52.74.20.228'})
 
     data = {
-        'recommendations': Search([]).mostRecommended(),
-        'most_searched': Search([]).mostSearched(),
+        'recommendations': Search().getContentData(key="recommendations"),
+        'most_searched': Search().getContentData(key="most_searched"),
         'categories': Search.getSearchCategories(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
-        'reading_multiplier': 1.43,
+        'reading_multiplier': 2.15,
         'time_slots': Order.getTimeSlotsForOrder(),
         'user_model': None
     }
