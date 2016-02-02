@@ -42,19 +42,22 @@ class Search():
 
 
     def basicSearch(self, page=0):
+        phrase_fail = False 
+        query_fail = False
+
         phrase_results = self.matchPhrase(page)
-        
         if len(phrase_results['items']) == 0:
-            self.reportFail('phrase_match')
-            #TODO channel to Slack
-            Mailer.genericMailer({'subject': '!SEARCH FAIL: '+self.query,
-                    'body': 'Made by user_id: '+ str(self.user_id)}) 
+            phrase_fail = True
 
         if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
             queried_results = self.queryMatch(page, filter_ids)
+            if phrase_fail and len(queried_results['items']) == 0 :
+                query_fail = True
             phrase_results['items'].extend(queried_results['items'])
             phrase_results['total'] += queried_results['total']
+       
+        self.reportFail(phrase_fail, query_fail)
         return phrase_results
 
     def matchPhrase(self, page):
@@ -83,7 +86,10 @@ class Search():
                     "fields": ["isbn_10", "isbn_13"]
                     }
                 } 
-        return self.executeSearch(data, page)
+        results = self.executeSearch(data, page)
+        if not results['items']:
+            self.reportFail(True, True, 'isbn')
+        return results
 
     def executeSearch(self, data, page):
         search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
@@ -121,12 +127,27 @@ class Search():
         categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational', 'Thriller']
         return categories
 
-    def reportFail(self, q_type):
+    @async
+    def reportFail(self, phrase_fail, query_fail, search_type='free'):
+        if self.user_id in Utils.getAdmins():
+            return
+        if not phrase_fail and not query_fail:
+            return
+        elif phrase_fail and not query_fail:
+            fail_type = 'phrase_match'
+        else:
+            fail_type = search_type
+
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow) VALUES (%s,%s,%s,%s)""",
-            (self.user_id, self.query, q_type, self.flow))
+            (self.user_id, self.query, fail_type, self.flow))
         conn.commit()
+
+        #TODO channel to Slack
+        with webapp.test_request_context():
+            Mailer.genericMailer({'subject': '!SEARCH FAIL:'+fail_type+': '+self.query, 'body': 'Made by user_id: '+ str(self.user_id)}) 
+
         return
 
     def getContentData(self, key=None):
