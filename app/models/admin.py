@@ -201,7 +201,7 @@ class Admin():
         (data['amazon']['title'],
         price,
         data['goodreads']['author'],
-        data['goodreads']['avg_rating'],
+        data['goodreads']['avg_rating'] if 'rating' not in data['goodreads']['avg_rating'] else data['goodreads']['avg_rating'].replace(' rating',''),
         data['goodreads']['num_ratings'],
         data['goodreads']['num_review'],
         data['goodreads']['language']
