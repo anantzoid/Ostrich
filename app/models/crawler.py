@@ -41,6 +41,8 @@ class AmazonCrawler():
         rating = rating.text if rating else ""                
         if rating != "" and rating != None:
             rating = float(rating.split("out")[0].strip())
+            if 'rating' in rating:
+                rating = rating.replace(' rating','')
 
         num_reviews = 0
         num_reviews = response.find("a", {"class": "a-link-emphasis a-nowrap"})
