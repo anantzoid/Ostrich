@@ -168,7 +168,7 @@ class Search():
         if not key:
             return refined_content
         else:
-            return [_ for _ in refined_content if _['key'] == key][0]
+            return [_ for _ in refined_content if _['key'] == key][0]['items']
 
 
     def mostRecommended(self):
