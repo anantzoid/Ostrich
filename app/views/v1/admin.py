@@ -3,6 +3,16 @@ from app.models import *
 from flask import request
 from flask.ext.jsonpify import jsonify
 
+@webapp.route('/push', methods=['POST'])
+def pushNotification():
+    if 'gcm_id' in request.form:
+        temp_gcm_id = request.form['gcm_id']
+    else:
+        temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
+    notification_data = json.loads(str(request.form['data']))
+    status = Notifications(temp_gcm_id).sendNotification(notification_data)
+    return jsonify(status)
+
 @webapp.route('/currentOrders')
 def getCurrentOrders():
     current_order = Admin.getCurrentOrders()
@@ -100,4 +110,18 @@ def getContent():
 @webapp.route('/saveContent')
 def saveContent():
     Admin.savePanelData(request.args)
+    return jsonify(status=True)
+
+@webapp.route('/getSearchFails')
+def getSearchFails():
+    return jsonify(data=Admin.getSearchFailedQueries())
+
+@webapp.route('/searchFailItem')
+def searchFailItem():
+    Admin.submitSearchFailItem(request.args)
+    return jsonify(status=True)
+
+@webapp.route('/searchFailNotification')
+def searchFailNotification():
+    Admin.sendSearchFailNotification(request.args)
     return jsonify(status=True)

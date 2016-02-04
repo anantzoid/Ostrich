@@ -282,3 +282,49 @@ class Admin():
                 )
         return True
 
+    @staticmethod
+    def getSearchFailedQueries():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM search_fails WHERE flow != 'admin' AND item_id IS NULL 
+                ORDER BY timestamp DESC""")
+        numrows = cursor.rowcount
+        data = []
+        for i in range(numrows):
+            data.append(Utils.fetchOneAssoc(cursor))
+        return data
+    
+    @staticmethod
+    def submitSearchFailItem(args):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE search_fails SET item_id = %s WHERE id = %s""",
+                (args['item_id'], args['query_id']))
+        conn.commit()
+        return True
+
+    @staticmethod
+    def sendSearchFailNotification(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT * FROM search_fails WHERE id = %s""",(data['query_id'],))
+        search_data = cursor.fetchone()
+        if not search_data[6]:
+            return
+        
+        item = Item(int(search_data[6]))
+        user = User(int(search_data[1]))
+        notif_msg = "We have noticed you were searching for "+item.item_name+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
+        notification_data = {
+                "notification_id": 5,
+                "entity_id": item.item_id,
+                "item_name": item.item_name,
+                "search_intention": search_data[5],
+                "title": "We found "+item.item_name,
+                "message": notif_msg, 
+                "expanded_text": notif_msg
+                }
+        status = Notifications(user.gcm_id).sendNotification(notification_data) 
+        if status and 'success' in status:
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (status['success'][status['success'].keys()[0]], data['query_id']))
+            conn.commit()
+        return True
