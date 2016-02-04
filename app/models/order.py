@@ -219,7 +219,7 @@ class Order():
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
             return ({
                 'title': 'Not enough credits in account',
-                'message': 'You can redeem your credits by referring the app to your friends directly, or sharing your referral code with them.'}, 
+                'message': 'You do not have enough credits in your account. You may place the order using "Pay by Cash" option.'}, 
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Since Address is editable before placing order

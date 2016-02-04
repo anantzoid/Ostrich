@@ -133,22 +133,22 @@ class Lend():
                 %(status_id, lender_id))
         conn.commit()
 
-        if status_id == 3:
+        if status_id in [1,2,3]:
             cursor.execute("""SELECT l.inventory_id, l.user_id, iv.item_id 
                 FROM lenders l 
                 INNER JOIN inventory iv ON iv.inventory_id = l.inventory_id
                 WHERE l.lender_id = %s""",(lender_id,))
             data = cursor.fetchone()
-
-            cursor.execute("""UPDATE inventory SET in_stock = 1, fetched = 1 WHERE
-            inventory_id = %s""",(data[0],))
-            conn.commit()
-
-            Indexer().indexItems(query_condition=' AND i.item_id='+str(data[2]))
-
             user = User(data[1])
-            # Mailer
-            Mailer.thankyou(user)
+            Lend.sendLendNotification(lender_id, status_id, user)
+
+            if status_id == 3:
+                cursor.execute("""UPDATE inventory SET in_stock = 1, fetched = 1 WHERE
+                inventory_id = %s""",(data[0],))
+                conn.commit()
+                Indexer().indexItems(query_condition=' AND i.item_id='+str(data[2]))
+                Mailer.thankyou(user)
+
 
         '''
         NOTE Later
@@ -159,8 +159,6 @@ class Lend():
             conn.commit()
         '''
 
-        if status_id in [1,2,3]:
-            Lend.sendLendNotification(lender_id, status_id, user)
         return True
 
     @staticmethod

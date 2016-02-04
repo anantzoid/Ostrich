@@ -21,7 +21,7 @@ def pickupTimeslot():
         notification_data = {
             "notification_id": 3,
             "entity_id": query_data['order_id'],
-            "title": "Return Day Tomorrow",
+            "title": "Return due date tomorrow",
             "message": "When should we come over to pickup tomorrow?",
             "expanded_text": "When should we come over to pickup tomorrow?"
             }
