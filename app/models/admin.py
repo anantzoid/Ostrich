@@ -7,6 +7,7 @@ import requests
 import time
 import re
 import os
+import json
 from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from pymongo import MongoClient
@@ -310,6 +311,8 @@ class Admin():
         search_data = cursor.fetchone()
         if not search_data[6]:
             return
+        if search_data[1] <= 0:
+            return
         
         item = Item(int(search_data[6]))
         user = User(int(search_data[1]))
@@ -325,6 +328,6 @@ class Admin():
                 }
         status = Notifications(user.gcm_id).sendNotification(notification_data) 
         if status and 'success' in status:
-            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (status['success'][status['success'].keys()[0]], data['query_id']))
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (json.dumps(status['success']), data['query_id']))
             conn.commit()
         return True

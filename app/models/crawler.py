@@ -201,7 +201,8 @@ class GoodreadsCrawler():
                 awards  = other_meta_value[i].text.replace('\n','').strip()
             elif "Other Editions" in key.text:
                 anchor = key.find('a')
-                isbns = self.getOtherISBNs(anchor.attrs['href'])
+                if anchor:
+                    isbns = self.getOtherISBNs(anchor.attrs['href'])
     
         # Book Binding
         bind_type = soup.find("span", {"itemprop":"bookFormatType"})    

@@ -144,10 +144,8 @@ class Search():
             (self.user_id, self.query, fail_type, self.flow))
         conn.commit()
 
-        #TODO channel to Slack
         with webapp.test_request_context():
             Mailer.genericMailer({'subject': '!SEARCH FAIL:'+fail_type+': '+self.query, 'body': 'Made by user_id: '+ str(self.user_id)}) 
-
         return
 
     def getContentData(self, key=None):
