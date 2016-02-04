@@ -308,21 +308,23 @@ class Admin():
         cursor = conn.cursor()
         cursor.execute("""SELECT * FROM search_fails WHERE id = %s""",(data['query_id'],))
         search_data = cursor.fetchone()
-        print search_data
         if not search_data[6]:
             return
-
-        notif_msg = "We have noticed you were searching for "+search_data[2]+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
+        
+        item = Item(int(search_data[6]))
+        user = User(int(search_data[1]))
+        notif_msg = "We have noticed you were searching for "+item.item_name+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
         notification_data = {
                 "notification_id": 5,
-                "entity_id": search_data[6],
-                "title": "We found "+search_data[2],
+                "entity_id": item.item_id,
+                "item_name": item.item_name,
+                "search_intention": search_data[5],
+                "title": "We found "+item.item_name,
                 "message": notif_msg, 
                 "expanded_text": notif_msg
                 }
-        user = User(int(search_data[1]))
         status = Notifications(user.gcm_id).sendNotification(notification_data) 
         if status and 'success' in status:
-            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""",(status['success'].keys()[0], data['query_id']))
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (status['success'][status['success'].keys()[0]], data['query_id']))
             conn.commit()
         return True
