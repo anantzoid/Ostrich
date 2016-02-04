@@ -101,3 +101,12 @@ def getContent():
 def saveContent():
     Admin.savePanelData(request.args)
     return jsonify(status=True)
+
+@webapp.route('/getSearchFails')
+def getSearchFails():
+    return jsonify(data=Admin.getSearchFailedQueries())
+
+@webapp.route('/searchFailItem')
+def searchFailItem():
+    Admin.submitSearchFailItem(request.args)
+    return jsonify(status=True)

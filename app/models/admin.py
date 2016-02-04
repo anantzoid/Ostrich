@@ -282,3 +282,23 @@ class Admin():
                 )
         return True
 
+    @staticmethod
+    def getSearchFailedQueries():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM search_fails WHERE flow != 'admin' AND item_id IS NULL 
+                ORDER BY timestamp DESC""")
+        numrows = cursor.rowcount
+        data = []
+        for i in range(numrows):
+            data.append(Utils.fetchOneAssoc(cursor))
+        return data
+    
+    @staticmethod
+    def submitSearchFailItem(args):
+        print args['item_id'], args['query_id']
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE search_fails SET item_id = %s WHERE id = %s""",
+                (args['item_id'], args['query_id']))
+        conn.commit()
+        return True
