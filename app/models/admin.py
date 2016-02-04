@@ -320,9 +320,9 @@ class Admin():
                 "message": notif_msg, 
                 "expanded_text": notif_msg
                 }
-        user = User(search_data[1])
+        user = User(int(search_data[1]))
         status = Notifications(user.gcm_id).sendNotification(notification_data) 
-        if status:
-            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""",(status, data['query_id']))
+        if status and 'success' in status:
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""",(status['success'].keys()[0], data['query_id']))
             conn.commit()
         return True
