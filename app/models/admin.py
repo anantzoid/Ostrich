@@ -295,10 +295,34 @@ class Admin():
     
     @staticmethod
     def submitSearchFailItem(args):
-        print args['item_id'], args['query_id']
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("""UPDATE search_fails SET item_id = %s WHERE id = %s""",
                 (args['item_id'], args['query_id']))
         conn.commit()
+        return True
+
+    @staticmethod
+    def sendSearchFailNotification(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT * FROM search_fails WHERE id = %s""",(data['query_id'],))
+        search_data = cursor.fetchone()
+        print search_data
+        if not search_data[6]:
+            return
+
+        notif_msg = "We have noticed you were searching for "+search_data[2]+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
+        notification_data = {
+                "notification_id": 5,
+                "entity_id": search_data[6],
+                "title": "We found "+search_data[2],
+                "message": notif_msg, 
+                "expanded_text": notif_msg
+                }
+        user = User(search_data[1])
+        status = Notifications(user.gcm_id).sendNotification(notification_data) 
+        if status:
+            cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""",(status, data['query_id']))
+            conn.commit()
         return True

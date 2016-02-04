@@ -164,15 +164,4 @@ def requestItem():
 def getTimeSlot():
     return jsonify(time_slots=Order.getTimeSlotsForOrder())
 
-'''
-    Test API calls
-'''
-@webapp.route('/push', methods=['POST'])
-def pushNotification():
-    if 'gcm_id' in request.form:
-        temp_gcm_id = request.form['gcm_id']
-    else:
-        temp_gcm_id = 'dTKtMjUPSho:APA91bGy3oVY680azB-jNmdAlDyRBCswnRaNg17naVkCXfTe88mSfJETB5BZTXO1dDaQJiCd7lUoDccJt3asT04nfWDj8gaghquqwjgIFUEuCZ2w4RojeTA4fQAsWNhVThSWWlASJ7NE'
-    notification_data = json.loads(str(request.form['data']))
-    status = Notifications(temp_gcm_id).sendNotification(notification_data)
-    return jsonify(status)
+
