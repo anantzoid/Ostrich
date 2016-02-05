@@ -93,7 +93,7 @@ def orderStatus():
 
     # Asking for user_id to double check
     if not(user_id and order_id):
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     order = Order(order_id)
     order_status = order.getOrderStatusForUser(user_id)
@@ -109,7 +109,7 @@ def editOrderDetails():
     response = {'status': 'False'}
     order_id = Utils.getParam(request.form, 'order_id', 'int')
     if not order_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     order_data = {}
     for key in request.form:
@@ -144,7 +144,7 @@ def requestItem():
     #item_name = Utils.getParam(request.form, 'item_name')
 
     #if not(item_name and item_type and item_id):
-    #    return Utils.errorResponse({'status': 'False'}, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+    #    return Utils.errorResponse({'status': 'False'}, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     Item.storeItemRequest(request.form)
 

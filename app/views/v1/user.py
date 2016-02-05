@@ -92,12 +92,12 @@ def addAddress():
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
         response['message'] = 'User ID missing'
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     address = request.form['address']  if 'address' in request.form else ''
     if not address:
         response['message'] = 'Address missing'
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     user = User(user_id, 'user_id')
     if user.getObj() is None:
@@ -116,7 +116,7 @@ def addAddress():
 def validateLocality():
     locality = Utils.getParam(request.form, 'locality', '')
     if not locality:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     response = User.validateLocality(locality)
     return jsonify(response)
@@ -138,7 +138,7 @@ def editDetails():
 
     user_id = Utils.getParam(request.form, 'user_id', 'int')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
     
     user_data = {}
     for key in request.form:
@@ -168,7 +168,7 @@ def getMyOrders():
     response = {'status': 'false'}
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     user = User(int(user_id), 'user_id')
     if user.getObj() is None:
@@ -192,11 +192,11 @@ def putReferral():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
     
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     user = User(int(user_id), 'user_id')
     if user.getObj() is None:
@@ -205,7 +205,7 @@ def putReferral():
     referral_id = user.logReferral(uuid)
     if not referral_id:
         response['message'] = 'User already existed'
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_ENTRY_EXISTS'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_ENTRY_EXISTS')
     else:
         response['status'] = 'True'
         response['referral_id'] = referral_id
@@ -226,11 +226,11 @@ def confirmReferral():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
  
     uuid = Utils.getParam(request.form, 'uuid')
     if not uuid:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     user = User(int(user_id), 'user_id')
     if user.getObj() is None:
@@ -260,11 +260,11 @@ def applyReferralCode():
 
     user_id = Utils.getParam(request.form, 'user_id')
     if not user_id:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
  
     code = Utils.getParam(request.form, 'code')
     if not code:
-        return Utils.errorResponse(response, webapp.config['HTTP_STATUS_CODE_DATA_MISSING'])
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
     
     user = User(int(user_id), 'user_id')
     if user.getObj() is None:

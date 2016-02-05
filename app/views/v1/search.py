@@ -26,7 +26,7 @@ def searchString():
     flow = Utils.getParam(request.args, 'flow', default='borrow')
 
     if not query:
-        return jsonify(response), webapp.config['HTTP_STATUS_CODE_DATA_MISSING']
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
     
     search = Search(query, user_id, flow)
     if search_type == 'free':

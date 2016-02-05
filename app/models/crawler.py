@@ -114,6 +114,9 @@ class GoodreadsCrawler():
 
     def startCrawl(self):
         url = self.makeUrl()
+        if not url:
+            return {'status':'error'}
+
         response = requests.get(url)
         if response.status_code != 200:
             return {'status':'error', 'code': response.status_code}
