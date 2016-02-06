@@ -108,6 +108,7 @@ class Order():
         notification_id = 1
         if status_id == 6:
             notification_id = 4
+            status_id = 3
         notification_data = {
                     "notification_id": notification_id,
                     "entity_id": self.order_id,
