@@ -9,12 +9,14 @@ def startSession():
         if android_id in []:
             return jsonify({'debug':'True', 'ip': '52.74.20.228'})
 
+    # VERSION SPECIFIC
+    reading_multiplier = 2.15 if 'version_code' in request.headers and int(request.headers.get('version_code')) >= 6030000 else 2.14
     data = {
         'recommendations': Search().getContentData(key="recommendations"),
         'most_searched': Search().getContentData(key="most_searched"),
         'categories': Search.getSearchCategories(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
-        'reading_multiplier': 2.14,
+        'reading_multiplier': reading_multiplier,
         'time_slots': Order.getTimeSlotsForOrder(),
         'user_model': None
     }

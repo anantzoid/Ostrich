@@ -113,7 +113,7 @@ class Order():
                     "entity_id": self.order_id,
                     "title": status_info["Status"],
                     "message": status_info["Description"],
-                    "expanded_text": status_info["Description"] 
+                    "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"]
                 }
 
         if user is None:
@@ -213,7 +213,7 @@ class Order():
                 return ({
                     'title': 'Order Limit Reached',
                     'message': 'You can keep a maximum of 2 books at a time. Please return a book that you are not reading from the "My Orders" section and try ordering again.'}, 
-                    'HTTP_STATUS_CODE_CLIENT_ERROR')
+                    'HTTP_STATUS_CODE_ORDER_LIMIT_EXCEEDED')
 
         # Wallet validity 
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
