@@ -43,8 +43,8 @@ class Lend():
             return {'message': 'Address not associated'}
         if not Lend.isUserValidForLending(lend_data):
             return ({
-                'title': 'You cannot offer the borrowed book',
-                'message': 'It seems you have reading this book right now, provided by Ostrich. You can\'t offer this book. Please try offering some other book'},
+                'title': 'Cannot Offer a Borrowed Book',
+                'message': 'You cannot offer a book borrowed with Ostrich. Please try again with another book.'},
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         conn = mysql.connect()
@@ -187,7 +187,7 @@ class Lend():
                 "entity_id": lender_id,
                 "title": status_info["Status"],
                 "message": status_info["Description"],
-                "expanded_text": status_info["Description"] 
+                "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"]
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
         return 

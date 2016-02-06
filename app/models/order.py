@@ -108,7 +108,6 @@ class Order():
         notification_id = 1
         if status_id == 6:
             notification_id = 4
-            status_id = 3
         notification_data = {
                     "notification_id": notification_id,
                     "entity_id": self.order_id,
@@ -201,8 +200,8 @@ class Order():
             (user.user_id, order_data['item_id']))
         if cursor.fetchone()[0]:
             return ({
-                'title': 'Book already ordered',
-                'message': 'It seems you already have this book with you right now, provided by Ostrich. You can check it in "My Orders" tab.'}, 
+                'title': 'Book Already Ordered',
+                'message': 'It seems you have already ordered this book from Ostrich. Please check the "My Orders" section.'}, 
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # User can only own 2 book @ a time
@@ -212,15 +211,15 @@ class Order():
                 #TODO enable this
                 #Mailer.excessOrder(user.user_id, order_data['item_id'])
                 return ({
-                    'title': 'Already rented maximum books',
-                    'message': 'Currently, we have a certain limit to the number of books that the user can have at one time. We\'ll contact you shortly to clarify your requirements.'}, 
+                    'title': 'Order Limit Reached',
+                    'message': 'You can keep a maximum of 2 books at a time. Please return a book that you are not reading from the "My Orders" section and try ordering again.'}, 
                     'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Wallet validity 
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
             return ({
-                'title': 'Not enough credits in account',
-                'message': 'You do not have enough credits in your account. You may place the order using "Pay by Cash" option.'}, 
+                'title': 'Not Enough Credits',
+                'message': 'Your current balance '+str(user.wallet_balance)+' is not enough for this order. Choose Cash option and please order again.'}, 
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Since Address is editable before placing order
@@ -409,7 +408,8 @@ class Order():
                     },
                 6: {
                     "Status": "We've picked up the book",
-                    "Description": "Thank you for ordering with us. We hope you enjoyed your book."
+                    "Description": "Thank you for using Ostrich. We hope you enjoyed your book.",
+                    "expanded_text" : "Thank you for using Ostrich. We hope you enjoyed your book. Would you like to order another?"
                     },
                 7: {
                     "Status": "Returned",
