@@ -2,9 +2,10 @@ from app import mysql
 from app import webapp
 from app.models import *
 from app.scripts import Indexer
-from datetime import datetime
+import datetime
 from app.decorators import async
 import json
+import pytz
 
 class Order():
     def __init__(self, order_id):
@@ -96,18 +97,36 @@ class Order():
         if order_data['payment_mode'] == 'wallet':
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
 
-        #TODO call roadrunnr api
         order.sendOrderNotification(1, user)
         Utils.notifyAdmin(user.user_id, 'Order')
         return response 
 
+    @async
     def sendOrderNotification(self, status_id, user=None):
         order_info = self.getOrderInfo()
         status_info = self.getOrderStatusDetails(order_info['order_status']) 
-
+        
         notification_id = 1
         if status_id == 6:
             notification_id = 4
+        if status_id == 1:
+
+            # Notification message formatting
+            item_name_ellipse = (order_info['item']['item_name'][:27] + '..') if len(order_info['item']['item_name']) > 27 else order_info['item']['item_name'] 
+            status_info["Description"] = status_info["Description"]%item_name_ellipse
+
+            day_today = datetime.datetime.now(pytz.timezone('Asia/Calcutta')).day
+            delivery_day = datetime.datetime.strptime(order_info['delivery_date'],"%Y-%m-%d %H:%M:%S")
+            if day_today == delivery_day.day:
+                day = "Today"
+            else:
+                day_tomorrow = (datetime.datetime.now(pytz.timezone('Asia/Calcutta'))+datetime.timedelta(days=1)).day
+                if day_tomorrow == delivery_day.day:
+                    day = "Tomorrow"
+                else:
+                    day = "on " + delivery_day.strftime("%A")
+            status_info["expanded_text"] = status_info["expanded_text"]%(order_info['item']['item_name'], day)
+
         notification_data = {
                     "notification_id": notification_id,
                     "entity_id": self.order_id,
@@ -305,8 +324,8 @@ class Order():
 
         if 'order_return' in order_data:
             ''''
-            old_order_return = datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
-            new_order_return = datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
+            old_order_return = datetime.datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
+            new_order_return = datetime.datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
             diff = new_order_return - old_order_return
             #if diff.days <= 0:
             #TODO send notification
@@ -387,8 +406,9 @@ class Order():
     def getOrderStatusDetails(status_id):
         status_info = {
                 1: {
-                    "Status": "Order placed",
-                    "Description": "Your order has been confirmed. The book will reach you soon."
+                    "Status": "Order Placed",
+                    "Description": "Your order has been confirmed for \"%s\"",
+                    "expanded_text" : "Your order for the book \"%s\" has been placed successfully. The book will be delivered %s."
                     },
                 2: {
                     "Status": "Picked up",
@@ -399,7 +419,7 @@ class Order():
                     "Description": "Your book is on the way"
                     },
                 4: {
-                    "Status": "Your book has been Delivered",
+                    "Status": "Book Delivered",
                     "Description": "Enjoy reading your book and don't forget to rate it."
                     },
                 5: {
@@ -407,7 +427,7 @@ class Order():
                     "Description": "We're on our way to pickup the book"
                     },
                 6: {
-                    "Status": "We've picked up the book",
+                    "Status": "Book Picked Up",
                     "Description": "Thank you for using Ostrich. We hope you enjoyed your book.",
                     "expanded_text" : "Thank you for using Ostrich. We hope you enjoyed your book. Would you like to order another?"
                     },

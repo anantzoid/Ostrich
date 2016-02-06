@@ -316,13 +316,15 @@ class Admin():
         
         item = Item(int(search_data[6]))
         user = User(int(search_data[1]))
-        notif_msg = "We have noticed you were searching for "+item.item_name+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
+
+        item_name_ellipse = (order_info['item']['item_name'][:27] + '..') if len(order_info['item']['item_name']) > 27 else order_info['item']['item_name'] 
+        notif_msg = "We have noticed you were searching for "+item_name_ellipse+" but didn't get the expected results. We've added the book for you. Tap here to open it up."
         notification_data = {
                 "notification_id": 5,
                 "entity_id": item.item_id,
                 "item_name": item.item_name,
                 "search_intention": search_data[5],
-                "title": "We found "+item.item_name,
+                "title": item_name+" is now available",
                 "message": notif_msg, 
                 "expanded_text": notif_msg
                 }

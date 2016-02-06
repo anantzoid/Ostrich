@@ -198,27 +198,29 @@ class Lend():
         status_info = {
                 1: {
                     "Status": "Request Received",
-                    "Description": "Your request has been received successfully"
+                    "Description": "Your request has been received successfully",
+                    "expanded_text" : "Your request to offer the book has been received successfully."
                     },
                 2: {
                     "Status": "Out for Pickup",
-                    "Description": "We're on our way to pickup the book"
+                    "Description": "We're on our way to pickup the book."
                     },
                 3: {
-                    "Status": "Thanks for sharing your book",
-                    "Description": "Your book can mean a world to someone"
+                    "Status": "Thanks for Sharing",
+                    "Description": "Your book can mean a world to someone."
                     },
                 4: {
                     "Status": "Delivered",
-                    "Description": "Order has been reported to inventory"
+                    "Description": "Order has been reported to inventory."
                     },
                 5: {
                     "Status": "Out for pickup",
-                    "Description": "Your book is on the way back to you"
+                    "Description": "Your book is on the way back to you."
                     },
                 6: {
                     "Status": "Returned",
-                    "Description": "Thanks for sharing your book",
+                    "Description": "Thanks for sharing your book.",
+                    "expanded_text": "Thanks for sharing your book. Your book can mean a world to someone.",
                     }
                 }
 

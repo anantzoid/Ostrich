@@ -3,7 +3,6 @@ from datetime import datetime
 from app import webapp
 from app.models import *
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
 import json
 import pytz
 
@@ -98,8 +97,8 @@ class User(Prototype):
        
         notification_data = {
                 "notification_id": 100,
-                "title": "Your wallet has been recharged!",
-                "message": "Read first 3 books at no cost",
+                "title": "Wallet Recharged",
+                "message": "Early sign-up bonus. Read the first 2 books at no cost.",
                 "expanded_text": "You've earned 100 credits as an early sign up bonus. You can use these credits to order books for free!" 
                 }
 
