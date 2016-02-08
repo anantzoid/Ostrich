@@ -39,8 +39,8 @@ def OrderItem():
         else:
             # VERSION SPECIFIC
             if order_placed[1] =='HTTP_STATUS_CODE_ORDER_LIMIT_EXCEEDED':
-                if 'version_code' in request.headers:
-                    if int(request.headers.get('version_code')) >= 6030000:
+                if 'App-Version' in request.headers:
+                    if int(request.headers.get('App-Version')) >= 6030000:
                         order_placed = (order_placed[0], 'HTTP_STATUS_CODE_CLIENT_ERROR') 
                     else:
                         order_placed = (order_placed[0], 'HTTP_STATUS_CODE_ERROR')
