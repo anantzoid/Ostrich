@@ -103,6 +103,21 @@ class Admin():
             isbn = cursor.fetchone()
             if isbn:
                 order_info['isbn_13'] = isbn[0]
+
+            # check for order extensions
+            if pickups:
+                cursor.execute("""SELECT * FROM edit_order_log WHERE order_id = %s""",(order_id,))
+                order_log = cursor.fetchall()
+                if order_log:
+                    order_info['edit'] = {}
+                    for log in order_log:
+                        if log[1] == 'order_return':
+                            order_info['edit']['old_order_return'] = log[2]
+                        elif log[1] == 'charge':
+                            if 'charge' not in order_info['edit']:
+                                order_info['edit']['charge'] = 0
+                            order_info['edit']['charge'] += int(log[3])
+
             order_list.append(order_info)
 
         return order_list
