@@ -99,7 +99,7 @@ def crawlItem():
         book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
             book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
-    
+   
     final_data = Admin.insertItem(book_data)
     return jsonify(final_data) 
 

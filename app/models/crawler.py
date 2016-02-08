@@ -31,6 +31,10 @@ class AmazonCrawler():
                 isbn10 = detail.text.replace('ISBN-10:','').replace('-','').strip()
 
 
+        amazon_id = 0
+        groups = re.search('\/(\d+)\/', self.url) 
+        if groups:
+            amazon_id = groups.group(1)
         title = response.find('span', {'id':'productTitle'})
         title = title.text if title else ''
 
@@ -50,6 +54,7 @@ class AmazonCrawler():
                 num_reviews = num_reviews.group(0)
 
         data = {
+            'amazon_id': amazon_id,
             'title': title,
             'isbn_13': isbn13,
             'isbn_10': isbn10,
@@ -145,6 +150,12 @@ class GoodreadsCrawler():
         return error
 
     def crawlItemPage(self, soup):
+
+        gr_id = 0
+        book_id = soup.find('input',{'id':'book_id'})
+        if book_id:
+            gr_id = book_id.attrs['value']
+       
         title = ''
         title_el = soup.find("h1",{"id":"bookTitle"})
         if title_el:
@@ -248,6 +259,7 @@ class GoodreadsCrawler():
             isbns.remove(isbn_13)
 
         data = {         
+            'gr_id': gr_id,
             'title': title,
             'author': author,
             'avg_rating': avg_rating,
