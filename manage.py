@@ -5,8 +5,8 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.scripts.pickup_timeslot import pickupTimeslot
-    pickupTimeslot()
+    from app.scripts.related_items import getRelatedItems
+    getRelatedItems(14)
 
 @manager.command
 def indexer():

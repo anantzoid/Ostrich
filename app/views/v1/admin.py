@@ -92,14 +92,8 @@ def updateOrderStatus():
 @webapp.route('/crawl')
 def crawlItem():
     amzn_url = Utils.getParam(request.args, 'url')
-    book_data = {'amazon': {}, 'goodreads': {}}
-    book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
-    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_13']).startCrawl()
-    if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
-        if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-            book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
-   
+    book_data = getAggregatedBookDetails(amzn_url)
+  
     final_data = Admin.insertItem(book_data)
     return jsonify(final_data) 
 

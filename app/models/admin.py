@@ -207,17 +207,17 @@ class Admin():
         price = data['amazon']['offer_price'] if data['amazon']['offer_price'] else data['amazon']['list_price']
         price = re.sub('\..*$', '', price)
 
-        cursor.execute("""SELECT item_name, author FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
+        cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
         match = cursor.fetchone()
         if match:
-            return False
+            return int(match[0])
         cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
         num_ratings, num_reviews, language) VALUES
         (%s,%s,%s,%s,%s,%s,%s)""",
         (data['amazon']['title'],
         price,
         data['goodreads']['author'],
-        data['goodreads']['avg_rating'] if 'rating' not in data['goodreads']['avg_rating'] else data['goodreads']['avg_rating'].replace(' rating',''),
+        data['goodreads']['avg_rating'].replace(' rating',''),
         data['goodreads']['num_ratings'],
         data['goodreads']['num_review'],
         data['goodreads']['language']
@@ -262,16 +262,17 @@ class Admin():
         ext =  os.path.splitext(parsed.path)[1]
         path = basepath + str(item_id) + ext
 
-        r = requests.get(url)
-        if r.status_code >= 200 and r.status_code <300:
-            content = r.content
-            key = Key(bucket)
-            key.key = path
-            key.set_contents_from_string(content)
+        if url:
+            r = requests.get(url)
+            if r.status_code >= 200 and r.status_code <300:
+                content = r.content
+                key = Key(bucket)
+                key.key = path
+                key.set_contents_from_string(content)
 
-            cursor.execute("""UPDATE items SET img_small = %s WHERE item_id = %s""",
-                    (path, item_id))
-            conn.commit()
+                cursor.execute("""UPDATE items SET img_small = %s WHERE item_id = %s""",
+                        (path, item_id))
+                conn.commit()
 
         Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id))
     
@@ -280,7 +281,8 @@ class Admin():
         final_data = data['goodreads']
         final_data.update(data['amazon'])
         final_data['_id'] = int(item_id)
-        db.items.insert_one(final_data)
+        if not db.items.find({'_id': final_data['_id']}).count():
+            db.items.insert_one(final_data)
 
         return final_data
 

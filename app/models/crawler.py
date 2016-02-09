@@ -10,6 +10,16 @@ def handleUnicode(text):
         text = unicode(text, "latin-1")
     return unicodedata.normalize("NFKD", text).encode('utf-8')
 
+def getAggregatedBookDetails(amzn_url):
+    book_data = {'amazon': {}, 'goodreads': {}}
+    book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
+    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_13']).startCrawl()
+    if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
+        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
+        if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
+            book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
+    return book_data
+ 
 class AmazonCrawler():
     def __init__(self, url='', title=''):
         self.url = url
@@ -30,11 +40,11 @@ class AmazonCrawler():
             if 'ISBN-10' in detail.text:
                 isbn10 = detail.text.replace('ISBN-10:','').replace('-','').strip()
 
-
         amazon_id = 0
-        groups = re.search('\/(\d+)\/', self.url) 
-        if groups:
-            amazon_id = groups.group(1)
+        book_id = response.find('input',{'id':'ASIN'})
+        if book_id:
+            amazon_id = book_id.attrs['value']
+
         title = response.find('span', {'id':'productTitle'})
         title = title.text if title else ''
 

@@ -112,7 +112,13 @@ class Order():
         if status_id == 1:
 
             # Notification message formatting
-            item_name_ellipse = (order_info['item']['item_name'][:27] + '..') if len(order_info['item']['item_name']) > 27 else order_info['item']['item_name'] 
+            if len(order_info['item']['item_name']) > 35:
+                item_name_ellipse = order_info['item']['item_name'][:35] + '..'
+            elif len(order_info['item']['item_name']) + len(order_info['item']['author']) <= 32:
+                item_name_ellipse = order_info['item']['item_name'] +' by '+ order_info['item']['author']
+            else:
+                item_name_ellipse = order_info['item']['item_name']
+
             status_info["Description"] = status_info["Description"]%item_name_ellipse
 
             day_today = datetime.datetime.now(pytz.timezone('Asia/Calcutta')).day
@@ -407,7 +413,7 @@ class Order():
         status_info = {
                 1: {
                     "Status": "Order Placed",
-                    "Description": "Your order has been confirmed for \"%s\"",
+                    "Description": "%s",
                     "expanded_text" : "Your order for the book \"%s\" has been placed successfully. The book will be delivered %s."
                     },
                 2: {
@@ -416,14 +422,14 @@ class Order():
                     },
                 3: {
                     "Status": "Out for Delivery",
-                    "Description": "Your book is on the way"
+                    "Description": "Your book is on its way"
                     },
                 4: {
                     "Status": "Book Delivered",
                     "Description": "Enjoy reading your book and don't forget to rate it."
                     },
                 5: {
-                    "Status": "Out for pickup",
+                    "Status": "Out for Pickup",
                     "Description": "We're on our way to pickup the book"
                     },
                 6: {

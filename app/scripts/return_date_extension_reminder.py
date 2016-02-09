@@ -21,9 +21,9 @@ def returnDateExtensionReminder():
         notification_data = {
                 "notification_id": 1,
                 "entity_id": query_data['order_id'],
-                "title": "3 days left to return your book",
+                "title": "3 days left to return the book",
                 "message": "Not finised yet? Extend the reading period.",
-                "expanded_text": "Not finised yet? You can extend the reading period by going to the order's page in \"My Orders\"."
+                "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
 
