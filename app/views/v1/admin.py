@@ -119,3 +119,8 @@ def searchFailItem():
 def searchFailNotification():
     Admin.sendSearchFailNotification(request.args)
     return jsonify(status=True)
+
+@webapp.route('/incrementInventory')
+def incrementInventory():
+    item_data = Admin.addItemToInventory(int(request.args.get('item_id')))
+    return jsonify(item_data)

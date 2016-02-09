@@ -350,3 +350,14 @@ class Admin():
             cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (json.dumps(status['success']), data['query_id']))
             conn.commit()
         return True
+
+    @staticmethod
+    def addItemToInventory(item_id):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO inventory (item_id, fetched) VALUES (%s,1)""",(item_id,))
+        conn.commit()
+        inventory_id = cursor.lastrowid
+        item = Item(item_id).getObj()
+        
+        return {'item': item, 'inventory_id': inventory_id}
