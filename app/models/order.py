@@ -56,7 +56,7 @@ class Order():
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
         
         #TODO calc total amount
-        order_data['order_amount'] = 30 
+        order_data['order_amount'] = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])  
 
         #check order validity
         # TODO check if item exists

@@ -80,6 +80,17 @@ def lendItem():
         else:
             return Utils.errorResponse(lend_info[0], lend_info[1])
 
+@webapp.route('/fetchOrder')
+def fetchOrder():
+    response = {"status": "False"}
+
+    order_id = Utils.getParam(request.args, 'order_id', 'int')
+    if not order_id:
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
+
+    order_info = Order(order_id).getOrderInfo()
+    return jsonify(order_info)
+
 '''
     Get the status of a current order
     @params

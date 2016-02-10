@@ -10,7 +10,7 @@ def startSession():
             return jsonify({'debug':'True', 'ip': '52.74.20.228'})
 
     # VERSION SPECIFIC
-    reading_multiplier = 2.15 if 'App-Version' in request.headers and int(request.headers.get('App-Version')) >= 6030000 else 2.14
+    reading_multiplier = webapp.config['NEW_READING_RATE'] if 'App-Version' in request.headers and int(request.headers.get('App-Version')) >= 6030000 else webapp.config['NEW_READING_RATE'] - 0.01
     data = {
         'recommendations': Search().getContentData(key="recommendations"),
         'most_searched': Search().getContentData(key="most_searched"),
