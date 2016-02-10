@@ -21,5 +21,5 @@ import app.models
 @webapp.route('/')
 def hello():
     from flask import render_template
-    return render_template('mailers/thank_you.html',name='Anant')
+    return render_template('mailers/extend_order.html',name='Anant')
     return 'Index Page'

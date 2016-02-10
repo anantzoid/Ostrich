@@ -21,7 +21,7 @@ def returnDateExtensionReminder():
         notification_data = {
                 "notification_id": 1,
                 "entity_id": query_data['order_id'],
-                "title": "3 days left to return the book",
+                "title": "3 Days Left to Return the Book",
                 "message": "Not finised yet? Extend the reading period.",
                 "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
                 }

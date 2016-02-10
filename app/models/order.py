@@ -417,7 +417,7 @@ class Order():
                     "expanded_text" : "Your order for the book \"%s\" has been placed successfully. The book will be delivered %s."
                     },
                 2: {
-                    "Status": "Picked up",
+                    "Status": "Picked Up",
                     "Description": "Your order has been picked up for delivery"
                     },
                 3: {

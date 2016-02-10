@@ -32,3 +32,4 @@ def pickupTimeSlot():
 def pickupSchedule():
     from app.scripts.pickup_schedule import pickupSchedule
     pickupSchedule()
+
