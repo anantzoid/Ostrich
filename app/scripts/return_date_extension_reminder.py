@@ -2,6 +2,7 @@ from app import mysql
 from app.models import Utils
 from app.models import User
 from app.models import Notifications
+from app.scripts.upsell_email import upsellEmail
 
 def returnDateExtensionReminder(): 
     current_timestamp = Utils.getCurrentTimestamp()
@@ -26,6 +27,8 @@ def returnDateExtensionReminder():
                 "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
+        upsellEmail(query_data['order_id'])
+
 
     
         

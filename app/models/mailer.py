@@ -3,6 +3,8 @@ from flask_mail import Message
 from threading import Thread
 from app import mail
 from app import webapp
+from app.decorators import async
+from premailer import Premailer
 
 class Mailer():
     @staticmethod
@@ -58,4 +60,24 @@ class Mailer():
         email.html = render_template('mailers/inlined/thank_you.html', name=name)
         thr = Thread(target=Mailer.send_async_mail, args=[webapp, email])
         thr.start()
+        return True
+
+    @staticmethod
+    @async
+    def sendUpsellEmail(data):
+        name = Mailer.getUserName(data['user'])
+        with webapp.app_context():
+            consumer_mail = render_template('mailers/extend_order.html',
+                            name = name,
+                            items = data['items'], 
+                            curated_items = data['curated_items'],
+                            quote = data['quote'], 
+                            quote_author = data['quote_author'])
+
+            pre = Premailer(consumer_mail, remove_classes=False, strip_important=False)
+            consumer_mail =  pre.transform()
+            email = Message('Enjoying the book?',
+                            recipients=[data['user'].email])
+            email.html = consumer_mail
+            mail.send(email)
         return True

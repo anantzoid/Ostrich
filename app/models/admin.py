@@ -210,7 +210,7 @@ class Admin():
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
         match = cursor.fetchone()
         if match:
-            return int(match[0])
+            return {'_id': int(match[0])}
         cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
         num_ratings, num_reviews, language) VALUES
         (%s,%s,%s,%s,%s,%s,%s)""",

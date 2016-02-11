@@ -5,8 +5,8 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.scripts.related_items import getRelatedItems
-    getRelatedItems(14)
+    from app.scripts.upsell_email import upsellEmail
+    upsellEmail(23)
 
 @manager.command
 def indexer():

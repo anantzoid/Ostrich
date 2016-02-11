@@ -33,3 +33,18 @@ def pickupSchedule():
     from app.scripts.pickup_schedule import pickupSchedule
     pickupSchedule()
 
+'''
+    Get similar items for all ordered items
+'''
+@periodic_task(run_every=(crontab(hour="19", minute="00")))
+def getRelatedItems():
+    from app.scripts.related_items import getRelatedItems
+    from app import mysql
+    from datetime import datetime
+    cursor = mysql.connect().cursor()
+    cursor.execute("""SELECT oh.item_id FROM orders o
+            INNER JOIN order_history oh ON o.order_id = oh.order_id
+            WHERE DATE(order_placed) = %s""",(str(datetime.now().date()),)) 
+    item_ids = cursor.fetchall()
+    for item_id in item_ids:
+        getRelatedItems(int(item_id))
