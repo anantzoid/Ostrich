@@ -218,7 +218,7 @@ class Admin():
         price,
         data['goodreads']['author'],
         data['goodreads']['avg_rating'].replace(' rating',''),
-        data['goodreads']['num_ratings'],
+        data['goodreads']['num_ratings'].replace(' rating',''),
         data['goodreads']['num_review'],
         data['goodreads']['language']
         ))

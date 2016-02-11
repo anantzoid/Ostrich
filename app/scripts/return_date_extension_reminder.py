@@ -27,7 +27,8 @@ def returnDateExtensionReminder():
                 "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
-        upsellEmail(query_data['order_id'])
+        if int(query_data['user_id']) in Utils.getAdmins():
+            upsellEmail(query_data['order_id'])
 
 
     
