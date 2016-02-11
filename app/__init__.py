@@ -20,6 +20,6 @@ import app.models
 
 @webapp.route('/')
 def hello():
-    from flask import render_template
-    return render_template('mailers/extend_order.html',name='Anant')
+    from app.scripts.upsell_email import upsellEmail
+    return upsellEmail(23)
     return 'Index Page'
