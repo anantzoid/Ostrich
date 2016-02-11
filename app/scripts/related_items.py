@@ -13,7 +13,7 @@ client = MongoClient(webapp.config['MONGO_DB'])
 db = client.ostrich
 
 def getRelatedItems(item_id):
-    related_items_data = [_ for _ in db.related_items_ids.find({'_id':item_id})]
+    related_items_data = [_ for _ in db.related_item_ids.find({'_id':item_id})]
     if related_items_data:
         return
 
@@ -77,7 +77,7 @@ def storeRelatedItemIds(item_id, item_id_list):
         db.related_items_amazon_ids.insert_one({"_id":item_id,"item_ids":item_id_list})
 
 def findAmazonIdFromUrl(item_link):
-    groups = re.search('\/(\d+)\/?', item_link)
+    groups = re.search('\/(B\d{3}\w{6}|\d{9}(?:X|\d))\/?', item_link)
     if groups:
         return groups.group(1)
     return item_link

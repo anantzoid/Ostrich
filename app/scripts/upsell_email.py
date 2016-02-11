@@ -52,8 +52,9 @@ def getItemDetails(item_ids):
     for item_id in item_ids:
         item = Item(item_id).getObj()
         item["item_name"] = re.sub("\(.*\)","",item["item_name"])
-        item["img_small"] = webapp.config["S3_HOST"]+item["img_small"]
-        items.append(item)
+        if item["img_small"]:
+            item["img_small"] = webapp.config["S3_HOST"]+item["img_small"]
+            items.append(item)
     return items
 
 
