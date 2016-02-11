@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Order, Lend, Item, Utils
+from app.models import *
 from flask import request, jsonify
 from app.models import Notifications
 import json
@@ -88,7 +88,9 @@ def fetchOrder():
     if not order_id:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
-    order_info = Order(order_id).getOrderInfo()
+    order_info = Order(order_id).getOrderInfo(formatted=True)
+    order_info['items'] = [order_info['item']]
+    order_info['address'] = User.getAddressInfo(order_info['address_id']) 
     return jsonify(order_info)
 
 '''
