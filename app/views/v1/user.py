@@ -66,7 +66,7 @@ def userSignup():
         user_data[key] = request.form[key]
 
     user = User.createUser(user_data)
-    if 'user' in user:
+    if 'user_id' in user:
         return jsonify(user)
     else:
         user['status'] = 'False'

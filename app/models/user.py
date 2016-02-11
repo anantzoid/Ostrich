@@ -72,7 +72,9 @@ class User(Prototype):
 
             if user_exists_id and len(user_exists_id):
                 user_exists = User(int(user_exists_id[0]), 'user_id')
-                return {'message': 'Email already exists', 'user': user_exists.getObj()} 
+                user_obj = user_exists.getObj()
+                user_obj['existed'] = "true"
+                return user_obj
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("INSERT INTO users (username, password, name, \
@@ -103,7 +105,7 @@ class User(Prototype):
                 }
 
         Notifications(user.gcm_id).sendNotification(notification_data)
-        return {'user': user.getObj()}
+        return user.getObj()
 
 
     def addAddress(self, address, mode='insert'):
