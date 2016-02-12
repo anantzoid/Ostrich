@@ -15,17 +15,16 @@ def upsellEmail(order_id):
     
     related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
     related_item_ids = [_ for _ in related_items_cursor]
-    print related_item_ids
+
     if not related_item_ids:
-        print "here"
         getRelatedItems(int(order_info['item_id']))
         related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
         related_item_ids = [_ for _ in related_items_cursor]
     
     related_item_ids = related_item_ids[0]['item_ids']
 
-    trending_items_cursor = db.trending_item_ids.find()
-    trending_item_ids = [_ for _ in trending_items_cursor][0]['item_ids']
+    trending_items_cursor = db.content.find({"key":"trending"})
+    trending_item_ids = [_ for _ in trending_items_cursor][0]['items']
     trending_item_ids = pickRandom(trending_item_ids)
 
     items = getItemDetails(related_item_ids)
@@ -50,7 +49,7 @@ def upsellEmail(order_id):
 def getItemDetails(item_ids):
     items = []
     for item_id in item_ids:
-        item = Item(item_id).getObj()
+        item = Item(int(item_id)).getObj()
         item["item_name"] = re.sub("\(.*\)","",item["item_name"])
         if item["img_small"]:
             item["img_small"] = webapp.config["S3_HOST"]+item["img_small"]

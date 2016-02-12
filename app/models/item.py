@@ -23,7 +23,7 @@ class Item(Prototype):
         return item_obj
 
     @staticmethod
-    def storeItemRequest(title, author, user_id):
+    def storeItemRequest(data):
         # This would be rarely used theoretically
         # only when the user will be puttin an item on rent
         # not present in our DB
@@ -35,10 +35,10 @@ class Item(Prototype):
         else:
             isbn = 'ISBN_13'
         '''
-        title = Utils.getParam(request.form, 'title')
-        author = Utils.getParam(request.form, 'author')
-        user_id = Utils.getParam(request.form, 'user_id')
-        query = Utils.getParam(request.form, 'related_search')
+        title = Utils.getParam(data, 'title')
+        author = Utils.getParam(data, 'author')
+        user_id = Utils.getParam(data, 'user_id')
+        query = Utils.getParam(data, 'related_search')
     
         conn = mysql.connect()
         store_request_cursor = conn.cursor()
@@ -47,6 +47,7 @@ class Item(Prototype):
         conn.commit()
         insert_id = store_request_cursor.lastrowid
         
+        Utils.notifyAdmin(-1, "Item Request made in Lend!")
         '''
         #TODO map item_type to category_id somehow
         category_id = 1

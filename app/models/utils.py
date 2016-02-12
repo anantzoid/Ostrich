@@ -7,6 +7,7 @@ from operator import itemgetter
 from app import webapp
 from app import mysql
 from flask import make_response, jsonify
+from app.decorators import async
 
 '''
 Generic helpers
@@ -193,6 +194,7 @@ class Utils():
         return make_response(jsonify(response_object), webapp.config[error_code]) 
 
     @staticmethod
+    @async
     def notifyAdmin(user_id, message):
         from app.models import User, Notifications
         notif_message = "ALERT!! "+message+" has been placed" if message in ["Order", "Lend"] else message
@@ -203,7 +205,7 @@ class Utils():
         admins = Utils.getAdmins()
         if user_id in admins:
             return
-        for u_id in admins:
+        for u_id in admins[:1]:
             user = User(u_id,'user_id')
             Notifications(user.gcm_id).sendNotification(notification_data)
         return True
