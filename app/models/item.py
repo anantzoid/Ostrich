@@ -37,7 +37,7 @@ class Item(Prototype):
         '''
         title = Utils.getParam(data, 'title')
         author = Utils.getParam(data, 'author')
-        user_id = Utils.getParam(data, 'user_id')
+        user_id = Utils.getParam(data, 'user_id', 'int')
         query = Utils.getParam(data, 'related_search')
     
         conn = mysql.connect()
@@ -47,7 +47,7 @@ class Item(Prototype):
         conn.commit()
         insert_id = store_request_cursor.lastrowid
         
-        Utils.notifyAdmin(-1, "Item Request made in Lend!")
+        Utils.notifyAdmin(user_id, "Item Request made in Lend!")
         '''
         #TODO map item_type to category_id somehow
         category_id = 1

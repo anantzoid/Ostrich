@@ -205,7 +205,7 @@ class Utils():
         admins = Utils.getAdmins()
         if user_id in admins:
             return
-        for u_id in admins[:1]:
+        for u_id in admins:
             user = User(u_id,'user_id')
             Notifications(user.gcm_id).sendNotification(notification_data)
         return True
