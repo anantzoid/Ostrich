@@ -135,7 +135,7 @@ class Order():
 
         notification_data = {
                     "notification_id": notification_id,
-                    "entity_id": self.order_id,
+                    "entity_id": order_info['order_id'],
                     "title": status_info["Status"],
                     "message": status_info["Description"],
                     "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"]
@@ -322,6 +322,70 @@ class Order():
             Indexer().indexItems(query_condition=' AND i.item_id='+str(self.getOrderInfo()['item_id']))
         return self.getOrderInfo() 
 
+    def editOrderDetailsNew(self, order_data):
+        conn = mysql.connect()
+        update_cursor = conn.cursor()
+        order_info = self.getOrderInfo()
+
+        if 'pickup_slot' in order_data:
+            if not order_data['pickup_slot'].isdigit():
+                return False
+            else:
+                order_data['pickup_slot'] = int(order_data['pickup_slot'])
+                slot_exists = False
+                for slot in Order.getTimeSlot():
+                    if slot['slot_id'] == order_data['pickup_slot']:
+                        slot_exists = True
+                        break
+                if not slot_exists:
+                    return False
+                update_cursor.execute("""UPDATE orders SET pickup_slot = %s 
+                        WHERE order_id = %s""",(order_data['pickup_slot'], order_info['order_id']))
+                conn.commit()
+                status = True if update_cursor.rowcount else False
+
+        if 'order_return' in order_data:
+            old_order_return = datetime.datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
+            new_order_return = datetime.datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
+            diff = new_order_return - old_order_return
+            if diff.days <= 0:
+                update_cursor.execute("""UPDATE orders SET order_return = %s
+                        WHERE order_id = %s""",(order_data['order_return'], self.order_id))
+                conn.commit()
+                status = True if update_cursor.rowcount else False
+            else:
+                # NOTE Order Extend is a new order
+                # TODO change payment hardcoding from cash, to get from app
+                update_cursor.execute("""INSERT INTO orders 
+                    (user_id, 
+                    address_id, 
+                    order_status,
+                    order_return,
+                    pickup_slot, 
+                    charge,
+                    payment_mode,
+                    parent_id) 
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""  
+                    ,(order_info['user_id'], 
+                    order_info['address_id'], 
+                    order_info['order_status'],
+                    order_data['order_return'], 
+                    order_info['pickup_slot'],
+                    order_data['extend_charges'] if 'extend_charges' in order_data else self.charge,
+                    'cash',
+                    self.order_id))
+                conn.commit()
+                child_order_id = update_cursor.lastrowid
+                status = True if update_cursor.rowcount else False
+
+                update_cursor.execute("""INSERT INTO order_history 
+                    (inventory_id, item_id, order_id) VALUES (%s, %s, %s)""",
+                    (order_info['inventory_id'], order_info['item_id'], child_order_id))
+                conn.commit()
+
+        self.logEditOrderDetails(order_data, order_info)
+        return status
+
     def editOrderDetails(self, order_data):
         # order_return validity
         order_info = self.getOrderInfo()
@@ -364,7 +428,7 @@ class Order():
         update_cursor.execute("""UPDATE orders SET order_return = %s,
                 pickup_slot = %s, charge = %s WHERE
                 order_id = %s""", (order_data['order_return'],
-                order_data['pickup_slot'], order_data['charge'], self.order_id))
+                order_data['pickup_slot'], order_data['charge'], order_info['order_id']))
         conn.commit()
         if update_cursor.rowcount:
             status =  True
@@ -379,12 +443,42 @@ class Order():
         conn = mysql.connect()
         update_cursor = conn.cursor()
         for key in ['order_return', 'pickup_slot', 'charge']:
-            if order_data[key] != order_info[key]:
+            if key in order_data and order_data[key] != order_info[key]:
                 update_cursor.execute("""INSERT INTO edit_order_log (order_id, 
                 `key`, old_value, new_value) VALUES (%s, %s, %s, %s)""",
                 (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
                 conn.commit()
 
+    @staticmethod
+    def clubOrderTree(order, orders=[]):
+        if orders:
+            if order['parent_id']:
+                parent_order = [_ for _ in orders if _['order_id'] == order['parent_id']][0]
+                order['order_placed'] = parent_order['order_placed']
+                order['delivery_date'] = parent_order['delivery_date']
+                order['charge'] += parent_order['charge']
+                order['delivery_slot'] = parent_order['delivery_slot']
+
+            #else: look for child
+        # else: look in db
+
+        return order
+
+    @staticmethod
+    def mergeOrders(order_list):
+        parents_list = []
+        for i in range(len(order_list)):
+            if order_list[i]['parent_id']: 
+                parents_list.append(order_list[i]['parent_id'])
+                order_list[i] = Order.clubOrderTree(order_list[i], orders=order_list)
+
+        # Filter parents
+        for i,order in enumerate(order_list):
+            if order['order_id'] in parents_list:
+                del(order_list[i])
+        return order_list
+
+            
     @staticmethod
     def getAreasForOrder():
         cursor = mysql.connect().cursor()
