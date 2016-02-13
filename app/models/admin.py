@@ -77,7 +77,7 @@ class Admin():
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
         query_condition = 'order_status >= 4 AND order_status < 7 AND DATE(order_return) >= '+date+' ORDER BY order_return ASC' if pickups else 'order_status < 4'
-        cursor.execute("""SELECT order_id FROM orders WHERE """+query_condition)
+        cursor.execute("""SELECT order_id FROM orders WHERE order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
         order_ids = cursor.fetchall()
         all_time_slots = Order.getTimeSlot()
 
@@ -104,6 +104,7 @@ class Admin():
             if isbn:
                 order_info['isbn_13'] = isbn[0]
 
+            '''
             # check for order extensions
             if pickups:
                 cursor.execute("""SELECT * FROM edit_order_log WHERE order_id = %s""",(order_id,))
@@ -117,7 +118,7 @@ class Admin():
                             if 'charge' not in order_info['edit']:
                                 order_info['edit']['charge'] = 0
                             order_info['edit']['charge'] += int(log[3])
-
+            '''
             order_list.append(order_info)
 
         return order_list
