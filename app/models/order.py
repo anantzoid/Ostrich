@@ -24,8 +24,33 @@ class Order():
 
         if 'formatted' in kwargs:
             order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
+        
+        if order_info['parent_id']:
+            order_info = Order.clubOrderTree(order_info)
 
         return order_info
+
+    @staticmethod
+    def clubOrderTree(order, orders=[]):
+        if orders:
+            # TODO merge this and below condition to always go without orders
+            if order['parent_id']:
+                parent_order = [_ for _ in orders if _['order_id'] == order['parent_id']][0]
+                order['order_placed'] = parent_order['order_placed']
+                order['delivery_date'] = parent_order['delivery_date']
+                order['charge'] += parent_order['charge']
+                order['delivery_slot'] = parent_order['delivery_slot']
+
+            #else: look for child
+        else:
+            parent_order = Order(order['parent_id']).getOrderInfo()
+
+            order['order_placed'] = parent_order['order_placed']
+            order['delivery_date'] = parent_order['delivery_date']
+            order['charge'] += parent_order['charge']
+            order['delivery_slot'] = parent_order['delivery_slot']
+        return order
+
 
     @staticmethod
     def placeOrder(order_data):
@@ -450,21 +475,6 @@ class Order():
                 conn.commit()
 
     @staticmethod
-    def clubOrderTree(order, orders=[]):
-        if orders:
-            if order['parent_id']:
-                parent_order = [_ for _ in orders if _['order_id'] == order['parent_id']][0]
-                order['order_placed'] = parent_order['order_placed']
-                order['delivery_date'] = parent_order['delivery_date']
-                order['charge'] += parent_order['charge']
-                order['delivery_slot'] = parent_order['delivery_slot']
-
-            #else: look for child
-        # else: look in db
-
-        return order
-
-    @staticmethod
     def mergeOrders(order_list):
         parents_list = []
         for i in range(len(order_list)):
@@ -501,6 +511,41 @@ class Order():
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
         return Utils.formatTimeSlots(order_timeslots)
+
+
+    @staticmethod
+    def deleteOrder(order_id):
+        conn = mysql.connect()
+        delete_cursor = conn.cursor()
+        
+        order_info = Order(order_id).getOrderInfo()
+        if order_info is None:
+            return {'status':'false'}
+
+        delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
+        order_id = %d""" %(order_id))
+        inventory_id = delete_cursor.fetchone()[0]
+
+        q_cond = """ AND fetched = 1"""
+
+        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
+        """+ str(inventory_id) + q_cond) 
+        conn.commit()
+        
+        delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
+        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
+        %(order_id))
+
+        if order_info['parent_id']:
+            delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
+            order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
+            %(order_info['parent_id']))
+
+        conn.commit()
+        delete_cursor.close()
+        return {'status':'true'}
+
+
 
     @staticmethod
     def getOrderStatusDetails(status_id):
@@ -541,32 +586,3 @@ class Order():
             return status_info[status_id]
         else:
             return False
-
-    
-    @staticmethod
-    def deleteOrder(order_id):
-        conn = mysql.connect()
-        delete_cursor = conn.cursor()
-        
-        order_info = Order(order_id).getOrderInfo()
-        if order_info is None:
-            return {'status':'false'}
-
-        delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
-        order_id = %d""" %(order_id))
-        inventory_id = delete_cursor.fetchone()[0]
-
-        q_cond = """ AND fetched = 1"""
-
-        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
-        """+ str(inventory_id) + q_cond) 
-        conn.commit()
-        
-        delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
-        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
-        %(order_id))
-        conn.commit()
-        delete_cursor.close()
-        return {'status':'true'}
-
-
