@@ -4,7 +4,7 @@ from threading import Thread
 from app import mail
 from app import webapp
 from app.decorators import async
-from premailer import Premailer
+from premailer import Premailer, transform
 
 class Mailer():
     @staticmethod
@@ -42,13 +42,14 @@ class Mailer():
 
 
     @staticmethod
+    @async
     def welcomeMailer(user):
         name = Mailer.getUserName(user)
-        email = Message('Welcome to Ostrich!',
-                    recipients=[user.email])
-        email.html = render_template('mailers/inlined/welcome.html', name=name)
-        thr = Thread(target=Mailer.send_async_mail, args=[webapp, email])
-        thr.start()
+        with webapp.app_context():
+            email = Message('Welcome to Ostrich!',
+                        recipients=[user.email])
+            email.html = transform(render_template('mailers/welcome.html', name=name))
+            mail.send(email)
         return True
 
     @staticmethod
