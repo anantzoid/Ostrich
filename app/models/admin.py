@@ -142,7 +142,9 @@ class Admin():
             order_return = datetime.strptime(order['order_return'], "%Y-%m-%d %H:%M:%S").date()
             if order_return < date:
                 history_orders.append(order)
-                orders_list.remove(order)
+
+        for order in history_orders:
+            orders_list.remove(order)
 
         return orders_list+rental_list+history_orders
 
