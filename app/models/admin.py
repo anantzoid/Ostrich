@@ -314,7 +314,7 @@ class Admin():
     def getSearchFailedQueries():
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM search_fails WHERE flow != 'admin' AND item_id IS NULL 
-                ORDER BY timestamp DESC""")
+                ORDER BY timestamp DESC LIMIT 50""")
         numrows = cursor.rowcount
         data = []
         for i in range(numrows):
