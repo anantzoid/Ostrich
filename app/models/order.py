@@ -385,7 +385,11 @@ class Order():
         update_cursor = conn.cursor()
       
         all_orders = self.getOrderInfo(fetch_all=True)
-        all_order_ids = Order.fetchAllOrderIds(all_orders)
+        if 'order' in all_orders:
+            all_order_ids = Order.fetchAllOrderIds(all_orders)
+        else:
+            all_order_ids = str(all_orders['order_id'])
+
         update_cursor.execute("UPDATE orders SET order_status = %s WHERE order_id IN ("+all_order_ids+")"
                 ,(status_id, ))
         conn.commit()
@@ -416,8 +420,12 @@ class Order():
         update_cursor = conn.cursor()
 
         all_orders = self.getOrderInfo(fetch_all=True)
-        all_order_ids = Order.fetchAllOrderIds(all_orders)
-        order_info = all_orders['order']
+        if 'order' in all_orders:
+            all_order_ids = Order.fetchAllOrderIds(all_orders)
+            order_info = all_orders['order']
+        else:
+            order_info = all_orders
+            all_order_ids = str(order_info['order_id'])
 
         if 'pickup_slot' in order_data:
             if not order_data['pickup_slot'].isdigit():
