@@ -241,7 +241,7 @@ class Order():
                     'HTTP_STATUS_CODE_ORDER_LIMIT_EXCEEDED')
 
         # Wallet validity 
-        if order_data['payment_mode'] == 'wallet' and user.wallet_balance is not None and user.wallet_balance < order_data['order_amount']:
+        if order_data['payment_mode'] == 'wallet' and user.wallet_balance < order_data['order_amount']:
             return ({
                 'title': 'Not Enough Credits',
                 'message': 'Your current balance '+str(user.wallet_balance)+' is not enough for this order. Choose Cash option and please order again.'}, 
