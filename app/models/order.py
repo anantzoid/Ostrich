@@ -29,7 +29,37 @@ class Order():
             order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
         
         if order_info['parent_id'] or order_info['is_parent']:
-            order_info = Order.clubOrders(order_info)
+            if 'fetch_all' in kwargs:
+                fetch_all = kwargs['fetch_all']
+            else:
+                fetch_all = False
+            order_info = Order.clubOrders(order_info, fetch_all)
+
+        return order_info
+
+    @staticmethod
+    def clubOrders(order_info, fetch_all=False):
+        parents, children = [], []
+        charge = 0
+        if order_info['parent_id']:
+            parents = Order.getAllParents(order_info, parents)
+        if order_info['is_parent']:
+            children = Order.getAllChildren(order_info, children)
+
+        if parents:
+            order_info['order_placed'] = parents[-1]['order_placed']
+        if children:
+            order_info['order_return'] = children[-1]['order_return']
+            order_info['pickup_slot'] = children[-1]['pickup_slot']
+            order_info['order_id'] = children[-1]['order_id']
+
+        all_orders = parents + children
+        for order in all_orders:
+            charge += order['charge']
+        order_info['charge'] += charge
+    
+        if fetch_all:
+            return {'parents':parents, 'order': order_info, 'children': children}
 
         return order_info
 
@@ -60,27 +90,7 @@ class Order():
         return children
 
 
-    @staticmethod
-    def clubOrders(order_info):
-        parents, children = [], []
-        charge = 0
-        if order_info['parent_id']:
-            parents = Order.getAllParents(order_info, parents)
-        if order_info['is_parent']:
-            children = Order.getAllChildren(order_info, children)
 
-        if parents:
-            order_info['order_placed'] = parents[-1]['order_placed']
-        if children:
-            order_info['order_return'] = children[-1]['order_return']
-            order_info['pickup_slot'] = children[-1]['pickup_slot']
-
-        all_orders = parents + children
-        for order in all_orders:
-            charge += order['charge']
-        order_info['charge'] += charge
-
-        return order_info
 
     @staticmethod
     def clubOrderTree(order, orders=[]):
@@ -373,8 +383,11 @@ class Order():
     def updateOrderStatus(self, status_id):
         conn = mysql.connect()
         update_cursor = conn.cursor()
-        update_cursor.execute("UPDATE orders SET order_status = %d WHERE order_id = %d"
-                %(status_id, self.order_id))
+      
+        all_orders = self.getOrderInfo(fetch_all=True)
+        all_order_ids = Order.fetchAllOrderIds(all_orders)
+        update_cursor.execute("UPDATE orders SET order_status = %s WHERE order_id IN ("+all_order_ids+")"
+                ,(status_id, ))
         conn.commit()
 
         update_inv_query = ''
@@ -401,7 +414,10 @@ class Order():
     def editOrderDetailsNew(self, order_data):
         conn = mysql.connect()
         update_cursor = conn.cursor()
-        order_info = self.getOrderInfo()
+
+        all_orders = self.getOrderInfo(fetch_all=True)
+        all_order_ids = Order.fetchAllOrderIds(all_orders)
+        order_info = all_orders['order']
 
         if 'pickup_slot' in order_data:
             if not order_data['pickup_slot'].isdigit():
@@ -416,7 +432,7 @@ class Order():
                 if not slot_exists:
                     return False
                 update_cursor.execute("""UPDATE orders SET pickup_slot = %s 
-                        WHERE order_id = %s""",(order_data['pickup_slot'], order_info['order_id']))
+                        WHERE order_id IN ("""+all_order_ids+""")""",(order_data['pickup_slot'],))
                 conn.commit()
                 status = True if update_cursor.rowcount else False
 
@@ -426,7 +442,7 @@ class Order():
             diff = new_order_return - old_order_return
             if diff.days <= 0:
                 update_cursor.execute("""UPDATE orders SET order_return = %s
-                        WHERE order_id = %s""",(order_data['order_return'], self.order_id))
+                        WHERE order_id IN ("""+all_order_ids+""")""",(order_data['order_return'],))
                 conn.commit()
                 status = True if update_cursor.rowcount else False
             else:
@@ -529,7 +545,18 @@ class Order():
                 (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
                 conn.commit()
 
-           
+
+    @staticmethod
+    def fetchAllOrderIds(all_orders):
+        all_order_ids = []
+        for key in all_orders.keys():
+            value = all_orders[key]
+            if isinstance(value, list):
+                all_order_ids.extend([_['order_id'] for _ in value])
+            else:
+                all_order_ids.append(value['order_id'])
+        return ",".join([str(_) for _ in all_order_ids])
+
     @staticmethod
     def getAreasForOrder():
         cursor = mysql.connect().cursor()
