@@ -93,18 +93,16 @@ class User(Prototype):
         # Free credits on signup
         if not webapp.config['APP_INVITE']:
             Wallet.creditTransaction(user.wallet_id, user.user_id, 'signup', user.user_id)
+            notification_data = {
+                    "notification_id": 100,
+                    "title": "Wallet Recharged",
+                    "message": "Early sign-up bonus. Read the first 2 books at no cost.",
+                    "expanded_text": "You've earned 100 credits as an early sign up bonus. You can use these credits to order books for free!" 
+                    }
+            Notifications(user.gcm_id).sendNotification(notification_data)
 
         # Welcome Mail
         Mailer.welcomeMailer(user)
-       
-        notification_data = {
-                "notification_id": 100,
-                "title": "Wallet Recharged",
-                "message": "Early sign-up bonus. Read the first 2 books at no cost.",
-                "expanded_text": "You've earned 100 credits as an early sign up bonus. You can use these credits to order books for free!" 
-                }
-
-        Notifications(user.gcm_id).sendNotification(notification_data)
         return user.getObj()
 
 
