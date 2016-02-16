@@ -90,29 +90,6 @@ class Order():
         return children
 
 
-
-
-    @staticmethod
-    def clubOrderTree(order, orders=[]):
-        if orders:
-            # TODO merge this and below condition to always go without orders
-            if order['parent_id']:
-                parent_order = [_ for _ in orders if _['order_id'] == order['parent_id']][0]
-                order['order_placed'] = parent_order['order_placed']
-                order['delivery_date'] = parent_order['delivery_date']
-                order['charge'] += parent_order['charge']
-                order['delivery_slot'] = parent_order['delivery_slot']
-
-        else:
-            parent_order = Order(order['parent_id']).getOrderInfo()
-
-            order['order_placed'] = parent_order['order_placed']
-            order['delivery_date'] = parent_order['delivery_date']
-            order['charge'] += parent_order['charge']
-            order['delivery_slot'] = parent_order['delivery_slot']
-        return order
-
-
     @staticmethod
     def placeOrder(order_data):
        
