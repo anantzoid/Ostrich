@@ -187,7 +187,7 @@ class User(Prototype):
                     self.addAddress(json.dumps(address), mode='insert')
         return address_valid
 
-    def getOrderSlotsNew(self):
+    def getOrderSlots(self):
         from app.models import Order
         time_slots = {}
         address = self.address if self.address else []
@@ -222,31 +222,6 @@ class User(Prototype):
                             time_slots[selected_area['area_id']].append(ts)
 
                 self.address[i]['time_slot'] = time_slots[selected_area['area_id']]
-         
-
-    def getOrderSlots(self):
-        from app.models import Order
-        time_slots = {}
-        address = self.address if self.address else []
-        available_areas = Order.getAreasForOrder()
-        for i,address in enumerate(address):
-            interval = 0
-            self.address[i]['time_slots'] = []
-
-            for area in available_areas.keys():
-                if area in address['locality'].lower():
-                    interval = available_areas[area]
-                    break
-            if interval:
-                if interval not in time_slots:
-                    if interval == "1 day":
-                        time_slot = Order.getTimeSlot(2)
-                        #TODO change to today afteer 12am
-                        time_slot['formatted'] = 'Tommorrow '+Utils.cleanTimeSlot(time_slot)
-                        time_slots[interval] = [time_slot]
-                    elif isinstance(interval, int):
-                        time_slots[interval] = Order.getTimeSlotsForOrder(interval)
-                self.address[i]['time_slot'] = time_slots[interval]
 
     @staticmethod
     def validateLocality(locality):
@@ -269,7 +244,9 @@ class User(Prototype):
         orders_cursor = mysql.connect().cursor()
         orders_cursor.execute("""SELECT order_id
                 FROM orders
-                WHERE user_id = %d""" % (self.user_id))
+                WHERE user_id = %d
+                AND order_id NOT IN (SELECT DISTINCT parent_id FROM orders)""" 
+                % (self.user_id))
         for order_id in orders_cursor.fetchall():
             order = Order(int(order_id[0]))
             order_info = order.getOrderInfo(formatted=True)
@@ -277,7 +254,11 @@ class User(Prototype):
             order_info['items'] = [Item(int(order_info['item_id'])).getObj()]
             order_info['address'] = User.getAddressInfo(order_info['address_id']) 
             order_list.append(order_info)
-        
+       
+        for i in range(len(order_list)):
+            if order_list[i]['parent_id']: 
+                order_list[i] = Order.clubOrders(order_list[i]) 
+
         order_statuses = {"ordered":[], "reading":[], "previous":[]}
         for order in order_list:
             if order['order_status'] in [1, 2, 3]:

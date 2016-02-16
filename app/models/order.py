@@ -15,17 +15,80 @@ class Order():
         # TODO concatnate list of inv_id and item_id when,
         # when going gor mulitple items in same order
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT o.*, oi.* \
-                FROM orders o \
-                INNER JOIN order_history oi ON o.order_id = oi.order_id \
-                WHERE o.order_id = %d" %(self.order_id))
+        obj_cursor.execute("""SELECT o.*, oi.*,
+                IF((select count(*) from orders where parent_id=%s)>0, 1, 0) as is_parent
+                FROM orders o 
+                INNER JOIN order_history oi ON o.order_id = oi.order_id 
+                WHERE o.order_id = %s""", (self.order_id, self.order_id))
         order_info = Utils.fetchOneAssoc(obj_cursor)
+        obj_cursor.close()
+
         order_info['item'] = Item(order_info['item_id']).getObj()
 
         if 'formatted' in kwargs:
             order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
+        
+        if order_info['parent_id'] or order_info['is_parent']:
+            if 'fetch_all' in kwargs:
+                fetch_all = kwargs['fetch_all']
+            else:
+                fetch_all = False
+            order_info = Order.clubOrders(order_info, fetch_all)
 
         return order_info
+
+    @staticmethod
+    def clubOrders(order_info, fetch_all=False):
+        parents, children = [], []
+        charge = 0
+        if order_info['parent_id']:
+            parents = Order.getAllParents(order_info, parents)
+        if order_info['is_parent']:
+            children = Order.getAllChildren(order_info, children)
+
+        if parents:
+            order_info['order_placed'] = parents[-1]['order_placed']
+        if children:
+            order_info['order_return'] = children[-1]['order_return']
+            order_info['pickup_slot'] = children[-1]['pickup_slot']
+            order_info['order_id'] = children[-1]['order_id']
+
+        all_orders = parents + children
+        for order in all_orders:
+            charge += order['charge']
+        order_info['charge'] += charge
+    
+        if fetch_all:
+            return {'parents':parents, 'order': order_info, 'children': children}
+
+        return order_info
+
+    @staticmethod
+    def getAllParents(order_info, parents):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM orders WHERE order_id = %s""",(order_info['parent_id'],))
+        parent_data = Utils.fetchOneAssoc(cursor)
+        cursor.close()
+        parents.append(parent_data)
+        if parent_data['parent_id']:
+            return Order.getAllParents(parent_data, parents)
+        return parents
+        
+    
+    @staticmethod
+    def getAllChildren(order_info, children):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT o.*,
+                IF((select count(*) from orders co where co.parent_id=o.order_id)>0, 1, 0) as is_parent
+                FROM orders o WHERE o.parent_id = %s""",(order_info['order_id'],))
+        child_data = Utils.fetchOneAssoc(cursor)
+        cursor.close()
+        children.append(child_data)
+
+        if child_data['is_parent']:
+            return Order.getAllChildren(child_data, children)
+        return children
+
 
     @staticmethod
     def placeOrder(order_data):
@@ -135,7 +198,7 @@ class Order():
 
         notification_data = {
                     "notification_id": notification_id,
-                    "entity_id": self.order_id,
+                    "entity_id": order_info['order_id'],
                     "title": status_info["Status"],
                     "message": status_info["Description"],
                     "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"]
@@ -298,8 +361,15 @@ class Order():
     def updateOrderStatus(self, status_id):
         conn = mysql.connect()
         update_cursor = conn.cursor()
-        update_cursor.execute("UPDATE orders SET order_status = %d WHERE order_id = %d"
-                %(status_id, self.order_id))
+      
+        all_orders = self.getOrderInfo(fetch_all=True)
+        if 'order' in all_orders:
+            all_order_ids = Order.fetchAllOrderIds(all_orders)
+        else:
+            all_order_ids = str(all_orders['order_id'])
+
+        update_cursor.execute("UPDATE orders SET order_status = %s WHERE order_id IN ("+all_order_ids+")"
+                ,(status_id, ))
         conn.commit()
 
         update_inv_query = ''
@@ -322,6 +392,81 @@ class Order():
         elif status_id == 7:
             Indexer().indexItems(query_condition=' AND i.item_id='+str(self.getOrderInfo()['item_id']))
         return self.getOrderInfo() 
+
+    def editOrderDetailsNew(self, order_data):
+        conn = mysql.connect()
+        update_cursor = conn.cursor()
+
+        all_orders = self.getOrderInfo(fetch_all=True)
+        if 'order' in all_orders:
+            all_order_ids = Order.fetchAllOrderIds(all_orders)
+            order_info = all_orders['order']
+        else:
+            order_info = all_orders
+            all_order_ids = str(order_info['order_id'])
+
+        if 'pickup_slot' in order_data:
+            if not order_data['pickup_slot'].isdigit():
+                return False
+            else:
+                order_data['pickup_slot'] = int(order_data['pickup_slot'])
+                slot_exists = False
+                for slot in Order.getTimeSlot():
+                    if slot['slot_id'] == order_data['pickup_slot']:
+                        slot_exists = True
+                        break
+                if not slot_exists:
+                    return False
+                update_cursor.execute("""UPDATE orders SET pickup_slot = %s 
+                        WHERE order_id IN ("""+all_order_ids+""")""",(order_data['pickup_slot'],))
+                conn.commit()
+                status = True if update_cursor.rowcount else False
+
+        if 'order_return' in order_data:
+            old_order_return = datetime.datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
+            new_order_return = datetime.datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
+            diff = new_order_return - old_order_return
+            if diff.days <= 0:
+                update_cursor.execute("""UPDATE orders SET order_return = %s
+                        WHERE order_id IN ("""+all_order_ids+""")""",(order_data['order_return'],))
+                conn.commit()
+                status = True if update_cursor.rowcount else False
+            else:
+                # NOTE Order Extend is a new order
+                # TODO change payment hardcoding from cash, to get from app
+                update_cursor.execute("""INSERT INTO orders 
+                    (user_id, 
+                    address_id, 
+                    order_status,
+                    order_return,
+                    pickup_slot, 
+                    delivery_date,
+                    delivery_slot,
+                    charge,
+                    payment_mode,
+                    parent_id) 
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                    ,(order_info['user_id'], 
+                    order_info['address_id'], 
+                    order_info['order_status'],
+                    order_data['order_return'], 
+                    order_info['pickup_slot'],
+                    order_info['delivery_date'],
+                    order_info['delivery_slot'],
+                    order_data['extend_charges'] if 'extend_charges' in order_data else self.charge,
+                    'cash',
+                    self.order_id))
+                conn.commit()
+                child_order_id = update_cursor.lastrowid
+                status = True if update_cursor.rowcount else False
+
+                update_cursor.execute("""INSERT INTO order_history 
+                    (inventory_id, item_id, order_id) VALUES (%s, %s, %s)""",
+                    (order_info['inventory_id'], order_info['item_id'], child_order_id))
+                conn.commit()
+
+        self.logEditOrderDetails(order_data, order_info)
+        return status
 
     def editOrderDetails(self, order_data):
         # order_return validity
@@ -365,7 +510,7 @@ class Order():
         update_cursor.execute("""UPDATE orders SET order_return = %s,
                 pickup_slot = %s, charge = %s WHERE
                 order_id = %s""", (order_data['order_return'],
-                order_data['pickup_slot'], order_data['charge'], self.order_id))
+                order_data['pickup_slot'], order_data['charge'], order_info['order_id']))
         conn.commit()
         if update_cursor.rowcount:
             status =  True
@@ -380,11 +525,23 @@ class Order():
         conn = mysql.connect()
         update_cursor = conn.cursor()
         for key in ['order_return', 'pickup_slot', 'charge']:
-            if order_data[key] != order_info[key]:
+            if key in order_data and order_data[key] != order_info[key]:
                 update_cursor.execute("""INSERT INTO edit_order_log (order_id, 
                 `key`, old_value, new_value) VALUES (%s, %s, %s, %s)""",
                 (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
                 conn.commit()
+
+
+    @staticmethod
+    def fetchAllOrderIds(all_orders):
+        all_order_ids = []
+        for key in all_orders.keys():
+            value = all_orders[key]
+            if isinstance(value, list):
+                all_order_ids.extend([_['order_id'] for _ in value])
+            else:
+                all_order_ids.append(value['order_id'])
+        return ",".join([str(_) for _ in all_order_ids])
 
     @staticmethod
     def getAreasForOrder():
@@ -408,6 +565,41 @@ class Order():
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
         return Utils.formatTimeSlots(order_timeslots)
+
+
+    @staticmethod
+    def deleteOrder(order_id):
+        conn = mysql.connect()
+        delete_cursor = conn.cursor()
+        
+        order_info = Order(order_id).getOrderInfo()
+        if order_info is None:
+            return {'status':'false'}
+
+        delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
+        order_id = %d""" %(order_id))
+        inventory_id = delete_cursor.fetchone()[0]
+
+        q_cond = """ AND fetched = 1"""
+
+        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
+        """+ str(inventory_id) + q_cond) 
+        conn.commit()
+        
+        delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
+        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
+        %(order_id))
+
+        if order_info['parent_id']:
+            delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
+            order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
+            %(order_info['parent_id']))
+
+        conn.commit()
+        delete_cursor.close()
+        return {'status':'true'}
+
+
 
     @staticmethod
     def getOrderStatusDetails(status_id):
@@ -448,32 +640,3 @@ class Order():
             return status_info[status_id]
         else:
             return False
-
-    
-    @staticmethod
-    def deleteOrder(order_id):
-        conn = mysql.connect()
-        delete_cursor = conn.cursor()
-        
-        order_info = Order(order_id).getOrderInfo()
-        if order_info is None:
-            return {'status':'false'}
-
-        delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
-        order_id = %d""" %(order_id))
-        inventory_id = delete_cursor.fetchone()[0]
-
-        q_cond = """ AND fetched = 1"""
-
-        delete_cursor.execute("""DELETE FROM inventory WHERE inventory_id =
-        """+ str(inventory_id) + q_cond) 
-        conn.commit()
-        
-        delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
-        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
-        %(order_id))
-        conn.commit()
-        delete_cursor.close()
-        return {'status':'true'}
-
-

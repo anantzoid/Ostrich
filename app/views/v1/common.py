@@ -24,6 +24,6 @@ def startSession():
     if 'user_id' in request.args:
         user_id = request.args.get('user_id')
         user = User(user_id)
-        user.getOrderSlotsNew()
+        user.getOrderSlots()
         data['user_model'] = user.getObj()
     return jsonify(data)
