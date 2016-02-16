@@ -246,7 +246,9 @@ class User(Prototype):
         orders_cursor = mysql.connect().cursor()
         orders_cursor.execute("""SELECT order_id
                 FROM orders
-                WHERE user_id = %d""" % (self.user_id))
+                WHERE user_id = %d
+                AND order_id NOT IN (SELECT DISTINCT parent_id FROM orders)""" 
+                % (self.user_id))
         for order_id in orders_cursor.fetchall():
             order = Order(int(order_id[0]))
             order_info = order.getOrderInfo(formatted=True)
@@ -255,7 +257,10 @@ class User(Prototype):
             order_info['address'] = User.getAddressInfo(order_info['address_id']) 
             order_list.append(order_info)
        
-        order_list = Order.mergeOrders(order_list)
+        for i in range(len(order_list)):
+            if order_list[i]['parent_id']: 
+                order_list[i] = Order.clubOrders(order_list[i]) 
+
         order_statuses = {"ordered":[], "reading":[], "previous":[]}
         for order in order_list:
             if order['order_status'] in [1, 2, 3]:

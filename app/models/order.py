@@ -15,18 +15,70 @@ class Order():
         # TODO concatnate list of inv_id and item_id when,
         # when going gor mulitple items in same order
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT o.*, oi.* \
-                FROM orders o \
-                INNER JOIN order_history oi ON o.order_id = oi.order_id \
-                WHERE o.order_id = %d" %(self.order_id))
+        obj_cursor.execute("""SELECT o.*, oi.*,
+                IF((select count(*) from orders where parent_id=%s)>0, 1, 0) as is_parent
+                FROM orders o 
+                INNER JOIN order_history oi ON o.order_id = oi.order_id 
+                WHERE o.order_id = %s""", (self.order_id, self.order_id))
         order_info = Utils.fetchOneAssoc(obj_cursor)
+        obj_cursor.close()
+
         order_info['item'] = Item(order_info['item_id']).getObj()
 
         if 'formatted' in kwargs:
             order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
         
+        if order_info['parent_id'] or order_info['is_parent']:
+            order_info = Order.clubOrders(order_info)
+
+        return order_info
+
+    @staticmethod
+    def getAllParents(order_info, parents):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM orders WHERE order_id = %s""",(order_info['parent_id'],))
+        parent_data = Utils.fetchOneAssoc(cursor)
+        cursor.close()
+        parents.append(parent_data)
+        if parent_data['parent_id']:
+            return Order.getAllParents(parent_data, parents)
+        return parents
+        
+    
+    @staticmethod
+    def getAllChildren(order_info, children):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT o.*,
+                IF((select count(*) from orders co where co.parent_id=o.order_id)>0, 1, 0) as is_parent
+                FROM orders o WHERE o.parent_id = %s""",(order_info['order_id'],))
+        child_data = Utils.fetchOneAssoc(cursor)
+        cursor.close()
+        children.append(child_data)
+
+        if child_data['is_parent']:
+            return Order.getAllChildren(child_data, children)
+        return children
+
+
+    @staticmethod
+    def clubOrders(order_info):
+        parents, children = [], []
+        charge = 0
         if order_info['parent_id']:
-            order_info = Order.clubOrderTree(order_info)
+            parents = Order.getAllParents(order_info, parents)
+        if order_info['is_parent']:
+            children = Order.getAllChildren(order_info, children)
+
+        if parents:
+            order_info['order_placed'] = parents[-1]['order_placed']
+        if children:
+            order_info['order_return'] = children[-1]['order_return']
+            order_info['pickup_slot'] = children[-1]['pickup_slot']
+
+        all_orders = parents + children
+        for order in all_orders:
+            charge += order['charge']
+        order_info['charge'] += charge
 
         return order_info
 
@@ -41,7 +93,6 @@ class Order():
                 order['charge'] += parent_order['charge']
                 order['delivery_slot'] = parent_order['delivery_slot']
 
-            #else: look for child
         else:
             parent_order = Order(order['parent_id']).getOrderInfo()
 
@@ -387,15 +438,19 @@ class Order():
                     order_status,
                     order_return,
                     pickup_slot, 
+                    delivery_date,
+                    delivery_slot,
                     charge,
                     payment_mode,
                     parent_id) 
-                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""  
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                     ,(order_info['user_id'], 
                     order_info['address_id'], 
                     order_info['order_status'],
                     order_data['order_return'], 
                     order_info['pickup_slot'],
+                    order_info['delivery_date'],
+                    order_info['delivery_slot'],
                     order_data['extend_charges'] if 'extend_charges' in order_data else self.charge,
                     'cash',
                     self.order_id))
@@ -474,21 +529,7 @@ class Order():
                 (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
                 conn.commit()
 
-    @staticmethod
-    def mergeOrders(order_list):
-        parents_list = []
-        for i in range(len(order_list)):
-            if order_list[i]['parent_id']: 
-                parents_list.append(order_list[i]['parent_id'])
-                order_list[i] = Order.clubOrderTree(order_list[i], orders=order_list)
-
-        # Filter parents
-        for i,order in enumerate(order_list):
-            if order['order_id'] in parents_list:
-                del(order_list[i])
-        return order_list
-
-            
+           
     @staticmethod
     def getAreasForOrder():
         cursor = mysql.connect().cursor()
