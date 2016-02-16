@@ -15,7 +15,8 @@ def pickupSchedule():
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT o.order_id 
         FROM orders o
-        WHERE DATE(o.order_return) = %s""",
+        WHERE DATE(o.order_return) = %s AND order_id NOT IN
+        (SELECT DISTINCT parent_id FROM orders)""",
         (date,))
     order_ids = cursor.fetchall()
     all_time_slots = Order.getTimeSlot()
