@@ -5,12 +5,9 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-    from app.models import Mailer,User
-    user = User(1)
-    Mailer.welcomeMailer(user)
 
-    #from app.scripts.upsell_email import upsellEmail
-    #upsellEmail(23)
+    from app.scripts.upsell_email import upsellEmail
+    upsellEmail(28)
 
 @manager.command
 def indexer():

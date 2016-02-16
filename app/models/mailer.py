@@ -70,11 +70,11 @@ class Mailer():
         with webapp.app_context():
             consumer_mail = render_template('mailers/extend_order.html',
                             name = name,
+                            book_name = data['book_name'],
                             items = data['items'], 
                             curated_items = data['curated_items'],
                             quote = data['quote'], 
                             quote_author = data['quote_author'])
-
             pre = Premailer(consumer_mail, remove_classes=False, strip_important=False)
             consumer_mail =  pre.transform()
             email = Message('Enjoying the book?',

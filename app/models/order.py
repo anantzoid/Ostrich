@@ -242,9 +242,10 @@ class Order():
 
         # Wallet validity 
         if order_data['payment_mode'] == 'wallet' and user.wallet_balance < order_data['order_amount']:
+            current_balance = str(user.wallet_balance) if user.wallet_balance is not None else "0.0"
             return ({
                 'title': 'Not Enough Credits',
-                'message': 'Your current balance '+str(user.wallet_balance)+' is not enough for this order. Choose Cash option and please order again.'}, 
+                'message': 'Your current balance '+current_balance+' is not enough for this order. Choose Cash option and please order again.'}, 
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Since Address is editable before placing order

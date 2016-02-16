@@ -42,7 +42,6 @@ def upsellEmail(order_id):
             "quote": quote, 
             "quote_author": quote_author
             }
-
     Mailer.sendUpsellEmail(data)
     return True
    
