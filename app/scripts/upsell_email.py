@@ -37,11 +37,11 @@ def upsellEmail(order_id):
     data = {
             "user": User(order_info['user_id']),
             "items": items[:4], 
+            "book_name": order_info["item"]["item_name"],
             "curated_items": curated_items,
             "quote": quote, 
             "quote_author": quote_author
             }
-
     Mailer.sendUpsellEmail(data)
     return True
    

@@ -12,6 +12,7 @@ from boto.s3.connection import S3Connection
 from boto.s3.key import Key
 from pymongo import MongoClient
 from bson import ObjectId
+from datetime import datetime
 
 class Admin():
     @staticmethod
@@ -76,8 +77,9 @@ class Admin():
         order_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'order_status >= 4 AND order_status < 7 AND DATE(order_return) >= '+date+' ORDER BY order_return ASC' if pickups else 'order_status < 4'
+        query_condition = 'order_status >= 4 AND order_status < 7  ORDER BY order_return ASC' if pickups else 'order_status < 4'
         cursor.execute("""SELECT order_id FROM orders WHERE order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
+
         order_ids = cursor.fetchall()
         all_time_slots = Order.getTimeSlot()
 
@@ -136,8 +138,18 @@ class Admin():
             rental_list[i]['order_type'] = 'lend'
             rental_list[i]['scheduled_date'] = rental['delivery_date']
             rental_list[i]['scheduled_slot'] = rental['delivery_slot']
-            
-        return orders_list+rental_list
+        
+        history_orders = []
+        date = datetime.now().date()
+        for order in orders_list:
+            order_return = datetime.strptime(order['order_return'], "%Y-%m-%d %H:%M:%S").date()
+            if order_return < date:
+                history_orders.append(order)
+
+        for order in history_orders:
+            orders_list.remove(order)
+
+        return orders_list+rental_list+history_orders
 
     @staticmethod
     def getItemDetail(inventory_id):
@@ -295,7 +307,7 @@ class Admin():
             'title': data['title'],
             'items': data['items'].split(',') 
         }
-        print db.content.update_one(
+        db.content.update_one(
                 {'_id': ObjectId(data['_id'])},
                 {'$set': panel_data}
                 )
@@ -305,7 +317,7 @@ class Admin():
     def getSearchFailedQueries():
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM search_fails WHERE flow != 'admin' AND item_id IS NULL 
-                ORDER BY timestamp DESC""")
+                ORDER BY timestamp DESC LIMIT 50""")
         numrows = cursor.rowcount
         data = []
         for i in range(numrows):
