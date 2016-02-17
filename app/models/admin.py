@@ -217,7 +217,7 @@ class Admin():
         conn = mysql.connect()
         cursor = conn.cursor()
     
-        price = data['amazon']['offer_price'] if data['amazon']['offer_price'] else data['amazon']['list_price']
+        price = data['amazon']['list_price'] if data['amazon']['list_price'] else data['amazon']['offer_price']
         price = re.sub('\..*$', '', price)
 
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))

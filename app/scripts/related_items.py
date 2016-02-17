@@ -110,7 +110,7 @@ def fetchRelatedItemsData(item_links):
                 dumpItemData(item_data, item_id)
                 continue
 
-        cursor.execute("""SELECT DISTINCT item_id FROM items WHERE item_name = %s""",(re.sub('\(.*\)','', item_data['goodreads']['title']),))
+        cursor.execute("""SELECT DISTINCT item_id FROM items WHERE item_name = %s""",(re.sub('\(.*\)','', item_data['amazon']['title']),))
         item_id = cursor.fetchone()
         if item_id:
             item_id = int(item_id[0])

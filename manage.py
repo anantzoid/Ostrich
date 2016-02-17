@@ -7,7 +7,7 @@ manager = Manager(webapp)
 def hello():
 
     from app.scripts.related_items import getRelatedItems
-    getRelatedItems(16)
+    getRelatedItems(4051)
 
 @manager.command
 def indexer():
