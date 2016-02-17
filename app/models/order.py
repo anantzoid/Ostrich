@@ -572,9 +572,17 @@ class Order():
         conn = mysql.connect()
         delete_cursor = conn.cursor()
         
-        order_info = Order(order_id).getOrderInfo()
+        all_orders = Order(order_id).getOrderInfo(fetch_all=True)
+        if 'order' in all_orders:
+            all_order_ids = Order.fetchAllOrderIds(all_orders)
+            order_info = all_orders['order']
+        else:
+            order_info = all_orders
+            all_order_ids = str(order_info['order_id'])
+
         if order_info is None:
             return {'status':'false'}
+
 
         delete_cursor.execute("""SELECT inventory_id FROM order_history WHERE
         order_id = %d""" %(order_id))
@@ -587,18 +595,10 @@ class Order():
         conn.commit()
         
         delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
-        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
-        %(order_id))
-
-        if order_info['parent_id']:
-            delete_cursor.execute("DELETE orders, order_history FROM orders INNER JOIN \
-            order_history WHERE orders.order_id = order_history.order_id AND orders.order_id = %d"
-            %(order_info['parent_id']))
-
+        order_history WHERE orders.order_id = order_history.order_id AND orders.order_id IN ("+all_order_ids+")")
         conn.commit()
         delete_cursor.close()
         return {'status':'true'}
-
 
 
     @staticmethod
