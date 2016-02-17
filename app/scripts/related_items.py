@@ -100,9 +100,8 @@ def fetchRelatedItemsData(item_links):
             dumpItemData(item_data, item_id)
             continue
 
-        isbns = item_data['goodreads']['isbns'].extend(item_data['goodreads']['isbn_13'])
-        #TODO this does not work
-        cursor.execute("""SELECT DISTINCT item_id FROM item_isbn WHERE isbn_13 IN (%s)""",(isbns,))
+        isbns = ",".join(item_data['goodreads']['isbns'] + [item_data['goodreads']['isbn_13']])
+        cursor.execute("""SELECT DISTINCT item_id FROM item_isbn WHERE isbn_13 IN ("""+isbns+""")""")
         item_id = cursor.fetchone()
         if item_id:
             item_id = int(item_id[0])
