@@ -265,7 +265,7 @@ class User(Prototype):
                 order_statuses['ordered'].append(order)
             elif order['order_status'] == 4:
                 order_statuses['reading'].append(order)
-            elif order['order_status'] in [5, 6]:
+            elif order['order_status'] in [5, 6, 7]:
                 #TODO NOTE Temp fix for app fuckup
                 if order['order_status'] == 6:
                     order['order_status'] = 5
