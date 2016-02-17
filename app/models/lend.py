@@ -203,7 +203,7 @@ class Lend():
                     },
                 2: {
                     "Status": "Out for Pickup",
-                    "Description": "We're on our way to pickup the book."
+                    "Description": "We're on our way to pick up the book."
                     },
                 3: {
                     "Status": "Thanks for Sharing",
