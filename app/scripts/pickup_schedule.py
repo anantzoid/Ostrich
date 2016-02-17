@@ -13,14 +13,20 @@ def pickupSchedule():
     # Order Pickup
     order_list = []
     cursor = mysql.connect().cursor()
-    cursor.execute("""SELECT o.order_id 
+    cursor.execute("""SELECT COUNT(*) 
         FROM orders o
         WHERE DATE(o.order_return) = %s AND order_id NOT IN
         (SELECT DISTINCT parent_id FROM orders)""",
         (date,))
-    order_ids = cursor.fetchall()
-    all_time_slots = Order.getTimeSlot()
+    order_ids = cursor.fetchone()
+    if order_ids[0] > 0:
+        with webapp.test_request_context():
+            Mailer.genericMailer({'subject':'Pickups for '+date, 'body': 'Check dashboard for more info'})
+        Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
 
+
+    '''
+    all_time_slots = Order.getTimeSlot()
     for order_id in order_ids:
         order = Order(int(order_id[0]))
         order_info = order.getOrderInfo()
@@ -41,7 +47,7 @@ def pickupSchedule():
         with webapp.test_request_context():
             Mailer.genericMailer({'subject':'Pickups for '+date, 'body': 'Check dashboard for more info'})
         Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
-
+    '''
     '''
     # Rentals delivery
     rental_list = []
