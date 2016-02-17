@@ -24,6 +24,9 @@ class Order():
         obj_cursor.close()
 
         order_info['item'] = Item(order_info['item_id']).getObj()
+        order_info['all_charges'] = [{
+                            'charge': int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']), 
+                            'payment_mode': order_info['payment_mode']}]
 
         if 'formatted' in kwargs:
             order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
@@ -56,6 +59,10 @@ class Order():
         all_orders = parents + children
         for order in all_orders:
             charge += order['charge']
+            order_info['all_charges'].append({
+                    'charge': order['charge'],
+                    'payment_mode': order['payment_mode']
+                    })
         order_info['charge'] += charge
     
         if fetch_all:
@@ -433,7 +440,6 @@ class Order():
                 status = True if update_cursor.rowcount else False
             else:
                 # NOTE Order Extend is a new order
-                # TODO change payment hardcoding from cash, to get from app
                 update_cursor.execute("""INSERT INTO orders 
                     (user_id, 
                     address_id, 
@@ -454,7 +460,7 @@ class Order():
                     order_info['delivery_date'],
                     order_info['delivery_slot'],
                     order_data['extend_charges'] if 'extend_charges' in order_data else self.charge,
-                    'cash',
+                    order_data['extend_payment_mode'] if 'extend_payment_mode' in order_data else 'cash',
                     self.order_id))
                 conn.commit()
                 child_order_id = update_cursor.lastrowid
