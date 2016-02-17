@@ -263,7 +263,15 @@ class Admin():
                         global_categories[genre] = cat_id[0]
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
                         VALUES (%s, %s)""",(item_id, global_categories[genre]))
-                    #TODO insert category if not exists
+                    else:
+                        cursor.execute("""INSERT INTO categories (category_name) VALUES (%s)""",
+                                (genre,))
+                        conn.commit()
+                        global_categories[genre] = cursor.lastrowid
+                        cursor.execute("""INSERT INTO items_categories (item_id, category_id)
+                        VALUES (%s, %s)""",(item_id, global_categories[genre]))
+
+
                 conn.commit()
 
         s3conn = S3Connection('AKIAIN4EU63OJMW63H6A', 'k97pZ8rmwkqLdeW+L4QOIKrCDIg3YR/uY/BifLU3')
