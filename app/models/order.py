@@ -315,7 +315,7 @@ class Order():
             current_balance = str(user.wallet_balance) if user.wallet_balance is not None else "0.0"
             return ({
                 'title': 'Not Enough Credits',
-                'message': 'Your current balance '+current_balance+' is not enough for this order. Choose Cash option and please order again.'}, 
+                'message': 'Your current balance '+current_balance+' is not enough for this order. Choose the Cash option and please order again.'}, 
                 'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # Since Address is editable before placing order
@@ -617,11 +617,11 @@ class Order():
                     },
                 2: {
                     "Status": "Picked Up",
-                    "Description": "Your order has been picked up for delivery"
+                    "Description": "Your order has been picked up for delivery."
                     },
                 3: {
                     "Status": "Out for Delivery",
-                    "Description": "Your book is on its way"
+                    "Description": "Your book is on its way."
                     },
                 4: {
                     "Status": "Book Delivered",
@@ -629,7 +629,7 @@ class Order():
                     },
                 5: {
                     "Status": "Out for Pickup",
-                    "Description": "We're on our way to pickup the book"
+                    "Description": "We're on our way to pick up the book."
                     },
                 6: {
                     "Status": "Book Picked Up",
@@ -638,7 +638,7 @@ class Order():
                     },
                 7: {
                     "Status": "Returned",
-                    "Description": "Order has been retured to the inventory"
+                    "Description": "Order has been retured to the inventory."
                     }
                 }
         
