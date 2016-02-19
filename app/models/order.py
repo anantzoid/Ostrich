@@ -23,20 +23,21 @@ class Order():
         order_info = Utils.fetchOneAssoc(obj_cursor)
         obj_cursor.close()
 
-        order_info['item'] = Item(order_info['item_id']).getObj()
-        order_info['all_charges'] = [{
-                            'charge': int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']), 
-                            'payment_mode': order_info['payment_mode']}]
+        if order_info:
+            order_info['item'] = Item(order_info['item_id']).getObj()
+            order_info['all_charges'] = [{
+                                'charge': int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']), 
+                                'payment_mode': order_info['payment_mode']}]
 
-        if 'formatted' in kwargs:
-            order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
-        
-        if order_info['parent_id'] or order_info['is_parent']:
-            if 'fetch_all' in kwargs:
-                fetch_all = kwargs['fetch_all']
-            else:
-                fetch_all = False
-            order_info = Order.clubOrders(order_info, fetch_all)
+            if 'formatted' in kwargs:
+                order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
+            
+            if order_info['parent_id'] or order_info['is_parent']:
+                if 'fetch_all' in kwargs:
+                    fetch_all = kwargs['fetch_all']
+                else:
+                    fetch_all = False
+                order_info = Order.clubOrders(order_info, fetch_all)
 
         return order_info
 
@@ -459,7 +460,7 @@ class Order():
                     order_info['pickup_slot'],
                     order_info['delivery_date'],
                     order_info['delivery_slot'],
-                    order_data['extend_charges'] if 'extend_charges' in order_data else self.charge,
+                    order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'],
                     order_data['extend_payment_mode'] if 'extend_payment_mode' in order_data else 'cash',
                     self.order_id))
                 conn.commit()
