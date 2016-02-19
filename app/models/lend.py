@@ -7,6 +7,10 @@ import json
 
 class Lend():
     @staticmethod
+    def getOfferCredits():
+        return int(3 * webapp.config['NEW_READING_RATE'] * webapp.config['DEFAULT_RETURN_DAYS'])
+
+    @staticmethod
     def lendItem(lend_data):
         lend_fields = ['item_id', 'user_id', 'address']
         for key in lend_fields:
@@ -67,8 +71,8 @@ class Lend():
             Lend.rollbackLend(lend_data['inventory_id'])
             return {}
 
-        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend',
-                lend_data['inventory_id'], webapp.config['DEFAULT_RENTAL_CREDIT']) 
+        Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend', 
+                lend_data['inventory_id'], Lend.getOfferCredits()) 
        
         Lend.sendLendNotification(status_id=1,user=user)
         Utils.notifyAdmin(user.user_id, 'Lend')
@@ -250,7 +254,7 @@ class Lend():
         conn.commit()
 
         user = User(user_id) 
-        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, webapp.config['DEFAULT_RENTAL_CREDIT'])
+        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, Lend.getOfferCredits())
         
         return {'status':'true'}
         
