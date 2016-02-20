@@ -347,24 +347,45 @@ class Admin():
         cursor = conn.cursor()
         cursor.execute("""SELECT * FROM search_fails WHERE id = %s""",(data['query_id'],))
         search_data = cursor.fetchone()
-        if not search_data[6]:
+        if not search_data[6] and not search_data[7]:
             return
         if search_data[1] <= 0:
             return
-        
-        item = Item(int(search_data[6]))
+       
         user = User(int(search_data[1]))
-
-        item_name_ellipse = (item.item_name[:27] + '...') if len(item.item_name) > 27 else item.item_name
         notification_data = {
-                "notification_id": 5,
-                "entity_id": item.item_id,
-                "item_name": item.item_name,
-                "search_intention": search_data[5],
-                "title": "Book Now Available",
-                "message": "\""+item_name_ellipse+"\" is now available", 
-                "expanded_text": "\""+item.item_name+"\" is now available."
+                    "title": "Book Now Available",
+                    "search_intention": search_data[5],
+                    "bottom_text": "Ostrich Books"
                 }
+        if search_data[6]:
+            item = Item(int(search_data[6]))
+            item_name_ellipse = (item.item_name[:27] + '...') if len(item.item_name) > 27 else item.item_name
+
+            notification_data['notification_id'] = 5
+            notification_data['entity_id'] = item.item_id
+            notification_data['item_name'] = item.item_name
+            notification_data['message'] = "\""+item_name_ellipse+"\" is now available"
+            notification_data['expanded_text'] = "\""+item.item_name+"\" is now available."
+
+        elif search_data[7]:
+            query_ellipse = (search_data[7][:27] + '...') if len(search_data[7]) > 27 else search_data[7]
+            if search_data[4] == "author":
+                notification_data['message'] = "Books by \""+query_ellipse+"\" are now available"
+                notification_data['expanded_text'] = "Books by \""+search_data[7]+"\" are now available"
+            elif search_data[4] == "genre":
+                notification_data['message'] = "\""+query_ellipse+"\" books are now available"
+                notification_data['expanded_text'] = "\""+search_data[7]+"\" books are now available"
+            else:
+                notification_data['message'] = "\""+query_ellipse+"\" is now available"
+                notification_data['expanded_text'] = "\""+search_data[7]+"\" is now available"
+
+            
+            notification_data['notification_id'] = 6
+            notification_data['query'] = search_data[7]
+            notification_data['query_name'] = search_data[7]
+            notification_data['query_type'] = search_data[4]
+
         status = Notifications(user.gcm_id).sendNotification(notification_data) 
         if status and 'success' in status:
             cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (json.dumps(status['success']), data['query_id']))

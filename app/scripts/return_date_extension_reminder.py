@@ -21,8 +21,9 @@ def returnDateExtensionReminder():
         user = User(query_data['user_id'])
         
         notification_data = {
-                "notification_id": 1,
+                "notification_id": 3,
                 "entity_id": query_data['order_id'],
+                "order_type": "borrow",
                 "title": "3 Days Left to Return the Book",
                 "message": "Not finised yet? Extend the reading period.",
                 "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
