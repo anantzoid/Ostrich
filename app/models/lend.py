@@ -182,7 +182,7 @@ class Lend():
 
         status_info = Lend.getLendStatusDetails(status_id)
 
-        notification_id = 1
+        notification_id = 3
         if status_id == 6:
             notification_id = 4
 

@@ -177,7 +177,7 @@ class Order():
         order_info = self.getOrderInfo()
         status_info = self.getOrderStatusDetails(order_info['order_status']) 
         
-        notification_id = 1
+        notification_id = 3
         if status_id == 6:
             notification_id = 4
         if status_id == 1:

@@ -336,8 +336,16 @@ class Admin():
     def submitSearchFailItem(args):
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""UPDATE search_fails SET item_id = %s WHERE id = %s""",
-                (args['item_id'], args['query_id']))
+
+        if args['item_id']:
+            update_field = "item_id = %s"
+            update_field_values = (args['item_id'], args['query_id'])
+        elif args['query']:
+            update_field = "refined_query = %s, type = %s"
+            update_field_values = (args['query'], args['query_type'], args['query_id'])
+
+        cursor.execute("""UPDATE search_fails SET """+update_field+""" WHERE id = %s""",
+                update_field_values)
         conn.commit()
         return True
 
