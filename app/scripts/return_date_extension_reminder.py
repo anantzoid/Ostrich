@@ -26,7 +26,8 @@ def returnDateExtensionReminder():
                 "order_type": "borrow",
                 "title": "3 Days Left to Return the Book",
                 "message": "Not finised yet? Extend the reading period.",
-                "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\"."
+                "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\".",
+                "order_type": "borrow"
                 }
         Notifications(user.gcm_id).sendNotification(notification_data)
         #if int(query_data['user_id']) in Utils.getAdmins():

@@ -28,7 +28,8 @@ def pickupTimeslot():
             "order_type": "borrow",
             "title": "Return Date Tomorrow",
             "message": "Would you like to extend your reading period?",
-            "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\". Otherwise, we'd contact you shortly to confirm your current pickup time: %s"%ts
+            "expanded_text": "You can extend the reading period by going to the order's page in \"My Orders\". Otherwise, we'd contact you shortly to confirm your current pickup time: %s"%ts,
+            "order_type": "borrow"
             }
 
         Notifications(user.gcm_id).sendNotification(notification_data)

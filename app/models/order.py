@@ -209,7 +209,8 @@ class Order():
                     "entity_id": order_info['order_id'],
                     "title": status_info["Status"],
                     "message": status_info["Description"],
-                    "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"]
+                    "expanded_text": status_info["Description"] if "expanded_text" not in status_info else status_info["expanded_text"],
+                    "order_type": "borrow"
                 }
 
         if user is None:
