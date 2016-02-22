@@ -303,6 +303,15 @@ class User(Prototype):
         return rental_statses
 
 
+    @staticmethod
+    def b2bUser(user_data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO b2b_users (name, phone, book_id) VALUES
+            (%s, %s, %s)""", (user_data['name'], user_data['phone'], user_data['book_id']))
+        conn.commit()
+        return True
+
     '''
         User Referral and Invite Functions
     '''

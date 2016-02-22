@@ -3,12 +3,22 @@ from app.models import User, Utils
 from flask import request, jsonify
 import json
 
-@webapp.route('/preregister', methods=['POST'])
+@webapp.route('/preregister', methods=['GET'])
 def preregister():
-    email = Utils.getParam(request.form, 'email')
-    if email:
-        User.preregisterUser(email)
-    return jsonify({'success': 'true'});
+    response = {'status': 'False'}
+    return jsonify({'status': 'True'});
+
+    user_data = {}
+    user_data['name'] = Utils.getParam(request.args, 'name')
+    user_data['phone'] = Utils.getParam(request.args, 'phone')
+    user_data['book_id'] = Utils.getParam(request.args, 'bookid', 'int')
+
+    for key in user_data.keys():
+        if not key:
+            Utils.errorResponse(response)
+    
+    User.b2bUser(user_data)
+    return jsonify({'status': 'True'});
 
 '''
     @params
