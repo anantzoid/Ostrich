@@ -6,7 +6,6 @@ import json
 @webapp.route('/preregister', methods=['GET'])
 def preregister():
     response = {'status': 'False'}
-    return jsonify({'status': 'True'});
 
     user_data = {}
     user_data['name'] = Utils.getParam(request.args, 'name')

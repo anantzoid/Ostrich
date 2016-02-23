@@ -8,7 +8,7 @@ webapp = Flask(__name__)
 
 mysql = MySQL()
 #TODO shift resources to @cross_origin
-cors = CORS(webapp, resources={'/*/?':{'origins':'*'}, '/preregister':{'origins':'*', 'supports_credentials':'true', 'expose_headers': 'accept, authorization', 'methods':'GET'}})
+#cors = CORS(webapp, resources={'/*/?':{'origins':'*'}, '/preregister':{'origins':'*', 'supports_credentials':'true', 'expose_headers': 'accept, authorization', 'methods':'GET'}})
 
 webapp.config.from_pyfile('/etc/app_config.cfg', silent=True)
 

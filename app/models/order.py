@@ -26,7 +26,7 @@ class Order():
         if order_info:
             order_info['item'] = Item(order_info['item_id']).getObj()
             order_info['all_charges'] = [{
-                                'charge': int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']), 
+                                'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
 
             if 'formatted' in kwargs:
@@ -61,7 +61,7 @@ class Order():
         for order in all_orders:
             charge += order['charge']
             order_info['all_charges'].append({
-                    'charge': order['charge'],
+                    'charge': Order.getCharge(order['charge']),
                     'payment_mode': order['payment_mode']
                     })
         order_info['charge'] += charge
@@ -97,10 +97,16 @@ class Order():
             return Order.getAllChildren(child_data, children)
         return children
 
+    @staticmethod
+    def getCharge(order_charge):
+        if not order_charge:
+            return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])
+        else:
+            return order_charge
+
 
     @staticmethod
     def placeOrder(order_data):
-       
         order_fields = ['item_id', 'user_id']
         for key in order_fields:
             if key not in order_data.keys():
