@@ -206,8 +206,9 @@ class Utils():
         if user_id in admins:
             return
         for u_id in admins:
-            user = User(u_id,'user_id')
-            Notifications(user.gcm_id).sendNotification(notification_data)
+            if u_id:
+                user = User(u_id,'user_id')
+                Notifications(user.gcm_id).sendNotification(notification_data)
         return True
 
 

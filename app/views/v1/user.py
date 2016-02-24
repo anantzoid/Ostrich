@@ -8,7 +8,7 @@ def preregister():
     response = {'status': 'False'}
 
     user_data = {}
-    user_data['name'] = Utils.getParam(request.args, 'name')
+    user_data['email'] = Utils.getParam(request.args, 'email')
     user_data['phone'] = Utils.getParam(request.args, 'phone')
     user_data['book_id'] = Utils.getParam(request.args, 'bookid', 'int')
 
@@ -123,6 +123,8 @@ def addAddress():
 
 @webapp.route('/validateLocality', methods=['POST'])
 def validateLocality():
+    response = {'status': 'False'}
+
     locality = Utils.getParam(request.form, 'locality', '')
     if not locality:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
