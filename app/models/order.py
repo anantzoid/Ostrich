@@ -64,7 +64,10 @@ class Order():
                     'charge': Order.getCharge(order['charge']),
                     'payment_mode': order['payment_mode']
                     })
-        order_info['charge'] += charge
+
+        # Ignoring orders extended before extend_order major change on 16th Feb
+        if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
+            order_info['charge'] += charge 
     
         if fetch_all:
             return {'parents':parents, 'order': order_info, 'children': children}

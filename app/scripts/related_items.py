@@ -125,6 +125,7 @@ def fetchRelatedItemsData(item_links):
 
 def dumpItemData(item_data, item_id):
     print 'item_id:', item_id
+    print 'item_name':,item_data['amazon']['title']
     final_data = item_data['goodreads']
     final_data.update(item_data['amazon'])
     final_data['_id'] = int(item_id)

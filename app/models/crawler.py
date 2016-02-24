@@ -238,7 +238,7 @@ class GoodreadsCrawler():
 
         # Number of Pages
         num_page  = soup.find("span", {"itemprop":"numberOfPages"})    
-        num_page = num_page.text if num_page else ''
+        num_page = num_page.text if num_page else 0
 
         # Publisher Details (including 1st published)
         pub_el = soup.find("div", {"id":"details"})
