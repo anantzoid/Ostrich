@@ -29,6 +29,7 @@ class Order():
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
 
+            order_info['review'] = Review(user_id=order_info['user_id'], item_id=order_info['item_id']).getObj() 
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
             

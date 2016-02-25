@@ -315,6 +315,19 @@ class User(Prototype):
         return True
 
     @staticmethod
+    def getWishlist(user_id):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT item_id FROM wishlist WHERE user_id = %s AND active = 1""",
+                (user_id,))
+        item_ids = cursor.fetchall()
+
+        wishlist = []
+        if item_ids:
+            item_ids = [int(_[0]) for _ in item_ids]
+            wishlist = Search().getById(item_ids)
+        return wishlist
+
+    @staticmethod
     def addToWishlist(form_data):
         user_id = Utils.getParam(form_data, 'user_id', 'int')
         item_id = Utils.getParam(form_data, 'item_id', 'int')

@@ -189,6 +189,14 @@ def getMyOrders():
     orders.update(user.getAllRentals())
     return jsonify(orders)
 
+@webapp.route('/getWishlist')
+def getWishlist():
+    response = {'status': 'False'}
+    user_id = Utils.getParam(request.args, 'user_id', 'int')
+    if user_id:
+        return json.dumps(User.getWishlist(user_id))
+    return Utils.errorResponse(response)
+
 @webapp.route('/addToWishlist', methods=['POST'])
 def addToWishlist():
     User.addToWishlist(request.form)

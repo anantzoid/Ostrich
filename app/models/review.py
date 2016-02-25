@@ -3,13 +3,18 @@ from app import webapp
 from app.models import Prototype, Utils
 
 class Review(Prototype):
-    def __init__(self, review_id):
+    def __init__(self, review_id=0, user_id=0, item_id=0):
         self.data = {} 
-        self.getData(review_id)
+        self.getData(review_id, user_id, item_id)
 
-    def getData(self, review_id):
+    def getData(self, review_id, user_id, item_id):
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT * FROM reviews WHERE review_id = %s""",(review_id,))
+        if review_id:
+            cursor.execute("""SELECT * FROM reviews WHERE review_id = %s""",(review_id,))
+        else:
+            cursor.execute("""SELECT * FROM reviews WHERE item_id = %s AND user_id = %s""",
+                (item_id, user_id))
+            
         self.data = Utils.fetchOneAssoc(cursor)
         cursor.close()
 
@@ -35,6 +40,15 @@ class Review(Prototype):
 
         conn = mysql.connect()
         cursor = conn.cursor()
+
+        cursor.execute("""SELECT review_id FROM reviews WHERE user_id = %s AND item_id = %s""", (user_id, item_id))
+        present_review_id = cursor.fetchone()
+        if present_review_id:
+            review_data['review_id'] = present_review_id[0] 
+            review = Review(review_id=review_data['review_id'])
+            review.editReview(review_data)
+            return review_data['review_id'] 
+
         cursor.execute("""INSERT INTO reviews (user_id, item_id, order_id, title, description, rating) VALUES (%s,%s,%s,%s,%s,%s)""",
                 (user_id, item_id, order_id, title, description, rating))
         conn.commit()
