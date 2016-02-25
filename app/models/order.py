@@ -28,6 +28,8 @@ class Order():
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
+            #NOTE charge denotes charge to be collected in cash
+            order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
 
             order_info['review'] = Review(user_id=order_info['user_id'], item_id=order_info['item_id']).getObj() 
             if 'formatted' in kwargs:
@@ -135,8 +137,6 @@ class Order():
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
-        
-        #TODO calc total amount
         order_data['order_amount'] = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])  
 
         #check order validity
@@ -482,6 +482,10 @@ class Order():
                     (inventory_id, item_id, order_id) VALUES (%s, %s, %s)""",
                     (order_info['inventory_id'], order_info['item_id'], child_order_id))
                 conn.commit()
+                if 'extend_payment_mode' in order_data and order_data['extend_payment_mode'] == 'wallet':
+                    user = User(order_info['user_id'])
+                    debit_amount = order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'] 
+                    Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', child_order_id, debit_amount) 
 
         self.logEditOrderDetails(order_data, order_info)
         return status
