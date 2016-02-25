@@ -23,9 +23,9 @@ class Review(Prototype):
 
     @staticmethod
     def submitReview(review_data):
-        user_id =  Utils.getParam(review_data, 'user_id', 'int')
-        item_id =  Utils.getParam(review_data, 'item_id', 'int')
-        order_id =  Utils.getParam(review_data, 'order_id', 'int')
+        user_id =  Utils.getParam(review_data, 'user_id')
+        item_id =  Utils.getParam(review_data, 'item_id')
+        order_id =  Utils.getParam(review_data, 'order_id')
         if not(user_id and item_id and order_id):
             return False
 

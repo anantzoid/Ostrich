@@ -7,7 +7,8 @@ import json
 def submitReview():
     response = {'status': 'False'}
     
-    review_id = Review.submitReview(request.form)
+    review_data = json.loads(Utils.getParam(request.form, 'review'))
+    review_id = Review.submitReview(review_data)
     if review_id:
         review = Review(review_id).getObj()
         return jsonify(review)
@@ -16,8 +17,8 @@ def submitReview():
 
 @webapp.route('/editReview', methods=['POST'])
 def editReview():
-    review_id = Utils.getParam(request.form, 'review_id', 'int')
-    review = Review(review_id) 
-    review.editReview(request.form)
-    review = Review(review_id).getObj()
+    review_data = json.loads(Utils.getParam(request.form, 'review'))
+    review = Review(review_data['review_id']) 
+    review.editReview(review_data)
+    review = Review(review_data['review_id']).getObj()
     return jsonify(review)
