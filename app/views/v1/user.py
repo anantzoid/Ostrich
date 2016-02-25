@@ -189,6 +189,16 @@ def getMyOrders():
     orders.update(user.getAllRentals())
     return jsonify(orders)
 
+@webapp.route('/addToWishlist', methods=['POST'])
+def addToWishlist():
+    User.addToWishlist(request.form)
+    return jsonify(status='True')
+
+@webapp.route('/removeFromWishlist', methods=['POST'])
+def removeFromWishlist():
+    User.removeFromWishlist(request.form)
+    return jsonify(status='True')
+
 '''
     Log on inviting another user
     @params

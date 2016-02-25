@@ -314,6 +314,38 @@ class User(Prototype):
         Utils.notifyAdmin(-1, 'B2B User')
         return True
 
+    @staticmethod
+    def addToWishlist(form_data):
+        user_id = Utils.getParam(form_data, 'user_id', 'int')
+        item_id = Utils.getParam(form_data, 'item_id', 'int')
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT COUNT(*) FROM wishlist WHERE user_id = %s AND item_id = %s""",
+                (user_id, item_id))
+        is_present = cursor.fetchone()
+        if not is_present[0]:
+            cursor.execute("""INSERT INTO wishlist (user_id, item_id) VALUES (%s,%s)""",
+                    (user_id, item_id))
+            conn.commit()
+        else:
+            cursor.execute("""UPDATE wishlist set active = 1, date_edited = CURRENT_TIMESTAMP
+                    WHERE item_id = %s AND user_id = %s""", (item_id, user_id))
+            conn.commit()
+        return True
+
+    @staticmethod
+    def removeFromWishlist(form_data):
+        user_id = Utils.getParam(form_data, 'user_id', 'int')
+        item_id = Utils.getParam(form_data, 'item_id', 'int')
+
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE wishlist set active = 0, date_edited = CURRENT_TIMESTAMP 
+                WHERE item_id = %s AND user_id = %s""", (item_id, user_id))
+        conn.commit()
+        return True
+
     '''
         User Referral and Invite Functions
     '''
