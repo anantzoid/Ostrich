@@ -36,6 +36,7 @@ class User(Prototype):
                 self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
    
 
+    #TODO transfer to prototype
     def getObj(self):
         user_obj = vars(self)
         user_obj = user_obj['data']
