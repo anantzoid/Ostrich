@@ -319,6 +319,8 @@ class Admin():
                 {'_id': ObjectId(data['_id'])},
                 {'$set': panel_data}
                 )
+        
+        Notifications().startDataUpdate() 
         return True
 
     @staticmethod
@@ -410,3 +412,33 @@ class Admin():
         item = Item(item_id).getObj()
         
         return {'item': item, 'inventory_id': inventory_id}
+
+    @staticmethod
+    def updateAreas(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        if 'area_id' in data:
+            cursor.execute("""UPDATE areas SET name = %s, hours = %s, day = %s, slot = %s, alias_id = %s, active = %s WHERE area_id = %s""", 
+                    (data['name'], int(data['hours']), int(data['day']),  int(data['slot']), int(data['alias_id']), int(data['active']), int(data['area_id'])))
+            conn.commit()
+        else:
+            cursor.execute("""INSERT INTO areas (name, hours, day, slot, alias_id) VALUES (%s,%s,%s,%s,%s)""", 
+                    (data['name'], int(data['hours']), int(data['day']), int(data['slot']), int(data['alias_id'])))
+            conn.commit()
+
+        cursor.execute("""SELECT address_id, locality, gcm_id FROM user_addresses ua 
+                INNER JOIN users u ON u.user_id = ua.user_id
+                WHERE LOWER(locality) = %s""",
+                (data['name'].lower(),)) 
+        addresses = cursor.fetchall()
+
+        for address in addresses:
+            validation = User.validateLocality(address[1])
+            validation['validated_locality'] = validation['validated_locality'] if validation['is_valid'] else data['name']
+
+            cursor.execute("""UPDATE user_addresses SET is_valid = %s, delivery_message = %s, locality = %s WHERE address_id = %s""",
+                    (validation['is_valid'], validation['delivery_message'], validation['validated_locality'], address[0]))
+            conn.commit()
+            Notifications(address[2]).startDataUpdate()
+        return True
+

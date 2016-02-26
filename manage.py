@@ -5,9 +5,13 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
-
     from app.scripts.related_items import getRelatedItems
     getRelatedItems(4051)
+
+@manager.command
+def session():
+    from app.models import Notifications
+    Notifications().startDataUpdate()
 
 @manager.command
 def indexer():

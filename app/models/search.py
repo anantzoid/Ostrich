@@ -124,6 +124,8 @@ class Search():
 
     @staticmethod
     def getSearchCategories():
+        # TODO from mongo
+        #  NOTE call session in manager to update
         categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational', 'Thriller']
         return categories
 
