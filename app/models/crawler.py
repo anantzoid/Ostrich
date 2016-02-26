@@ -257,7 +257,11 @@ class GoodreadsCrawler():
                 genre = el.find("div",{"class":"left"})
                 num_genre =  el.find("div",{"class":"right"})
                 if genre:
-                    genres.append([genre.text.replace('\n','').replace('  ','').replace(' >',','), num_genre.text.replace(' users','').replace('\n','')])
+                    genre_name = genre.text.replace('\n','').replace('  ','')
+                    if '>' in genre_name:
+                        genre_name = genre_name[genre_name.index('>')+1:]
+                    print genre_name
+                    genres.append([genre_name, num_genre.text.replace(' users','').replace('\n','')])
 
         # Handle unicode 
         title = handleUnicode(title)

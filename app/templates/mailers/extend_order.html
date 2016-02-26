@@ -158,7 +158,7 @@ p li, ul li, ol li {
 ------------------------------------- */
 a {
   color: #348eda;
-  text-decoration: underline;
+  text-decoration: none !important;
 }
 
 .btn-primary {
@@ -324,12 +324,12 @@ font-size: 14px;
                                 </tr>
                                 <tr>
                                     <td class="content-block">
-                                        <b>"{{ book_name }}"</b> is due in next 3 days. We hope you're enjoying it so far.
+                                        <a href="http://ostrichapp.in/orderInfo?orderId={{ order_id }}&orderType=16"><b>"{{ book_name }}"</b></a> is due in next 3 days. We hope you're enjoying it so far.
                                     </td>
                                 </tr>
                                 <tr>
                                     <td class="content-block">
-                                        If you're still reading it, you can extend the reading period by going to the <i>"My Orders"</i> page on the app.    
+                                        If you're still reading it, you can extend the reading period by going to the <a href="http://ostrichapp.in/orderInfo?orderId={{ order_id }}&orderType=16"><i>"My Orders"</i></a> page on the app.    
                                     </td>
                                 </tr>
                                 <tr>
@@ -348,18 +348,20 @@ font-size: 14px;
                                         {% for item in items %} 
                                         <div class="column">
                                         <table>
-                                            <tr>
-                                                <td class="inner">
-                                                    <table class="contents">
-                                                        <tr><td>
-                                                            <img src={{ item.img_small }} width="280" alt="" />
-                                                        </td></tr>
-                                                        <tr><td class="text">
-                                                            {{ item.item_name }} 
-                                                        </td></tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
+                                                <tr>
+                                                    <td class="inner">
+                                                        <table class="contents">
+                                                            <tr><td>
+                                                            <a href="http://ostrichapp.in/search?searchKeyword=items_alias/item/{{item.item_id}}&itemName={{item.item_name}}&searchIntention=16&searchType=16">
+                                                                <img src={{ item.img_small }} width="280" alt="" />
+                                                                <div class="text">
+                                                                    {{ item.item_name }} 
+                                                                </div>
+                                                            </a>
+                                                            </td></tr>
+                                                        </table>
+                                                    </td>
+                                                </tr>
                                         </table> 
                                         </div>
                                         {% endfor %}
@@ -380,10 +382,12 @@ font-size: 14px;
                                                 <td class="inner">
                                                     <table class="contents">
                                                         <tr><td>
+                                                            <a href="http://ostrichapp.in/search?searchKeyword=items_alias/item/{{item.item_id}}&itemName={{item.item_name}}&searchIntention=16&searchType=16">
                                                             <img src={{ item.img_small }} width="280" alt="" />
-                                                        </td></tr>
-                                                        <tr><td class="text">
-                                                            {{ item.item_name }} 
+                                                            <div class="text">
+                                                                {{ item.item_name }} 
+                                                            </div>
+                                                            </a>
                                                         </td></tr>
                                                     </table>
                                                 </td>

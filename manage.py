@@ -5,6 +5,9 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
+    from app.scripts.upsell_email import upsellEmail
+    upsellEmail(23)
+    return
     from app.scripts.related_items import getRelatedItems
     getRelatedItems(4051)
 

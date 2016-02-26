@@ -71,6 +71,7 @@ class Mailer():
             consumer_mail = render_template('mailers/extend_order.html',
                             name = name,
                             book_name = data['book_name'],
+                            order_id = data['order_id'],
                             items = data['items'], 
                             curated_items = data['curated_items'],
                             quote = data['quote'], 

@@ -219,6 +219,7 @@ class Admin():
     
         price = data['amazon']['list_price'] if data['amazon']['list_price'] else data['amazon']['offer_price']
         price = re.sub('\..*$', '', price)
+        price = price.replace(',','')
 
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
         match = cursor.fetchone()
