@@ -44,7 +44,7 @@ def getRelatedItems():
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT oh.item_id FROM orders o
             INNER JOIN order_history oh ON o.order_id = oh.order_id
-            WHERE DATE(o.order_placed) = %s AND o.order_status >=4 AND 
+            WHERE DATE(o.order_placed) = %s AND 
             o.order_id NOT IN  (SELECT DISTINCT parent_id FROM orders)""",
             (str(datetime.now().date()),)) 
     item_ids = cursor.fetchall()

@@ -11,8 +11,8 @@ def returnDateExtensionReminder():
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT order_id, user_id
         FROM orders 
-        WHERE DATE(order_return) = DATE('%s') AND order_id NOT IN 
-        (SELECT DISTINCT parent_id FROM orders)
+        WHERE DATE(order_return) = DATE('%s') AND order_status >=4 AND
+        order_id NOT IN (SELECT DISTINCT parent_id FROM orders)
         """ % (return_date))
     num_items = cursor.rowcount
 
