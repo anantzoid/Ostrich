@@ -35,12 +35,14 @@ def searchString():
         results = search.categorySearch(page=page-1)
     elif search_type == 'isbn':
         results = search.isbnSearch(page=page-1)
+    elif search_type == 'auto':
+        results = search.autoComplete()
     elif search_type == 'custom':
         results = search.customQuery()
         return results
     #log
     if user_id not in Utils.getAdmins():
-        Search.logSearch({_:request.args.get(_) for _ in request.args})
+        Search.logSearch({_:request.args.get(_) for _ in request.args}, search_type)
 
     return jsonify(results) if flow != 'admin' else jsonp(results)
 

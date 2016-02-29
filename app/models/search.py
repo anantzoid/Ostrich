@@ -91,6 +91,13 @@ class Search():
             self.reportFail(True, True, 'isbn')
         return results
 
+    def autoComplete(self, page=0):
+        if len(self.query) < 4:
+            return {"items": []}
+        data = self.search_query
+        data["query"]["function_score"]["query"] = {"match_phrase_prefix":{"item_name":self.query}}
+        return self.executeSearch(data, page)
+
     def executeSearch(self, data, page):
         search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
         item_results = []
@@ -104,7 +111,7 @@ class Search():
                 "total": total_results,
                 "items": item_results
                 }
-
+        
         return final_search_results
 
     def unindexItem(self):
@@ -206,9 +213,13 @@ class Search():
 
     @staticmethod
     @async
-    def logSearch(data):
+    def logSearch(data, search_type):
         data['timestamp'] = str(datetime.now()).split(".")[0] 
         client = MongoClient(webapp.config['MONGO_DB'])
         db = client.ostrich
-        db.search_log.insert_one(data)
+        if search_type == "auto":
+            db.autocomplete_search_log.insert_one(data)
+        else:
+            db.search_log.insert_one(data)
+
 
