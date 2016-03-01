@@ -150,6 +150,9 @@ class Lend():
                 cursor.execute("""UPDATE inventory SET in_stock = 1, fetched = 1 WHERE
                 inventory_id = %s""",(data[0],))
                 conn.commit()
+                cursor.execute("""UPDATE lenders SET pickup_date = CURRENT_TIMESTAMP WHERE
+                    lender_id = %s""",(lender_id,))
+                conn.commit()
                 Indexer().indexItems(query_condition=' AND i.item_id='+str(data[2]))
                 Mailer.thankyou(user)
 
@@ -197,6 +200,28 @@ class Lend():
         return 
 
     @staticmethod
+    def deleteRental(lender_id):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        cursor.execute("""SELECT user_id, inventory_id FROM lenders WHERE lender_id= %s""",
+        (lender_id,))
+        (user_id, inventory_id) = cursor.fetchone()
+        if not user_id:
+            return {'status':'false'}
+
+        cursor.execute("""DELETE FROM inventory WHERE inventory_id = %s""",
+        (inventory_id,))
+        conn.commit()
+
+        cursor.execute("""DELETE FROM lenders WHERE lender_id = %s""", (lender_id,))
+        conn.commit()
+
+        user = User(user_id) 
+        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, Lend.getOfferCredits())
+        return {'status':'true'}
+ 
+    @staticmethod
     def getLendStatusDetails(status_id):
         # NOTE 5,6 are not used now as book is not returned
         status_info = {
@@ -233,28 +258,4 @@ class Lend():
         else: 
             return False
 
-    
-
-    @staticmethod
-    def deleteRental(lender_id):
-        conn = mysql.connect()
-        cursor = conn.cursor()
-
-        cursor.execute("""SELECT user_id, inventory_id FROM lenders WHERE lender_id= %s""",
-        (lender_id,))
-        (user_id, inventory_id) = cursor.fetchone()
-        if not user_id:
-            return {'status':'false'}
-
-        cursor.execute("""DELETE FROM inventory WHERE inventory_id = %s""",
-        (inventory_id,))
-        conn.commit()
-
-        cursor.execute("""DELETE FROM lenders WHERE lender_id = %s""", (lender_id,))
-        conn.commit()
-
-        user = User(user_id) 
-        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, Lend.getOfferCredits())
-        
-        return {'status':'true'}
-        
+       

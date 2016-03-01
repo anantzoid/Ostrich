@@ -142,7 +142,7 @@ def editOrderDetails():
         order_data[key] = request.form[key]
 
     order = Order(order_id)
-    status = order.editOrderDetailsNew(order_data)
+    status = order.editOrderDetails(order_data)
     if status:
         return jsonify(order.getOrderInfo(formatted=True))
     else:

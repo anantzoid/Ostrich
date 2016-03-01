@@ -53,6 +53,9 @@ class Order():
         if order_info['is_parent']:
             children = Order.getAllChildren(order_info, children)
 
+        if fetch_all:
+            return {'parents':parents, 'order': order_info, 'children': children}
+
         if parents:
             order_info['order_placed'] = parents[-1]['order_placed']
         if children:
@@ -71,9 +74,6 @@ class Order():
             # Ignoring orders extended before extend_order major change on 16th Feb
             if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
                 order_info['charge'] += charge 
-    
-        if fetch_all:
-            return {'parents':parents, 'order': order_info, 'children': children}
 
         return order_info
 
@@ -377,6 +377,7 @@ class Order():
             time_slots = [_ for _ in time_slots if _['slot_id'] == slot_id][0]
         return time_slots
 
+
     def updateOrderStatus(self, status_id):
         conn = mysql.connect()
         update_cursor = conn.cursor()
@@ -391,20 +392,46 @@ class Order():
                 ,(status_id, ))
         conn.commit()
 
-        update_inv_query = ''
-        # Putting item back in stock
-        if status_id == 7:
-            update_inv_query = """UPDATE inventory SET in_stock = 1 WHERE 
-                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
-                    order_id = %d)""" % (self.order_id)
-        elif status_id == 2:
-            update_inv_query = """UPDATE inventory SET fetched = 1 WHERE
-                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
-                    order_id = %d)""" % (self.order_id)
+        # Update inventory and respective dates
+        current_ts = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
+        if 'order' in all_orders:
+            old_order_return =  all_orders['order']['order_return']
+            old_delivery_date = all_orders['order']['delivery_date']
+        else:
+            old_order_return = all_orders['order_return']
+            old_delivery_date = all_orders['delivery_date']
 
-        if update_inv_query:
-            update_cursor.execute(update_inv_query) 
+        if status_id == 7:
+            update_cursor.execute("""UPDATE inventory SET in_stock = 1 WHERE 
+                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
+                    order_id = %s)""", (self.order_id,))
             conn.commit()
+
+            update_cursor.execute("UPDATE orders SET order_return = %s WHERE order_id = %s",
+                    (current_ts, self.order_id,)) 
+            conn.commit()
+            self.logEditOrderDetails(
+                    {'order_return': old_order_return}, 
+                    {'order_return': current_ts}, 
+                    ['order_return'])
+
+        elif status_id == 2:
+            update_cursor.execute("""UPDATE inventory SET fetched = 1 WHERE
+                    inventory_id IN (SELECT inventory_id FROM order_history WHERE
+                    order_id = %s)""", (self.order_id,))
+            conn.commit()
+
+        elif status_id == 4:
+            new_order_return = Utils.getDefaultReturnTimestamp(current_ts, webapp.config['DEFAULT_RETURN_DAYS'])
+            update_cursor.execute("""UPDATE orders SET delivery_date = %s, 
+                    order_return = %s WHERE order_id = %s""",
+            (current_ts, new_order_return, self.order_id)) 
+            conn.commit()
+            self.logEditOrderDetails(
+                    {'delivery_date': old_delivery_date, 'order_return': old_order_return}, 
+                    {'delivery_date': current_ts, 'order_return': new_order_return}, 
+                    ['delivery_date', 'order_return'])
+
         update_cursor.close()
         if status_id in [3, 4, 5, 6]:
             self.sendOrderNotification(status_id) 
@@ -412,7 +439,7 @@ class Order():
             Indexer().indexItems(query_condition=' AND i.item_id='+str(self.getOrderInfo()['item_id']))
         return self.getOrderInfo() 
 
-    def editOrderDetailsNew(self, order_data):
+    def editOrderDetails(self, order_data):
         conn = mysql.connect()
         update_cursor = conn.cursor()
 
@@ -487,70 +514,18 @@ class Order():
                     debit_amount = order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'] 
                     Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', child_order_id, debit_amount) 
 
-        self.logEditOrderDetails(order_data, order_info)
-        return status
-
-    def editOrderDetails(self, order_data):
-        # order_return validity
-        order_info = self.getOrderInfo()
-        if not order_info:
-            return False
-
-        if 'order_return' in order_data:
-            ''''
-            old_order_return = datetime.datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
-            new_order_return = datetime.datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
-            diff = new_order_return - old_order_return
-            #if diff.days <= 0:
-            #TODO send notification
-            '''
-        else:
-            order_data['order_return'] = order_info['order_return']
-       
-        if 'extend_charges' not in order_data:
-            order_data['charge'] = order_info['charge']
-        else:
-            order_data['charge'] = order_data['extend_charges']
-
-        if 'pickup_slot' in order_data:
-            if not order_data['pickup_slot'].isdigit():
-                return False
-            else:
-                order_data['pickup_slot'] = int(order_data['pickup_slot'])
-                slot_exists = False
-                for slot in Order.getTimeSlot():
-                    if slot['slot_id'] == order_data['pickup_slot']:
-                        slot_exists = True
-                        break
-                if not slot_exists:
-                    return False
-        else:
-            order_data['pickup_slot'] = order_info['pickup_slot']
-       
-        conn = mysql.connect()
-        update_cursor = conn.cursor()
-        update_cursor.execute("""UPDATE orders SET order_return = %s,
-                pickup_slot = %s, charge = %s WHERE
-                order_id = %s""", (order_data['order_return'],
-                order_data['pickup_slot'], order_data['charge'], order_info['order_id']))
-        conn.commit()
-        if update_cursor.rowcount:
-            status =  True
-        else:
-            status =  False
-
-        self.logEditOrderDetails(order_data, order_info)
+        self.logEditOrderDetails(order_data, order_info, ['order_return', 'pickup_slot', 'charge'])
         return status
 
     @async
-    def logEditOrderDetails(self, order_data, order_info):
+    def logEditOrderDetails(self, order_data, order_info, fields):
         conn = mysql.connect()
         update_cursor = conn.cursor()
-        for key in ['order_return', 'pickup_slot', 'charge']:
+        for key in fields:
             if key in order_data and order_data[key] != order_info[key]:
                 update_cursor.execute("""INSERT INTO edit_order_log (order_id, 
                 `key`, old_value, new_value) VALUES (%s, %s, %s, %s)""",
-                (order_info['order_id'], key, str(order_info[key]), str(order_data[key])))
+                (self.order_id, key, str(order_info[key]), str(order_data[key])))
                 conn.commit()
 
 
