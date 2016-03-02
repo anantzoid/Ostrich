@@ -345,10 +345,15 @@ class Admin():
         search_data = cursor.fetchone()
         if not search_data[6] and not search_data[7]:
             return
-        if search_data[1] <= 0:
+        if search_data[1] <= 0 and not search_data[8]:
             return
-       
-        user = User(int(search_data[1]))
+      
+        if search_data[1] <= 0 and search_data[8]:
+            user_gcm_id = search_data[8]
+        else:
+            user = User(int(search_data[1]))
+            user_gcm_id = user.gcm_id
+
         notification_data = {
                     "title": "Book Now Available",
                     "search_intention": search_data[5],
@@ -382,7 +387,7 @@ class Admin():
             notification_data['query_name'] = search_data[7]
             notification_data['query_type'] = search_data[4]
 
-        status = Notifications(user.gcm_id).sendNotification(notification_data) 
+        status = Notifications(user_gcm_id).sendNotification(notification_data) 
         if status and 'success' in status:
             cursor.execute("""UPDATE search_fails SET gcm_token = %s WHERE id = %s""", (json.dumps(status['success']), data['query_id']))
             conn.commit()

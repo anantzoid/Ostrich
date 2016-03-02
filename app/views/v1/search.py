@@ -24,11 +24,14 @@ def searchString():
     search_type = Utils.getParam(request.args, 'type', default='free')
     user_id = Utils.getParam(request.args, 'userId', 'int')
     flow = Utils.getParam(request.args, 'flow', default='borrow')
+    gcm_id = Utils.getParam(request.args, 'gcm_id', default=None)
+    uuid = Utils.getParam(request.args, 'distinct_id', default=None)
 
     if not query:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
     
-    search = Search(query, user_id, flow)
+    user_info = {'user_id': user_id, 'gcm_id': gcm_id, 'uuid': uuid}
+    search = Search(query, user_info, flow)
     if search_type == 'free':
         results = search.basicSearch(page=page-1)
     elif search_type == 'category':
@@ -61,7 +64,7 @@ def searchFail():
     q_type = Utils.getParam(request.form,'type')
     flow = Utils.getParam(request.form, 'flow', default='borrow')
     
-    Search(q, user_id, flow).reportFail(True,True,q_type)
+    Search(q, {'user_id': user_id}, flow).reportFail(True,True,q_type)
     return jsonify(status='true')
 
 @webapp.route('/recommended', methods=['GET'])

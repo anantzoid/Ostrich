@@ -9,13 +9,12 @@ import requests
 import string
 
 class Search():
-    def __init__(self, query='', user_id=0, flow='borrow', size=20):
+    def __init__(self, query='', user_info={}, flow='borrow', size=20):
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.query = query
         self.index = 'items_alias'
         self.size = size
-        self.user_id = user_id
         self.flow = flow
         self.search_query = {
                 "query": {
@@ -39,6 +38,12 @@ class Search():
                         }
                     }
                 }
+        try:
+            self.user_id = user_info['user_id']
+            self.gcm_id = user_info['gcm_id']
+            self.uuid = user_info['uuid']
+        except:
+            pass
 
 
     def basicSearch(self, page=0):
@@ -149,8 +154,9 @@ class Search():
 
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow) VALUES (%s,%s,%s,%s)""",
-            (self.user_id, self.query, fail_type, self.flow))
+        cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow, gcm_id, uuid) 
+                VALUES (%s,%s,%s,%s,%s,%s)""",
+            (self.user_id, self.query, fail_type, self.flow, self.gcm_id, self.uuid))
         conn.commit()
 
         with webapp.test_request_context():
