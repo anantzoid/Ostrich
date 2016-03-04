@@ -100,15 +100,18 @@ def fetchRelatedItemsData(item_links):
             dumpItemData(item_data, item_id)
             continue
 
-        isbns = ",".join([_.replace('-','') for _ in item_data['goodreads']['isbns'] + [item_data['goodreads']['isbn_13']]])
-        if isbns:
-            cursor.execute("""SELECT DISTINCT item_id FROM item_isbn WHERE isbn_13 IN ("""+isbns+""")""")
-            item_id = cursor.fetchone()
-            if item_id:
-                item_id = int(item_id[0])
-                related_item_ids.append(item_id)
-                dumpItemData(item_data, item_id)
-                continue
+        try:
+            isbns = ",".join([_.replace('-','') for _ in item_data['goodreads']['isbns'] + [item_data['goodreads']['isbn_13']]])
+            if isbns:
+                cursor.execute("""SELECT DISTINCT item_id FROM item_isbn WHERE isbn_13 IN ("""+isbns+""")""")
+                item_id = cursor.fetchone()
+                if item_id:
+                    item_id = int(item_id[0])
+                    related_item_ids.append(item_id)
+                    dumpItemData(item_data, item_id)
+                    continue
+        except Exception, e:
+            print isbns, str(e)
 
         cursor.execute("""SELECT DISTINCT item_id FROM items WHERE item_name = %s""",(re.sub('\(.*\)','', item_data['amazon']['title']),))
         item_id = cursor.fetchone()

@@ -14,14 +14,15 @@ def pickupSchedule():
     order_list = []
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT COUNT(*) 
-        FROM orders o
-        WHERE DATE(o.order_return) = %s AND order_id NOT IN
-        (SELECT DISTINCT parent_id FROM orders)""",
-        (date,))
+        FROM orders
+        WHERE DATE(order_return) = %s AND order_id NOT IN
+        (SELECT DISTINCT parent_id FROM orders) AND user_id NOT IN (%s)
+        AND order_status >= 4""",
+        (date,','.join([str(_) for _ in Utils.getAdmins()])))
     order_ids = cursor.fetchone()
     if order_ids[0] > 0:
-        with webapp.test_request_context():
-            Mailer.genericMailer({'subject':'Pickups for '+date, 'body': 'Check dashboard for more info'})
+        # with webapp.test_request_context():
+        #    Mailer.genericMailer({'subject':'Pickups for '+date, 'body': 'Check dashboard for more info'})
         Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
 
 

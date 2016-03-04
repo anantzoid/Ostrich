@@ -26,6 +26,7 @@ def searchString():
     flow = Utils.getParam(request.args, 'flow', default='borrow')
     gcm_id = Utils.getParam(request.args, 'gcm_id', default=None)
     uuid = Utils.getParam(request.args, 'distinct_id', default=None)
+    uuid = ','.join(uuid) if uuid else uuid
 
     if not query:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')

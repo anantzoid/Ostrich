@@ -260,7 +260,6 @@ class GoodreadsCrawler():
                     genre_name = genre.text.replace('\n','').replace('  ','')
                     if '>' in genre_name:
                         genre_name = genre_name[genre_name.index('>')+1:]
-                    print genre_name
                     genres.append([genre_name, num_genre.text.replace(' users','').replace('\n','')])
 
         # Handle unicode 

@@ -411,8 +411,8 @@ class Order():
                     (current_ts, self.order_id,)) 
             conn.commit()
             self.logEditOrderDetails(
-                    {'order_return': old_order_return}, 
                     {'order_return': current_ts}, 
+                    {'order_return': old_order_return}, 
                     ['order_return'])
 
         elif status_id == 2:
@@ -428,8 +428,8 @@ class Order():
             (current_ts, new_order_return, self.order_id)) 
             conn.commit()
             self.logEditOrderDetails(
-                    {'delivery_date': old_delivery_date, 'order_return': old_order_return}, 
                     {'delivery_date': current_ts, 'order_return': new_order_return}, 
+                    {'delivery_date': old_delivery_date, 'order_return': old_order_return}, 
                     ['delivery_date', 'order_return'])
 
         update_cursor.close()
