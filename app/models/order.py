@@ -141,6 +141,7 @@ class Order():
 
         #check order validity
         # TODO check if item exists
+        # TODO check for timeslot (exists or not)
 
         # User validity
         user = User(order_data['user_id'], 'user_id')
@@ -562,7 +563,6 @@ class Order():
                 break
         order_timeslots = [next_timeslot] + Utils.getNextTimeslots(next_timeslot['start_time'], all_timeslots, 2)
         return Utils.formatTimeSlots(order_timeslots)
-
 
     @staticmethod
     def deleteOrder(order_id):

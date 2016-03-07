@@ -132,5 +132,9 @@ def updateAreas():
 
 @webapp.route('/orderComment')
 def orderComment():
-    Admin.updateOrderComment(request.args)
+    comment_data = {}
+    for key in request.args:
+        comment_data[key] = request.args[key]
+    comment_data['edited'] = 1
+    Admin.updateOrderComment(comment_data)
     return jsonify(status=True)

@@ -2,6 +2,7 @@ from app import mysql
 from app import webapp
 from app.models import *
 from app.scripts import Indexer
+from app.decorators import async
 import urlparse
 import requests
 import time
@@ -29,7 +30,7 @@ class Admin():
             l.delivery_date, l.delivery_slot, l.order_placed,
             iv.inventory_id, u.email,
             ua.description, ua.locality, ua.landmark,
-            co.comment
+            co.comment, co.edited
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
@@ -72,6 +73,7 @@ class Admin():
             rental['order_placed'] = str(row[12]) 
             rental['inventory_id'] = row[13]
             rental['comment'] = row[18]
+            rental['edited'] = row[19]
             rental_list.append(rental)
         return rental_list
 
@@ -81,7 +83,7 @@ class Admin():
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
         query_condition = 'order_status >= 4 AND order_status < 7  ORDER BY order_return ASC' if pickups else 'order_status < 4'
-        cursor.execute("""SELECT o.order_id, comment FROM orders o 
+        cursor.execute("""SELECT o.order_id, comment, edited FROM orders o 
                 LEFT JOIN orders_admin_notes co ON co.order_id = o.order_id AND co.order_type = 'borrow' 
                 WHERE o.order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
 
@@ -98,6 +100,7 @@ class Admin():
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
             order_info['comment'] = order_data[1]
+            order_info['edited'] = order_data[2]
 
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
@@ -204,16 +207,17 @@ class Admin():
         return True            
 
     @staticmethod
+    @async
     def updateOrderComment(data):
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""UPDATE orders_admin_notes SET comment = %s WHERE order_id = %s AND order_type = %s""",
+        cursor.execute("""UPDATE orders_admin_notes SET comment = %s, edited = 1 WHERE order_id = %s AND order_type = %s""",
                 (data['comment'], data['order_id'], data['order_type']))
         conn.commit()
         affected = cursor.rowcount
         if not affected:
-            cursor.execute("""INSERT INTO orders_admin_notes (order_id, order_type, comment)
-                VALUES (%s, %s, %s)""", (data['order_id'], data['order_type'], data['comment']))
+            cursor.execute("""INSERT INTO orders_admin_notes (order_id, order_type, comment, edited)
+                VALUES (%s, %s, %s, %s)""", (data['order_id'], data['order_type'], data['comment'], data['edited']))
             conn.commit()
         return True
 

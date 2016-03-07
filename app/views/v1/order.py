@@ -27,10 +27,14 @@ def OrderItem():
     order_data = {}
     for key in request.form:
         order_data[key] = request.form[key]
-
     order_placed = Order.placeOrder(order_data)
 
     if 'order_id' in order_placed and order_placed['order_id']:
+        if 'App-Version' in request.headers:
+            Admin.updateOrderComment({'order_id': order_placed['order_id'], 
+                'comment': 'App Version: '+request.headers.get('App-Version')+'\n',
+                'order_type': 'borrow',
+                'edited': 0})
         order_placed['status'] = 'True'
         return jsonify(order_placed)
     else:
@@ -73,6 +77,11 @@ def lendItem():
     lend_info = Lend.lendItem(lend_data)
 
     if 'inventory_id' in lend_info and lend_info['inventory_id']:
+        if 'App-Version' in request.headers:
+            Admin.updateOrderComment({'order_id': lend_info['lender_id'], 
+                'comment': 'App Version: '+request.headers.get('App-Version')+'\n',
+                'order_type': 'lend',
+                'edited': 0})
         return jsonify(lend_info)
     else:
         if isinstance(lend_info, dict):
