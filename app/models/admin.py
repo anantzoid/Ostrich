@@ -28,12 +28,14 @@ class Admin():
             l.status_id, l.pickup_date, l.pickup_slot,
             l.delivery_date, l.delivery_slot, l.order_placed,
             iv.inventory_id, u.email,
-            ua.description, ua.locality, ua.landmark
+            ua.description, ua.locality, ua.landmark,
+            co.comment
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
             INNER JOIN inventory iv ON iv.inventory_id = l.inventory_id
             INNER JOIN items i ON i.item_id = iv.item_id
+            LEFT JOIN orders_admin_notes co ON co.order_id = l.lender_id AND co.order_type = 'lend' 
             WHERE """+query_condition)
         raw_data = cursor.fetchall()
         rental_list = []
@@ -69,6 +71,7 @@ class Admin():
             rental['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == row[11]][0]
             rental['order_placed'] = str(row[12]) 
             rental['inventory_id'] = row[13]
+            rental['comment'] = row[18]
             rental_list.append(rental)
         return rental_list
 
@@ -78,13 +81,15 @@ class Admin():
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
         query_condition = 'order_status >= 4 AND order_status < 7  ORDER BY order_return ASC' if pickups else 'order_status < 4'
-        cursor.execute("""SELECT order_id FROM orders WHERE order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
+        cursor.execute("""SELECT o.order_id, comment FROM orders o 
+                LEFT JOIN orders_admin_notes co ON co.order_id = o.order_id AND co.order_type = 'borrow' 
+                WHERE o.order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
 
         order_ids = cursor.fetchall()
         all_time_slots = Order.getTimeSlot()
 
-        for order_id in order_ids:
-            order = Order(int(order_id[0]))
+        for order_data in order_ids:
+            order = Order(int(order_data[0]))
             order_info = order.getOrderInfo()
 
             user = User(order_info['user_id'])
@@ -92,6 +97,7 @@ class Admin():
             order_info['address'] = user.getAddressInfo(order_info['address_id']) 
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
+            order_info['comment'] = order_data[1]
 
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
@@ -196,6 +202,20 @@ class Admin():
                 inv_insert_data['item_condition'], inv_insert_data['source'], inv_insert_data['inventory_id']))
         conn.commit() 
         return True            
+
+    @staticmethod
+    def updateOrderComment(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE orders_admin_notes SET comment = %s WHERE order_id = %s AND order_type = %s""",
+                (data['comment'], data['order_id'], data['order_type']))
+        conn.commit()
+        affected = cursor.rowcount
+        if not affected:
+            cursor.execute("""INSERT INTO orders_admin_notes (order_id, order_type, comment)
+                VALUES (%s, %s, %s)""", (data['order_id'], data['order_type'], data['comment']))
+            conn.commit()
+        return True
 
     @staticmethod
     def insertItem(data):        

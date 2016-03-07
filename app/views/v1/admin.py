@@ -129,3 +129,8 @@ def incrementInventory():
 def updateAreas():
     Admin.updateAreas(request.form)
     return jsonify(status='True')
+
+@webapp.route('/orderComment')
+def orderComment():
+    Admin.updateOrderComment(request.args)
+    return jsonify(status=True)
