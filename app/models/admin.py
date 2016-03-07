@@ -21,7 +21,9 @@ class Admin():
         rental_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'l.status_id >= 4 AND l.status_id < 6 ORDER BY l.delivery_date ASC' if returns else 'l.status_id < 4'
+        query_condition = 'l.status_id >= 4 AND l.status_id < 6' if returns else 'l.status_id < 4'
+        query_condition += ' ORDER BY l.delivery_date ASC' 
+
         cursor.execute("""SELECT l.lender_id,
             u.name, u.phone,
             ua.address,
@@ -82,7 +84,8 @@ class Admin():
         order_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'order_status >= 4 AND order_status < 7  ORDER BY order_return ASC' if pickups else 'order_status < 4'
+        query_condition = 'order_status >= 4 AND order_status < 7' if pickups else 'order_status < 4'
+        query_condition += '  ORDER BY order_return ASC' 
         cursor.execute("""SELECT o.order_id, comment, edited FROM orders o 
                 LEFT JOIN orders_admin_notes co ON co.order_id = o.order_id AND co.order_type = 'borrow' 
                 WHERE o.order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
