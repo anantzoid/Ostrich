@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import User, Utils
+from app.models import User, Utils, Notifications
 from flask import request, jsonify
 import json
 
@@ -316,4 +316,19 @@ def deleteUser():
     # TODO sessions stuff
     ids = request.args.get('id').split(',')
     User.deleteUser(ids)
+    return jsonify(status=True)
+
+@webapp.route('/sendMassNotification')
+def sendMassNotification():
+    notification_data = {'notification_id': 10}
+    notification_data['title'] = Utils.getParam(request.args, 'title')
+    notification_data['message'] = Utils.getParam(request.args, 'message')
+    notification_data['image_url'] = Utils.getParam(request.args, 'image_url')
+    notification_data['post_url'] = Utils.getParam(request.args, 'post_url')
+    notification_data['social_media'] = Utils.getParam(request.args, 'social_media')
+
+    for key in notification_data:
+        if not notification_data[key]:
+            Utils.errorResponse({'status': 'False'})
+    Notifications().sendMassNotification(notification_data)
     return jsonify(status=True)

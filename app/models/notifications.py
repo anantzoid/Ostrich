@@ -21,12 +21,16 @@ class Notifications():
         if self.gcm_id:
             self.gcm.json_request(registration_ids=self.gcm_id, data={'notification_id': 99})
             return
+        self.sendMassNotification({'notification_id': 99})
 
+    @async
+    def sendMassNotification(self, notification_data):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT gcm_id FROM users""")
         all_gcm = cursor.fetchall()
         all_gcm_ids = []
         for gcm in all_gcm:
             all_gcm_ids.append(gcm[0])
-        self.gcm.json_request(registration_ids=all_gcm_ids, data={'notification_id': 99})
+        self.gcm.json_request(registration_ids=all_gcm_ids, data=notification_data)
+
 
