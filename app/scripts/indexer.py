@@ -73,6 +73,23 @@ class Indexer():
         if stock and int(stock[0]) > 0:
             item['in_stock'] = 1
 
+        cursor.execute("""SELECT c.collection_id, name FROM collections c
+                INNER JOIN collections_items ci ON c.collection_id=ci.collection_id
+                WHERE ci.item_id = %s""", (item['item_id'],))
+        c_names = cursor.fetchall()
+        c_ids = []
+        if c_names:
+            item['in_collections'] = []
+            for c_name in c_names:
+                item['in_collections'].append(c_name[1])
+                c_ids.append(c_name[0])
+
+            # NOTE Custom item manipulations
+            # 1: batman v superman (comics)
+            if 1 in c_ids:
+                item['custom_price'] = 100
+                item['custom_return_days'] = 14
+
         return item
 
     def extendItemProperties(self, item):
@@ -86,10 +103,6 @@ class Indexer():
             item['num_reviews_int'] = int(item['num_reviews'].replace(',',''))
 
         #TODO item_name_prettify
-        comics = [int(_) for _ in webapp.config["COMICS"].split(",")]
-        if item['item_id'] in comics:
-            item['custom_price'] = 100
-            item['custom_return_days'] = 14
         return item
 
     def handleUnicode(self, item):

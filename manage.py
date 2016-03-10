@@ -19,7 +19,7 @@ def session():
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    Indexer().indexItems(query_condition=' AND (i.item_id = 1 OR i.item_id=79)')
+    Indexer().indexItems(query_condition=' AND (i.item_id = 217)')
 
 if __name__ == "__main__":
     manager.run()

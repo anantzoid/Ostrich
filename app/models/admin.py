@@ -429,6 +429,7 @@ class Admin():
         inventory_id = cursor.lastrowid
         item = Item(item_id).getObj()
         
+        Indexer().indexItems(query_condition=' AND i.item_id='+str(item_id))
         return {'item': item, 'inventory_id': inventory_id}
 
     @staticmethod

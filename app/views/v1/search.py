@@ -37,6 +37,8 @@ def searchString():
         results = search.basicSearch(page=page-1)
     elif search_type == 'category':
         results = search.categorySearch(page=page-1)
+    elif search_type == 'collections':
+        results = search.collectionsSearch(page=page-1)
     elif search_type == 'isbn':
         results = search.isbnSearch(page=page-1)
     elif search_type == 'auto':

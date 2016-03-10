@@ -83,6 +83,11 @@ class Search():
         data["query"]["function_score"]["query"] = {"match": {"categories": self.query}} 
         return self.executeSearch(data, page)
 
+    def collectionsSearch(self, page=0):
+        data = self.search_query 
+        data["query"]["function_score"]["query"] = {"match": {"in_collections": self.query}} 
+        return self.executeSearch(data, page)
+
     def isbnSearch(self, page=0):
         data = self.search_query 
         data["query"]["function_score"]["query"] = {
