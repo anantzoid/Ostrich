@@ -326,9 +326,10 @@ def sendMassNotification():
     notification_data['image_url'] = Utils.getParam(request.args, 'image_url')
     notification_data['post_url'] = Utils.getParam(request.args, 'post_url')
     notification_data['social_media'] = Utils.getParam(request.args, 'social_media')
+    admin_flag = Utils.getParam(request.args, 'admin', var_type='int', default=0)
 
     for key in notification_data:
         if not notification_data[key]:
             Utils.errorResponse({'status': 'False'})
-    Notifications().sendMassNotification(notification_data)
+    Notifications().sendMassNotification(notification_data, admin_flag)
     return jsonify(status=True)

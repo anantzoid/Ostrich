@@ -3,6 +3,7 @@ from app import webapp
 from app import mysql 
 import json
 from app.decorators import async
+from app.models import Utils
 
 class Notifications():
     def __init__(self, gcm_id=''):
@@ -24,9 +25,15 @@ class Notifications():
         self.sendMassNotification({'notification_id': 99})
 
     @async
-    def sendMassNotification(self, notification_data):
+    def sendMassNotification(self, notification_data, admin=0):
+        if admin:
+            admins = ",".join([str(_) for _ in Utils.getAdmins()])
+            query_condition = " WHERE user_id in ("+admins+")"
+        else:
+            query_condition = ""
+
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT gcm_id FROM users""")
+        cursor.execute("""SELECT gcm_id FROM users"""+query_condition)
         all_gcm = cursor.fetchall()
         all_gcm_ids = []
         for gcm in all_gcm:
