@@ -70,9 +70,9 @@ def fetchUser():
 @webapp.route('/signup', methods=['POST'])
 def userSignup():
     user_data = {}
-
     for key in request.form:
         user_data[key] = request.form[key]
+    user_data['app_version'] = int(request.headers.get('App-Version')) if 'App-Version' in request.headers else 0
 
     user = User.createUser(user_data)
     if 'user_id' in user:

@@ -2,7 +2,9 @@ from app import mysql
 from datetime import datetime
 from app import webapp
 from app.models import *
+from app.decorators import async
 from werkzeug.security import generate_password_hash, check_password_hash
+from pymongo import MongoClient
 import json
 import pytz
 
@@ -78,9 +80,11 @@ class User(Prototype):
                 return user_obj
 
         create_user_cursor = conn.cursor()
-        create_user_cursor.execute("INSERT INTO users (username, password, name, \
-                email, phone, google_id, gcm_id) VALUES ('%s', '%s', '%s','%s', \
-                '%s', '%s', '%s')" % (username, password, name, email, phone, google_id, gcm_id))
+        create_user_cursor.execute("""INSERT INTO users (username, password, name,
+                email, phone, google_id, gcm_id, last_app_version, 
+                last_used_timestamp) 
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
+            (username, password, name, email, phone, google_id, gcm_id, user_data['app_version']))
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)
@@ -357,6 +361,28 @@ class User(Prototype):
         cursor.execute("""UPDATE wishlist set active = 0, date_edited = CURRENT_TIMESTAMP 
                 WHERE item_id = %s AND user_id = %s""", (item_id, user_id))
         conn.commit()
+        return True
+
+    @async
+    def logMetadata(self, app_version):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE users SET last_app_version = %s, last_used_timestamp = 
+                CURRENT_TIMESTAMP WHERE user_id = %s""", (app_version, self.user_id))
+        conn.commit()
+
+        client = MongoClient(webapp.config['MONGO_DB'])
+        db = client.ostrich
+        
+        user_id = int(self.user_id)
+        user_set = db.user_access_frequency.find({'_id':user_id}).count()
+        if user_set:
+            db.user_access_frequency.update({'_id': user_id}, 
+                {'$addToSet': {'dates': datetime.now().strftime('%Y-%m-%d')}})
+        else:
+            db.user_access_frequency.insert({'_id': user_id,
+                'dates': [datetime.now().strftime('%Y-%m-%d')]    
+            })
         return True
 
     '''
