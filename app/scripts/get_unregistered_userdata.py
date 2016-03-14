@@ -101,14 +101,23 @@ def import_data(from_date, to_date):
         })  
     users_data = []
     for row in data:
-        if not row['properties']['distinct_id'].isdigit():
-            users_data.append([row['properties']['distinct_id'], row['properties']['Gcm Id']])
+        try:
+            if not row['properties']['distinct_id'].isdigit():
+                users_data.append([row['properties']['distinct_id'], row['properties']['Gcm Id']])
+        except:
+            continue
     users_data = [list(_) for _ in set(tuple(_) for _ in users_data)]
 
     conn = mysql.connect()
     cursor = conn.cursor()
     for row in users_data:
-        cursor.execute("""INSERT INTO users_unregistered (mixpanel_id, gcm_id) VALUES 
-                (%s, %s)""", tuple(row))
+        cursor.except("""SELECT COUNT(*) FROM users_unregistered WHERE mixpanel_id = %s""",
+                (row[0],))
+        if cursor.fetchone()[0]:
+            cursor.execute("""UPDATE users_unregistered SET gcm_id = %s, date_created = CURRENT_TIMESTAMP
+                    WHERE mixpanel_id = %s""", tuple(row[::-1]))
+        else:
+            cursor.execute("""INSERT INTO users_unregistered (mixpanel_id, gcm_id) VALUES 
+                    (%s, %s)""", tuple(row))
         conn.commit()
     return True
