@@ -312,8 +312,8 @@ class User(Prototype):
     def b2bUser(user_data):
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO b2b_users (email, phone, book_id) VALUES
-            (%s, %s, %s)""", (user_data['email'], user_data['phone'], user_data['book_id']))
+        cursor.execute("""INSERT INTO b2b_users (email, phone, book_id, organization) VALUES
+            (%s, %s, %s, %s)""", (user_data['email'], user_data['phone'], user_data['book_id'], user_data['org']))
         conn.commit()
         Utils.notifyAdmin(-1, 'B2B User')
         return True
