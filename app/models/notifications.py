@@ -33,7 +33,9 @@ class Notifications():
             query_condition = ""
 
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT gcm_id FROM users"""+query_condition)
+
+        cursor.execute("""SELECT gcm_id FROM users"""+query_condition
+                +""" UNION SELECT gcm_id FROM users_unregistered""")
         all_gcm = cursor.fetchall()
         all_gcm_ids = []
         for gcm in all_gcm:

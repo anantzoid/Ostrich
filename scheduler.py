@@ -3,6 +3,7 @@ from celery import Celery
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
+from datetime import date, timedelta
 
 from app.scripts.create_celery_app import createCeleryApp
 celery = createCeleryApp(webapp)
@@ -40,13 +41,22 @@ def pickupSchedule():
 def getRelatedItems():
     from app.scripts.related_items import getRelatedItems
     from app import mysql
-    from datetime import datetime
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT oh.item_id FROM orders o
             INNER JOIN order_history oh ON o.order_id = oh.order_id
             WHERE DATE(o.order_placed) = %s AND 
             o.order_id NOT IN  (SELECT DISTINCT parent_id FROM orders)""",
-            (str(datetime.now().date()),)) 
+            (str(date.today()),)) 
     item_ids = cursor.fetchall()
     for item_id in item_ids:
         getRelatedItems(int(item_id[0]))
+
+'''
+    Get Gcm_id of all unregistered users from mixpanel
+'''
+@periodic_task(run_every=(crontab(hour="00", minute="10")))
+def getMixpanelId():
+    from app.scripts.get_unregistered_userdata import import_data
+    yesterday = date.today() - timedelta(1)
+    yesterday = yesterday.strftime('%Y-%m-%d')
+    import_data(yesterday, str(date.today()))

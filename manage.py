@@ -5,6 +5,12 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
+    from datetime import date, timedelta
+    from app.scripts.get_unregistered_userdata import import_data
+    yesterday = date.today() - timedelta(1)
+    yesterday = yesterday.strftime('%Y-%m-%d')
+    import_data(yesterday, str(date.today()))
+    exit(0)
     from app.scripts.upsell_email import upsellEmail
     upsellEmail(23)
     return

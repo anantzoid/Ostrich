@@ -108,6 +108,7 @@ class User(Prototype):
 
         # Welcome Mail
         Mailer.welcomeMailer(user)
+        user.removeFromUnregistered()
         return user.getObj()
 
 
@@ -151,6 +152,14 @@ class User(Prototype):
 
         return address_ids
 
+    @async
+    def removeFromUnregistered(self):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""DELETE FROM users_unregistered WHERE gcm_id = %s""",
+                (self.gcm_id,))
+        conn.commit()
+        return True
 
     def editDetails(self, user_data):
         username = user_data['username'] if 'username' in user_data else self.username
