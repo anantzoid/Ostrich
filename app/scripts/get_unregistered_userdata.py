@@ -111,7 +111,7 @@ def import_data(from_date, to_date):
     conn = mysql.connect()
     cursor = conn.cursor()
     for row in users_data:
-        cursor.except("""SELECT COUNT(*) FROM users_unregistered WHERE mixpanel_id = %s""",
+        cursor.execute("""SELECT COUNT(*) FROM users_unregistered WHERE mixpanel_id = %s""",
                 (row[0],))
         if cursor.fetchone()[0]:
             cursor.execute("""UPDATE users_unregistered SET gcm_id = %s, date_created = CURRENT_TIMESTAMP

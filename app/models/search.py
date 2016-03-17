@@ -61,7 +61,8 @@ class Search():
                 query_fail = True
             phrase_results['items'].extend(queried_results['items'])
             phrase_results['total'] += queried_results['total']
-       
+      
+        phrase_results['collections'] = self.getCollectionsFromResults(phrase_results['items'])
         self.reportFail(phrase_fail, query_fail)
         return phrase_results
 
@@ -100,6 +101,14 @@ class Search():
         if not results['items']:
             self.reportFail(True, True, 'isbn')
         return results
+
+    def getCollectionsFromResults(self, results):
+        collections = []
+        for result in results:
+            if 'in_collections' in result:
+                collections.extend(result['in_collections'])
+        collections = [{'collection_name': _} for _ in list(set(collections))]
+        return collections
 
     def autoComplete(self, page=0):
         if len(self.query) < 4:

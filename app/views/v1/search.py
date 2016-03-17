@@ -18,6 +18,7 @@ import json
 @webapp.route('/search')
 def searchString():
     response = {'status': 'False'}
+    results = {}
 
     query = Utils.getParam(request.args, 'q') 
     page = Utils.getParam(request.args, 'page', var_type='int', default=1)
