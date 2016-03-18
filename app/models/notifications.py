@@ -30,12 +30,11 @@ class Notifications():
             admins = ",".join([str(_) for _ in Utils.getAdmins()])
             query_condition = " WHERE user_id in ("+admins+")"
         else:
-            query_condition = ""
+            query_condition = " UNION SELECT gcm_id FROM users_unregistered"
 
         cursor = mysql.connect().cursor()
 
-        cursor.execute("""SELECT gcm_id FROM users"""+query_condition
-                +""" UNION SELECT gcm_id FROM users_unregistered""")
+        cursor.execute("""SELECT gcm_id FROM users"""+query_condition)
         all_gcm = cursor.fetchall()
         all_gcm_ids = []
         for gcm in all_gcm:
