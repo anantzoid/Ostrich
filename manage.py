@@ -25,7 +25,10 @@ def session():
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    Indexer().indexItems(query_condition=' AND (i.item_id = 217)')
+    custom_keys = {
+            'out_of_stock': 1
+            }
+    Indexer().indexItems(query_condition=' AND (i.item_id = 217)',limit='',custom_keys=custom_keys)
 
 if __name__ == "__main__":
     manager.run()

@@ -20,7 +20,7 @@ class Indexer():
             #print >>self.err_log, str(e)+","+ str(data['item_id'])
             print str(e), data['item_id']
 
-    def indexItems(self, query_condition='', limit=''):
+    def indexItems(self, query_condition='', limit='', custom_keys={}):
 
         search_query = """SELECT i.item_id, i.item_name, i.author, i.price,
         i.ratings, i.num_ratings, i.num_reviews, i.img_small,
@@ -46,13 +46,13 @@ class Indexer():
                 record['categories'] = record['categories'].split("|")
             else:
                 record['categories'] = []
-            record = self.fetchItemProperties(record)
+            record = self.fetchItemProperties(record, custom_keys)
             record = self.extendItemProperties(record)
            
             record = self.handleUnicode(record)
             self.indexItemObject(record)
     
-    def fetchItemProperties(self, item):
+    def fetchItemProperties(self, item, custom_keys):
         item['isbn_10'] = []
         item['isbn_13'] = []
         item['in_stock'] = 0
@@ -90,6 +90,9 @@ class Indexer():
                 item['custom_price'] = 100
                 item['custom_return_days'] = 14
 
+        if custom_keys:
+            for key in custom_keys.keys():
+                item[key] = custom_keys[key]
         return item
 
     def extendItemProperties(self, item):
