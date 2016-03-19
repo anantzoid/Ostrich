@@ -321,7 +321,8 @@ def deleteUser():
 
 @webapp.route('/sendMassNotification')
 def sendMassNotification():
-    notification_data = {'notification_id': 10}
+    notification_data = {}
+    notification_data['notification_id'] = Utils.getParam(request.args, 'notification_id', var_type='int', default=10)
     notification_data['title'] = Utils.getParam(request.args, 'title')
     notification_data['message'] = Utils.getParam(request.args, 'message')
     notification_data['image_url'] = Utils.getParam(request.args, 'image_url')
