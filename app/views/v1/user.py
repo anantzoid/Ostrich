@@ -322,6 +322,7 @@ def deleteUser():
 @webapp.route('/sendMassNotification')
 def sendMassNotification():
     notification_data = {}
+    '''
     notification_data['notification_id'] = Utils.getParam(request.args, 'notification_id', var_type='int', default=10)
     notification_data['title'] = Utils.getParam(request.args, 'title')
     notification_data['message'] = Utils.getParam(request.args, 'message')
@@ -329,7 +330,14 @@ def sendMassNotification():
     notification_data['post_url'] = Utils.getParam(request.args, 'post_url')
     notification_data['social_media'] = Utils.getParam(request.args, 'social_media')
     admin_flag = Utils.getParam(request.args, 'admin', var_type='int', default=0)
+    '''
 
+    for arg in request.args:
+        notification_data[arg] = request.args[arg]
+    if not 'notification_id' in notification_data:
+        notification_data['notification_id'] = 10
+    if 'admin' in notification_data and notification_data['admin']:
+        admin_flag = 1
     for key in notification_data:
         if not notification_data[key]:
             Utils.errorResponse({'status': 'False'})
