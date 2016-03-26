@@ -104,12 +104,32 @@ class Search():
 
     def getCollectionsFromResults(self, results):
         collections = []
+        collection_objects = []
         for result in results:
             if 'in_collections' in result:
                 collections.extend(result['in_collections'])
-        collections = [{'collection_name': _} for _ in list(set(collections))]
-        return collections
-
+        for collection in list(set(collections)):
+            collection_objects = self.fetchCollectionObject(collection)
+        return collection_objects
+        
+    def fetchCollectionObject(self, collection_name):
+        query = {
+                "query": {
+                    "match": { "name": collection_name }
+                    }
+                }
+        collection_object = {}
+        collection_results = self.executeSearch(query)
+        if collection_results['total'] and 'item_ids' in collection_results['items'][0]:
+            collection_object = collection_results['items'][0]
+            collection_object['items'] = []
+            docs = self.es.mget(index=self.index, doc_type='item', body={"ids": collection_object['item_ids']})
+            if 'docs' in docs:
+                for doc in docs['docs']:
+                    if '_source' in doc:
+                        collection_object['items'].append(doc['_source'])
+        return collection_object
+        
     def autoComplete(self, page=0):
         if len(self.query) < 4:
             return {"items": []}
@@ -117,7 +137,7 @@ class Search():
         data["query"]["function_score"]["query"] = {"match_phrase_prefix":{"item_name":self.query}}
         return self.executeSearch(data, page)
 
-    def executeSearch(self, data, page):
+    def executeSearch(self, data, page=0):
         search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
         item_results = []
         total_results = 0
@@ -172,9 +192,6 @@ class Search():
                 VALUES (%s,%s,%s,%s,%s,%s)""",
             (self.user_id, self.query, fail_type, self.flow, self.gcm_id, self.uuid))
         conn.commit()
-
-        with webapp.test_request_context():
-            Mailer.genericMailer({'subject': '!SEARCH FAIL:'+fail_type+': '+self.query, 'body': 'Made by user_id: '+ str(self.user_id)}) 
         return
 
     def getContentData(self, key=None):

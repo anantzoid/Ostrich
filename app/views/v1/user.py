@@ -336,8 +336,8 @@ def sendMassNotification():
         notification_data[arg] = request.args[arg]
     if not 'notification_id' in notification_data:
         notification_data['notification_id'] = 10
-    if 'admin' in notification_data and notification_data['admin']:
-        admin_flag = 1
+    if 'admin' in notification_data:
+        admin_flag = int(notification_data['admin'])
     for key in notification_data:
         if not notification_data[key]:
             Utils.errorResponse({'status': 'False'})

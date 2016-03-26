@@ -11,7 +11,24 @@ class Indexer():
         self.es_index = index
         self.es_doctype = 'item'
         #self.err_log = open('es_err.log','w')
- 
+
+    def indexCollections(self):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT c.collection_id, c.name, c.description,
+           (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
+           WHERE ci.collection_id = c.collection_id AND ci.active = 1) AS item_ids
+           FROM collections c""")
+        num_items = cursor.rowcount
+        for i in range(num_items):
+            collection = Utils.fetchOneAssoc(cursor)
+            collection['item_ids'] = [int(_) for _ in collection['item_ids'].split(',')]
+            try:
+                self.es.index(index=self.es_index, doc_type='collections', 
+                    id=collection['collection_id'], body=collection, refresh=True)
+                print collection['collection_id']
+            except Exception, e:
+                print str(e), collection['collection_id']
+
     def indexItemObject(self, data):
         try:
             resp = self.es.index(index=self.es_index, doc_type=self.es_doctype,
