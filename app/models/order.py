@@ -14,7 +14,7 @@ class Order():
     def getOrderInfo(self, **kwargs):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("""SELECT o.*,
-                (select group_concat(oh.item_id separator ',') from order_history oh where oh.order_id = o.order_id) as item_ids 
+                (select group_concat(oh.item_id separator ',') from order_history oh where oh.order_id = o.order_id) as item_ids, 
                 IF((select count(*) from orders where parent_id=%s)>0, 1, 0) as is_parent
                 FROM orders o 
                 WHERE o.order_id = %s""", (self.order_id, self.order_id))
@@ -22,7 +22,7 @@ class Order():
         obj_cursor.close()
 
         if order_info:
-            order_info['items'] = [Item(int(item_id)).getObj() for item_id in order_info['item_ids']]
+            order_info['items'] = [Item(int(item_id)).getObj() for item_id in order_info['item_ids'].split(',')]
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
@@ -570,6 +570,7 @@ class Order():
 
     @staticmethod
     def deleteOrder(order_id):
+        #TODO support multiple items
         conn = mysql.connect()
         delete_cursor = conn.cursor()
         

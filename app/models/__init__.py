@@ -9,6 +9,7 @@ from review import *
 from search import *
 from item import *
 from user import *
+from collection import *
 from order import *
 from lend import *
 from admin import *

@@ -264,8 +264,6 @@ class User(Prototype):
         for order_id in orders_cursor.fetchall():
             order = Order(int(order_id[0]))
             order_info = order.getOrderInfo(formatted=True)
-            #TODO item_id will be list in future
-            order_info['items'] = [Item(int(order_info['item_id'])).getObj()]
             order_info['address'] = User.getAddressInfo(order_info['address_id']) 
             order_list.append(order_info)
        
