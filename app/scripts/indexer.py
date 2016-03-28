@@ -22,12 +22,23 @@ class Indexer():
         for i in range(num_items):
             collection = Utils.fetchOneAssoc(cursor)
             collection['item_ids'] = [int(_) for _ in collection['item_ids'].split(',')]
+            collection['metadata'] = self.fetchCollectionsMetadata(collection['collection_id'])
             try:
                 self.es.index(index=self.es_index, doc_type='collections', 
                     id=collection['collection_id'], body=collection, refresh=True)
                 print collection['collection_id']
             except Exception, e:
                 print str(e), collection['collection_id']
+
+    def fetchCollectionsMetadata(self, collection_id):
+        collections_metadata = {}
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM collections_metadata WHERE collection_id = %s""",
+                (collection_id,))
+        metadata = cursor.fetchall()
+        for data in metadata:
+            collections_metadata[data[1]] = data[2]
+        return collections_metadata
 
     def indexItemObject(self, data):
         try:

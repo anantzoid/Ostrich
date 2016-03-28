@@ -109,7 +109,7 @@ class Search():
             if 'in_collections' in result:
                 collections.extend(result['in_collections'])
         for collection in list(set(collections)):
-            collection_objects = self.fetchCollectionObject(collection)
+            collection_objects.append(self.fetchCollectionObject(collection))
         return collection_objects
         
     def fetchCollectionObject(self, collection_name):

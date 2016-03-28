@@ -30,5 +30,10 @@ def indexer():
             }
     Indexer().indexItems(query_condition=' AND (i.item_id = 217)',limit='',custom_keys=custom_keys)
 
+@manager.command
+def indexcol():
+    from app.scripts import Indexer
+    Indexer().indexCollections()
+
 if __name__ == "__main__":
     manager.run()
