@@ -13,8 +13,9 @@ class Indexer():
         #self.err_log = open('es_err.log','w')
 
     def indexCollections(self):
+        #TODO fetch collection object from Collection class
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT c.collection_id, c.name, c.description,
+        cursor.execute("""SELECT c.*,
            (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
            WHERE ci.collection_id = c.collection_id AND ci.active = 1) AS item_ids
            FROM collections c""")

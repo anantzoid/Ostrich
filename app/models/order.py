@@ -12,26 +12,26 @@ class Order():
         self.order_id = order_id
 
     def getOrderInfo(self, **kwargs):
-        # TODO concatnate list of inv_id and item_id when,
-        # when going gor mulitple items in same order
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("""SELECT o.*, oi.*,
+        obj_cursor.execute("""SELECT o.*,
+                (select group_concat(oh.item_id separator ',') from order_history oh where oh.order_id = o.order_id) as item_ids 
                 IF((select count(*) from orders where parent_id=%s)>0, 1, 0) as is_parent
                 FROM orders o 
-                INNER JOIN order_history oi ON o.order_id = oi.order_id 
                 WHERE o.order_id = %s""", (self.order_id, self.order_id))
         order_info = Utils.fetchOneAssoc(obj_cursor)
         obj_cursor.close()
 
         if order_info:
-            order_info['item'] = Item(order_info['item_id']).getObj()
+            order_info['items'] = [Item(int(item_id)).getObj() for item_id in order_info['item_ids']]
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
             #NOTE charge denotes charge to be collected in cash
             order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
+            if order_info['from_collection']:
+                order_info['collection'] = Collection(order_info['from_collection']).getObj()
 
-            order_info['review'] = Review(user_id=order_info['user_id'], item_id=order_info['item_id']).getObj() 
+            order_info['review'] = [Review(user_id=order_info['user_id'], item_id=item_id).getObj() for item_id in order_info['item_ids']] 
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
             
@@ -113,31 +113,27 @@ class Order():
 
     @staticmethod
     def placeOrder(order_data):
-        order_fields = ['item_id', 'user_id']
-        for key in order_fields:
-            if key not in order_data.keys():
-                return {'message': 'Required params missing'}
-            elif not order_data[key] or not order_data[key].isdigit():
-                return {'message': 'Wrong param value'}
-            else:
-                order_data[key] = int(order_data[key])
-       
+        order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
+        order_data['user_id'] = int(order_data['user_id'])
+        order_data['collection_id'] = Utils.getParam(order_data, 'collection_id', 'int', None)
+
         if 'address_id' in order_data:
             order_data['address'] = {}
             order_data['address']['address_id'] = int(order_data['address_id'])
         else:
             order_data['address'] = json.loads(order_data['address'])
             
-
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
-        order_data['delivery_slot'] = int(Utils.getParam(order_data, 'delivery_slot', 
-                default = Utils.getDefaultTimeSlot()))
+        order_data['delivery_slot'] = Utils.getParam(order_data, 'delivery_slot', 
+                'int', Utils.getDefaultTimeSlot())
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
-        order_data['order_amount'] = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])  
+
+        default_order_amount = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id']) 
+        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', default_order_amount)
 
         #check order validity
         # TODO check if item exists
@@ -158,8 +154,9 @@ class Order():
                 delivery_date,
                 delivery_slot, 
                 pickup_slot, 
-                payment_mode) 
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s)"""  
+                payment_mode,
+                from_collection) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
@@ -167,14 +164,15 @@ class Order():
                     order_data['delivery_date'], 
                     order_data['delivery_slot'], 
                     order_data['delivery_slot'], 
-                    order_data['payment_mode']))
+                    order_data['payment_mode'],
+                    order_data['collection_id']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
         response = {'order_id': order_id}
 
         order = Order(order_id)
-        order.updateInventoryPostOrder([order_data['item_id']])
+        order.updateInventoryPostOrder(order_data['item_id'])
 
         if order_data['payment_mode'] == 'wallet':
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
@@ -192,14 +190,22 @@ class Order():
         if status_id == 6:
             notification_id = 4
         if status_id == 1:
-
-            # Notification message formatting
-            if len(order_info['item']['item_name']) > 35:
-                item_name_ellipse = order_info['item']['item_name'][:35] + '..'
-            elif len(order_info['item']['item_name']) + len(order_info['item']['author']) <= 32:
-                item_name_ellipse = order_info['item']['item_name'] +' by '+ order_info['item']['author']
+            
+            if 'collection' not in order_info:
+                # Notification message formatting
+                if len(order_info['item']['item_name']) > 35:
+                    item_name_ellipse = order_info['item']['item_name'][:35] + '..'
+                elif len(order_info['item']['item_name']) + len(order_info['item']['author']) <= 32:
+                    item_name_ellipse = order_info['item']['item_name'] +' by '+ order_info['item']['author']
+                else:
+                    item_name_ellipse = order_info['item']['item_name']
+                entity_name = order_info['item']['item_id']
             else:
-                item_name_ellipse = order_info['item']['item_name']
+                if len(order_info['collection']['name']) > 35:
+                    item_name_ellipse = order_info['collection']['name'][:35] + '..'
+                else:
+                    item_name_ellipse = order_info['collection']['name']
+                entity_name = order_info['collection']['name']
 
             status_info["Description"] = status_info["Description"]%item_name_ellipse
 
@@ -213,7 +219,7 @@ class Order():
                     day = "Tomorrow"
                 else:
                     day = "on " + delivery_day.strftime("%A")
-            status_info["expanded_text"] = status_info["expanded_text"]%(order_info['item']['item_name'], day)
+            status_info["expanded_text"] = status_info["expanded_text"]%(entity_name, day)
 
         notification_data = {
                     "notification_id": notification_id,
@@ -230,8 +236,6 @@ class Order():
 
 
     def updateInventoryPostOrder(self, item_ids):
-        # NOTE this part is supported for multiple items in same order. PlaceOrder function isnt
-
         inventory_ids = self.getInventoryIds(item_ids) 
 
         #update order_history and clear stock in inventory
@@ -299,13 +303,13 @@ class Order():
     def isUserValidForOrder(user, order_data):
         if user.getObj() is None:
             return {'message': 'User does not exist'}
-        
+       
         # IF the user is already possessing the book
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT COUNT(*) FROM orders o
             INNER JOIN order_history oh ON oh.order_id=o.order_id
-            WHERE o.user_id = %s AND  oh.item_id = %s AND o.order_status < 5""",
-            (user.user_id, order_data['item_id']))
+            WHERE o.user_id = %s AND  oh.item_id IN (%s) AND o.order_status < 5""",
+            (user.user_id, ','.join([str(_) for _ in order_data['item_id']])))
         if cursor.fetchone()[0]:
             return ({
                 'title': 'Book Already Ordered',

@@ -5,6 +5,12 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
+    from app import mysql
+    conn = mysql.connect()
+    cursor = conn.cursor()
+    cursor.executemany("insert into collections_metadata (collection_id, meta_key, meta_value) values (%s,%s,%s)",[(1,'1','1')])
+    conn.commit()
+    return
     from datetime import date, timedelta
     from app.scripts.get_unregistered_userdata import import_data
     yesterday = date.today() - timedelta(1)

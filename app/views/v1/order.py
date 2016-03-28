@@ -99,7 +99,6 @@ def fetchOrder():
 
     order_info = Order(order_id).getOrderInfo(formatted=True)
     if order_info:
-        order_info['items'] = [order_info['item']]
         order_info['address'] = User.getAddressInfo(order_info['address_id']) 
         return jsonify(order_info)
     else:
