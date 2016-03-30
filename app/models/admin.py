@@ -111,9 +111,8 @@ class Admin():
                     }
             order_info['order_status'] = Order.getOrderStatusDetails(order_info['order_status'])['Status']
             
-            for i,item_inv in enumerate(order_info['item_ids'].split(',')):
+            for i,inventory_id in enumerate(order_info['inventory_ids']):
                 # check if item is in inventory
-                inventory_id = item_inv.split(':')[1]
                 order_copy = dict(order_info)
                 cursor.execute("""SELECT isbn_13 FROM inventory WHERE inventory_id = %s""",(inventory_id,))
                 isbn = cursor.fetchone()
@@ -122,6 +121,7 @@ class Admin():
                 order_copy['item'] = order_info['items'][i]
                 order_copy['inventory_id'] = inventory_id
                 del(order_copy['items'])
+                del(order_copy['inventory_ids'])
                 order_list.append(order_copy)
 
         return order_list

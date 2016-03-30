@@ -34,6 +34,7 @@ class Order():
             order_info['reviews'] = [Review(user_id=order_info['user_id'], item_id=item_id.split(':')[0]).getObj() for item_id in order_info['item_ids'].split(',')] 
             if len(order_info['items']) == 1:
                 order_info['review'] = order_info['reviews'][0]
+            order_info['inventory_ids'] = [_.split(':')[1] for _ in order_info['item_ids'].split(',')]
 
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
@@ -519,11 +520,12 @@ class Order():
                 conn.commit()
                 child_order_id = update_cursor.lastrowid
                 status = True if update_cursor.rowcount else False
-
-                update_cursor.execute("""INSERT INTO order_history 
-                    (inventory_id, item_id, order_id) VALUES (%s, %s, %s)""",
-                    (order_info['inventory_id'], order_info['item_id'], child_order_id))
-                conn.commit()
+                
+                for i, item in enumerate(order_info['items']):
+                    update_cursor.execute("""INSERT INTO order_history 
+                        (inventory_id, item_id, order_id) VALUES (%s, %s, %s)""",
+                        (order_info['inventory_ids'][i], item['item_id'], child_order_id))
+                    conn.commit()
                 if 'extend_payment_mode' in order_data and order_data['extend_payment_mode'] == 'wallet':
                     user = User(order_info['user_id'])
                     debit_amount = order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'] 
