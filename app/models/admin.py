@@ -96,7 +96,7 @@ class Admin():
         for order_data in order_ids:
             order = Order(int(order_data[0]))
             order_info = order.getOrderInfo()
-
+            print order_info
             user = User(order_info['user_id'])
             order_info['user'] = user.getObj()
             order_info['address'] = user.getAddressInfo(order_info['address_id']) 

@@ -11,8 +11,8 @@ class Collection(Prototype):
             (select group_concat(ci.item_id separator ',') from collections_items ci 
             where ci.collection_id = c.collection_id and ci.active = 1) as item_ids,
             (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
-            where cm.collection_id = c.collection_id) as metadata)
-            FROM collections WHERE collection_id = %s""", (collection_id,))
+            where cm.collection_id = c.collection_id) as metadata
+            FROM c.collections WHERE c.collection_id = %s""", (collection_id,))
         self.data = Utils.fetchOneAssoc(cursor)
         if not self.data:
             self.data = {}

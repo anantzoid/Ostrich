@@ -14,7 +14,7 @@ class Order():
     def getOrderInfo(self, **kwargs):
         obj_cursor = mysql.connect().cursor()
         obj_cursor.execute("""SELECT o.*,
-                (select group_concat(oh.item_id separator ',') from order_history oh where oh.order_id = o.order_id) as item_ids, 
+                (select group_concat(concat(oh.item_id, ':', oh.inventory_id) separator ',') from order_history oh where oh.order_id = o.order_id) as item_ids, 
                 IF((select count(*) from orders where parent_id=%s)>0, 1, 0) as is_parent
                 FROM orders o 
                 WHERE o.order_id = %s""", (self.order_id, self.order_id))
@@ -22,7 +22,7 @@ class Order():
         obj_cursor.close()
 
         if order_info:
-            order_info['items'] = [Item(int(item_id)).getObj() for item_id in order_info['item_ids'].split(',')]
+            order_info['items'] = [Item(int(item_id.split(':')[0])).getObj() for item_id in order_info['item_ids'].split(',')]
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
@@ -31,7 +31,7 @@ class Order():
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
 
-            order_info['review'] = [Review(user_id=order_info['user_id'], item_id=item_id).getObj() for item_id in order_info['item_ids']] 
+            order_info['review'] = [Review(user_id=order_info['user_id'], item_id=item_id.split(':')[0]).getObj() for item_id in order_info['item_ids']] 
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
             
@@ -131,8 +131,14 @@ class Order():
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
-
+       
         default_order_amount = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id']) 
+
+        #NOTE temp workaround to handle custom prices
+        if len(order_data['item_id']) == 1:
+            item = Item(order_data['item_id'][0])
+            if item.price >= 699:
+                default_order_amount = 60
         order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', default_order_amount)
 
         #check order validity
@@ -193,13 +199,14 @@ class Order():
             
             if 'collection' not in order_info:
                 # Notification message formatting
-                if len(order_info['item']['item_name']) > 35:
-                    item_name_ellipse = order_info['item']['item_name'][:35] + '..'
-                elif len(order_info['item']['item_name']) + len(order_info['item']['author']) <= 32:
-                    item_name_ellipse = order_info['item']['item_name'] +' by '+ order_info['item']['author']
+                order_item = order_info['items'][0]
+                if len(order_item['item_name']) > 35:
+                    item_name_ellipse = order_item['item_name'][:35] + '..'
+                elif len(order_item['item_name']) + len(order_item['author']) <= 32:
+                    item_name_ellipse = order_item['item_name'] +' by '+ order_item['author']
                 else:
-                    item_name_ellipse = order_info['item']['item_name']
-                entity_name = order_info['item']['item_id']
+                    item_name_ellipse = order_item['item_name']
+                entity_name = order_item['item_id']
             else:
                 if len(order_info['collection']['name']) > 35:
                     item_name_ellipse = order_info['collection']['name'][:35] + '..'
