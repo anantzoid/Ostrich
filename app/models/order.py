@@ -136,8 +136,8 @@ class Order():
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
-        default_order_amount = Item.getRentalAmount(order_data['item_id'][0])
 
+        default_order_amount = Item.getRentalAmount(order_data)
         #NOTE temp workaround to handle custom prices
         if len(order_data['item_id']) == 1:
             item = Item(order_data['item_id'][0])
@@ -377,7 +377,23 @@ class Order():
 
         return order_info
 
-   
+    def getExtendRentalChargesSlab(self, order_data):
+        slab = {
+                '7 days': 10,
+                '10 days': 15,
+                '14 days': 20
+                }
+        if order_data['from_collection']:
+            slab['7 days'] = int(order_data['collection']['price'] * 0.3)
+            slab['10 days'] = int(order_data['collection']['price'] * 0.5)
+            slab['14 days'] = int(order_data['collection']['price'] * 0.7)
+        elif order_data['items'][0]['price'] >= 399:
+            slab['7 days'] = 15 
+            slab['10 days'] = 20
+            slab['14 days'] = 30
+
+        return slab
+            
     @staticmethod    
     def getTimeSlot(slot_id=None, active=0):
         query_cond = " WHERE active = 1" if active else ""

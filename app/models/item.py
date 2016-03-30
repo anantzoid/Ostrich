@@ -59,15 +59,17 @@ class Item(Prototype):
         return True
 
     @staticmethod
-    def getRentalAmount(item_id):
-        collection_retail = Collection.getByItemId(item_id)
-        if collection_retail:
-            return collection_retail
-        else:
-            item = Item(item_id)
-            if item.price >= 399:
-                return 60
-        return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])
+    def getRentalAmount(order_data):
+        item_id = order_data['item_id'][0]
+        if order_data['collection_id']:
+            collection_retail = Collection.getByItemId(item_id)
+            if collection_retail:
+                return collection_retail
+
+        item = Item(item_id)
+        if item.price >= 399:
+            return 60 * len(order_data['item_id'])
+        return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id'])
 
     @staticmethod
     def removeItem(item_id):
