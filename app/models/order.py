@@ -31,7 +31,10 @@ class Order():
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
 
-            order_info['review'] = [Review(user_id=order_info['user_id'], item_id=item_id.split(':')[0]).getObj() for item_id in order_info['item_ids']] 
+            order_info['reviews'] = [Review(user_id=order_info['user_id'], item_id=item_id.split(':')[0]).getObj() for item_id in order_info['item_ids']] 
+            if len(order_info['items']) == 1:
+                order_info['review'] = order_info['reviews'][0]
+
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
             
