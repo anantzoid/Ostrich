@@ -96,7 +96,6 @@ class Admin():
         for order_data in order_ids:
             order = Order(int(order_data[0]))
             order_info = order.getOrderInfo()
-            print order_info
             user = User(order_info['user_id'])
             order_info['user'] = user.getObj()
             order_info['address'] = user.getAddressInfo(order_info['address_id']) 
@@ -111,14 +110,19 @@ class Admin():
                     'status': Order.getOrderStatusDetails(next_order_status)['Status']
                     }
             order_info['order_status'] = Order.getOrderStatusDetails(order_info['order_status'])['Status']
-
-            # check if item is in inventory
-            cursor.execute("""SELECT isbn_13 FROM inventory WHERE inventory_id = %d"""%(order_info['inventory_id']))
-            isbn = cursor.fetchone()
-            if isbn:
-                order_info['isbn_13'] = isbn[0]
-
-            order_list.append(order_info)
+            
+            for i,item_inv in enumerate(order_info['item_ids'].split(',')):
+                # check if item is in inventory
+                inventory_id = item_inv.split(':')[1]
+                order_copy = dict(order_info)
+                cursor.execute("""SELECT isbn_13 FROM inventory WHERE inventory_id = %s""",(inventory_id,))
+                isbn = cursor.fetchone()
+                if isbn:
+                    order_copy['isbn_13'] = isbn[0]
+                order_copy['item'] = order_info['items'][i]
+                order_copy['inventory_id'] = inventory_id
+                del(order_copy['items'])
+                order_list.append(order_copy)
 
         return order_list
 
