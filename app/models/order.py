@@ -379,18 +379,18 @@ class Order():
 
     def getExtendRentalChargesSlab(self, order_data):
         slab = {
-                '7 days': 10,
-                '10 days': 15,
-                '14 days': 20
+                '7': 10,
+                '10': 15,
+                '14': 20
                 }
         if order_data['from_collection']:
-            slab['7 days'] = int(order_data['collection']['price'] * 0.3)
-            slab['10 days'] = int(order_data['collection']['price'] * 0.5)
-            slab['14 days'] = int(order_data['collection']['price'] * 0.7)
+            slab['7'] = int(order_data['collection']['price'] * 0.3)
+            slab['10'] = int(order_data['collection']['price'] * 0.5)
+            slab['14'] = int(order_data['collection']['price'] * 0.7)
         elif order_data['items'][0]['price'] >= 399:
-            slab['7 days'] = 15 
-            slab['10 days'] = 20
-            slab['14 days'] = 30
+            slab['7'] = 15 
+            slab['10'] = 20
+            slab['14'] = 30
 
         return slab
             
