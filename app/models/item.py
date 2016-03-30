@@ -1,5 +1,5 @@
-from app import mysql
-from app.models import Prototype, Utils
+from app import mysql, webapp
+from app.models import *
 
 class Item(Prototype):
     def __init__(self, item_id):
@@ -57,6 +57,17 @@ class Item(Prototype):
         store_request_cursor.close()
         '''
         return True
+
+    @staticmethod
+    def getRentalAmount(item_id):
+        collection_retail = Collection.getByItemId(item_id)
+        if collection_retail:
+            return collection_retail
+        else:
+            item = Item(item_id)
+            if item.price >= 399:
+                return 60
+        return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE'])
 
     @staticmethod
     def removeItem(item_id):

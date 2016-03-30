@@ -27,4 +27,14 @@ class Collection(Prototype):
         obj = vars(self)
         obj = obj['data']
         return obj
-
+    
+    @staticmethod
+    def getByItemId(item_id):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT c.price FROM collections c INNER JOIN 
+            collections_items ci ON ci.collection_id = c.collection_id
+            WHERE ci.item_id = %s""", (item_id,))
+        rental_price = cursor.fetchone()
+        if rental_price:
+            rental_price = int(rental_price[0])
+        return rental_price 

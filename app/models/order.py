@@ -136,8 +136,7 @@ class Order():
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
                 default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
-       
-        default_order_amount = int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id']) 
+        default_order_amount = Item.getRentalAmount(order_data['item_id'][0])
 
         #NOTE temp workaround to handle custom prices
         if len(order_data['item_id']) == 1:
