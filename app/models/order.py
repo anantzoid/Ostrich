@@ -68,8 +68,9 @@ class Order():
             order_info['order_id'] = children[-1]['order_id']
 
         all_orders = parents + children
-        for order in all_orders:
-            charge += order['charge']
+        for i, order in enumerate(all_orders):
+            if i < len(all_orders) - 1:
+                charge += order['charge']
             order_info['all_charges'].append({
                     'charge': Order.getCharge(order['charge']),
                     'payment_mode': order['payment_mode']
@@ -141,7 +142,7 @@ class Order():
         #NOTE temp workaround to handle custom prices
         if len(order_data['item_id']) == 1:
             item = Item(order_data['item_id'][0])
-            if item.price >= 699:
+            if item.price >= 399:
                 default_order_amount = 60
         order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', default_order_amount)
 
@@ -165,8 +166,9 @@ class Order():
                 delivery_slot, 
                 pickup_slot, 
                 payment_mode,
-                from_collection) 
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                from_collection, 
+                charge) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
@@ -175,7 +177,8 @@ class Order():
                     order_data['delivery_slot'], 
                     order_data['delivery_slot'], 
                     order_data['payment_mode'],
-                    order_data['collection_id']))
+                    order_data['collection_id'],
+                    order_data['order_amount']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
