@@ -16,7 +16,7 @@ def upsellEmail(order_id):
     related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
     related_item_ids = [_ for _ in related_items_cursor]
 
-    if not related_item_ids:
+    if len(related_item_ids) == 0:
         getRelatedItems(int(order_info['item_id']))
         related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
         related_item_ids = [_ for _ in related_items_cursor]

@@ -338,6 +338,8 @@ def sendMassNotification():
         notification_data['notification_id'] = 10
     if 'admin' in notification_data:
         admin_flag = int(notification_data['admin'])
+    else:
+        admin_flag = 0
     for key in notification_data:
         if not notification_data[key]:
             Utils.errorResponse({'status': 'False'})

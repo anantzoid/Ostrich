@@ -523,8 +523,9 @@ class Order():
                     delivery_slot,
                     charge,
                     payment_mode,
+                    from_collection,
                     parent_id) 
-                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                    VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                     ,(order_info['user_id'], 
                     order_info['address_id'], 
                     order_info['order_status'],
@@ -534,6 +535,7 @@ class Order():
                     order_info['delivery_slot'],
                     order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'],
                     order_data['extend_payment_mode'] if 'extend_payment_mode' in order_data else 'cash',
+                    order_info['from_collection'],
                     self.order_id))
                 conn.commit()
                 child_order_id = update_cursor.lastrowid
