@@ -118,9 +118,12 @@ class Order():
 
     @staticmethod
     def placeOrder(order_data):
-        order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
-        order_data['user_id'] = int(order_data['user_id'])
         order_data['collection_id'] = Utils.getParam(order_data, 'collection_id', 'int', None)
+        if order_data['collection_id']:
+            order_data['item_id'] = Collection(order_data['collection_id']).getObj()['item_ids']
+        else:
+            order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
+        order_data['user_id'] = int(order_data['user_id'])
 
         if 'address_id' in order_data:
             order_data['address'] = {}
@@ -212,7 +215,7 @@ class Order():
                     item_name_ellipse = order_item['item_name'] +' by '+ order_item['author']
                 else:
                     item_name_ellipse = order_item['item_name']
-                entity_name = order_item['item_id']
+                entity_name = order_item['item_name']
             else:
                 if len(order_info['collection']['name']) > 35:
                     item_name_ellipse = order_info['collection']['name'][:35] + '..'
