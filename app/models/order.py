@@ -122,7 +122,8 @@ class Order():
         if order_data['collection_id']:
             order_data['item_id'] = Collection(order_data['collection_id']).getObj()['item_ids']
         else:
-            order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
+            order_data['item_id'] = order_data['item_id']
+        order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
         order_data['user_id'] = int(order_data['user_id'])
 
         if 'address_id' in order_data:

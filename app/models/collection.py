@@ -14,12 +14,13 @@ class Collection(Prototype):
             where cm.collection_id = c.collection_id) as metadata
             FROM collections c WHERE c.collection_id = %s""", (collection_id,))
         self.data = Utils.fetchOneAssoc(cursor)
-
-        collections_metadata_raw = self.data['metadata']
-        self.data['metadata'] = {}
-        for props in collections_metadata_raw.split('&'):
-            props_formatted = props.split(':')
-            self.data['metadata'][props_formatted[0]] = props_formatted[1]
+        
+        if self.data['metadata']:
+            collections_metadata_raw = self.data['metadata']
+            self.data['metadata'] = {}
+            for props in collections_metadata_raw.split('&'):
+                props_formatted = props.split(':')
+                self.data['metadata'][props_formatted[0]] = props_formatted[1]
         if not self.data:
             self.data = {}
         
