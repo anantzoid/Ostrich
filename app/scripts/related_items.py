@@ -32,6 +32,7 @@ def getRelatedItems(item_id):
         if book_id:
             amazon_id = book_id.attrs['value']
         print amazon_id
+        related_items_ids = []
         try:
             carousel = soup.find('div',{'class':'a-carousel-container'})
             if carousel:
@@ -133,6 +134,4 @@ def dumpItemData(item_data, item_id):
     final_data = item_data['goodreads']
     final_data.update(item_data['amazon'])
     final_data['_id'] = int(item_id)
-
-    if not db.items.find({'_id': final_data['_id']}).count():
-        db.items.insert_one(final_data)
+    db.items.update_one({'_id': final_data['_id']}, {'$set': final_data}, upsert=True)

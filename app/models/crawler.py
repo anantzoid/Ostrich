@@ -227,9 +227,11 @@ class GoodreadsCrawler():
         gr_summary = ""
         desc_container = soup.find('div', {'id': 'descriptionContainer'})
         if desc_container:
-            gr_summary = desc_container.findAll('span')[-1]
-            if gr_summary:
-                gr_summary = gr_summary.text
+            summaries = desc_container.findAll('span')
+            if summaries:
+                gr_summary = summaries[-1]
+                if gr_summary:
+                    gr_summary = gr_summary.text
 
         # ISBNs, Language 
         isbn_10 = ''
