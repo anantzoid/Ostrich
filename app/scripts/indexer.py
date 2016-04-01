@@ -27,7 +27,7 @@ class Indexer():
             try:
                 self.es.index(index=self.es_index, doc_type='collections', 
                     id=collection['collection_id'], body=collection, refresh=True)
-                print collection['collection_id']
+                self.updateItems(collection['item_ids'], collection['name'])
             except Exception, e:
                 print str(e), collection['collection_id']
 
@@ -41,6 +41,13 @@ class Indexer():
             collections_metadata[data[1]] = data[2]
         return collections_metadata
 
+    def updateItems(self, item_ids, collection_name):
+        #TODO support one item beloning to multiple collections
+        update_body = {"doc": {"in_collections":[collection_name]}}
+        for item_id in item_ids:
+            self.es.update(index=self.es_index, doc_type='item',id=item_id,
+                    body=update_body)
+        
     def indexItemObject(self, data):
         try:
             resp = self.es.index(index=self.es_index, doc_type=self.es_doctype,
