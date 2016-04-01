@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import json
 import re
 import unicodedata
+import urllib2
 
 # TODO move this to utils
 def handleUnicode(text):
@@ -62,6 +63,8 @@ class AmazonCrawler():
             num_reviews = re.search('\d+',num_reviews.text)
             if num_reviews:
                 num_reviews = num_reviews.group(0)
+        
+        amzn_summary = self.findSummary(response)
 
         data = {
             'amazon_id': amazon_id,
@@ -73,7 +76,8 @@ class AmazonCrawler():
             'img_small': img_small,
             'img_large': img_large,
             'rating': rating,
-            'amzn_num_ratings': num_reviews
+            'amzn_num_ratings': num_reviews,
+            'amzn_summary': amzn_summary
         }
         return data
 
@@ -110,6 +114,30 @@ class AmazonCrawler():
                 else:
                     img_large = url
         return (img_small, img_large)
+   
+    def findSummary(self, response):
+        summaries = {}
+        summaries['Paperback'] = self.extractSummary(response)
+        other_versions = response.findAll('li', {'class': 'swatchElement unselected'})
+        for version in other_versions:
+            anchor = version.find('a')
+            link = 'http://www.amazon.in' + anchor.attrs['href']
+            version_response = requests.get(link)
+            format_type = anchor.find('span').text
+            summaries[format_type] = self.extractSummary(BeautifulSoup(version_response.text, "html.parser"))
+        return summaries
+
+    def extractSummary(self, response):
+        scripts = response.findAll('script')
+        for script in scripts:
+            if 'bookDesc_iframe' in script.text:
+                group = re.search('bookDescEncodedData = "(.*)"', script.text)
+                if group:
+                    encoded_summary = urllib2.unquote(group.group(1))
+                    summary_text = BeautifulSoup(encoded_summary, "html.parser") 
+                    return summary_text.text
+        return ""
+
 
 class GoodreadsCrawler():
     def __init__(self, isbn='', url='', title=''):
@@ -195,6 +223,14 @@ class GoodreadsCrawler():
                 num_review =  meta.text
                 num_review = num_review.lower().replace('reviews','').strip()
 
+        # Summary
+        gr_summary = ""
+        desc_container = soup.find('div', {'id': 'descriptionContainer'})
+        if desc_container:
+            gr_summary = desc_container.findAll('span')[-1]
+            if gr_summary:
+                gr_summary = gr_summary.text
+
         # ISBNs, Language 
         isbn_10 = ''
         isbn_13 = ''
@@ -276,7 +312,7 @@ class GoodreadsCrawler():
             'title': title,
             'author': author,
             'avg_rating': avg_rating,
-            'num_ratings': num_rating,
+            'num_ratings':num_rating,
             'num_review': num_review,
             'isbn_10':    isbn_10,
             'isbn_13':    isbn_13,
@@ -284,12 +320,13 @@ class GoodreadsCrawler():
             'bind_type':  bind_type,
             'edition':    edition,
             'num_page':   num_page,
-            'pub_details': pub_details,
+            'pub_details':pub_details,
             'alt_title':  alt_title,
             'series':     series,
             'awards':     awards,
             'genres':     genres,
-            'isbns':     isbns
+            'isbns':      isbns,
+            'gr_summary': gr_summary
         }
         return data
 

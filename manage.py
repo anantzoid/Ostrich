@@ -5,8 +5,11 @@ manager = Manager(webapp)
 
 @manager.command
 def hello():
+    #from app.models import  AmazonCrawler
+    #AmazonCrawler(url='http://www.amazon.in/Kite-Runner-Khaled-Hosseini/dp/1408850257/ref=tmm_pap_swatch_0?_encoding=UTF8&qid=&sr=').crawlPage()
+    #return
     from app.scripts.related_items import getRelatedItems
-    getRelatedItems(4051)
+    getRelatedItems(110)
 
 @manager.command
 def session():
