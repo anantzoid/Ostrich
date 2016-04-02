@@ -101,6 +101,15 @@ def crawlItem():
 def getContent():
     return jsonify(Search().getContentData())
 
+@webapp.route('/getNewContent')
+def getNewContent():
+    all_content = []
+    # NOTE make this generic in dashboard
+    # hard coded panel ids for now
+    for panel_id in [3,4,5]:
+        all_content.append(Collection(panel_id).getExpandedObj())
+    return jsonify(all_content)
+
 @webapp.route('/saveContent')
 def saveContent():
     Admin.savePanelData(request.args)

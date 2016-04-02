@@ -26,9 +26,12 @@ class Collection(Prototype):
   
     def getExpandedObj(self):
         collection_object = self.getObj()
-        collection_object['item_ids'] = [int(_) for _ in collection_object['item_ids'].split(',')]
-        collection_object['items'] = Search().getById(collection_object['item_ids']) 
-        return  collection_object
+        if collection_object['item_ids']:
+            collection_object['item_ids'] = [int(_) for _ in collection_object['item_ids'].split(',')]
+            collection_object['items'] = Search().getById(collection_object['item_ids']) 
+        else:
+            collection_object['items'] = []
+        return collection_object
 
     @staticmethod
     def getByItemId(item_id):
