@@ -1,5 +1,5 @@
 from app import mysql
-from app.models import Prototype, Utils
+from app.models import Prototype, Utils, Search
 
 class Collection(Prototype):
     def __init__(self, collection_id):
@@ -23,12 +23,13 @@ class Collection(Prototype):
                 self.data['metadata'][props_formatted[0]] = props_formatted[1]
         if not self.data:
             self.data = {}
-        
-    def getObj(self):
-        obj = vars(self)
-        obj = obj['data']
-        return obj
-    
+  
+    def getExpandedObj(self):
+        collection_object = self.getObj()
+        collection_object['item_ids'] = [int(_) for _ in collection_object['item_ids'].split(',')]
+        collection_object['items'] = Search().getById(collection_object['item_ids']) 
+        return  collection_object
+
     @staticmethod
     def getByItemId(item_id):
         cursor = mysql.connect().cursor()

@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Search, Order, User
+from app.models import Search, Order, User, Collection
 from flask import jsonify, request
 
 @webapp.route('/startSession')
@@ -14,8 +14,8 @@ def startSession():
 
     reading_multiplier = webapp.config['NEW_READING_RATE'] if app_version >= 6030000 else webapp.config['NEW_READING_RATE'] - 0.01
     data = {
-        'recommendations': Search().getContentData(key="recommendations"),
-        'most_searched': Search().getContentData(key="most_searched"),
+        'most_searched': Collection(4).getExpandedObj()['items'],
+        'recommendations': Collection(5).getExpandedObj()['items'],
         'categories': Search.getSearchCategories(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
         'reading_multiplier': reading_multiplier,

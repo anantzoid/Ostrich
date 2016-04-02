@@ -7,4 +7,11 @@ class Prototype():
         else:
             return None
 
- 
+    def getObj(self):
+        user_obj = vars(self)
+        user_obj = user_obj['data']
+        if not user_obj:
+            user_obj = None
+        return user_obj
+
+
