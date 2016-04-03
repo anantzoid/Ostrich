@@ -13,12 +13,13 @@ def upsellEmail(order_id):
     client = MongoClient(webapp.config['MONGO_DB'])
     db = client.ostrich
     
-    related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
+    first_item_id = order_info['items'][0]['item_id']
+    related_items_cursor = db.related_item_ids.find({'_id': first_item_id})
     related_item_ids = [_ for _ in related_items_cursor]
 
     if len(related_item_ids) == 0:
         getRelatedItems(int(order_info['item_id']))
-        related_items_cursor = db.related_item_ids.find({'_id': order_info['item_id']})
+        related_items_cursor = db.related_item_ids.find({'_id': first_item_id})
         related_item_ids = [_ for _ in related_items_cursor]
     
     related_item_ids = related_item_ids[0]['item_ids']
