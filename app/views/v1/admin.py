@@ -112,7 +112,8 @@ def getNewContent():
 
 @webapp.route('/saveContent')
 def saveContent():
-    Admin.savePanelData(request.args)
+    Collection.saveCollectionData(request.args)
+    #Admin.savePanelData(request.args)
     return jsonify(status=True)
 
 @webapp.route('/getSearchFails')
