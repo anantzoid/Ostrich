@@ -37,7 +37,7 @@ def pickupSchedule():
 '''
     Get similar items for all ordered items
 '''
-@periodic_task(run_every=(crontab(hour="23", minute="30")))
+@periodic_task(run_every=(crontab(hour="17", minute="00")))
 def getRelatedItems():
     from app.scripts.related_items import getRelatedItems
     from app import mysql
@@ -54,7 +54,7 @@ def getRelatedItems():
 '''
     Get Gcm_id of all unregistered users from mixpanel
 '''
-@periodic_task(run_every=(crontab(hour="00", minute="10")))
+@periodic_task(run_every=(crontab(hour="18", minute="00")))
 def getMixpanelId():
     from app.scripts.get_unregistered_userdata import import_data
     yesterday = date.today() - timedelta(1)
