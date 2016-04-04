@@ -6,6 +6,7 @@ from app.models import *
 from app import webapp, mysql
 from pymongo import MongoClient
 import urllib3
+from datetime import datetime
 urllib3.disable_warnings()
 
 amazon_search_url = 'http://www.amazon.in/s/ref=nb_sb_noss?url=search-alias%3Dstripbooks&field-keywords='
@@ -92,6 +93,7 @@ def fetchRelatedItemsData(item_links):
     for link in item_links:
         print 'amazon_id:',link
         item_data = getAggregatedBookDetails('http://www.amazon.in/dp/'+link) 
+        item_data['timestamp'] = str(datetime.now()) 
 
         cursor.execute("""SELECT item_id FROM mongo_mapping WHERE amazon_id = %s""", (link,))
         item_id = cursor.fetchone()
