@@ -14,7 +14,7 @@ class Collection(Prototype):
             where cm.collection_id = c.collection_id) as metadata
             FROM collections c WHERE c.collection_id = %s""", (collection_id,))
         self.data = Utils.fetchOneAssoc(cursor)
-        
+
         if self.data['metadata']:
             collections_metadata_raw = self.data['metadata']
             self.data['metadata'] = {}
@@ -32,6 +32,16 @@ class Collection(Prototype):
         else:
             collection_object['items'] = []
         return collection_object
+
+    @staticmethod
+    def getPreview():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT collection_id, name FROM collections WHERE active = 1""")
+        num_rows = cursor.rowcount
+        collections = []
+        for i in range(num_rows):
+            collections.append(Utils.fetchOneAssoc(cursor))
+        return collections
 
     @staticmethod
     def getByItemId(item_id):

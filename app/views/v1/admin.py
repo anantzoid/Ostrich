@@ -97,6 +97,14 @@ def crawlItem():
     final_data = Admin.insertItem(book_data)
     return jsonify(final_data) 
 
+@webapp.route('/getCollectionsList')
+def getCollectionsList():
+   return jsonify(Collection.getPreview()) 
+
+@webapp.route('/getCollection')
+def getCollection():
+    return jsonify(Collection(request.args.get('id')).getExpandedObj())
+
 @webapp.route('/getContent')
 def getContent():
     return jsonify(Search().getContentData())
