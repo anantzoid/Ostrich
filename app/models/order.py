@@ -474,7 +474,7 @@ class Order():
         if status_id in [3, 4, 5, 6]:
             self.sendOrderNotification(status_id) 
         elif status_id == 7:
-            Indexer().indexItems(query_condition=' AND i.item_id='+str(self.getOrderInfo()['item_id']))
+            Indexer().indexItems(query_condition=' AND i.item_id IN ('+",".join([str(_['item_id']) for _ in self.getOrderInfo()['items']]) +")")
         return self.getOrderInfo() 
 
     def editOrderDetails(self, order_data):
