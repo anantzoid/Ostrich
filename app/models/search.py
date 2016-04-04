@@ -122,12 +122,7 @@ class Search():
         collection_results = self.executeSearch(query)
         if collection_results['total'] and 'item_ids' in collection_results['items'][0]:
             collection_object = collection_results['items'][0]
-            collection_object['items'] = []
-            docs = self.es.mget(index=self.index, doc_type='item', body={"ids": collection_object['item_ids']})
-            if 'docs' in docs:
-                for doc in docs['docs']:
-                    if '_source' in doc:
-                        collection_object['items'].append(doc['_source'])
+            collection_object['items'] = self.getById(collection_object['item_ids']) 
         return collection_object
         
     def autoComplete(self, page=0):
@@ -194,6 +189,8 @@ class Search():
         conn.commit()
         return
 
+    # NOTE Deprecated
+    # DELETE This next time
     def getContentData(self, key=None):
         client = MongoClient(webapp.config['MONGO_DB'])
         db = client.ostrich
@@ -214,7 +211,7 @@ class Search():
         else:
             return [_ for _ in refined_content if _['key'] == key][0]['items']
 
-
+    # TODO confirm and remove this
     def mostRecommended(self):
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
         item_ids = { "ids": self.query }
@@ -227,6 +224,7 @@ class Search():
     
         return reco_list
 
+    # TODO confirm and remove this
     def mostSearched(self):
         self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
         item_ids = { "ids": self.query }
