@@ -105,6 +105,12 @@ def getCollectionsList():
 def getCollection():
     return jsonify(Collection(request.args.get('id')).getExpandedObj())
 
+@webapp.route('/saveCollection')
+def setCollection():
+    print request.args
+    Collection.saveCollectionData(request.args)
+    return jsonify(status=True)
+
 @webapp.route('/getContent')
 def getContent():
     return jsonify(Search().getContentData())

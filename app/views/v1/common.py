@@ -11,6 +11,9 @@ def startSession():
 
     # VERSION SPECIFIC
     app_version = int(request.headers.get('App-Version')) if 'App-Version' in request.headers else 0
+    
+    # Search().getContentData(key="recommendations")
+    # Search().getContentData(key="most_searched")
 
     reading_multiplier = webapp.config['NEW_READING_RATE'] if app_version >= 6030000 else webapp.config['NEW_READING_RATE'] - 0.01
     data = {

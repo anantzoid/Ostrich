@@ -1,5 +1,6 @@
 from app import mysql
 from app.models import Prototype, Utils, Search
+import json
 
 class Collection(Prototype):
     def __init__(self, collection_id):
@@ -53,3 +54,57 @@ class Collection(Prototype):
         if rental_price:
             rental_price = int(rental_price[0])
         return rental_price 
+
+    @staticmethod
+    def saveCollectionData(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE collections SET name = %s, description = %s,
+            price = %s, return_days = %s, date_edited = CURRENT_TIMESTAMP
+            WHERE collection_id = %s""", (
+                data['name'],
+                data['description'],
+                data['price'],
+                data['return_days'],
+                data['collection_id'])) 
+        conn.commit()
+
+        cursor.execute("""DELETE FROM collections_metadata WHERE collection_id = %s""",
+                (data['collection_id'],))
+        conn.commit()
+
+        metadata_pairs = []
+        for meta in data['metadata'].split(";"):
+            key, value = meta.split(":")
+            metadata_pairs.append(tuple([data['collection_id'], key, value]))
+        cursor.executemany("""INSERT INTO collections_metadata (collection_id, meta_key, meta_value) 
+                VALUES (%s, %s, %s)""", metadata_pairs)
+        conn.commit()
+
+        item_order = []
+        item_ids = []
+        for item in data['items'].split(";"):
+            key, value = item.split(":")
+            item_ids.append(key)
+            item_order.append(tuple([value, data['collection_id'], key]))
+        cursor.executemany("""UPDATE collections_items SET sort_order = %s, 
+            date_edited = CURRENT_TIMESTAMP WHERE collection_id = %s AND item_id = %s""",
+            item_order)
+        conn.commit()
+        
+        format_chars = ",".join(["%s"] * len(item_ids))
+        cursor.execute("""UPDATE collections_items SET active = 0, sort_order = 1000, date_edited = CURRENT_TIMESTAMP
+            WHERE collection_id = %s AND item_id NOT IN ("""+format_chars+""")""", 
+            (tuple([data['collection_id']]) + tuple(item_ids)))
+        conn.commit()
+        return True
+
+    @staticmethod
+    def removeCollection(collection_id):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE collections SET active = 0, date_edited = CURRENT_TIMESTAMP
+            WHERE collection_id = %s""", (collection_id))
+        conn.commit()
+        return True
+            
