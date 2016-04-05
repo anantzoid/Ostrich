@@ -440,13 +440,19 @@ class Admin():
     def updateAreas(data):
         conn = mysql.connect()
         cursor = conn.cursor()
+        hours = Utils.getParam(data, 'hours', 'int', None)
+        day = Utils.getParam(data, 'day', 'int', None)
+        slot = Utils.getParam(data, 'slot', 'int', None)
+        alias_id = Utils.getParam(data, 'alias_id', 'int', None)
+        active = Utils.getParam(data, 'alias_id', 'int', 1)
+
         if 'area_id' in data:
             cursor.execute("""UPDATE areas SET name = %s, hours = %s, day = %s, slot = %s, alias_id = %s, active = %s WHERE area_id = %s""", 
-                    (data['name'], int(data['hours']), int(data['day']),  int(data['slot']), int(data['alias_id']), int(data['active']), int(data['area_id'])))
+                    (data['name'], hours, day, slot, alias_id, active, int(data['area_id'])))
             conn.commit()
         else:
             cursor.execute("""INSERT INTO areas (name, hours, day, slot, alias_id) VALUES (%s,%s,%s,%s,%s)""", 
-                    (data['name'], int(data['hours']), int(data['day']), int(data['slot']), int(data['alias_id'])))
+                    (data['name'], hours, day, slot, alias_id))
             conn.commit()
 
         cursor.execute("""SELECT address_id, locality, gcm_id FROM user_addresses ua 
