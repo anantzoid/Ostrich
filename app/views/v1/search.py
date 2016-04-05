@@ -1,5 +1,5 @@
 from app import webapp
-from app.models import Search , Utils
+from app.models import Search , Utils, Collection
 from flask import request, jsonify
 from flask.ext.jsonpify import jsonify as jsonp
 import json
@@ -56,6 +56,10 @@ def searchString():
 def getCategories():
     categories = Search.getSearchCategories()
     return json.dumps(categories)
+
+@webapp.route('/getCollectionCategory')
+def getCollectionCategory():
+   return jsonify(Collection.getByCategory())
 
 @webapp.route('/searchFail', methods=['POST'])
 def searchFail():

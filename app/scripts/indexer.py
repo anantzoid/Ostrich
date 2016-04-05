@@ -17,7 +17,7 @@ class Indexer():
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT c.*,
            (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
-           WHERE ci.collection_id = c.collection_id AND ci.active = 1) AS item_ids
+           WHERE ci.collection_id = c.collection_id) AS item_ids
            FROM collections c""")
         num_items = cursor.rowcount
         for i in range(num_items):

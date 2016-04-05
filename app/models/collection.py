@@ -10,7 +10,7 @@ class Collection(Prototype):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT c.*, 
             (select group_concat(ci.item_id separator ',') from collections_items ci 
-            where ci.collection_id = c.collection_id and ci.active = 1) as item_ids,
+            where ci.collection_id = c.collection_id) as item_ids,
             (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
             where cm.collection_id = c.collection_id) as metadata
             FROM collections c WHERE c.collection_id = %s""", (collection_id,))
@@ -33,6 +33,19 @@ class Collection(Prototype):
         else:
             collection_object['items'] = []
         return collection_object
+
+    @staticmethod
+    def getByCategory():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT cc.*, c.collection_id
+            FROM collections_category cc INNER JOIN collections c 
+            ON c.category_id = cc.category_id""")
+        collections_category = {}
+        for coll in cursor.fetchall():
+            if coll[1] not in collections_category:
+                collections_category[coll[1]] = []
+            collections_category[coll[1]].append(Collection(int(coll[2])).getExpandedObj())
+        return collections_category
 
     @staticmethod
     def getPreview():
@@ -93,7 +106,7 @@ class Collection(Prototype):
         conn.commit()
         
         format_chars = ",".join(["%s"] * len(item_ids))
-        cursor.execute("""UPDATE collections_items SET active = 0, sort_order = 1000, date_edited = CURRENT_TIMESTAMP
+        cursor.execute("""DELETE FROM collections_items 
             WHERE collection_id = %s AND item_id NOT IN ("""+format_chars+""")""", 
             (tuple([data['collection_id']]) + tuple(item_ids)))
         conn.commit()
