@@ -69,9 +69,19 @@ class Collection(Prototype):
         return rental_price 
 
     @staticmethod
-    def saveCollectionData(data):
+    def saveCollectionData(data, collection_item_ids=''):
         conn = mysql.connect()
         cursor = conn.cursor()
+        
+        if not collection_item_ids:
+            cursor.execute("""INSERT INTO collections (name, description, price,
+                return_days) VALUES (%s, %s, %s, %s)""", 
+                (data['name'], data['description'], data['price'], data['return_days']))
+            conn.commit()
+            collection_id = cursor.lastrowid
+        else:
+            collection_id = data['collection_id']
+
         cursor.execute("""UPDATE collections SET name = %s, description = %s,
             price = %s, return_days = %s, date_edited = CURRENT_TIMESTAMP
             WHERE collection_id = %s""", (
@@ -79,36 +89,48 @@ class Collection(Prototype):
                 data['description'],
                 data['price'],
                 data['return_days'],
-                data['collection_id'])) 
+                collection_id)) 
         conn.commit()
 
         cursor.execute("""DELETE FROM collections_metadata WHERE collection_id = %s""",
-                (data['collection_id'],))
+                (collection_id,))
         conn.commit()
 
-        metadata_pairs = []
-        for meta in data['metadata'].split(";"):
-            key, value = meta.split(":")
-            metadata_pairs.append(tuple([data['collection_id'], key, value]))
-        cursor.executemany("""INSERT INTO collections_metadata (collection_id, meta_key, meta_value) 
-                VALUES (%s, %s, %s)""", metadata_pairs)
-        conn.commit()
+        if data['metadata']:
+            print data['metadata']
+            metadata_pairs = []
+            for meta in data['metadata'].split(";"):
+                key, value = meta.split(":")
+                metadata_pairs.append(tuple([collection_id, key, value]))
+            cursor.executemany("""INSERT INTO collections_metadata (collection_id, meta_key, meta_value) 
+                    VALUES (%s, %s, %s)""", metadata_pairs)
+            conn.commit()
 
-        item_order = []
+        update_item_order = []
+        insert_item_order = []
         item_ids = []
+        
+        original_items = collection_item_ids.split(",")
         for item in data['items'].split(";"):
             key, value = item.split(":")
             item_ids.append(key)
-            item_order.append(tuple([value, data['collection_id'], key]))
+            if key in original_items:
+                update_item_order.append(tuple([value, collection_id, key]))
+            else: 
+                insert_item_order.append(tuple([value, collection_id, key]))
+                
         cursor.executemany("""UPDATE collections_items SET sort_order = %s, 
             date_edited = CURRENT_TIMESTAMP WHERE collection_id = %s AND item_id = %s""",
-            item_order)
+            update_item_order)
+        conn.commit()
+        cursor.executemany("""INSERT INTO collections_items (sort_order, collection_id, item_id)
+            VALUES (%s, %s, %s)""", insert_item_order)
         conn.commit()
         
         format_chars = ",".join(["%s"] * len(item_ids))
         cursor.execute("""DELETE FROM collections_items 
             WHERE collection_id = %s AND item_id NOT IN ("""+format_chars+""")""", 
-            (tuple([data['collection_id']]) + tuple(item_ids)))
+            (tuple([collection_id]) + tuple(item_ids)))
         conn.commit()
         return True
 

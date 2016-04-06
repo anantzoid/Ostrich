@@ -107,8 +107,11 @@ def getCollection():
 
 @webapp.route('/saveCollection')
 def setCollection():
-    print request.args
-    Collection.saveCollectionData(request.args)
+    item_ids = ''
+    if int(request.args.get('collection_id')):
+        coll = Collection(request.args.get('collection_id'))
+        item_ids = self.item_ids
+    Collection.saveCollectionData(request.args, item_ids)
     return jsonify(status=True)
 
 @webapp.route('/getContent')
