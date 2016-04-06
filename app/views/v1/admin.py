@@ -110,7 +110,7 @@ def setCollection():
     item_ids = ''
     if int(request.args.get('collection_id')):
         coll = Collection(request.args.get('collection_id'))
-        item_ids = self.item_ids
+        item_ids = coll.item_ids
     Collection.saveCollectionData(request.args, item_ids)
     return jsonify(status=True)
 
