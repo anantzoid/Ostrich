@@ -37,15 +37,19 @@ class Collection(Prototype):
     @staticmethod
     def getByCategory():
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT cc.*, c.collection_id
-            FROM collections_category cc INNER JOIN collections c 
-            ON c.category_id = cc.category_id""")
-        collections_category = {}
-        for coll in cursor.fetchall():
-            if coll[1] not in collections_category:
-                collections_category[coll[1]] = []
-            collections_category[coll[1]].append(Collection(int(coll[2])).getExpandedObj())
-        return collections_category
+        cursor.execute("""SELECT cc.*,
+            (select group_concat(c.collection_id separator ',') from collections c
+            where c.category_id = cc.category_id) as collection_ids
+            FROM collections_category cc""")
+        num_rows = cursor.rowcount
+        collections_categories = []
+        for i in range(num_rows):
+            category = Utils.fetchOneAssoc(cursor)
+            category['collections'] = []
+            for col_id in category['collection_ids'].split(','):
+                category['collections'].append(Collection(col_id).getExpandedObj())
+            collections_categories.append(category)
+        return collections_categories
 
     @staticmethod
     def getPreview():

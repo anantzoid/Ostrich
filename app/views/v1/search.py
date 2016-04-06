@@ -59,7 +59,7 @@ def getCategories():
 
 @webapp.route('/getCollectionCategory')
 def getCollectionCategory():
-   return jsonify(Collection.getByCategory())
+   return json.dumps(Collection.getByCategory())
 
 @webapp.route('/searchFail', methods=['POST'])
 def searchFail():
