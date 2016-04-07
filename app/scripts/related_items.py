@@ -137,6 +137,6 @@ def dumpItemData(item_data, item_id):
     final_data.update(item_data['amazon'])
     final_data['_id'] = int(item_id)
 
-    db.items.delete({'_id': final_data['_id']})
+    db.items.remove({'_id': final_data['_id']})
     db.items.insert_one(final_data)
     #db.items.update_one({'_id': final_data['_id']}, {'$set': final_data}, upsert=True)

@@ -23,6 +23,7 @@ class Order():
 
         if order_info:
             order_info['items'] = [Item(int(item_id.split(':')[0])).getObj() for item_id in order_info['item_ids'].split(',')]
+            order_info['item_id'] = order_info['items'][0]['item_id'] 
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
