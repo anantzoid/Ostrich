@@ -12,13 +12,16 @@ class Indexer():
         self.es_doctype = 'item'
         #self.err_log = open('es_err.log','w')
 
-    def indexCollections(self):
+    def indexCollections(self, query_condition):
         #TODO fetch collection object from Collection class
         cursor = mysql.connect().cursor()
+        condition = 'WHERE c.partial_order = 0'
+        if query_condition:
+            condition = ' AND '+query_condition
         cursor.execute("""SELECT c.*,
            (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
            WHERE ci.collection_id = c.collection_id) AS item_ids
-           FROM collections c""")
+           FROM collections c """+condition)
         num_items = cursor.rowcount
         for i in range(num_items):
             collection = Utils.fetchOneAssoc(cursor)
