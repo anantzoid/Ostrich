@@ -19,7 +19,7 @@ def returnDateExtensionReminder():
     for num in range(num_items):
         query_data = Utils.fetchOneAssoc(cursor)
         user = User(query_data['user_id'])
-        
+        print 'order_id:', query_data['order_id']
         notification_data = {
                 "notification_id": 3,
                 "entity_id": query_data['order_id'],
