@@ -5,6 +5,7 @@ from flask.ext.cors import CORS
 from flask_mail import Mail
 
 webapp = Flask(__name__)
+#webapp.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
 
 mysql = MySQL()
 #TODO shift resources to @cross_origin

@@ -310,10 +310,12 @@ class User(Prototype):
 
     @staticmethod
     def b2bUser(user_data):
+        address = Utils.getParam(user_data, 'address', default=None)
+
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO b2b_users (email, phone, book_id, organization) VALUES
-            (%s, %s, %s, %s)""", (user_data['email'], user_data['phone'], user_data['book_id'], user_data['org']))
+        cursor.execute("""INSERT INTO b2b_users (email, phone, book_id, organization, address) VALUES
+            (%s, %s, %s, %s, %s)""", (user_data['email'], user_data['phone'], user_data['book_id'], user_data['org'], address))
         conn.commit()
         Utils.notifyAdmin(-1, 'B2B User')
         return True
