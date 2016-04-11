@@ -444,7 +444,7 @@ class Admin():
         day = Utils.getParam(data, 'day', 'int', None)
         slot = Utils.getParam(data, 'slot', 'int', None)
         alias_id = Utils.getParam(data, 'alias_id', 'int', None)
-        active = Utils.getParam(data, 'alias_id', 'int', 1)
+        active = Utils.getParam(data, 'active', 'int', 1)
 
         if 'area_id' in data:
             cursor.execute("""UPDATE areas SET name = %s, hours = %s, day = %s, slot = %s, alias_id = %s, active = %s WHERE area_id = %s""", 

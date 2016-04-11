@@ -136,6 +136,9 @@ class Collection(Prototype):
             WHERE collection_id = %s AND item_id NOT IN ("""+format_chars+""")""", 
             (tuple([collection_id]) + tuple(item_ids)))
         conn.commit()
+
+        #NOTE for start session cals
+        Notifications().startDataUpdate() 
         return True
 
     @staticmethod

@@ -188,7 +188,6 @@ class GoodreadsCrawler():
         return error
 
     def crawlItemPage(self, soup):
-
         gr_id = 0
         book_id = soup.find('input',{'id':'book_id'})
         if book_id:
