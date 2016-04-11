@@ -3,9 +3,11 @@ from flask import Flask
 from flaskext.mysql import MySQL
 from flask.ext.cors import CORS
 from flask_mail import Mail
+from werkzeug.contrib.cache import SimpleCache
 
 webapp = Flask(__name__)
 #webapp.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
+cache = SimpleCache()
 
 mysql = MySQL()
 #TODO shift resources to @cross_origin
