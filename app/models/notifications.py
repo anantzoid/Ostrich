@@ -13,19 +13,27 @@ class Notifications():
 
     def sendNotification(self, data):
         data['bottom_text'] = "Ostrich Books"
+        if 'notification_id' in data:
+            data['collapse_key'] = data['notification_id']
         if self.is_enabled and self.gcm_id:
             notification_status = self.gcm.json_request(registration_ids=self.gcm_id, data=data)
             return notification_status
 
     @async
     def startDataUpdate(self):
+        data = {
+                'notification_id': 99,
+                'collapse_key': 99
+                }
         if self.gcm_id:
-            self.gcm.json_request(registration_ids=self.gcm_id, data={'notification_id': 99})
+            self.gcm.json_request(registration_ids=self.gcm_id, data=data)
             return
-        self.sendMassNotification({'notification_id': 99})
+        self.sendMassNotification(data)
 
     @async
     def sendMassNotification(self, notification_data, admin=0):
+        if 'notification_id' in notification_data:
+            notification_data['collapse_key'] = notification_data['notification_id']
         if admin:
             admins = ",".join([str(_) for _ in Utils.getAdmins()])
             query_condition = " WHERE user_id in ("+admins+")"
