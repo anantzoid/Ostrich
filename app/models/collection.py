@@ -86,7 +86,6 @@ class Collection(Prototype):
     def saveCollectionData(data, collection_item_ids=''):
         conn = mysql.connect()
         cursor = conn.cursor()
-        print data 
         if not collection_item_ids:
             cursor.execute("""INSERT INTO collections (name, description, price,
                 return_days, category_id) VALUES (%s, %s, %s, %s, %s)""", 
@@ -112,7 +111,6 @@ class Collection(Prototype):
         conn.commit()
 
         if data['metadata']:
-            print data['metadata']
             metadata_pairs = []
             for meta in data['metadata'].split(";"):
                 key, value = meta.split(":")
@@ -161,4 +159,14 @@ class Collection(Prototype):
             WHERE collection_id = %s""", (collection_id))
         conn.commit()
         return True
-            
+           
+    @staticmethod
+    def addCategory(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""INSERT INTO collections_category (category_name, image) VALUES (%s, %s)""", (data['name'], data['img_url']))
+        conn.commit()
+        response = {'category_name': data['name']}
+        response['category_id'] = cursor.lastrowid
+        return response
+    

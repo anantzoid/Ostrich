@@ -114,6 +114,11 @@ def setCollection():
     Collection.saveCollectionData(request.args, item_ids)
     return jsonify(status=True)
 
+@webapp.route('/addCollectionCategory')
+def addCollectionCategory():
+    category = Collection.addCategory(request.args)
+    return jsonify(category)
+
 @webapp.route('/getContent')
 def getContent():
     return jsonify(Search().getContentData())
