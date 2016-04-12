@@ -1,4 +1,4 @@
-from app import webapp
+from app import webapp, mysql
 from app.models import Search , Utils, Collection
 from flask import request, jsonify
 from flask.ext.jsonpify import jsonify as jsonp
@@ -83,4 +83,13 @@ def recommended():
 def mostSearched():
     return json.dumps(Search([]).mostSearched())
 
+@webapp.route('/getMutliplePanels')
+def getMutliplePanels():
+    cursor = mysql.connect().cursor()
+    cursor.execute("""SELECT collection_id FROM collections WHERE active = 1 AND
+        partial_order = 1""")
+    panels = []
+    for col_id in cursor.fetchall():
+        panels.append(Collection(col_id).getExpandedObj())
+    return json.dumps(panels)
 
