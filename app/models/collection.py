@@ -1,5 +1,5 @@
 from app import mysql
-from app.models import Prototype, Utils, Search
+from app.models import *
 import json
 
 class Collection(Prototype):
@@ -53,13 +53,23 @@ class Collection(Prototype):
 
     @staticmethod
     def getPreview():
+        collections_data = {
+                'collections_list': [],
+                'collections_categories': []
+                }
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT collection_id, name FROM collections WHERE active = 1""")
         num_rows = cursor.rowcount
         collections = []
         for i in range(num_rows):
-            collections.append(Utils.fetchOneAssoc(cursor))
-        return collections
+            collections_data['collections_list'].append(Utils.fetchOneAssoc(cursor))
+
+        cursor.execute("""SELECT category_id, category_name FROM collections_category""")
+        num_rows = cursor.rowcount
+        collections = []
+        for i in range(num_rows):
+            collections_data['collections_categories'].append(Utils.fetchOneAssoc(cursor))
+        return collections_data
 
     @staticmethod
     def getByItemId(item_id):
@@ -76,23 +86,24 @@ class Collection(Prototype):
     def saveCollectionData(data, collection_item_ids=''):
         conn = mysql.connect()
         cursor = conn.cursor()
-        
+        print data 
         if not collection_item_ids:
             cursor.execute("""INSERT INTO collections (name, description, price,
-                return_days) VALUES (%s, %s, %s, %s)""", 
-                (data['name'], data['description'], data['price'], data['return_days']))
+                return_days, category_id) VALUES (%s, %s, %s, %s, %s)""", 
+                (data['name'], data['description'], data['price'], data['return_days'], data['category_id']))
             conn.commit()
             collection_id = cursor.lastrowid
         else:
             collection_id = data['collection_id']
 
         cursor.execute("""UPDATE collections SET name = %s, description = %s,
-            price = %s, return_days = %s, date_edited = CURRENT_TIMESTAMP
+            price = %s, return_days = %s, category_id = %s, date_edited = CURRENT_TIMESTAMP
             WHERE collection_id = %s""", (
                 data['name'],
                 data['description'],
                 data['price'],
                 data['return_days'],
+                data['category_id'],
                 collection_id)) 
         conn.commit()
 
@@ -138,7 +149,8 @@ class Collection(Prototype):
         conn.commit()
 
         #NOTE for start session cals
-        Notifications().startDataUpdate() 
+        if collection_id in [4, 5]:
+            Notifications().startDataUpdate() 
         return True
 
     @staticmethod
