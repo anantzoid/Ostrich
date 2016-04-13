@@ -14,7 +14,9 @@ def handleUnicode(text):
 def getAggregatedBookDetails(amzn_url):
     book_data = {'amazon': {}, 'goodreads': {}}
     book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
-    book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_13']).startCrawl()
+
+    amazon_isbn = book_data['amazon']['isbn_13'] if 'isbn_13' in book_data['amazon'] else ''
+    book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
     if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
         book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
@@ -124,6 +126,7 @@ class AmazonCrawler():
             link = 'http://www.amazon.in' + anchor.attrs['href']
             version_response = requests.get(link)
             format_type = anchor.find('span').text
+            format_type = " ".join(re.findall("[a-zA-Z]+", format_type))
             summaries[format_type] = self.extractSummary(BeautifulSoup(version_response.text, "html.parser"))
         return summaries
 
@@ -154,6 +157,7 @@ class GoodreadsCrawler():
             return self.search_url+self.isbn
         if self.title:
             return self.search_url+self.title
+        return None
 
     def startCrawl(self):
         url = self.makeUrl()
