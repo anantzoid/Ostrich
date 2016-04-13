@@ -83,11 +83,11 @@ def recommended():
 def mostSearched():
     return json.dumps(Search([]).mostSearched())
 
-@webapp.route('/getMutliplePanels')
-def getMutliplePanels():
+@webapp.route('/getMultiplePanels')
+def getMultiplePanels():
     cursor = mysql.connect().cursor()
     cursor.execute("""SELECT collection_id FROM collections WHERE active = 1 AND
-        partial_order = 1""")
+        partial_order = 1 ORDER BY collection_id DESC""")
     panels = []
     for col_id in cursor.fetchall():
         panels.append(Collection(col_id).getExpandedObj())

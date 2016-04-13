@@ -46,8 +46,9 @@ class Collection(Prototype):
         for i in range(num_rows):
             category = Utils.fetchOneAssoc(cursor)
             category['collections'] = []
-            for col_id in category['collection_ids'].split(','):
-                category['collections'].append(Collection(col_id).getExpandedObj())
+            if category['collection_ids'] is not None:
+                for col_id in category['collection_ids'].split(','):
+                    category['collections'].append(Collection(col_id).getExpandedObj())
             collections_categories.append(category)
         return collections_categories
 

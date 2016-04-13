@@ -62,7 +62,7 @@ class Indexer():
     def indexItems(self, query_condition='', limit='', custom_keys={}):
 
         search_query = """SELECT i.item_id, i.item_name, i.author, i.price,
-        i.ratings, i.num_ratings, i.num_reviews, i.img_small,
+        i.ratings, i.num_ratings, i.num_reviews, i.img_small, i.asin, i.goodreads_id, i.summary,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
         INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
         ic.item_id = i.item_id) AS categories
