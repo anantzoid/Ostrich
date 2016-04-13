@@ -9,7 +9,7 @@ class Collection(Prototype):
     def getData(self, collection_id):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT c.*, 
-            (select group_concat(ci.item_id separator ',') from collections_items ci 
+            (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
             where ci.collection_id = c.collection_id) as item_ids,
             (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
             where cm.collection_id = c.collection_id) as metadata

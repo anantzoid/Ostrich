@@ -237,7 +237,13 @@ class Admin():
         price = re.sub('\..*$', '', price)
         price = price.replace(',','')
 
-        cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], data['goodreads']['author']))
+        if 'author' in data['goodreads'] and data['goodreads']['author']:
+            author = data['goodreads']['author']
+        elif 'author' in data['amazon'] and data['amazon']['author']:
+            author = data['amazon']['author']
+        else:
+            author = ''
+        cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], author))
         match = cursor.fetchone()
         if match:
             return {'_id': int(match[0])}
@@ -246,7 +252,7 @@ class Admin():
         (%s,%s,%s,%s,%s,%s,%s)""",
         (data['amazon']['title'],
         price,
-        data['goodreads']['author'],
+        author,
         data['goodreads']['avg_rating'].replace(' rating',''),
         data['goodreads']['num_ratings'].replace(' rating',''),
         data['goodreads']['num_review'],
@@ -295,12 +301,15 @@ class Admin():
         bucket = s3conn.get_bucket('ostrich-catalog')
         basepath = webapp.config['S3_IMAGE_BUCKET']
 
-        url = data['amazon']['img_small']
-        parsed = urlparse.urlparse(url)
-        ext =  os.path.splitext(parsed.path)[1]
-        path = basepath + str(item_id) + ext
+        if 'img_small' in data['amazon'] and data['amazon']['img_small']:
+            url = data['amazon']['img_small']
+        elif 'img_large' in data['amazon'] and data['amazon']['img_large']:
+            url = data['amazon']['img_large']
 
         if url:
+            parsed = urlparse.urlparse(url)
+            ext =  os.path.splitext(parsed.path)[1]
+            path = basepath + str(item_id) + ext
             r = requests.get(url)
             if r.status_code >= 200 and r.status_code <300:
                 content = r.content
