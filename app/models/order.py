@@ -207,7 +207,6 @@ class Order():
         if status_id == 6:
             notification_id = 4
         if status_id == 1:
-            
             if 'collection' not in order_info:
                 # Notification message formatting
                 order_item = order_info['items'][0]
@@ -239,6 +238,11 @@ class Order():
                     day = "on " + delivery_day.strftime("%A")
             status_info["expanded_text"] = status_info["expanded_text"]%(entity_name, day)
 
+        if 'collection' in order_info:
+            status_info['Status'] = status_info['Status'].replace('Book', 'Book set')
+            status_info['Description'] = status_info['Description'].replace('book', 'book set')
+            if 'expanded_text' in status_info:
+                status_info['expanded_text'] = status_info['expanded_text'].replace('book', 'book set')
         notification_data = {
                     "notification_id": notification_id,
                     "entity_id": order_info['order_id'],
