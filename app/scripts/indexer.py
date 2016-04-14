@@ -128,6 +128,8 @@ class Indexer():
             if 1 in c_ids:
                 item['custom_price'] = 100
                 item['custom_return_days'] = 14
+            elif item['price'] >= 299:
+                item['custom_price'] = 60
 
         if custom_keys:
             for key in custom_keys.keys():

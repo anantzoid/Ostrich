@@ -167,7 +167,7 @@ class Search():
     def getSearchCategories():
         # TODO from mongo
         #  NOTE call session in manager to update
-        categories = ['Fiction', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational', 'Thriller']
+        categories = ['Fiction', 'Childrens', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational']
         return categories
 
     @async

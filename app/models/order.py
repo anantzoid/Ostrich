@@ -146,7 +146,7 @@ class Order():
         #NOTE temp workaround to handle custom prices
         if len(order_data['item_id']) == 1:
             item = Item(order_data['item_id'][0])
-            if item.price >= 399:
+            if item.price >= 299:
                 default_order_amount = 60
         order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', default_order_amount)
 
@@ -392,7 +392,7 @@ class Order():
             slab['7'] = int(order_data['collection']['price'] * 0.3)
             slab['10'] = int(order_data['collection']['price'] * 0.5)
             slab['14'] = int(order_data['collection']['price'] * 0.7)
-        elif order_data['items'][0]['price'] >= 399:
+        elif order_data['items'][0]['price'] >= 299:
             slab['7'] = 15 
             slab['10'] = 20
             slab['14'] = 30

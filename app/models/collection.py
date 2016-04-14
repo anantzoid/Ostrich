@@ -39,7 +39,7 @@ class Collection(Prototype):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT cc.*,
             (select group_concat(c.collection_id separator ',') from collections c
-            where c.category_id = cc.category_id) as collection_ids
+            where c.category_id = cc.category_id and c.active=1) as collection_ids
             FROM collections_category cc""")
         num_rows = cursor.rowcount
         collections_categories = []

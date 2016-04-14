@@ -67,7 +67,7 @@ class Item(Prototype):
                 return collection_retail
 
         item = Item(item_id)
-        if item.price >= 399:
+        if item.price >= 299:
             return 60 * len(order_data['item_id'])
         return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id'])
 
