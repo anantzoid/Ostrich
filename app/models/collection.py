@@ -87,7 +87,7 @@ class Collection(Prototype):
     def saveCollectionData(data, collection_item_ids=''):
         conn = mysql.connect()
         cursor = conn.cursor()
-        if not collection_item_ids:
+        if not int(data['collection_id']):
             cursor.execute("""INSERT INTO collections (name, description, price,
                 return_days, category_id) VALUES (%s, %s, %s, %s, %s)""", 
                 (data['name'], data['description'], data['price'], data['return_days'], data['category_id']))
@@ -123,7 +123,7 @@ class Collection(Prototype):
         update_item_order = []
         insert_item_order = []
         item_ids = []
-        
+       
         original_items = collection_item_ids.split(",")
         for item in data['items'].split(";"):
             key, value = item.split(":")

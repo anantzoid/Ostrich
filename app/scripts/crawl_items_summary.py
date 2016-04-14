@@ -16,7 +16,7 @@ def crawl_items():
             UNION
             SELECT DISTINCT(item_id) FROM collections_items) 
         item_id WHERE item_id NOT IN (SELECT item_id FROM items WHERE summary
-        IS NOT NULL) limit 10""")
+        IS NOT NULL) """)
     item_ids = cursor.fetchall()
 
     for item_id in item_ids:
