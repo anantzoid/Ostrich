@@ -3,6 +3,7 @@ from flask import Flask
 from flaskext.mysql import MySQL
 from flask.ext.cors import CORS
 from flask_mail import Mail
+from react.conf import settings
 
 webapp = Flask(__name__)
 #webapp.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
@@ -27,4 +28,5 @@ else:
 
 import app.views
 import app.models
+
 

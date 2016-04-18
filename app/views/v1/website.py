@@ -1,5 +1,6 @@
 import os
 from app import webapp
+from app.models import *
 from flask import request, jsonify, render_template
 from react.render import render_component
 
@@ -10,6 +11,8 @@ def path(js_file):
 
 @webapp.route('/')
 def homepage():
-    rendered = render_component(path('home.jsx'))
+    panel_data = [Collection(4).getExpandedObj(), Collection(5).getExpandedObj()]
+    
+    rendered = render_component(path('home.jsx'), props={'panel_data': panel_data})
     return render_template(base_view, rendered=rendered)
 

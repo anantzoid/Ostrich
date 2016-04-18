@@ -1,18 +1,3 @@
-var argv = require('yargs')
-    .option('p', {
-        alias: 'port',
-        description: 'Specify the server\'s port',
-        default: 9009
-    })
-    .option('a', {
-        alias: 'address',
-        description: 'Specify the server\'s address',
-        default: '127.0.0.1'
-    })
-    .help('h').alias('h', 'help')
-    .strict()
-    .argv;
-
 var http = require('http');
 var express = require('express');
 var bodyParser = require('body-parser');
@@ -21,8 +6,8 @@ var reactRender = require('react-render');
 // Ensure support for loading files that contain ES6+7 & JSX
 require('babel-core/register');
 
-var ADDRESS = argv.address;
-var PORT = argv.port;
+var ADDRESS = process.env.PORT || '127.0.0.1';
+var PORT = process.env.PORT || 9009;
 
 var app = express();
 var server = http.Server(app);

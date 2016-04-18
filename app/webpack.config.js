@@ -1,6 +1,6 @@
 module.exports = {
   entry: [
-    './src/index.js'
+    './static/js/components/home.jsx'
   ],
   module: {
     loaders: [{
@@ -13,7 +13,7 @@ module.exports = {
     extensions: ['', '.js', '.jsx']
   },
   output: {
-    path: __dirname + '/dist',
+    path: './static/js/dist/',
     publicPath: '/',
     filename: 'bundle.js'
   },
