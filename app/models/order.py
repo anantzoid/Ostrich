@@ -27,8 +27,10 @@ class Order():
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
+
             #NOTE charge denotes charge to be collected in cash
-            order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
+            order_info['charge'] = order_info['charge'] if order_info['parent_id'] else 0
+
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
 
