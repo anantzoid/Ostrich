@@ -29,7 +29,7 @@ class Order():
                                 'payment_mode': order_info['payment_mode']}]
 
             #NOTE charge denotes charge to be collected in cash
-            order_info['charge'] = order_info['charge'] if order_info['parent_id'] else 0
+            order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
 
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
@@ -79,9 +79,9 @@ class Order():
                     'payment_mode': order['payment_mode']
                     })
 
-            # Ignoring orders extended before extend_order major change on 16th Feb
-            if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
-                order_info['charge'] += charge 
+        # Ignoring orders extended before extend_order major change on 16th Feb
+        if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
+            order_info['charge'] += charge 
 
         return order_info
 
