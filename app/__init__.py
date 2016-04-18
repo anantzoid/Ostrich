@@ -28,8 +28,3 @@ else:
 import app.views
 import app.models
 
-@webapp.route('/')
-def hello():
-    from app.scripts.upsell_email import upsellEmail
-    return upsellEmail(23)
-    return 'Index Page'
