@@ -1,11 +1,6 @@
-<html>
-    <head>
-        <!-- INSERT HEAD TAGS -->
-        <link rel="stylesheet" href="/static/css/vendor/bootstrap/bootstrap.min.css">
-        <link rel="stylesheet" href="/static/css/main.css">
-    </head>
-    <body>
-        {{ rendered | safe }}
-    </body>
-</html>
+{% extends "base.html" %}
 
+{% block title %} {{title}} {% endblock %}
+{% block content %}
+    {{ rendered | safe }}
+{% endblock %}
