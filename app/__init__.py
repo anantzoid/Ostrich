@@ -29,4 +29,9 @@ else:
 import app.views
 import app.models
 
-
+'''
+settings.configure(
+        RENDER=False,
+        RENDER_URL='http://127.0.0.1:9009/render',
+)
+'''

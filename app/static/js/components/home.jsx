@@ -25,8 +25,10 @@ const homepage = React.createClass({
         }); 
         return (
             <div>
-                <Navbar />
-                <Header />
+                <section className="header-section">
+                    <Navbar />
+                    <Header />
+                </section>
                 <Searchbar />
                 <div className="container">
                 <div className="row">

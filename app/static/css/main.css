@@ -40,7 +40,7 @@
 @media (min-width: 768px) {
   .navbar-default {
     background-color: transparent;
-    border-color: rgba(255, 255, 255, 0.3);
+    /*border-color: rgba(255, 255, 255, 0.3);*/
   }
   .navbar-default .navbar-header .navbar-brand {
     color: rgba(255, 255, 255, 0.7);
@@ -81,7 +81,7 @@
 /*------------ NavBar Ends ---------------*/
 
 /*------------ Header Ends ---------------*/
-header {
+.header-section {
   position: relative;
   width: 100%;
   min-height: auto;
@@ -117,7 +117,7 @@ header .header-content .header-content-inner p {
 }
 @media (min-width: 768px) {
   header {
-    min-height: 60%;
+    min-height: 50%;
   }
   header .header-content {
     position: absolute;
