@@ -19,6 +19,7 @@ class Item(Prototype):
             self.data = {}
         else:
             self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
+            self.data['categories'] = self.data['categories'].split("|") if self.data['categories'] else []
 
     def getObj(self):
         item_obj = vars(self)
