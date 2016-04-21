@@ -19,7 +19,7 @@ def indexer():
     custom_keys = {
             'custom_price': 60
             }
-    Indexer().indexItems(query_condition=' AND (i.price <= 200)',limit='10',custom_keys=custom_keys)
+    Indexer().indexItems(query_condition=' AND (i.item_id = 6)')
 
 @manager.command
 def indexcol():

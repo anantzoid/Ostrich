@@ -1,7 +1,7 @@
 from elasticsearch import Elasticsearch
 from app import webapp
 from app import mysql 
-from app.models import Utils
+from app.models import Utils, Item
 import unicodedata
 
 class Indexer():
@@ -123,14 +123,10 @@ class Indexer():
                 item['in_collections'].append(c_name[1])
                 c_ids.append(c_name[0])
 
-            # NOTE Custom item manipulations
-            # 1: batman v superman (comics)
-            if 1 in c_ids:
-                item['custom_price'] = 100
-                item['custom_return_days'] = 14
-            elif item['price'] >= 299:
-                item['custom_price'] = 60
-
+        item_custom_props = Item.getCustomProperties([item])
+        for prop in item_custom_props.keys():
+            item['custom_'+prop] = item_custom_props[prop] 
+        
         if custom_keys:
             for key in custom_keys.keys():
                 item[key] = custom_keys[key]
