@@ -47,7 +47,7 @@ class Item(Prototype):
         conn.commit()
         insert_id = store_request_cursor.lastrowid
         
-        Utils.notifyAdmin(user_id, "Item Request made in Lend!")
+        Utils.notifyAdmin(user_id, "Item Request: "+title)
         '''
         #TODO map item_type to category_id somehow
         category_id = 1

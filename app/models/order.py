@@ -29,7 +29,7 @@ class Order():
                                 'payment_mode': order_info['payment_mode']}]
 
             #NOTE charge denotes charge to be collected in cash
-            order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
+            order_info['charge'] = order_info['charge'] if (order_info['payment_mode'] == 'cash') else 0
 
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
@@ -72,7 +72,7 @@ class Order():
 
         all_orders = parents + children
         for i, order in enumerate(all_orders):
-            if i < len(all_orders) - 1:
+            if i < len(all_orders) - 1 and order['parent_id']::
                 charge += order['charge']
             order_info['all_charges'].append({
                     'charge': Order.getCharge(order['charge']),

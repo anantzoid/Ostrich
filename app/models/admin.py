@@ -104,6 +104,10 @@ class Admin():
             order_info['comment'] = order_data[1]
             order_info['edited'] = order_data[2]
 
+            order_charge = order_info['all_charges'][0]
+            if order_charge['payment_mode'] == 'cash':
+                order_info['charge'] = order_charge['charge']
+
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
                     'status_id': next_order_status, 
@@ -133,6 +137,9 @@ class Admin():
             orders_list[i]['order_type'] = 'borrow'
             orders_list[i]['scheduled_date'] = order['order_return']
             orders_list[i]['scheduled_slot'] = order['pickup_slot']
+             # NOTE removing charge of first order
+            if len(order['all_charges']) == 1 and order['charge'] == order['all_charges'][0]['charge']:
+                order['charge'] = 0
         
         rental_list = Admin.getCurrentRentals(returns=True)
         for i,rental in enumerate(rental_list):
