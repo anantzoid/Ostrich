@@ -106,10 +106,7 @@ class Indexer():
             if prop[1] is not None:
                 item['isbn_13'].append(prop[1])
 
-        cursor.execute("""SELECT COUNT(*) FROM inventory WHERE item_id = %s
-            AND in_stock = 1""",(item['item_id'],))
-        stock = cursor.fetchone()
-        if stock and int(stock[0]) > 0:
+        if Item.checkStock(item['item_id']):
             item['in_stock'] = 1
 
         cursor.execute("""SELECT c.collection_id, name FROM collections c

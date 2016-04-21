@@ -186,7 +186,7 @@ class Order():
         response = {'order_id': order_id}
 
         order = Order(order_id)
-        order.updateInventoryPostOrder(order_data['item_id'])
+        order.updateInventoryPostOrder(order_data['item_id'], order_data['user_id'])
 
         if order_data['payment_mode'] == 'wallet':
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
@@ -254,7 +254,7 @@ class Order():
         Notifications(user.gcm_id).sendNotification(notification_data)
 
 
-    def updateInventoryPostOrder(self, item_ids):
+    def updateInventoryPostOrder(self, item_ids, user_id):
         inventory_ids = self.getInventoryIds(item_ids) 
 
         #update order_history and clear stock in inventory
@@ -267,13 +267,14 @@ class Order():
             connect.commit()
             order_history_cursor.close()
 
-            update_stock_cursor = connect.cursor()
-            update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
-                    inventory_id = %d" % (inventory_item['inventory_id']))
-            connect.commit()
-            Indexer().indexItems(query_condition=' AND i.item_id='+str(inventory_item['item_id']))
-            update_stock_cursor.close()
-
+            # NOTE preventing inventory count messup from admins
+            if user_id not in Utils.getAdmins(): 
+                update_stock_cursor = connect.cursor()
+                update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
+                        inventory_id = %d" % (inventory_item['inventory_id']))
+                connect.commit()
+                Indexer().indexItems(query_condition=' AND i.item_id='+str(inventory_item['item_id']))
+                update_stock_cursor.close()
 
     def getInventoryIds(self, item_ids):
         # Incremental Inventory Logic

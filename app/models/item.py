@@ -80,16 +80,32 @@ class Item(Prototype):
             if item['categories'] and 'Comics' in item['categories']:
                 charges.append(100)
                 days.append(14)
-            elif item['price'] > 500:
-                charges.append(80)
-                days.append(default_return_days)
-            elif item['price'] >= 250:
-                charges.append(60)
-                days.append(default_return_days)
             else:
-                charges.append(45)
+                if item['price'] > 900:
+                    if Item.checkStock(item['item_id']):
+                        charges.append(int(0.15 * item['price']))
+                    else:
+                        charges.append(int(0.2 * item['price']))
+                elif item['price'] > 700:
+                    charges.append(99)
+                elif item['price'] > 500:
+                    charges.append(80)
+                elif item['price'] >= 250:
+                    charges.append(60)
+                else:
+                    charges.append(45)
                 days.append(default_return_days)
         return {'price': sum(charges), 'return_days': max(days)}
+    
+    @staticmethod
+    def checkStock(item_id):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT COUNT(*) FROM inventory WHERE item_id = %s
+            AND in_stock = 1""",(item_id,))
+        stock = cursor.fetchone()
+        if stock and int(stock[0]) > 0:
+            return True
+        return False
 
     @staticmethod
     def removeItem(item_id):
