@@ -104,10 +104,6 @@ class Admin():
             order_info['comment'] = order_data[1]
             order_info['edited'] = order_data[2]
 
-            order_charge = order_info['all_charges'][0]
-            if order_charge['payment_mode'] == 'cash':
-                order_info['charge'] = order_charge['charge']
-
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
                     'status_id': next_order_status, 
