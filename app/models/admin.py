@@ -334,10 +334,10 @@ class Admin():
         db = client.ostrich
         final_data = data['goodreads']
         final_data.update(data['amazon'])
-        #final_data['_id'] = int(item_id)
         #if not db.items.find({'_id': final_data['_id']}).count():
         #    db.items.insert_one(final_data)
         db.items.update_one({'_id': int(item_id)}, {'$set': final_data}, upsert=True)
+        final_data['item id'] = item_id
         return final_data
 
     @staticmethod
