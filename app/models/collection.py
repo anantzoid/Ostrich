@@ -72,6 +72,7 @@ class Collection(Prototype):
             collections_data['collections_categories'].append(Utils.fetchOneAssoc(cursor))
         return collections_data
 
+    # NOTE not used anymore
     @staticmethod
     def getCollectionPropertiesByItemId(item_id):
         cursor = mysql.connect().cursor()

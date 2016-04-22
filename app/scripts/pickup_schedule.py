@@ -8,7 +8,8 @@ from app.models import User
 from app.models import Lend
 
 def pickupSchedule():
-    date = Utils.getCurrentTimestamp().split(' ')[0]
+    current_ts = Utils.getCurrentTimestamp()
+    date = current_ts.split(' ')[0]
 
     # Order Pickup
     order_list = []
@@ -25,6 +26,11 @@ def pickupSchedule():
     if order_ids[0] > 0:
         Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
 
+    cursor.execute("""SELECT COUNT(*)
+        FROM b2b_users WHERE DATE(timestamp) = %s""", (Utils.getDefaultReturnTimestamp(current_ts, -21),))
+    order_ids = cursor.fetchone()
+    if order_ids[0] > 0:
+        Utils.notifyAdmin(-1, "B2B PICKUPS DUE!!")
 
     '''
     all_time_slots = Order.getTimeSlot()

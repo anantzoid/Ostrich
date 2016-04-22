@@ -46,7 +46,6 @@ class Utils():
         chars = string.ascii_uppercase + string.ascii_lowercase
         return ''.join(random.choice(chars) for _ in range(size))
         
-
     @staticmethod
     def getCurrentTimestamp():
         current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
@@ -60,7 +59,6 @@ class Utils():
 
         next_week_timestamp = str(current_timestamp + timedelta(days=num_days))
         order_return = next_week_timestamp.split('.')[0]
-
         return order_return
 
     @staticmethod
