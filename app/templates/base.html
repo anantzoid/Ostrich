@@ -10,8 +10,16 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-        <script src="https://apis.google.com/js/platform.js" async defer></script>
-        <meta name="google-signin-client_id" content="487125469761-4anu3rqa9koulgjjkujj38miba15epu9.apps.googleusercontent.com">
+        <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
+        <script>
+            function start() {
+                gapi.load('auth2', function() {
+                    auth2 = gapi.auth2.init({
+                        client_id: '487125469761-4anu3rqa9koulgjjkujj38miba15epu9.apps.googleusercontent.com' 
+                    });
+                });
+            }
+        </script>
         {% block head %}{% endblock %}
     </head>
     <body>

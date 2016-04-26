@@ -22,10 +22,9 @@ const Navbar = React.createClass({
                     <li className="">
                         { this.props.user === null ?
                             <div>
-                                <div className="g-signin2" data-onsuccess="onSignIn"></div>
                                 <button id="googleAuth">Sign in with Google</button>
                             </div>:<div>
-                                <div>{this.props.user_data.username}</div>
+                                <div>{this.props.user_data.name}</div>
                             </div>
                         }
                     </li>

@@ -6,6 +6,10 @@ import json
 from flask import request, jsonify, render_template, redirect, url_for, session
 from react.render import render_component
 
+from apiclient import discovery
+import httplib2
+from oauth2client import client
+
 base_view = 'index.html'
 components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'components')
 def path(js_file):
@@ -18,19 +22,15 @@ def getTitle(path):
 
 @webapp.route('/')
 def homepage():
-    panel_data = [Collection(4).getExpandedObj(), Collection(5).getExpandedObj()]
+    panel_data = []#[Collection(4).getExpandedObj(), Collection(5).getExpandedObj()]
     user_data = session.get('_user', None)
-    if session.get('authenticated'):
-        if not user_data:
-            session['authenticated'] = False
-
     rendered = render_component(path('home.jsx'), props={
         'panel_data': panel_data, 
         'user': user_data
     })
     return render_template(base_view, rendered=rendered, title=getTitle('home'))
 
-@webapp.route('/googlesignin', methods=['POST'])
+@webapp.route('/1googlesignin', methods=['POST'])
 def tokensignin():
     idtoken = Utils.getParam(request.form, 'data', '')
     if not idtoken:
@@ -51,4 +51,30 @@ def tokensignin():
         session['_user'] = user
         return jsonify(session['_user'])
     return jsonify({})
+
+@webapp.route('/googlesignin', methods=['POST'])
+def googlesignin():
+    auth_code = Utils.getParam(request.form, 'data', '')
+    if not auth_code:
+        return ''
+    client_secret_file = '/etc/ostrich_conf/google_client_secret.json' 
+    credentials = client.credentials_from_clientsecrets_and_code(
+           client_secret_file,
+           ['profile', 'email'],
+           auth_code)
+    http_auth = credentials.authorize(httplib2.Http())
+    users_service = discovery.build('oauth2', 'v2', http=http_auth)
+    user_document = users_service.userinfo().get().execute()
+    user_data = {
+        'username': user_document['email'],
+        'name': user_document['name'],
+        'email': user_document['email'],
+        'google_id': credentials.id_token['sub']
+        }
+    user = User.createUser(user_data)
+    session['_user'] = user
+    visible_user_data = {
+            'name': user['name']
+            }
+    return jsonify(data=visible_user_data)
 

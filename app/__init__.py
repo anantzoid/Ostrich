@@ -13,7 +13,7 @@ mysql = MySQL()
 #TODO shift resources to @cross_origin
 #cors = CORS(webapp, resources={'/*/?':{'origins':'*'}, '/preregister':{'origins':'*', 'supports_credentials':'true', 'expose_headers': 'accept, authorization', 'methods':'GET'}})
 
-webapp.config.from_pyfile('/etc/app_config.cfg', silent=True)
+webapp.config.from_pyfile('/etc/ostrich_conf/app_config.cfg', silent=True)
 
 #initialize global objects of libraries
 mysql.init_app(webapp)
