@@ -3,17 +3,22 @@
     <head>
         <!-- INSERT HEAD TAGS -->
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-                <meta http-equiv="X-UA-Compatible" content="IE=edge">
-                    <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}{% endblock %} « Ostrich - Rent Books</title>
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap/bootstrap.min.css')}}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css')}}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap/bootstrap.min.css') }}">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+        <script src="https://apis.google.com/js/platform.js" async defer></script>
+        <meta name="google-signin-client_id" content="487125469761-4anu3rqa9koulgjjkujj38miba15epu9.apps.googleusercontent.com">
         {% block head %}{% endblock %}
     </head>
     <body>
         {% block content %}
             No Content!
         {% endblock %}
+        <script src="{{ url_for('static', filename='js/google_auth.js') }}"></script>
     </body>
 </html>
 

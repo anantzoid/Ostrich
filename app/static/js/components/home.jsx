@@ -26,7 +26,7 @@ const homepage = React.createClass({
         return (
             <div>
                 <section className="header-section">
-                    <Navbar />
+                    <Navbar user={this.props.user} />
                     <Header />
                 </section>
                 <Searchbar />

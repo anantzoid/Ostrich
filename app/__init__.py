@@ -3,7 +3,8 @@ from flask import Flask
 from flaskext.mysql import MySQL
 from flask.ext.cors import CORS
 from flask_mail import Mail
-from react.conf import settings
+#from react.conf import settings
+from flask.ext.session import Session
 
 webapp = Flask(__name__)
 #webapp.secret_key = 'F12Zr47j\3yX R~X@H!jmM]Lwf/,?KT'
@@ -17,6 +18,7 @@ webapp.config.from_pyfile('/etc/app_config.cfg', silent=True)
 #initialize global objects of libraries
 mysql.init_app(webapp)
 mail = Mail(webapp)
+Session(webapp)
 
 # NOTE temp workaround as cache is low priority
 if webapp.config['APP_ENV'] == 'dev':
@@ -35,3 +37,4 @@ settings.configure(
         RENDER_URL='http://127.0.0.1:9009/render',
 )
 '''
+

@@ -54,7 +54,6 @@ class User(Prototype):
 
         address = Utils.getParam(user_data, 'address')
     
-        #TODO handle facebook_id
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
 

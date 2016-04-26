@@ -1,5 +1,5 @@
 import React from 'react';
-const Banner = React.createClass({
+const Navbar = React.createClass({
     render() {
         return(
         <nav className="navbar navbar-default">
@@ -19,6 +19,16 @@ const Banner = React.createClass({
                     <li className="">
                         <a className="page-scroll" href="#about">About</a>
                     </li>
+                    <li className="">
+                        { this.props.user === null ?
+                            <div>
+                                <div className="g-signin2" data-onsuccess="onSignIn"></div>
+                                <button id="googleAuth">Sign in with Google</button>
+                            </div>:<div>
+                                <div>{this.props.user_data.username}</div>
+                            </div>
+                        }
+                    </li>
                </ul>
             </div>
         </div>
@@ -27,4 +37,4 @@ const Banner = React.createClass({
     }
 });
 
-export default Banner;
+export default Navbar;
