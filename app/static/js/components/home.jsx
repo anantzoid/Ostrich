@@ -40,5 +40,6 @@ const homepage = React.createClass({
     }
 });
 
-export default homepage;
+//export default homepage;
+module.exports = homepage;
 

@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
 {% block title %} {{title}} {% endblock %}
-{% block content %}<div id="app-container">{{ rendered | safe }}</div>{% endblock %}
+{% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
 {% block postscript %}
     <script>
-        window.props = {{props | safe}}; 
+    var props = {{props | safe}}; 
+    window.ReactDOM.render(React.createFactory(window.homepage)(props), document.getElementById('app-container'));
     </script>
 {% endblock %}
