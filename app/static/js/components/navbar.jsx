@@ -1,5 +1,25 @@
 import React from 'react';
 const Navbar = React.createClass({
+    
+    // TODO Move to approriate place 
+    signInCallback(authResult) {
+        if(authResult['code']) {
+            $.ajax({
+                type: 'POST',
+                url: '/googlesignin',
+                data: {'data': authResult['code']},
+                success: function(response) {
+                    $('#googleAuth').attr('style', 'display:none');
+                }
+            });
+        } else {
+            alert('There was a login error');
+        }
+    }, 
+    startAuth() {
+        console.log("here");
+        auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(this.signInCallback);
+    },
     render() {
         return(
         <nav className="navbar navbar-default">
@@ -21,11 +41,9 @@ const Navbar = React.createClass({
                     </li>
                     <li className="">
                         { this.props.user === null ?
-                            <div>
-                                <button id="googleAuth">Sign in with Google</button>
-                            </div>:<div>
-                                <div>{this.props.user_data.name}</div>
-                            </div>
+                            <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in with Google</a>
+                            :
+                            <div>{this.props.user_data.name}</div>
                         }
                     </li>
                </ul>

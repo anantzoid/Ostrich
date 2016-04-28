@@ -20,11 +20,6 @@ function signInCallback(authResult) {
 /*
 (function(global) {
 
-    var a = gapi.auth2.getAuthInstance();
-    console.log(a.isSignedIn.get());
-    console.log(a.currentUser.get());
-    //TODO replace with gauth
-    /*
     global.onSignIn = function(googleUser) {
         var id_token = googleUser.getAuthResponse().id_token;
         var xhr = new XMLHttpRequest();

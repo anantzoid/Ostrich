@@ -169,7 +169,7 @@ hr.light {
 .search-row {
     margin: 30px 0px;
 }
-.search-action-row {
+.search-elements {
     height: 40px;
 }
 .search-input {
@@ -185,7 +185,7 @@ hr.light {
 }
 /*------------ SearchBar Ends ---------------*/
 
-.book-section{
+.collection-section{
     width: 100%;
     min-height: 220px;
     white-space: nowrap;
@@ -193,14 +193,14 @@ hr.light {
     position: relative;
     margin: 0;
 }
-.book-ul {
+.collection-ul {
     display: inline-block;
     position: relative;
     left: 0;
     margin: 0 0 14px;
     padding: 0; 
 }
-.book-li {
+.collection-li {
     text-align: center;
     min-width: 145px;
     max-width: 270px;
@@ -212,13 +212,13 @@ hr.light {
     display: inline-block;
     margin-right: 10px;
 }
-.book-span {
+.collection-span {
     text-align: center;
     position: relative;
     display: inline-block;
     min-width: 145px;
 }
-.book-img {
+.collection-img {
     width: auto;
     height: auto;
     max-width: 270px;
@@ -227,4 +227,8 @@ hr.light {
 }
 
 
-
+.footer {
+    background-color: #f4f4f4;
+    height: 60px;
+    padding-top: 20px;
+}

@@ -5,11 +5,11 @@ const Banner = React.createClass({
                 <div className="container">
                     <div className="row search-row">
                         <div className="col-lg-8 col-lg-offset-2 search-inner-container">
-                            <div className="row search-action-row">
-                                <div className="col-lg-9">
+                            <div className="row">
+                                <div className="col-lg-9 search-elements">
                                     <input className="search-input" type="text" />
                                 </div>
-                                <div className="col-lg-3">
+                                <div className="col-lg-3 search-elements">
                                     <button className="btn btn-primary search-btn">Search</button>
                                 </div>
                             </div>

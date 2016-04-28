@@ -25,6 +25,8 @@ class Collection(Prototype):
         if not self.data:
             self.data = {}
   
+        self.data['slug'] = ''
+
     def getExpandedObj(self):
         collection_object = self.getObj()
         if collection_object['item_ids']:
@@ -170,4 +172,18 @@ class Collection(Prototype):
         response = {'category_name': data['name']}
         response['category_id'] = cursor.lastrowid
         return response
-    
+  
+    '''
+        Website Related functions
+    '''
+    @staticmethod
+    def getHomepageCollections():
+        # List of collections to be displayed on homepage
+        homepage_collection_ids = [1, 2, 3, 4]
+        homepage_collections = []
+        for col_id in homepage_collection_ids:
+            col_obj = Collection(col_id).getObj()
+            col_obj['url'] = webapp.config['HOST'] + col_obj['slug'] 
+            homepage_collections.append(col_obj)
+        return homepage_collections
+
