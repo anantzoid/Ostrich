@@ -4,3 +4,6 @@
 {% block content %}
     {{ rendered | safe }}
 {% endblock %}
+{% block postscript %}
+    {{ render_data | safe }}
+{% endblock %}

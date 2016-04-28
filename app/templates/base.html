@@ -24,10 +24,14 @@
         {% block head %}{% endblock %}
     </head>
     <body>
-        {% block content %}
-            No Content!
-        {% endblock %}
+        <div id="app-container">
+            {% block content %}
+                No Content!
+            {% endblock %}
+        </div>
         <!--<script src="{{ url_for('static', filename='js/google_auth.js') }}"></script>-->
+        <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
+        <script>{% block postscript %}{% endblock %}</script>
     </body>
 </html>
 

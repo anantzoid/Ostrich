@@ -1,7 +1,7 @@
 module.exports = {
-  entry: [
-    './static/js/components/home.jsx'
-  ],
+  entry: {
+        app: './static/js/render_client.js'
+  },
   module: {
     loaders: [{
       test: /\.jsx?$/,

@@ -1,6 +1,6 @@
 import React from 'react';
 const Navbar = React.createClass({
-    
+
     // TODO Move to approriate place 
     signInCallback(authResult) {
         if(authResult['code']) {

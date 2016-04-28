@@ -24,12 +24,13 @@ def getTitle(path):
 def homepage():
     collections = Collection.getHomepageCollections() 
     user_data = session.get('_user', None)
-    rendered = render_component(path('home.jsx'), props={
+    props = {
         'collections': collections, 
         'user': user_data
-    })
+    }
+    rendered = render_component(path('home.jsx'), props=props)
 
-    return render_template('index.html', rendered=rendered, title=getTitle('home'))
+    return render_template('index.html', rendered=rendered, title=getTitle('home'), render_data='RenderClient("home.jsx", '+json.dumps(props)+')')
 
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
