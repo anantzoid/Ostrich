@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %} {{title}} {% endblock %}
-{% block content %}
-    {{ rendered | safe }}
-{% endblock %}
+{% block content %}<div id="app-container">{{ rendered | safe }}</div>{% endblock %}
 {% block postscript %}
-    {{ render_data | safe }}
+    <script>
+        window.props = {{props | safe}}; 
+    </script>
 {% endblock %}

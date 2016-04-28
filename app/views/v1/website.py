@@ -30,7 +30,7 @@ def homepage():
     }
     rendered = render_component(path('home.jsx'), props=props)
 
-    return render_template('index.html', rendered=rendered, title=getTitle('home'), render_data='RenderClient("home.jsx", '+json.dumps(props)+')')
+    return render_template('index.html', rendered=rendered, title=getTitle('home'), props=json.dumps(props))
 
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
