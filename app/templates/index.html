@@ -2,9 +2,3 @@
 
 {% block title %} {{title}} {% endblock %}
 {% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
-{% block postscript %}
-    <script>
-    var props = {{props | safe}}; 
-    window.ReactDOM.render(React.createFactory(window.homepage)(props), document.getElementById('app-container'));
-    </script>
-{% endblock %}

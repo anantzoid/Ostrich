@@ -25,9 +25,12 @@
     </head>
     <body>
         {% block content %}No Content!{% endblock %}
-        <!--<script src="{{ url_for('static', filename='js/google_auth.js') }}"></script>-->
+        {% block postscript %}
+        <script>
+            var store = {{ store | safe }}; 
+        </script>
         <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
-        {% block postscript %}{% endblock %}
+        {% endblock %}
     </body>
 </html>
 

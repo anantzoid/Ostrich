@@ -22,15 +22,22 @@ def getTitle(path):
 
 @webapp.route('/')
 def homepage():
+    view_component = 'home.jsx'
     collections = Collection.getHomepageCollections() 
     user_data = session.get('_user', None)
     props = {
         'collections': collections, 
         'user': user_data
     }
-    rendered = render_component(path('home.jsx'), props=props)
-
-    return render_template('index.html', rendered=rendered, title=getTitle('home'), props=json.dumps(props))
+    store = {
+        'component': view_component,  
+        'props': json.dumps(props)
+    }
+    rendered = render_component(path(view_component), props=props)
+    return render_template('index.html', 
+            rendered=rendered, 
+            title=getTitle('home'), 
+            store=store)
 
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
