@@ -1,14 +1,14 @@
 import os
-from app import webapp
-from app.models import *
 import requests
 import json
 from flask import request, jsonify, render_template, redirect, url_for, session
 from react.render import render_component
-
 from apiclient import discovery
 import httplib2
 from oauth2client import client
+from app import webapp
+from app.models import *
+from app.decorator import user_session
 
 components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'components')
 
@@ -16,14 +16,12 @@ def path(js_file):
     return os.path.join(components_path, js_file)
 
 @webapp.route('/')
-def homepage():
+@user_session
+def homepage(props):
     component = 'home.jsx'
     collections = Collection.getHomepageCollections() 
-    user_data = session.get('_user', None)
-    props = {
-        'collections': collections, 
-        'user': user_data
-    }
+
+    props['collections'] = collections
     store = {
         'component': component,  
         'props': json.dumps(props)
@@ -35,23 +33,22 @@ def homepage():
             store=store)
 
 @webapp.route('/books')
-def catalog():
+@user_session
+def catalog(props):
     component = 'catalog.jsx'
     query = Utils.getParam(request.args, 'q', default='')
     search_type = Utils.getParam(request.args, 'type', default='free')
    
     # TODO use decorator to access this
-    user_data = session.get('_user', None)
     results, catalog = [], []
     if query:
         results = Search(query).basicSearch()
     else:
         catalog = Search.fetchWebCatalog()
-    props = {
+    props.update({
             'search_results': results,
-            'catalog': catalog,
-            'user': user_data
-            }
+            'catalog': catalog
+            })
     store = {
             'component': component,
             'props': json.dumps(props)
