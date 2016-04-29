@@ -172,6 +172,9 @@ hr.light {
 .search-elements {
     height: 40px;
 }
+.search-elements > * {
+    height: 100%;
+}
 .search-input {
     width: 100%;
     height: 100%;
@@ -180,7 +183,6 @@ hr.light {
 }
 .search-btn {
     width: 100%;
-    height: 100%;
     font-size: 18px;
 }
 /*------------ SearchBar Ends ---------------*/

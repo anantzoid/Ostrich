@@ -15,14 +15,9 @@ components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'components')
 def path(js_file):
     return os.path.join(components_path, js_file)
 
-def getTitle(path):
-    if (path == 'home'):
-        return 'Ostrich: Home'
-    return 'Ostrich'
-
 @webapp.route('/')
 def homepage():
-    view_component = 'home.jsx'
+    component = 'home.jsx'
     collections = Collection.getHomepageCollections() 
     user_data = session.get('_user', None)
     props = {
@@ -30,15 +25,43 @@ def homepage():
         'user': user_data
     }
     store = {
-        'component': view_component,  
+        'component': component,  
         'props': json.dumps(props)
     }
-    rendered = render_component(path(view_component), props=props)
+    rendered = render_component(path(component), props=props)
     return render_template('index.html', 
             rendered=rendered, 
-            title=getTitle('home'), 
+            title='Home', 
             store=store)
 
+@webapp.route('/books')
+def catalog():
+    component = 'catalog.jsx'
+    query = Utils.getParam(request.args, 'q', default='')
+    search_type = Utils.getParam(request.args, 'type', default='free')
+   
+    # TODO use decorator to access this
+    user_data = session.get('_user', None)
+    results, catalog = [], []
+    if query:
+        results = Search(query).basicSearch()
+    else:
+        catalog = Search.fetchWebCatalog()
+    props = {
+            'search_results': results,
+            'catalog': catalog,
+            'user': user_data
+            }
+    store = {
+            'component': component,
+            'props': json.dumps(props)
+            }
+    rendered = render_component(path(component), props=props)
+    return render_template('catalog.html',
+            rendered=rendered,
+            title='Catalog',
+            store=store)
+    
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
     auth_code = Utils.getParam(request.form, 'data', '')

@@ -6,9 +6,11 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}{% endblock %} « Ostrich - Rent Books</title>
+        <!-- TODO :Enter Site Description and other essential meta -->
+
+        {% block head %}{% endblock %}
         <link rel="stylesheet" href="{{ url_for('static', filename='css/vendor/bootstrap/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
         <script src="https://apis.google.com/js/client:platform.js?onload=start" async defer></script>
         <script>
@@ -21,10 +23,9 @@
                 });
             }
         </script>
-        {% block head %}{% endblock %}
     </head>
     <body>
-        {% block content %}No Content!{% endblock %}
+        {% block content %}Loading...{% endblock %}
         {% block postscript %}
         <script>
             var store = {{ store | safe }}; 

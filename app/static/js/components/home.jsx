@@ -2,7 +2,9 @@ import React from 'react';
 import Navbar from './navbar';
 import Header from './header';
 import Searchbar from './searchbar';
-const homepage = React.createClass({
+import Footer from './footer';
+
+const Homepage = React.createClass({
     render() {
         let collections = this.props.collections.map((panel) => {
             let img_link = "https://d3i8lg6krdgeel.cloudfront.net/" + panel.image;
@@ -30,16 +32,13 @@ const homepage = React.createClass({
                         </div>
                     </div>
                 </section>
-                <footer className="footer">
-                    <div className="container">
-                        <div className="pull-right">CopyRight Ostrich</div>
-                    </div>
-                </footer>
-            </div>
+                <Footer />
+           </div>
             );
     }
 });
 
+// not compatible with React.createFactory
 //export default homepage;
-module.exports = homepage;
+module.exports = Homepage;
 
