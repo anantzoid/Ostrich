@@ -8,7 +8,7 @@ import httplib2
 from oauth2client import client
 from app import webapp
 from app.models import *
-from app.decorator import user_session
+from app.decorators import user_session
 
 components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'components')
 

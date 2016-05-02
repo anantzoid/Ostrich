@@ -5,10 +5,20 @@ const Banner = React.createClass({
                 <div className="header-content">
                     <div className="header-content-inner">
                         <h1>Ostrich</h1>
-                        <hr className="light" />
                         <h3>Our Books | Your Bookself</h3>
-                        <hr className="light" />
                         <p>Discover and Rent Books in a few taps</p>
+
+                        <div className="row">
+                            <div className="col-lg-3"></div>
+                            <div className="col-lg-6 search-elements">
+                                <form onSubmit={this._onClick}>
+                                    <div className="form-group has-feedback">
+                                        <input className="search-input form-control" type="text" placeholder="What do you want to read today?"/>
+                                        <i className="glyphicon glyphicon-search form-control-feedback"></i>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>

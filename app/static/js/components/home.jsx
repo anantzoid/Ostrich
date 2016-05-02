@@ -1,19 +1,25 @@
 import React from 'react';
 import Navbar from './navbar';
 import Header from './header';
-import Searchbar from './searchbar';
 import Footer from './footer';
 
 const Homepage = React.createClass({
+    componentDidMount() {
+        $('.collection-ul').slick({
+            infinite: true,
+            slidesToShow: 5,
+            slidesToScroll: 1
+        });
+    },
     render() {
         let collections = this.props.collections.map((panel) => {
             let img_link = "https://d3i8lg6krdgeel.cloudfront.net/" + panel.image;
             return (
-                <li className="collection-li"><span className="collections-span">
+                <div className="collection-li" key={panel.collection_id}><span className="collections-span">
                     <a>
                         <img className="collection-img" src={img_link} />
                     </a>
-                </span></li>
+                </span></div>
                 );
         });
        return (
@@ -22,14 +28,16 @@ const Homepage = React.createClass({
                     <Navbar user={this.props.user} />
                     <Header />
                 </section>
-                <Searchbar />
                 <section className="collection-section">
                     <div className="container">
+                        <div className="row"><div className="col-lg-12 text-center">
+                            <h4 className="collection-heading">Don't know what to read?</h4>
+                            <h5 className="collection-subheading">Browse through our collection</h5>
+                        </div></div>
                         <div className="row">
-                            <div className="collection-section">
-                                <ul className="collection-ul">{collections}</ul>
-                            </div>
-                        </div>
+                        <div className="col-lg-12 collection-container">
+                            <div className="collection-ul">{collections}</div>
+                        </div></div>
                     </div>
                 </section>
                 <Footer />
