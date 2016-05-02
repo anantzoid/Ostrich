@@ -3,6 +3,7 @@ import random
 import string
 import pytz
 import copy
+import math
 from operator import itemgetter
 from app import webapp
 from app import mysql
@@ -45,7 +46,11 @@ class Utils():
     def generateCode(size=4):
         chars = string.ascii_uppercase + string.ascii_lowercase
         return ''.join(random.choice(chars) for _ in range(size))
-        
+    
+    @staticmethod
+    def getSlabbedAmount(amount, rate):
+        return int(math.ceil((amount*rate)/5)*5)
+
     @staticmethod
     def getCurrentTimestamp():
         current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))

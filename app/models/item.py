@@ -96,7 +96,21 @@ class Item(Prototype):
                     charges.append(45)
                 days.append(default_return_days)
         return {'price': sum(charges), 'return_days': max(days)}
-    
+
+    @staticmethod
+    def getExtendRentalChargesSlab(order_data):
+        if order_data['from_collection']:
+            rental = order_data['collection']['price']
+        else:
+            rental = order_data['all_charges'][-1]['charge']
+
+        return {
+                '7': Utils.getSlabbedAmount(rental, 0.3),
+                '10': Utils.getSlabbedAmount(rental, 0.5),
+                '14': Utils.getSlabbedAmount(rental, 0.7)
+                }
+        
+
     @staticmethod
     def checkStock(item_id):
         cursor = mysql.connect().cursor()

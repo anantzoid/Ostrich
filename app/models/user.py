@@ -257,7 +257,7 @@ class User(Prototype):
             order = Order(int(order_id[0]))
             order_info = order.getOrderInfo(formatted=True)
             order_info['address'] = User.getAddressInfo(order_info['address_id']) 
-            order_info['extend_charges_slab'] = order.getExtendRentalChargesSlab(order_info)
+            order_info['extend_charges_slab'] = Item.getExtendRentalChargesSlab(order_info)
             order_list.append(order_info)
        
         for i in range(len(order_list)):

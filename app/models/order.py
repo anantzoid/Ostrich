@@ -384,23 +384,7 @@ class Order():
 
         return order_info
 
-    def getExtendRentalChargesSlab(self, order_data):
-        slab = {
-                '7': 10,
-                '10': 15,
-                '14': 20
-                }
-        if order_data['from_collection']:
-            slab['7'] = int(order_data['collection']['price'] * 0.3)
-            slab['10'] = int(order_data['collection']['price'] * 0.5)
-            slab['14'] = int(order_data['collection']['price'] * 0.7)
-        elif order_data['items'][0]['price'] >= 299:
-            slab['7'] = 15 
-            slab['10'] = 20
-            slab['14'] = 30
-
-        return slab
-            
+           
     @staticmethod    
     def getTimeSlot(slot_id=None, active=0):
         query_cond = " WHERE active = 1" if active else ""
