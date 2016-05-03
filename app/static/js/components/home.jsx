@@ -8,16 +8,17 @@ const Homepage = React.createClass({
         $('.collection-ul').slick({
             infinite: true,
             slidesToShow: 5,
-            slidesToScroll: 1
+            slidesToScroll: 1,
+            prevArrow: '<a href="#" class="slick-left" onClick="event.preventDefault()"><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span></a>',
+            nextArrow: '<a href="#" class="slick-right" onClick="event.preventDefault()"><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>'
         });
     },
     render() {
         let collections = this.props.collections.map((panel) => {
-            let img_link = "https://d3i8lg6krdgeel.cloudfront.net/" + panel.image;
             return (
                 <div className="collection-li" key={panel.collection_id}><span className="collections-span">
                     <a>
-                        <img className="collection-img" src={img_link} />
+                        <img className="collection-img" src={panel.image} />
                     </a>
                 </span></div>
                 );
@@ -38,9 +39,24 @@ const Homepage = React.createClass({
                         <div className="col-lg-12 collection-container">
                             <div className="collection-ul">{collections}</div>
                         </div></div>
-                        <div className="row">
-                            <div className="col-lg-12">
+                    </div>
+                </section>
+                <section className="howto-section">
+                    <div className="container">
+                        <div className="row howto-heading">
+                            <div className="col-lg-12 text-center">
                                 <h3>What's so great about Ostrich?</h3>
+                            </div>
+                        </div>
+                        <div className="row">
+                            <div className="col-lg-4">
+                                <img src="/static/img/tmp/click_120.png" />
+                            </div>
+                            <div className="col-lg-4">
+                                <img src="/static/img/tmp/door_120.png" />
+                            </div>
+                            <div className="col-lg-4">
+                                <img src="/static/img/tmp/pay_r_120.png" />
                             </div>
                         </div>
                     </div>

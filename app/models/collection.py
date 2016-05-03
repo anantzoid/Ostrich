@@ -24,8 +24,6 @@ class Collection(Prototype):
                 self.data['metadata'][props_formatted[0]] = props_formatted[1]
         if not self.data:
             self.data = {}
-  
-        self.data['slug'] = ''
 
     def getExpandedObj(self):
         collection_object = self.getObj()
@@ -183,7 +181,11 @@ class Collection(Prototype):
         homepage_collections = []
         for col_id in homepage_collection_ids:
             col_obj = Collection(col_id).getObj()
-            col_obj['url'] = webapp.config['HOST'] + col_obj['slug'] 
+            if not col_obj['image']:
+                col_obj['image'] = '/static/img/book_placeholder.jpeg' 
+
+            col_obj['url'] = webapp.config['HOST'] + col_obj['slug_url'] 
+            col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
             homepage_collections.append(col_obj)
         return homepage_collections
 

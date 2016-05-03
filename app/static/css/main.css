@@ -23,16 +23,18 @@ html, body {
 } 
 .navbar-brand {
   width: 210px;
-font-size: 20px;
+    font-size: 20px;
 }
 .navbar-default .nav > li > a {
   font-size: 13px;
 } 
 
-.navbar-logo {
+.navbar-logo,
+.footer-logo {
     width: 40px;
 }
-.navbar-brand-name {
+.navbar-brand-name,
+.footer-brand-name {
     margin: 10px;
 }
 #userProfile img {
@@ -221,9 +223,33 @@ header .header-content .header-content-inner p {
     vertical-align: middle;
 }
 
+.slick-left {
+    top: 45%;
+    position: absolute;
+    font-size: 30px;
+    margin-right: 7px;
+    left: -10px;
+}
+.slick-right {
+    top: 45%;
+    position: absolute;
+    font-size: 30px;
+    right: -14px;
+}
+
+.howto-section{
+    margin-top: 50px;
+    margin-bottom: 70px;
+}
+.howto-heading {
+    margin-bottom: 50px;
+    margin-top: 30px;
+}
 
 .footer {
     background-color: #f4f4f4;
-    height: 60px;
+    min-height: 100px;
     padding-top: 20px;
 }
+
+
