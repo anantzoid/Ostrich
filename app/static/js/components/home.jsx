@@ -31,13 +31,18 @@ const Homepage = React.createClass({
                 <section className="collection-section">
                     <div className="container">
                         <div className="row"><div className="col-lg-12 text-center">
-                            <h4 className="collection-heading">Don't know what to read?</h4>
-                            <h5 className="collection-subheading">Browse through our collection</h5>
+                            <h3 className="collection-heading">Don't know what to read?</h3>
+                            <h4 className="collection-subheading">Browse through our collection</h4>
                         </div></div>
                         <div className="row">
                         <div className="col-lg-12 collection-container">
                             <div className="collection-ul">{collections}</div>
                         </div></div>
+                        <div className="row">
+                            <div className="col-lg-12">
+                                <h3>What's so great about Ostrich?</h3>
+                            </div>
+                        </div>
                     </div>
                 </section>
                 <Footer />

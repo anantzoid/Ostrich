@@ -24,7 +24,10 @@ const Navbar = React.createClass({
         <nav className="navbar navbar-default">
         <div className="container-fluid">
             <div className="navbar-header">
-               <a className="navbar-brand page-scroll" href="#page-top">Ostrich</a>
+               <a className="navbar-brand page-scroll" href="#page-top">
+                    <img className="navbar-logo pull-left" src="/static/img/logo.png" />
+                    <div className="pull-left navbar-brand-name">Ostrich</div>
+                </a>
             </div>
 
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -36,7 +39,7 @@ const Navbar = React.createClass({
                         { this.props.user === null ?
                             <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in with Google</a>
                             :
-                            <div>{this.props.user.name}</div>
+                            <a>{this.props.user.name}</a>
                         }
                     </li>
                </ul>

@@ -179,7 +179,7 @@ class Collection(Prototype):
     @staticmethod
     def getHomepageCollections():
         # List of collections to be displayed on homepage
-        homepage_collection_ids = [1, 2, 3, 4]
+        homepage_collection_ids = [1, 2, 3, 4, 5, 10, 19]
         homepage_collections = []
         for col_id in homepage_collection_ids:
             col_obj = Collection(col_id).getObj()

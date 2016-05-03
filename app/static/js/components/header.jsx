@@ -4,9 +4,9 @@ const Banner = React.createClass({
         return(<header>
                 <div className="header-content">
                     <div className="header-content-inner">
-                        <h1>Ostrich</h1>
-                        <h3>Our Books | Your Bookself</h3>
-                        <p>Discover and Rent Books in a few taps</p>
+                        <h1>Renting books has never been easier</h1>
+                        <p>Search from a myraid of genres and collections, and get
+                        the book of your choice delivered to your place.</p>
 
                         <div className="row">
                             <div className="col-lg-3"></div>
