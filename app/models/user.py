@@ -15,7 +15,7 @@ class User(Prototype):
     def getData(self, user_id, login_type):
 
         get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
-                u.gcm_id, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u \
+                u.gcm_id, u.picture_url, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u \
                 LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id \
                 LEFT JOIN user_wallet uw ON uw.user_id = u.user_id \
                 WHERE u.%s = %d" 
@@ -36,6 +36,9 @@ class User(Prototype):
             num_address = obj_cursor.rowcount
             for i in range(num_address):
                 self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
+
+            if not self.picture_url:
+                self.picture_url = '/static/img/profile_default.jpg'
    
 
     @staticmethod
@@ -56,7 +59,7 @@ class User(Prototype):
     
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
-
+        picture_url = user_data['picture_url'] if 'picture_url' in user_data else ''
         
         if email:
             check_email_cursor = conn.cursor()
@@ -72,10 +75,10 @@ class User(Prototype):
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("""INSERT INTO users (username, password, name,
-                email, phone, google_id, gcm_id, last_app_version, 
+                email, phone, google_id, gcm_id, picture_url, last_app_version, 
                 last_used_timestamp) 
-                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
-            (username, password, name, email, phone, google_id, gcm_id, user_data['app_version']))
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
+            (username, password, name, email, phone, google_id, gcm_id, picture_url, user_data['app_version']))
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)

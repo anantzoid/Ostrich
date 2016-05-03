@@ -10,6 +10,9 @@ const Navbar = React.createClass({
                 data: {'data': authResult['code']},
                 success: function(response) {
                     $('#googleAuth').attr('style', 'display:none');
+                    // NOTE this will not work. use flux flow
+                    $('#userProfile img').attr('src', response.data.picture_url)
+                    $('#userProfile').show();
                 }
             });
         } else {
@@ -39,7 +42,7 @@ const Navbar = React.createClass({
                         { this.props.user === null ?
                             <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in with Google</a>
                             :
-                            <a>{this.props.user.name}</a>
+                            <a id="userProfile"><img src={this.props.user.picture_url}/></a>
                         }
                     </li>
                </ul>

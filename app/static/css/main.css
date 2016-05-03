@@ -17,6 +17,7 @@ html, body {
   color: rgba(255, 255, 255, 0.7);
 }
 .navbar-brand-name:hover, 
+.navbar-default .nav > li > a:focus,
 .navbar-default .nav > li > a:hover {
   color: rgba(255, 255, 255, 1.0);
 } 
@@ -34,6 +35,10 @@ font-size: 20px;
 .navbar-brand-name {
     margin: 10px;
 }
+#userProfile img {
+    border-radius: 50px;
+    width: 30px;
+}
 @media (min-width: 768px) {
 
 }
@@ -50,7 +55,7 @@ font-size: 20px;
   background-size: cover;
   -o-background-size: cover;
   background-position: center;
-  background-image: url('../img/header.jpeg');
+  background-image: url('../img/header3.jpeg');
   text-align: center;
   color: white;
 }
@@ -142,16 +147,26 @@ header .header-content .header-content-inner p {
     border-radius: 4px;
     color: black;
     opacity: 0.8
+    padding: 7px 15px;
 }
 .search-input:focus {
     outline: none;
 }
+.form-control-feedback {
+    top: 3px;
+    right: 3px;
+    font-size: 20px;
+    color: #9a9a9a;
+}
+
 /*------------ SearchBar Ends ---------------*/
 
 .collection-heading {
+    margin-top: 40px;
     margin-bottom: 15px;
 }
 .collection-subheading {
+    font-weight: 300;
     margin-bottom: 75px;
 }
 

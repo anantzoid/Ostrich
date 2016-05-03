@@ -76,13 +76,14 @@ def googlesignin():
         'username': user_document['email'],
         'name': user_document['name'],
         'email': user_document['email'],
-        'google_id': credentials.id_token['sub']
+        'google_id': credentials.id_token['sub'],
+        'picture': user_document['picture']
         }
     user = User.createUser(user_data)
     session['_user'] = user
     visible_user_data = {
-            'name': user['name']
-            }
+            'picture_url': user_document['picture']
+    }
     return jsonify(data=visible_user_data)
 
 '''
