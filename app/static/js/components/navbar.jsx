@@ -4,7 +4,6 @@ const Navbar = React.createClass({
     startAuth() {
         auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(this.signInCallback);
     },
-    // TODO Move to approriate place 
     signInCallback(authResult) {
         if(authResult['code']) {
             $.ajax({
@@ -12,10 +11,7 @@ const Navbar = React.createClass({
                 url: '/googlesignin',
                 data: {'data': authResult['code']},
                 success: function(response) {
-                    $('#googleAuth').attr('style', 'display:none');
-                    // NOTE this will not work. use flux flow
-                    $('#userProfile img').attr('src', response.data.picture_url)
-                    $('#userProfile').show();
+                    $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
                 }
             });
         } else {
@@ -38,7 +34,7 @@ const Navbar = React.createClass({
                     <li className="">
                         <a className="page-scroll" href="#about">About</a>
                     </li>
-                    <li className="">
+                    <li className="auth-container">
                         { this.props.user === null ?
                             <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in with Google</a>
                             :

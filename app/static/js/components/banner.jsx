@@ -1,5 +1,12 @@
 import React from 'react';
 const Banner = React.createClass({
+    _onClick(event) {
+        event.preventDefault();
+        let query = $('.search-input').val();
+        if (query) {
+            window.location.href = window.location.origin+'/books?type=free&q='+query;
+        }
+    },
     render() {
         return(<header>
                 <div className="header-content">

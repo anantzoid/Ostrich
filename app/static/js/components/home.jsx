@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './navbar';
-import Header from './header';
+import Header from './banner';
 import Footer from './footer';
 
 const Homepage = React.createClass({
