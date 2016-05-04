@@ -12,7 +12,6 @@ def async(func):
 def user_session(func):
     @wraps(func)
     def wrapper():
-        session.clear()
         user_data = session.get('_user', None)
         props = {'user': user_data}
         return func(props)

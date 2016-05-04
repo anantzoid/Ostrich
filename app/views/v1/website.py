@@ -10,7 +10,7 @@ from app import webapp
 from app.models import *
 from app.decorators import user_session
 
-components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'components')
+components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'src', 'components')
 
 def path(js_file):
     return os.path.join(components_path, js_file)
@@ -21,7 +21,10 @@ def homepage(props):
     component = 'home.jsx'
     collections = Collection.getHomepageCollections() 
     
-    props['collections'] = collections
+    props.update({
+        'collections': collections,
+        'page': 'home'
+        })
     store = {
         'component': component,  
         'props': json.dumps(props)
@@ -43,11 +46,15 @@ def catalog(props):
     results, catalog = [], []
     if query:
         results = Search(query).basicSearch()
+        for i, item in enumerate(results['items']):
+            results['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
     else:
         catalog = Search.fetchWebCatalog()
     props.update({
             'search_results': results,
-            'catalog': catalog
+            'catalog': catalog,
+            'query': query,
+            'page': 'catalog'
             })
     store = {
             'component': component,

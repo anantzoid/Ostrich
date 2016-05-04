@@ -1,4 +1,5 @@
 import React from 'react';
+import SearchBar from './searchbar';
 
 const Navbar = React.createClass({
     startAuth() {
@@ -42,6 +43,11 @@ const Navbar = React.createClass({
                         }
                     </li>
                </ul>
+               { this.props.hasOwnProperty('page') && this.props.page !== 'home' ? 
+                    <SearchBar {...this.props} />
+                   :
+                    null
+                }
             </div>
         </div>
         </nav>

@@ -42,9 +42,9 @@ const Homepage = React.createClass({
                 );
         });
        return (
-            <div>
+            <div id="home">
                 <section className="header-section">
-                    <Navbar user={this.props.user} />
+                    <Navbar {...this.props} />
                     <Header />
                 </section>
                 <section className="collection-section">
