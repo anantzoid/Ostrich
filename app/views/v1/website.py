@@ -20,7 +20,7 @@ def path(js_file):
 def homepage(props):
     component = 'home.jsx'
     collections = Collection.getHomepageCollections() 
-
+    
     props['collections'] = collections
     store = {
         'component': component,  

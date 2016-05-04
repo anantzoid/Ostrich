@@ -1,6 +1,9 @@
 import React from 'react';
-const Navbar = React.createClass({
 
+const Navbar = React.createClass({
+    startAuth() {
+        auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(this.signInCallback);
+    },
     // TODO Move to approriate place 
     signInCallback(authResult) {
         if(authResult['code']) {
@@ -18,9 +21,6 @@ const Navbar = React.createClass({
         } else {
             alert('There was a login error');
         }
-    }, 
-    startAuth() {
-        auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(this.signInCallback);
     },
     render() {
         return(

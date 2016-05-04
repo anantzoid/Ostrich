@@ -143,7 +143,7 @@ header .header-content .header-content-inner p {
 .search-input {
     width: 100%;
     height: 40px;;
-    font-size: 18px;
+    font-size: 16px;
     padding: 0px 10px;
     border: none;
     border-radius: 4px;
@@ -229,6 +229,7 @@ header .header-content .header-content-inner p {
     font-size: 30px;
     margin-right: 7px;
     left: -10px;
+    z-index: 2;
 }
 .slick-right {
     top: 45%;
@@ -237,6 +238,9 @@ header .header-content .header-content-inner p {
     right: -14px;
 }
 
+.slick-list.draggable{
+    margin: 0 10px;
+}
 .howto-section{
     margin-top: 50px;
     margin-bottom: 70px;
@@ -251,5 +255,32 @@ header .header-content .header-content-inner p {
     min-height: 100px;
     padding-top: 20px;
 }
+/*
+.slick-prev, .slick-next {
+    display: block;
+    width: 75px;
+    height: 536px;
+    background: url(https://asla.org/sustainablelandscapes/images/LargeSlideLEFT.png) no-repeat;
+    margin: 5px 0 0 0;
+    float: left;
+    transition: .6s linear;
+    -moz-transition: .6s linear;
+    -webkit-transition: .6s linear;
+    cursor: pointer;
+    top: 35%;
+}
+
+.slick-prev {
+        left: -6%;
+    }
 
 
+    .slick-next {
+        background: url(https://asla.org/sustainablelandscapes/images/LargeSlideRIGHT.png) no-repeat !important;
+        clear: right;
+        margin-left: 10px;
+        right: -10%;
+                }
+
+
+*/

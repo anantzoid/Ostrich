@@ -13,7 +13,7 @@ module.exports = {
     extensions: ['', '.js', '.jsx']
   },
   output: {
-    path: './static/js/dist/',
+    path: './static/dist/',
     publicPath: '/',
     filename: 'bundle.js'
   },

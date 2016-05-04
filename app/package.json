@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "alt": "^0.18.4",
     "body-parser": "^1.15.0",
     "express": "^4.13.4",
     "react": "^15.0.1",
