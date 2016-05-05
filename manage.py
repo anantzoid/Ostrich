@@ -16,10 +16,7 @@ def session():
 @manager.command
 def indexer():
     from app.scripts import Indexer
-    custom_keys = {
-            'custom_price': 60
-            }
-    Indexer().indexItems(query_condition=' AND (i.price <= 200)',limit='10',custom_keys=custom_keys)
+    Indexer().indexItems(query_condition=' AND (i.item_id = 410)',limit='10')
 
 @manager.command
 def indexcol():

@@ -48,6 +48,7 @@ def catalog(props):
         results = Search(query).basicSearch()
         for i, item in enumerate(results['items']):
             results['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
+            results['items'][i]['item_url'] = Item.getItemPageUrl(item)
     else:
         catalog = Search.fetchWebCatalog()
     props.update({

@@ -6,7 +6,7 @@ const SearchResults = React.createClass({
             let key = 'book-'+book.item_id;
             return(
                 <li className="catalog-book-container text-center" key={key}>
-                    <a href="#">
+                    <a href={book.item_url}>
                         <img className="catalog-book-image" src={book.img_small} />
                         <div className="catalog-book-info">{book.item_name}</div>
                     </a>

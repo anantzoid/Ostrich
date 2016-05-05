@@ -5,7 +5,6 @@ import Footer from './footer';
 
 const Catalog = React.createClass({
     render() {
-        console.log(this.props);
         return(
             <div id="catalog">
                 <Navbar {...this.props} />
