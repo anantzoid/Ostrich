@@ -10,14 +10,12 @@ const Catalog = React.createClass({
             <div id="catalog">
                 <Navbar {...this.props} />
                 <section className="catalog-section">
-                    <div className="container">
-                        <div className="row">
-                            {this.props.catalog.length ?
-                                null
-                                :
-                                <SearchResults search_results={this.props.search_results}/>
-                            } 
-                        </div>
+                    <div className="container-fluid">
+                        {this.props.catalog.length ?
+                            null
+                            :
+                            <SearchResults {...this.props}/>
+                        } 
                     </div>
                 </section>
                 <Footer />

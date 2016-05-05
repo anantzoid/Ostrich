@@ -262,12 +262,13 @@ header .header-content .header-content-inner p {
     margin-left: 60px;
 }
 .catalog-book-container {
-    margin: 20px;
-    padding: 0 10px;
-}
-.catalog-book-image-container{
-    margin: auto;
-    width: 60%;
+    padding-top: 10px;
+    width: 110px;
+    float: left;
+    min-height: 209px;
+    margin-right: 40px;
+    display: inline;
+    padding: 20px 0 0;
 }
 .catalog-book-image {
     width: auto;
@@ -275,6 +276,13 @@ header .header-content .header-content-inner p {
     max-width: 200px;
     height: 200px;
     vertical-align: middle;
+}
+.catalog-book-info {
+    min-height: 70px;
+}
+.catalog-sidebar-item {
+    display: inherit;
+    margin: 5px 0px;
 }
 /*------------ Catalog Ends ---------------*/
 

@@ -53,6 +53,7 @@ def catalog(props):
     props.update({
             'search_results': results,
             'catalog': catalog,
+            'categories': Search.getAllSearchCategories(),
             'query': query,
             'page': 'catalog'
             })

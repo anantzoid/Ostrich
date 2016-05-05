@@ -54,7 +54,7 @@ def searchString():
 
 @webapp.route('/getCategories')
 def getCategories():
-    categories = Search.getSearchCategories()
+    categories = Search.getSearchCategoriesForApp()
     return json.dumps(categories)
 
 @webapp.route('/getCollectionCategory')

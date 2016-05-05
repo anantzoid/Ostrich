@@ -164,10 +164,18 @@ class Search():
         return resp.text
 
     @staticmethod
-    def getSearchCategories():
-        # TODO from mongo
-        #  NOTE call session in manager to update
+    def getSearchCategoriesForApp():
         categories = ['Fiction', 'Childrens', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational']
+        return categories
+
+    # TODO cache this
+    @staticmethod
+    def getAllSearchCategories():
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
+        categories = []
+        for i in range(cursor.rowcount):
+            categories.append(Utils.fetchOneAssoc(cursor))
         return categories
 
     @async
