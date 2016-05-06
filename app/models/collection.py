@@ -72,16 +72,17 @@ class Collection(Prototype):
             collections_data['collections_categories'].append(Utils.fetchOneAssoc(cursor))
         return collections_data
 
+    # NOTE not used anymore
     @staticmethod
-    def getByItemId(item_id):
+    def getCollectionPropertiesByItemId(item_id):
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT c.price FROM collections c INNER JOIN 
+        cursor.execute("""SELECT c.price, c.return_days FROM collections c INNER JOIN 
             collections_items ci ON ci.collection_id = c.collection_id
             WHERE ci.item_id = %s""", (item_id,))
-        rental_price = cursor.fetchone()
-        if rental_price:
-            rental_price = int(rental_price[0])
-        return rental_price 
+        rental_data = cursor.fetchone()
+        if rental_data:
+            rental_data = {'price': int(rental_data[0]), 'return_days': int(rental_data[1])} 
+        return rental_data
 
     @staticmethod
     def saveCollectionData(data, collection_item_ids=''):

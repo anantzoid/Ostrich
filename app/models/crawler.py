@@ -18,7 +18,8 @@ def getAggregatedBookDetails(amzn_url):
     amazon_isbn = book_data['amazon']['isbn_13'] if 'isbn_13' in book_data['amazon'] else ''
     book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
     if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-        book_data['goodreads'] = GoodreadsCrawler(isbn=book_data['amazon']['isbn_10']).startCrawl()
+        amazon_isbn = book_data['amazon']['isbn_10'] if 'isbn_10' in book_data['amazon'] else ''
+        book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
             book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
     return book_data

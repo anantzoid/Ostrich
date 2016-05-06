@@ -7,12 +7,19 @@ class Item(Prototype):
 
     def getData(self, item_id):
         obj_cursor = mysql.connect().cursor()
-        obj_cursor.execute("SELECT * FROM items WHERE item_id = %d" %(item_id))
+        query = """SELECT i.*,
+        (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
+        INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
+        ic.item_id = i.item_id) AS categories
+        FROM items i WHERE i.active=1 AND i.item_id = %s"""
+
+        obj_cursor.execute(query, (item_id,))
         self.data = Utils.fetchOneAssoc(obj_cursor)
         if not self.data:
             self.data = {}
         else:
             self.data['price'] = float(self.data['price']) if self.data['price'] else self.data['price']
+            self.data['categories'] = self.data['categories'].split("|") if self.data['categories'] else []
 
     def getObj(self):
         item_obj = vars(self)
@@ -47,7 +54,7 @@ class Item(Prototype):
         conn.commit()
         insert_id = store_request_cursor.lastrowid
         
-        Utils.notifyAdmin(user_id, "Item Request made in Lend!")
+        Utils.notifyAdmin(user_id, "Item Request: "+title)
         '''
         #TODO map item_type to category_id somehow
         category_id = 1
@@ -59,17 +66,60 @@ class Item(Prototype):
         return True
 
     @staticmethod
-    def getRentalAmount(order_data):
-        item_id = order_data['item_id'][0]
-        if order_data['collection_id']:
-            collection_retail = Collection.getByItemId(item_id)
-            if collection_retail:
-                return collection_retail
+    def getCustomProperties(item_ids, collection=None):
+        default_return_days = webapp.config['DEFAULT_RETURN_DAYS']
 
-        item = Item(item_id)
-        if item.price >= 299:
-            return 60 * len(order_data['item_id'])
-        return int(webapp.config['DEFAULT_RETURN_DAYS'] * webapp.config['NEW_READING_RATE']) * len(order_data['item_id'])
+        if collection:
+            if collection['price']:
+                collection_custom_data = {'price': collection['price'], 'return_days': collection['return_days'] if collection['return_days'] else default_return_days}
+                return collection_custom_data
+
+        charges, days = [], []
+        for item_id in item_ids:
+            item = Item(item_id).getObj() if isinstance(item_id, int) else item_id
+            if item['categories'] and 'Comics' in item['categories']:
+                charges.append(100)
+                days.append(14)
+            else:
+                if item['price'] > 900:
+                    if Item.checkStock(item['item_id']):
+                        charges.append(int(0.15 * item['price']))
+                    else:
+                        charges.append(int(0.2 * item['price']))
+                elif item['price'] > 700:
+                    charges.append(99)
+                elif item['price'] > 500:
+                    charges.append(80)
+                elif item['price'] >= 250:
+                    charges.append(60)
+                else:
+                    charges.append(45)
+                days.append(default_return_days)
+        return {'price': sum(charges), 'return_days': max(days)}
+
+    @staticmethod
+    def getExtendRentalChargesSlab(order_data):
+        if order_data['from_collection']:
+            rental = order_data['collection']['price']
+        else:
+            rental = order_data['all_charges'][-1]['charge']
+
+        return {
+                '7': Utils.getSlabbedAmount(rental, 0.3),
+                '10': Utils.getSlabbedAmount(rental, 0.5),
+                '14': Utils.getSlabbedAmount(rental, 0.7)
+                }
+        
+
+    @staticmethod
+    def checkStock(item_id):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT COUNT(*) FROM inventory WHERE item_id = %s
+            AND in_stock = 1""",(item_id,))
+        stock = cursor.fetchone()
+        if stock and int(stock[0]) > 0:
+            return True
+        return False
 
     @staticmethod
     def removeItem(item_id):

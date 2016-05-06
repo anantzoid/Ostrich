@@ -27,8 +27,10 @@ class Order():
             order_info['all_charges'] = [{
                                 'charge': Order.getCharge(order_info['charge']), 
                                 'payment_mode': order_info['payment_mode']}]
+
             #NOTE charge denotes charge to be collected in cash
-            order_info['charge'] = order_info['charge'] if order_info['payment_mode'] == 'cash' else 0
+            order_info['charge'] = order_info['charge'] if (order_info['payment_mode'] == 'cash') else 0
+
             if order_info['from_collection']:
                 order_info['collection'] = Collection(order_info['from_collection']).getObj()
 
@@ -70,16 +72,16 @@ class Order():
 
         all_orders = parents + children
         for i, order in enumerate(all_orders):
-            if i < len(all_orders) - 1:
+            if i < len(all_orders) - 1 and order['parent_id']:
                 charge += order['charge']
             order_info['all_charges'].append({
                     'charge': Order.getCharge(order['charge']),
                     'payment_mode': order['payment_mode']
                     })
 
-            # Ignoring orders extended before extend_order major change on 16th Feb
-            if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
-                order_info['charge'] += charge 
+        # Ignoring orders extended before extend_order major change on 16th Feb
+        if order['payment_mode'] == 'cash' and order['order_id'] not in [20,41,51,66,67,73,78,121]:
+            order_info['charge'] += charge 
 
         return order_info
 
@@ -121,7 +123,8 @@ class Order():
     def placeOrder(order_data):
         order_data['collection_id'] = Utils.getParam(order_data, 'collection_id', 'int', None)
         if order_data['collection_id']:
-            order_data['item_id'] = Collection(order_data['collection_id']).getObj()['item_ids']
+            collection = Collection(order_data['collection_id']).getObj()
+            order_data['item_id'] = collection['item_ids']
         else:
             order_data['item_id'] = order_data['item_id']
         order_data['item_id'] = [int(_) for _ in order_data['item_id'].split(',')]
@@ -139,16 +142,10 @@ class Order():
         order_data['delivery_slot'] = Utils.getParam(order_data, 'delivery_slot', 
                 'int', Utils.getDefaultTimeSlot())
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
-        order_data['order_return'] = Utils.getParam(order_data, 'order_return', 
-                default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], webapp.config['DEFAULT_RETURN_DAYS']))
 
-        default_order_amount = Item.getRentalAmount(order_data)
-        #NOTE temp workaround to handle custom prices
-        if len(order_data['item_id']) == 1:
-            item = Item(order_data['item_id'][0])
-            if item.price >= 299:
-                default_order_amount = 60
-        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', default_order_amount)
+        custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
+        order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
+        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'])
 
         #check order validity
         # TODO check if item exists
@@ -189,7 +186,7 @@ class Order():
         response = {'order_id': order_id}
 
         order = Order(order_id)
-        order.updateInventoryPostOrder(order_data['item_id'])
+        order.updateInventoryPostOrder(order_data['item_id'], order_data['user_id'])
 
         if order_data['payment_mode'] == 'wallet':
             Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', order_id, order_data['order_amount']) 
@@ -257,7 +254,7 @@ class Order():
         Notifications(user.gcm_id).sendNotification(notification_data)
 
 
-    def updateInventoryPostOrder(self, item_ids):
+    def updateInventoryPostOrder(self, item_ids, user_id):
         inventory_ids = self.getInventoryIds(item_ids) 
 
         #update order_history and clear stock in inventory
@@ -270,13 +267,14 @@ class Order():
             connect.commit()
             order_history_cursor.close()
 
-            update_stock_cursor = connect.cursor()
-            update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
-                    inventory_id = %d" % (inventory_item['inventory_id']))
-            connect.commit()
-            Indexer().indexItems(query_condition=' AND i.item_id='+str(inventory_item['item_id']))
-            update_stock_cursor.close()
-
+            # NOTE preventing inventory count messup from admins
+            if user_id not in Utils.getAdmins(): 
+                update_stock_cursor = connect.cursor()
+                update_stock_cursor.execute("UPDATE inventory SET in_stock = 0 WHERE \
+                        inventory_id = %d" % (inventory_item['inventory_id']))
+                connect.commit()
+                Indexer().indexItems(query_condition=' AND i.item_id='+str(inventory_item['item_id']))
+                update_stock_cursor.close()
 
     def getInventoryIds(self, item_ids):
         # Incremental Inventory Logic
@@ -386,23 +384,7 @@ class Order():
 
         return order_info
 
-    def getExtendRentalChargesSlab(self, order_data):
-        slab = {
-                '7': 10,
-                '10': 15,
-                '14': 20
-                }
-        if order_data['from_collection']:
-            slab['7'] = int(order_data['collection']['price'] * 0.3)
-            slab['10'] = int(order_data['collection']['price'] * 0.5)
-            slab['14'] = int(order_data['collection']['price'] * 0.7)
-        elif order_data['items'][0]['price'] >= 299:
-            slab['7'] = 15 
-            slab['10'] = 20
-            slab['14'] = 30
-
-        return slab
-            
+           
     @staticmethod    
     def getTimeSlot(slot_id=None, active=0):
         query_cond = " WHERE active = 1" if active else ""
@@ -428,8 +410,10 @@ class Order():
         all_orders = self.getOrderInfo(fetch_all=True)
         if 'order' in all_orders:
             all_order_ids = Order.fetchAllOrderIds(all_orders)
+            order_info = all_orders['order']
         else:
             all_order_ids = str(all_orders['order_id'])
+            order_info = all_orders
 
         update_cursor.execute("UPDATE orders SET order_status = %s WHERE order_id IN ("+all_order_ids+")"
                 ,(status_id, ))
@@ -437,12 +421,6 @@ class Order():
 
         # Update inventory and respective dates
         current_ts = datetime.datetime.now(pytz.timezone('Asia/Calcutta'))
-        if 'order' in all_orders:
-            old_order_return =  all_orders['order']['order_return']
-            old_delivery_date = all_orders['order']['delivery_date']
-        else:
-            old_order_return = all_orders['order_return']
-            old_delivery_date = all_orders['delivery_date']
 
         if status_id == 7:
             update_cursor.execute("""UPDATE inventory SET in_stock = 1 WHERE 
@@ -455,7 +433,7 @@ class Order():
             conn.commit()
             self.logEditOrderDetails(
                     {'order_return': current_ts}, 
-                    {'order_return': old_order_return}, 
+                    {'order_return': order_info['order_return']}, 
                     ['order_return'])
 
         elif status_id == 2:
@@ -465,14 +443,15 @@ class Order():
             conn.commit()
 
         elif status_id == 4:
-            new_order_return = Utils.getDefaultReturnTimestamp(current_ts, webapp.config['DEFAULT_RETURN_DAYS'])
+            item_return_days = Item.getCustomProperties(order_info['items'], order_info['collection'] if order_info['from_collection'] else None)['return_days']
+            new_order_return = Utils.getDefaultReturnTimestamp(current_ts, item_return_days)
             update_cursor.execute("""UPDATE orders SET delivery_date = %s, 
                     order_return = %s WHERE order_id = %s""",
             (current_ts, new_order_return, self.order_id)) 
             conn.commit()
             self.logEditOrderDetails(
                     {'delivery_date': current_ts, 'order_return': new_order_return}, 
-                    {'delivery_date': old_delivery_date, 'order_return': old_order_return}, 
+                    {'delivery_date': order_info['delivery_date'], 'order_return': order_info['order_return']}, 
                     ['delivery_date', 'order_return'])
 
         update_cursor.close()

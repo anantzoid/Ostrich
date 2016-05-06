@@ -98,6 +98,7 @@ class Admin():
             order_info = order.getOrderInfo()
             user = User(order_info['user_id'])
             order_info['user'] = user.getObj()
+            order_info['user']['wishlist'] = User.getWishlist(order_info['user_id'])
             order_info['address'] = user.getAddressInfo(order_info['address_id']) 
             order_info['delivery_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['delivery_slot']][0]
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
@@ -133,6 +134,9 @@ class Admin():
             orders_list[i]['order_type'] = 'borrow'
             orders_list[i]['scheduled_date'] = order['order_return']
             orders_list[i]['scheduled_slot'] = order['pickup_slot']
+             # NOTE removing charge of first order
+            if len(order['all_charges']) == 1 and order['charge'] == order['all_charges'][0]['charge']:
+                order['charge'] = 0
         
         rental_list = Admin.getCurrentRentals(returns=True)
         for i,rental in enumerate(rental_list):
@@ -327,10 +331,10 @@ class Admin():
         db = client.ostrich
         final_data = data['goodreads']
         final_data.update(data['amazon'])
-        #final_data['_id'] = int(item_id)
         #if not db.items.find({'_id': final_data['_id']}).count():
         #    db.items.insert_one(final_data)
         db.items.update_one({'_id': int(item_id)}, {'$set': final_data}, upsert=True)
+        final_data['item id'] = item_id
         return final_data
 
     @staticmethod

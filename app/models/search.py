@@ -191,10 +191,13 @@ class Search():
 
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow, gcm_id, uuid) 
-                VALUES (%s,%s,%s,%s,%s,%s)""",
-            (self.user_id, self.query, fail_type, self.flow, self.gcm_id, self.uuid))
-        conn.commit()
+        cursor.execute("""SELECT * FROM search_fails WHERE query = %s AND uuid
+            = %s""", (self.query, self.uuid))
+        if not cursor.fetchone():
+            cursor.execute("""INSERT INTO search_fails (user_id, query, type, flow, gcm_id, uuid) 
+                    VALUES (%s,%s,%s,%s,%s,%s)""",
+                (self.user_id, self.query, fail_type, self.flow, self.gcm_id, self.uuid))
+            conn.commit()
         return
 
     # NOTE Deprecated
