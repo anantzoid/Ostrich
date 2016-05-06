@@ -48,8 +48,10 @@ class Collection(Prototype):
             category['collections'] = []
             if category['collection_ids'] is not None:
                 for col_id in category['collection_ids'].split(','):
-                    category['collections'].append(Collection(col_id).getExpandedObj())
-            collections_categories.append(category)
+                    items = Collection(col_id).getExpandedObj()
+                    if items:
+                        category['collections'].append(items)
+                collections_categories.append(category)
         return collections_categories
 
     @staticmethod
