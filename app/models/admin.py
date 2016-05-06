@@ -32,7 +32,8 @@ class Admin():
             l.delivery_date, l.delivery_slot, l.order_placed,
             iv.inventory_id, u.email,
             ua.description, ua.locality, ua.landmark,
-            co.comment, co.edited
+            co.comment, co.edited, co.delivered_by, co.delivery_amount,
+            co.picked_by, co.pickup_amount
             FROM lenders l
             INNER JOIN users u ON l.user_id = u.user_id
             INNER JOIN user_addresses ua ON ua.address_id = l.address_id
@@ -76,6 +77,10 @@ class Admin():
             rental['inventory_id'] = row[13]
             rental['comment'] = row[18]
             rental['edited'] = row[19]
+            rental['delivered_by'] = row[20]
+            rental['delivery_amount'] = row[21]
+            rental['picked_by'] = row[22]
+            rental['pickup_amount'] = row[23]
             rental_list.append(rental)
         return rental_list
 
@@ -85,8 +90,11 @@ class Admin():
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
         query_condition = 'order_status >= 4 AND order_status < 7' if pickups else 'order_status < 4'
-        query_condition += '  ORDER BY order_return ASC' 
-        cursor.execute("""SELECT o.order_id, comment, edited FROM orders o 
+        query_condition += '  ORDER BY order_id ASC' 
+        cursor.execute("""SELECT o.order_id,
+                co.comment, co.edited, co.delivered_by, co.delivery_amount,
+                co.picked_by, co.pickup_amount
+                FROM orders o 
                 LEFT JOIN orders_admin_notes co ON co.order_id = o.order_id AND co.order_type = 'borrow' 
                 WHERE o.order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND """+query_condition)
 
@@ -104,6 +112,10 @@ class Admin():
             order_info['pickup_slot'] = [ts for ts in all_time_slots if ts['slot_id'] == order_info['pickup_slot']][0]
             order_info['comment'] = order_data[1]
             order_info['edited'] = order_data[2]
+            order_info['delivered_by'] = order_data[3]
+            order_info['delivery_amount'] = order_data[4]
+            order_info['picked_by'] = order_data[5]
+            order_info['pickup_amount'] = order_data[6]
 
             next_order_status = int(order_info['order_status'])+1
             order_info['change_status'] = {
@@ -222,8 +234,16 @@ class Admin():
     def updateOrderComment(data):
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""UPDATE orders_admin_notes SET comment = %s, edited = 1 WHERE order_id = %s AND order_type = %s""",
-                (data['comment'], data['order_id'], data['order_type']))
+        cursor.execute("""UPDATE orders_admin_notes SET 
+                comment = %s, 
+                edited = %s,
+                delivered_by = %s,
+                delivery_amount = %s,
+                picked_by = %s,
+                pickup_amount = %s
+                WHERE order_id = %s AND order_type = %s""",
+        (data['comment'], data['edited'], data['delivered_by'], data['delivery_amount'], 
+        data['picked_by'], data['pickup_amount'], data['order_id'], data['order_type']))
         conn.commit()
         affected = cursor.rowcount
         if not affected:
