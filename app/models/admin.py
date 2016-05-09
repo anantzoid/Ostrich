@@ -257,30 +257,44 @@ class Admin():
         conn = mysql.connect()
         cursor = conn.cursor()
     
-        price = data['amazon']['list_price'] if data['amazon']['list_price'] else data['amazon']['offer_price']
-        price = re.sub('\..*$', '', price)
-        price = price.replace(',','')
-
         if 'author' in data['goodreads'] and data['goodreads']['author']:
             author = data['goodreads']['author']
         elif 'author' in data['amazon'] and data['amazon']['author']:
             author = data['amazon']['author']
         else:
             author = ''
+
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], author))
         match = cursor.fetchone()
         if match:
             return {'_id': int(match[0])}
+
+        price = data['amazon']['list_price'] if data['amazon']['list_price'] else data['amazon']['offer_price']
+        price = re.sub('\..*$', '', price)
+        price = price.replace(',','')
+
+        summary = ''
+        if 'gr_summary' in data['goodreads'] and data['goodreads']['gr_summary']:
+            summary = data['goodreads']['gr_summary']
+        elif 'amzn_summary' in data['amazon']:
+            for key in data['amazon']['amzn_summary']:
+                if data['amazon']['amzn_summary'][key]:
+                    summary = data['amazon']['amzn_summary'][key]
+                    break
+
         cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
-        num_ratings, num_reviews, language) VALUES
-        (%s,%s,%s,%s,%s,%s,%s)""",
+        num_ratings, num_reviews, language, asin, goodreads_id, summary) VALUES
+        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         (data['amazon']['title'],
         price,
         author,
         data['goodreads']['avg_rating'].replace(' rating',''),
         data['goodreads']['num_ratings'].replace(' rating',''),
         data['goodreads']['num_review'],
-        data['goodreads']['language']
+        data['goodreads']['language'],
+        data['amazon']['amazon_id'],
+        data['goodreads']['gr_id'],
+        summary
         ))
         conn.commit()
         item_id = cursor.lastrowid
