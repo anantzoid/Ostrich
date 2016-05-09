@@ -7,8 +7,12 @@ import json
 
 class Lend():
     @staticmethod
-    def getOfferCredits():
-        return int(3 * webapp.config['NEW_READING_RATE'] * webapp.config['DEFAULT_RETURN_DAYS'])
+    def getOfferCredits(item_id):
+        results = Search().getById([item_id])[0]
+        if 'custom_price' in results:
+            return int(3 * results['custom_price'])
+        else:
+            return int(3 * webapp.config['NEW_READING_RATE'] * webapp.config['DEFAULT_RETURN_DAYS'])
 
     @staticmethod
     def lendItem(lend_data):
@@ -72,7 +76,7 @@ class Lend():
             return {}
 
         Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend', 
-                lend_data['inventory_id'], Lend.getOfferCredits()) 
+                lend_data['inventory_id'], Lend.getOfferCredits(lend_data['item_id'])) 
        
         Lend.sendLendNotification(status_id=1,user=user)
         Utils.notifyAdmin(user.user_id, 'Lend')
@@ -204,9 +208,11 @@ class Lend():
         conn = mysql.connect()
         cursor = conn.cursor()
 
-        cursor.execute("""SELECT user_id, inventory_id FROM lenders WHERE lender_id= %s""",
+        cursor.execute("""SELECT l.user_id, l.inventory_id, iv.item_id FROM lenders l 
+                INNER JOIN inventory iv ON iv.inventory_id = l.inventory_id
+                WHERE lender_id= %s""",
         (lender_id,))
-        (user_id, inventory_id) = cursor.fetchone()
+        (user_id, inventory_id, item_id) = cursor.fetchone()
         if not user_id:
             return {'status':'false'}
 
@@ -218,7 +224,7 @@ class Lend():
         conn.commit()
 
         user = User(user_id) 
-        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, Lend.getOfferCredits())
+        Wallet.debitTransaction(user.wallet_id, user.user_id, 'cancellation', lender_id, Lend.getOfferCredits(item_id))
         return {'status':'true'}
  
     @staticmethod
