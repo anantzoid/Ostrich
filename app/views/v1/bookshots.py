@@ -20,7 +20,14 @@ def getBooks():
                     'delivery': None,
                     'link': book_data['amzn_link'],
                     'icon': 'http://png-5.findicons.com/files/icons/2779/simple_icons/4096/amazon_4096_black.png'
-                    }]
+                    },
+                   {
+                    'source': 'Flipkart',
+                    'price': book_data['fk_price'],
+                    'delivery': book_data['fk_delivery'],
+                    'link': book_data['fk_link'],
+                    'icon': 'https://image.freepik.com/free-icon/flipkart-logo_318-65196.jpg'
+                    }] 
                 }
         del(book_data['amzn_link'])
 
