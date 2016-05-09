@@ -13,7 +13,17 @@ def getBooks():
         book_data = Utils.fetchOneAssoc(cursor)
         book_data['read_by'] = book_data['read_by'].split(',')
         book_data['for_whom'] = [_.strip().capitalize() for _ in book_data['for_whom'].split(',')]
-        book_data['affiliate'] = {}
+        book_data['affiliate'] = {
+                'india': [{
+                    'source': 'Amazon',
+                    'price': None,
+                    'delivery': None,
+                    'link': book_data['amzn_link'],
+                    'icon': 'http://png-5.findicons.com/files/icons/2779/simple_icons/4096/amazon_4096_black.png'
+                    }]
+                }
+        del(book_data['amzn_link'])
+
         item_ids.append(book_data['item_id'])
         books.append(book_data)
     item_objects = Search().getById(item_ids)
