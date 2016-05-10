@@ -1,6 +1,8 @@
 from app import mysql
 from app.models import *
+from app.scripts import Indexer
 import json
+import slugify from slugify
 
 class Collection(Prototype):
     def __init__(self, collection_id):
@@ -91,9 +93,11 @@ class Collection(Prototype):
         conn = mysql.connect()
         cursor = conn.cursor()
         if not int(data['collection_id']):
+            slug_url = slugify(data['name'])[:100] 
             cursor.execute("""INSERT INTO collections (name, description, price,
-                return_days, category_id) VALUES (%s, %s, %s, %s, %s)""", 
-                (data['name'], data['description'], data['price'], data['return_days'], data['category_id']))
+                return_days, category_id, slug_url) VALUES (%s, %s, %s, %s, %s, %s)""", 
+                (data['name'], data['description'], data['price'], data['return_days'], 
+                    data['category_id'], slug_url))
             conn.commit()
             collection_id = cursor.lastrowid
         else:
@@ -150,6 +154,7 @@ class Collection(Prototype):
             (tuple([collection_id]) + tuple(item_ids)))
         conn.commit()
 
+        Indexer().indexCollections(query_condition='c.collection_id='+collection_id)
         #NOTE for start session cals
         if collection_id in [4, 5]:
             Notifications().startDataUpdate() 
