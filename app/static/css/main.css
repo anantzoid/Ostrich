@@ -22,6 +22,7 @@ html, body {
   text-transform: uppercase;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.7);
+  padding-top: 27px;
 }
 .navbar-brand-name:hover, 
 .navbar-default .nav > li > a:focus,
@@ -47,6 +48,7 @@ html, body {
 #userProfile img {
     border-radius: 50px;
     width: 30px;
+    margin-top: -7px;
 }
 @media (min-width: 768px) {
 
@@ -167,6 +169,8 @@ header .header-content .header-content-inner p {
     right: 3px;
     font-size: 20px;
     color: #9a9a9a;
+    pointer-events: auto;
+    cursor: pointer;
 }
 
 /*------------ SearchBar Ends ---------------*/
@@ -208,7 +212,7 @@ header .header-content .header-content-inner p {
     display: inline-block;
     margin-right: 10px;
     */
-    background-image: url('https://placeholdit.imgix.net/~text?w=200&h=200');
+    background-image: url('../img/tmp/collection_blur.png');
     width: 200px;
     height: 200px !important;
     overflow: hidden;
@@ -216,13 +220,33 @@ header .header-content .header-content-inner p {
     display: inline-block;
     margin: 0px 20px;
     border-radius: 4px;
+    text-align: center;
+    word-wrap: break-word;
+    white-space: normal;
+    position: relative;
+
+    text-transform: uppercase;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 600;
 }
 .collection-span {
     text-align: center;
     position: relative;
     display: inline-block;
     min-width: 145px;
+
+    /* NOTE Make do. Pleaes change */
+    width: 225px;
+    height: 100px;
+    padding: 20px;
+    position: absolute;
+    top: 58%;
+    left: 83%;
+    margin: -70px 0 0 -170px;
+
 }
+
 .collection-img {
     width: auto;
     height: auto;

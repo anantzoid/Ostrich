@@ -13,7 +13,7 @@ const Navbar = React.createClass({
         <nav className="navbar navbar-default">
         <div className="container-fluid">
             <div className="navbar-header">
-               <a className="navbar-brand page-scroll" href="#page-top">
+               <a className="navbar-brand page-scroll" href="/">
                     <img className="navbar-logo pull-left" src="/static/img/logo.png" />
                     <div className="pull-left navbar-brand-name">Ostrich</div>
                 </a>

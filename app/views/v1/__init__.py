@@ -6,3 +6,4 @@ from admin import *
 from review import *
 from slack import *
 from website import *
+from bookshots import *

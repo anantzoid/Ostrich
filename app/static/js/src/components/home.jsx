@@ -34,11 +34,11 @@ const Homepage = React.createClass({
     render() {
         let collections = this.props.collections.map((panel) => {
             return (
-                <div className="collection-li" key={panel.collection_id}><span className="collections-span">
-                    <a>
+                <a href={panel.slug_url}>
+                    <div className="collection-li" key={panel.collection_id}><span className="collection-span">
                         {panel.name}
-                    </a>
-                </span></div>
+                    </span></div>
+                </a>
                 );
         });
        return (

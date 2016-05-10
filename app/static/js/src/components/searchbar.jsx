@@ -12,7 +12,7 @@ const SearchBar = React.createClass({
                 <form onSubmit={this._onClick}>
                     <div className="form-group has-feedback">
                         <input className="search-input form-control" type="text" placeholder="What do you want to read today?" value={this.props.query} />
-                        <i className="glyphicon glyphicon-search form-control-feedback"></i>
+                        <i className="glyphicon glyphicon-search form-control-feedback" onClick={this._onClick}></i>
                     </div>
                 </form>
             </div>);
