@@ -6,10 +6,17 @@ html, body {
 }
 
 /*------------ NavBar Starts ---------------*/
-.navbar-default {
+#home .navbar-default {
     background-color: transparent;
+}
+
+.navbar-default {
+    background-color: #9a9a9a;
+    height: 75px;
+    border-radius: 0px;
     border: none;
 }
+
 .navbar-brand-name, 
 .navbar-default .nav > li > a {
   text-transform: uppercase;
@@ -252,11 +259,6 @@ header .header-content .header-content-inner p {
 }
 
 /*------------ Catalog Starts ---------------*/
-#catalog .navbar-default {
-    background-color: #9a9a9a;
-    height: 75px;
-    border-radius: 0px;
-}
 #catalog .search-elements {
     margin-top: 15px;
     margin-left: 60px;
@@ -285,6 +287,23 @@ header .header-content .header-content-inner p {
     margin: 5px 0px;
 }
 /*------------ Catalog Ends ---------------*/
+/*------------ ItemPage Starts ---------------*/
+.itempage-section {
+    min-height: 500px;
+}
+.item-container {
+    border-right: 1px solid #f4f4f4;
+}
+.img-container img {
+    width: 100%;
+}
+.itemmeta-container > div {
+    display: inline-block;
+    margin: 10px;
+    padding: 0px 10px;
+}
+
+/*------------ ItemPage Ends ---------------*/
 
 .footer {
     background-color: #f4f4f4;

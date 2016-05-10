@@ -120,10 +120,7 @@ class Indexer():
                 item['in_collections'].append(c_name[1])
                 c_ids.append(c_name[0])
 
-        item_custom_props = Item.getCustomProperties([item])
-        for prop in item_custom_props.keys():
-            item['custom_'+prop] = item_custom_props[prop] 
-        
+        item.update(Item.getCustomProperties([item]))
         if custom_keys:
             for key in custom_keys.keys():
                 item[key] = custom_keys[key]

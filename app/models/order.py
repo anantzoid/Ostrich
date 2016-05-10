@@ -144,8 +144,8 @@ class Order():
         order_data['delivery_date'] = Utils.getParam(order_data, 'delivery_date', default = order_data['order_placed'])
 
         custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
-        order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
-        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'])
+        order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['custom_return_days'])) 
+        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['custom_price'])
 
         #check order validity
         # TODO check if item exists
@@ -443,7 +443,7 @@ class Order():
             conn.commit()
 
         elif status_id == 4:
-            item_return_days = Item.getCustomProperties(order_info['items'], order_info['collection'] if order_info['from_collection'] else None)['return_days']
+            item_return_days = Item.getCustomProperties(order_info['items'], order_info['collection'] if order_info['from_collection'] else None)['custom_return_days']
             new_order_return = Utils.getDefaultReturnTimestamp(current_ts, item_return_days)
             update_cursor.execute("""UPDATE orders SET delivery_date = %s, 
                     order_return = %s WHERE order_id = %s""",

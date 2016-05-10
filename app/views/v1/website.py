@@ -18,18 +18,14 @@ def path(js_file):
 @webapp.route('/')
 @user_session
 def homepage(props):
-    component = 'home.jsx'
+    store = {'component': 'home.jsx'}
     collections = Collection.getHomepageCollections() 
-    
     props.update({
         'collections': collections,
         'page': 'home'
         })
-    store = {
-        'component': component,  
-        'props': json.dumps(props)
-    }
-    rendered = render_component(path(component), props=props)
+    store['props'] = json.dumps(props)
+    rendered = render_component(path(store['component']), props=props)
     return render_template('index.html', 
             rendered=rendered, 
             title='Home', 
@@ -38,11 +34,10 @@ def homepage(props):
 @webapp.route('/books')
 @user_session
 def catalog(props):
-    component = 'catalog.jsx'
+    store = {'component': 'catalog.jsx'}
     query = Utils.getParam(request.args, 'q', default='')
     search_type = Utils.getParam(request.args, 'type', default='free')
    
-    # TODO use decorator to access this
     results, catalog = [], []
     if query:
         results = Search(query).basicSearch()
@@ -50,7 +45,7 @@ def catalog(props):
             results['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
             results['items'][i]['item_url'] = Item.getItemPageUrl(item)
     else:
-        catalog = Search.fetchWebCatalog()
+        catalog = {} #Search.fetchWebCatalog()
     props.update({
             'search_results': results,
             'catalog': catalog,
@@ -58,16 +53,32 @@ def catalog(props):
             'query': query,
             'page': 'catalog'
             })
-    store = {
-            'component': component,
-            'props': json.dumps(props)
-            }
-    rendered = render_component(path(component), props=props)
+    store['props'] =json.dumps(props)
+    rendered = render_component(path(store['component']), props=props)
     return render_template('catalog.html',
             rendered=rendered,
             title='Catalog',
             store=store)
-    
+   
+@webapp.route('/book/rent/<int:item_id>')
+@webapp.route('/book/rent/<int:item_id>-<slug>')
+@user_session
+def itemPage(**kwargs):
+    store = {'component': 'item.jsx'}
+    item_data = Item(kwargs['item_id']).getObj()
+    item_data['img_small'] = webapp.config['S3_HOST'] + item_data['img_small'] 
+    item_data.update(Item.getCustomProperties([item_data]))
+    props = kwargs['props']
+    props.update({
+        'item_data': item_data 
+        })
+    store['props'] = json.dumps(props)
+    rendered = render_component(path(store['component']), props=props)
+    return render_template('item.html',
+            rendered=rendered,
+            title=item_data['item_name'],
+            store=store)
+
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
     auth_code = Utils.getParam(request.form, 'data', '')

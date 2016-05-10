@@ -71,7 +71,7 @@ class Item(Prototype):
 
         if collection:
             if collection['price']:
-                collection_custom_data = {'price': collection['price'], 'return_days': collection['return_days'] if collection['return_days'] else default_return_days}
+                collection_custom_data = {'custom_price': collection['price'], 'custom_return_days': collection['return_days'] if collection['return_days'] else default_return_days}
                 return collection_custom_data
 
         charges, days = [], []
@@ -95,7 +95,7 @@ class Item(Prototype):
                 else:
                     charges.append(45)
                 days.append(default_return_days)
-        return {'price': sum(charges), 'return_days': max(days)}
+        return {'custom_price': sum(charges), 'custom_return_days': max(days)}
 
     @staticmethod
     def getExtendRentalChargesSlab(order_data):

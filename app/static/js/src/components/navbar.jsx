@@ -1,23 +1,12 @@
 import React from 'react';
 import SearchBar from './searchbar';
+import gAuth from '../google_auth.js'; 
 
 const Navbar = React.createClass({
     startAuth() {
-        auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(this.signInCallback);
-    },
-    signInCallback(authResult) {
-        if(authResult['code']) {
-            $.ajax({
-                type: 'POST',
-                url: '/googlesignin',
-                data: {'data': authResult['code']},
-                success: function(response) {
-                    $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
-                }
-            });
-        } else {
-            alert('There was a login error');
-        }
+        gAuth().then(function(response) {
+            $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
+        });
     },
     render() {
         return(

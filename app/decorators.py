@@ -11,10 +11,10 @@ def async(func):
 
 def user_session(func):
     @wraps(func)
-    def wrapper():
+    def wrapper(**kwargs):
         user_data = session.get('_user', None)
-        props = {'user': user_data}
-        return func(props)
+        kwargs['props'] = {'user': user_data}
+        return func(**kwargs)
     return wrapper
 
 
