@@ -14,6 +14,7 @@ from boto.s3.key import Key
 from pymongo import MongoClient
 from bson import ObjectId
 from datetime import datetime
+from slugify import slugify
 
 class Admin():
     @staticmethod
@@ -281,10 +282,11 @@ class Admin():
                 if data['amazon']['amzn_summary'][key]:
                     summary = data['amazon']['amzn_summary'][key]
                     break
+        slug_url = slugify(data['amazon']['title'])[:100]
 
         cursor.execute("""INSERT INTO items (item_name, price, author, ratings,
-        num_ratings, num_reviews, language, asin, goodreads_id, summary) VALUES
-        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
+        num_ratings, num_reviews, language, asin, goodreads_id, summary, slug_url) VALUES
+        (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)""",
         (data['amazon']['title'],
         price,
         author,
@@ -294,7 +296,8 @@ class Admin():
         data['goodreads']['language'],
         data['amazon']['amazon_id'],
         data['goodreads']['gr_id'],
-        summary
+        summary,
+        slug_url
         ))
         conn.commit()
         item_id = cursor.lastrowid
