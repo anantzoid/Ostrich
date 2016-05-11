@@ -16,7 +16,10 @@ Generic helpers
 class Utils():
     @staticmethod
     def getAdmins():
-        return [1,5,6,8,9,27,28,0]
+        if webapp.config['APP_ENV'] == 'dev':
+            return [93]
+        else:
+            return [1,5,6,8,9,27,28,0]
 
     @staticmethod
     def fetchOneAssoc(cursor):

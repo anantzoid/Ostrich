@@ -177,8 +177,12 @@ class Search():
             cursor = mysql.connect().cursor()
             cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
             for i in range(cursor.rowcount):
-                categories.append(Utils.fetchOneAssoc(cursor))
-            cache.set(cache_key, categories, timeout=10000)
+                category = Utils.fetchOneAssoc(cursor)
+                url = webapp.config['HOST']  + '/books/genre/' + str(category['category_id'])
+                if category['slug_url']: 
+                    category['slug_url'] = url + '-' + category['slug_url']
+                categories.append(category)
+            cache.set(cache_key, categories)
         return categories
 
     @async

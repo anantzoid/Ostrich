@@ -4,7 +4,9 @@ html, body {
     min-height: 100%;
     width: 100%;
 }
-
+a:hover {
+    text-decoration: none;
+}
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default {
     background-color: transparent;
@@ -316,6 +318,18 @@ header .header-content .header-content-inner p {
 }
 .catalog-book-info {
     min-height: 70px;
+}
+
+.catalog-sidebar {
+    margin-bottom: 30px;
+}
+.catalog-sidebar > ul {
+    padding-left: 10px;
+}
+.catalog-sidebar-title {
+    color: #9a9a9a;
+    font-size: 16px;
+    letter-spacing: 1.2px;
 }
 .catalog-sidebar-item {
     display: inherit;
