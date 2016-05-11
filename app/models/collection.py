@@ -2,7 +2,7 @@ from app import mysql
 from app.models import *
 from app.scripts import Indexer
 import json
-import slugify from slugify
+from slugify import slugify
 
 class Collection(Prototype):
     def __init__(self, collection_id):
