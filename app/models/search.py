@@ -178,7 +178,7 @@ class Search():
             cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
             for i in range(cursor.rowcount):
                 category = Utils.fetchOneAssoc(cursor)
-                url = webapp.config['HOST']  + '/books/genre/' + str(category['category_id'])
+                url = webapp.config['HOST']  + '/books/category/' + str(category['category_id'])
                 if category['slug_url']: 
                     category['slug_url'] = url + '-' + category['slug_url']
                 categories.append(category)

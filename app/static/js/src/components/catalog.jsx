@@ -40,15 +40,18 @@ const Catalog = React.createClass({
                                     <ul>{categories}</ul>
                                 </div>  
                             </div>
-                            <div className="col-lg-9">
-                                {this.props.catalog.length ?
-                                    null
-                                    :
+                            {this.props.catalog.length ?
+                                null
+                                :
+                                <div className="col-lg-9">
+                                    <div className="search-result-title">
+                                        Showing results for: <span>{this.props.query}</span>
+                                    </div>
                                     <ul>
                                         {results}
                                     </ul>
-                                }
-                            </div>
+                                </div>
+                            }
                         </div>
 
                          

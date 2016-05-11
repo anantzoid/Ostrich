@@ -32,20 +32,29 @@ def homepage(props):
             store=store)
 
 @webapp.route('/books')
+@webapp.route('/books/category/<int:category_id>')
+@webapp.route('/books/category/<int:category_id>-<slug>')
+@webapp.route('/books/collection/<int:collection_id>')
+@webapp.route('/books/collection/<int:collection_id>-<slug>')
 @user_session
-def catalog(props):
+def catalog(**kwargs):
     store = {'component': 'catalog.jsx'}
     query = Utils.getParam(request.args, 'q', default='')
     search_type = Utils.getParam(request.args, 'type', default='free')
    
     results, catalog = [], []
     if query:
-        results = Search(query).basicSearch()
-        for i, item in enumerate(results['items']):
-            results['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
-            results['items'][i]['item_url'] = Item.getItemPageUrl(item)
+        results = WebUtils.fetchSearchResults(query, search_type)  
+    elif 'category_id' in kwargs:
+        query = Item.fetchCategoryById(kwargs['category_id'])['category_name']
+        results = WebUtils.fetchSearchResults(query, 'category')  
+    elif 'collection_id' in kwargs:
+        collection = Collection(kwargs['collection_id'])
+        query = collection.name
+        results = WebUtils.fetchSearchResults(query, 'collection')   
     else:
         catalog = {} #Search.fetchWebCatalog()
+    props = kwargs['props']
     props.update({
             'search_results': results,
             'catalog': catalog,

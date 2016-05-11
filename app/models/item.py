@@ -67,6 +67,18 @@ class Item(Prototype):
         return True
 
     @staticmethod
+    def fetchCategoryById(category_id):
+        from app import cache
+        cache_key = 'category_'+str(category_id)
+        category = cache.get(cache_key)
+        if not category:
+            cursor = mysql.connect().cursor()
+            cursor.execute("SELECT * FROM categories WHERE category_id = %s", (category_id,))
+            category = Utils.fetchOneAssoc(cursor)
+            cache.set(cache_key, category)
+        return category
+
+    @staticmethod
     def getCustomProperties(item_ids, collection=None):
         default_return_days = webapp.config['DEFAULT_RETURN_DAYS']
 
@@ -134,7 +146,11 @@ class Item(Prototype):
     @staticmethod
     def getItemPageUrl(item):
         item_url = webapp.config['HOST']  + '/book/rent/' + str(item['item_id'])
-        if item['slug_url']:
-            item_url += '-' + item['slug_url']
+        # NOTE remove this later. Only for Test environment becuase we're poor
+        try:
+            if item['slug_url']:
+                item_url += '-' + item['slug_url']
+        except:
+            pass
         return item_url
             

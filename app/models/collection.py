@@ -7,23 +7,28 @@ class Collection(Prototype):
         self.getData(collection_id)
     
     def getData(self, collection_id):
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT c.*, 
-            (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
-            where ci.collection_id = c.collection_id) as item_ids,
-            (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
-            where cm.collection_id = c.collection_id) as metadata
-            FROM collections c WHERE c.collection_id = %s""", (collection_id,))
-        self.data = Utils.fetchOneAssoc(cursor)
-
-        if self.data['metadata']:
-            collections_metadata_raw = self.data['metadata']
-            self.data['metadata'] = {}
-            for props in collections_metadata_raw.split('&'):
-                props_formatted = props.split(':')
-                self.data['metadata'][props_formatted[0]] = props_formatted[1]
+        from app import cache
+        cache_key = 'collection_'+str(collection_id)
+        self.data = cache.get(cache_key)
         if not self.data:
-            self.data = {}
+            cursor = mysql.connect().cursor()
+            cursor.execute("""SELECT c.*, 
+                (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
+                where ci.collection_id = c.collection_id) as item_ids,
+                (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
+                where cm.collection_id = c.collection_id) as metadata
+                FROM collections c WHERE c.collection_id = %s""", (collection_id,))
+            self.data = Utils.fetchOneAssoc(cursor)
+
+            if self.data['metadata']:
+                collections_metadata_raw = self.data['metadata']
+                self.data['metadata'] = {}
+                for props in collections_metadata_raw.split('&'):
+                    props_formatted = props.split(':')
+                    self.data['metadata'][props_formatted[0]] = props_formatted[1]
+            if not self.data:
+                self.data = {}
+            cache.set(cache_key, self.data)
 
     def getExpandedObj(self):
         collection_object = self.getObj()
@@ -73,18 +78,6 @@ class Collection(Prototype):
         for i in range(num_rows):
             collections_data['collections_categories'].append(Utils.fetchOneAssoc(cursor))
         return collections_data
-
-    # NOTE not used anymore
-    @staticmethod
-    def getCollectionPropertiesByItemId(item_id):
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT c.price, c.return_days FROM collections c INNER JOIN 
-            collections_items ci ON ci.collection_id = c.collection_id
-            WHERE ci.item_id = %s""", (item_id,))
-        rental_data = cursor.fetchone()
-        if rental_data:
-            rental_data = {'price': int(rental_data[0]), 'return_days': int(rental_data[1])} 
-        return rental_data
 
     @staticmethod
     def saveCollectionData(data, collection_item_ids=''):

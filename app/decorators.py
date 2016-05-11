@@ -1,6 +1,7 @@
 from threading import Thread
 from functools import wraps
 from flask import session
+from app import cache
 
 def async(func):
     @wraps(func)
@@ -17,5 +18,4 @@ def user_session(func):
         return func(**kwargs)
     return wrapper
 
-
-
+         
