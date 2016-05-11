@@ -22,7 +22,6 @@ html, body {
   text-transform: uppercase;
   font-weight: 700;
   color: rgba(255, 255, 255, 0.7);
-  padding-top: 27px;
 }
 .navbar-brand-name:hover, 
 .navbar-default .nav > li > a:focus,
@@ -35,6 +34,7 @@ html, body {
 }
 .navbar-default .nav > li > a {
   font-size: 13px;
+  padding-top: 27px;
 } 
 
 .navbar-logo,
@@ -230,6 +230,15 @@ header .header-content .header-content-inner p {
     font-size: 20px;
     font-weight: 600;
 }
+
+@media (max-width: 800px) {
+    .collection-li {
+        width: 130px;
+        height: 130px !important;
+        margin: 0 5px;
+    }
+}
+
 .collection-span {
     text-align: center;
     position: relative;
@@ -273,11 +282,13 @@ header .header-content .header-content-inner p {
 .slick-list.draggable{
     margin: 0 10px;
 }
-.howto-section{
+.howto-section,
+.apps-section {
     margin-top: 50px;
     margin-bottom: 70px;
 }
-.howto-heading {
+.howto-heading,
+.apps-heading {
     margin-bottom: 50px;
     margin-top: 30px;
 }

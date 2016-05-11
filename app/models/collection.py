@@ -1,4 +1,4 @@
-from app import mysql
+from app import mysql, cache
 from app.models import *
 import json
 
@@ -180,15 +180,20 @@ class Collection(Prototype):
     @staticmethod
     def getHomepageCollections():
         # List of collections to be displayed on homepage
-        homepage_collection_ids = [1, 2, 3, 4, 5, 10, 19]
-        homepage_collections = []
-        for col_id in homepage_collection_ids:
-            col_obj = Collection(col_id).getObj()
-            if not col_obj['image']:
-                col_obj['image'] = '/static/img/book_placeholder.jpeg' 
+        cache_key = 'homepage_collections'
+        homepage_collections = cache.get(cache_key)
+        if not homepage_collections:
+            homepage_collection_ids = [1, 2, 3, 4, 5, 10, 19]
+            homepage_collections = []
+            for col_id in homepage_collection_ids:
+                col_obj = Collection(col_id).getObj()
 
-            col_obj['url'] = webapp.config['HOST'] + col_obj['slug_url'] 
-            col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
-            homepage_collections.append(col_obj)
+                url = webapp.config['HOST'] + '/books/collection/'+str(col_obj['collection_id']) 
+                if col_obj['slug_url']:
+                    col_obj['slug_url'] = url + '-' + col_obj['slug_url']
+                if col_obj['image']:
+                    col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
+                homepage_collections.append(col_obj)
+            cache.set(cache_key, homepage_collections, timeout=10000)
         return homepage_collections
 

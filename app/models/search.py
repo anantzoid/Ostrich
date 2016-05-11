@@ -1,5 +1,4 @@
-from app import mysql
-from app import webapp
+from app import mysql, webapp, cache
 from app.models import *
 from app.decorators import async
 from elasticsearch import Elasticsearch
@@ -168,14 +167,17 @@ class Search():
         categories = ['Fiction', 'Childrens', 'Biography', 'Fantasy', 'History', 'Romance', 'Classics', 'Inspirational']
         return categories
 
-    # TODO cache this
     @staticmethod
     def getAllSearchCategories():
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
-        categories = []
-        for i in range(cursor.rowcount):
-            categories.append(Utils.fetchOneAssoc(cursor))
+        cache_key = 'search_categories'
+        categories = cache.get(cache_key)
+        if not categories:
+            categories = []
+            cursor = mysql.connect().cursor()
+            cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
+            for i in range(cursor.rowcount):
+                categories.append(Utils.fetchOneAssoc(cursor))
+            cache.set(cache_key, categories, timeout=10000)
         return categories
 
     @async

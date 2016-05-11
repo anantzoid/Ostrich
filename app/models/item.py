@@ -6,6 +6,7 @@ class Item(Prototype):
         self.getData(item_id) 
 
     def getData(self, item_id):
+        #TODO cache this
         obj_cursor = mysql.connect().cursor()
         query = """SELECT i.*,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 

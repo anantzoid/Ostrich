@@ -3,9 +3,7 @@ const SearchBar = React.createClass({
     _onClick(event) {
         event.preventDefault();
         let query = $('.search-input').val();
-        if (query) {
-            window.location.href = window.location.origin+'/books?type=free&q='+query;
-        }
+        window.location.href = window.location.origin+'/books?type=free&q='+query;
     },
     render() {
         return(<div className="col-lg-6 search-elements">
