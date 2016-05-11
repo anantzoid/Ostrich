@@ -1,4 +1,4 @@
-from app import mysql, webapp, cache
+from app import mysql, webapp
 from app.models import *
 from app.decorators import async
 from elasticsearch import Elasticsearch
@@ -169,6 +169,7 @@ class Search():
 
     @staticmethod
     def getAllSearchCategories():
+        from app import cache
         cache_key = 'search_categories'
         categories = cache.get(cache_key)
         if not categories:

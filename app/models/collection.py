@@ -1,4 +1,4 @@
-from app import mysql, cache
+from app import mysql
 from app.models import *
 import json
 
@@ -180,6 +180,7 @@ class Collection(Prototype):
     @staticmethod
     def getHomepageCollections():
         # List of collections to be displayed on homepage
+        from app import cache
         cache_key = 'homepage_collections'
         homepage_collections = cache.get(cache_key)
         if not homepage_collections:
@@ -194,6 +195,6 @@ class Collection(Prototype):
                 if col_obj['image']:
                     col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
                 homepage_collections.append(col_obj)
-            cache.set(cache_key, homepage_collections, timeout=10000)
+            cache.set(cache_key, homepage_collections)
         return homepage_collections
 

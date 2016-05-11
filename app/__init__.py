@@ -20,19 +20,15 @@ mysql.init_app(webapp)
 mail = Mail(webapp)
 Session(webapp)
 
-# NOTE temp workaround as cache is low priority
 if webapp.config['APP_ENV'] == 'dev':
-    from werkzeug.contrib.cache import SimpleCache
-    cache = SimpleCache()
     webapp.config['HOST'] = 'http://localhost:5000'
 else:
-    from werkzeug.contrib.cache import MemcachedCache
-    cache = MemcachedCache(['127.0.0.1:11211'])
     webapp.config['HOST'] = 'http://52.32.104.299'
 
-import app.views
 import app.models
+import app.views
 
+cache = app.models.cache.Cache()
 '''
 settings.configure(
         RENDER=False,

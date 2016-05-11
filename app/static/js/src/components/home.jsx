@@ -108,7 +108,7 @@ const Homepage = React.createClass({
                                 <a target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' width="196" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
                             </div>
                             <div className="col-lg-4">
-                                <a href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img alt="Add to Slack" height="55" width="196" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+                                <a href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img alt="Add to Slack" height="55" width="196" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
                             </div>
                             <div className="col-lg-4">
                                 <span>Coming Soon:<br/> Facebook Messenger App</span>
