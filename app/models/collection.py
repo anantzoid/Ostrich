@@ -92,25 +92,27 @@ class Collection(Prototype):
     def saveCollectionData(data, collection_item_ids=''):
         conn = mysql.connect()
         cursor = conn.cursor()
+        slug_url = slugify(data['name'])[:100] 
         if not int(data['collection_id']):
-            slug_url = slugify(data['name'])[:100] 
             cursor.execute("""INSERT INTO collections (name, description, price,
-                return_days, category_id, slug_url) VALUES (%s, %s, %s, %s, %s, %s)""", 
+                return_days, partial_order, category_id, slug_url) VALUES (%s, %s, %s, %s, %s, %s, %s)""", 
                 (data['name'], data['description'], data['price'], data['return_days'], 
-                    data['category_id'], slug_url))
+                    data['partial_order'], data['category_id'], slug_url))
             conn.commit()
             collection_id = cursor.lastrowid
         else:
             collection_id = data['collection_id']
 
         cursor.execute("""UPDATE collections SET name = %s, description = %s,
-            price = %s, return_days = %s, category_id = %s, date_edited = CURRENT_TIMESTAMP
-            WHERE collection_id = %s""", (
+            price = %s, return_days = %s, category_id = %s, date_edited = CURRENT_TIMESTAMP,
+            partial_order = %s, slug_url = %s WHERE collection_id = %s""", (
                 data['name'],
                 data['description'],
                 data['price'],
                 data['return_days'],
                 data['category_id'],
+                data['partial_order'],
+                slug_url,
                 collection_id)) 
         conn.commit()
 
@@ -165,7 +167,7 @@ class Collection(Prototype):
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("""UPDATE collections SET active = 0, date_edited = CURRENT_TIMESTAMP
-            WHERE collection_id = %s""", (collection_id))
+            WHERE collection_id = %s""", (collection_id,))
         conn.commit()
         return True
            

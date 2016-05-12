@@ -119,6 +119,11 @@ def addCollectionCategory():
     category = Collection.addCategory(request.args)
     return jsonify(category)
 
+@webapp.route('/deleteCollection')
+def deleteCollection():
+    Collection.removeCollection(request.args.get('collection_id'))
+    return jsonify(status=True)
+
 @webapp.route('/getContent')
 def getContent():
     return jsonify(Search().getContentData())
