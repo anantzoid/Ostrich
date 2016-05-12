@@ -21,6 +21,8 @@ mail = Mail(webapp)
 if webapp.config['APP_ENV'] == 'dev':
     from werkzeug.contrib.cache import SimpleCache
     cache = SimpleCache()
+    from flask.ext.cors import CORS
+    CORS(webapp)
 else:
     from werkzeug.contrib.cache import MemcachedCache
     cache = MemcachedCache(['127.0.0.1:11211'])

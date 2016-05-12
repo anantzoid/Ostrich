@@ -521,3 +521,58 @@ class Admin():
             Notifications(address[2]).startDataUpdate()
         return True
 
+    @staticmethod
+    def updateBookShotsData(rows):
+        ####### Rows #########
+        # Book id (optional)
+        # Book Title
+        # Genre 1
+        # Genre 2
+        # Genre 3
+        # meta_description
+        # for_whom
+        # read_by
+        # num_readers
+        # trivia
+        # amzn_link
+        # amzn_delivery
+        # amzn_price
+        # fk_link
+        # fk_delivery
+        # fk_price
+        ###########
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        for row in rows:
+            try:
+                if not row[0] or (row[0] and not row[0].isdigit()):
+                    cursor.execute("SELECT item_id FROM items WHERE item_name = %s", (row[1],))
+                    row[0] = cursor.fetchone()[0]
+                del(row[1])
+                del(row[7])
+                cursor.execute("""INSERT INTO bs_items (item_id, genre1, genre2, genre3,
+                    meta_description, for_whom, read_by, trivia, amzn_link, 
+                    amzn_delivery, amzn_price, fk_link, fk_delivery, fk_price) VALUES
+                    (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE
+                    genre1 = %s,
+                    genre2 = %s,
+                    genre3 = %s,
+                    meta_description = %s,
+                    for_whom = %s,
+                    read_by = %s,
+                    trivia = %s,
+                    amzn_link = %s,
+                    amzn_delivery = %s,
+                    amzn_price = %s,
+                    fk_link = %s,
+                    fk_delivery = %s,
+                    fk_price = %s""", tuple(row + row[1:]))
+                conn.commit() 
+            except e:
+                print str(e)
+
+        return True
+        #cursor.execute("SELECT * FROM bs_items")
+        #rows = [list(row) for row in cursor.fetchall()]
+        #return rows 

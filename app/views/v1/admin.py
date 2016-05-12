@@ -1,7 +1,9 @@
 from app import webapp
 from app.models import *
-from flask import request
+from flask import request, make_response
 from flask.ext.jsonpify import jsonify
+import csv
+import StringIO
 
 @webapp.route('/push', methods=['POST'])
 def pushNotification():
@@ -173,3 +175,24 @@ def orderComment():
         comment_data[key] = request.args[key]
     Admin.updateOrderComment(comment_data)
     return jsonify(status=True)
+
+
+@webapp.route('/uploadBookshotsData', methods=['POST'])
+def upload():
+    uploaded_file = request.files['0']
+    reader = [row for row in csv.reader(uploaded_file.read().splitlines())]
+    rows = [row for row in reader[1:] if ''.join(row)]
+    rows = Admin.updateBookShotsData(rows)
+
+    '''
+    si = StringIO.StringIO()
+    writer = csv.writer(si)
+    writer.writerows(rows)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=bs_items.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+    '''
+    return jsonify(status=True)
+    
+    
