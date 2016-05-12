@@ -8,8 +8,8 @@ const Catalog = React.createClass({
         let categories = this.props.categories.map((category) => {
             let key = 'category-'+category.category_id;
             return(
-                <li className="catalog-sidebar-item" key={key}>
-                    <a href={category.slug_url}>{category.category_name}</a>    
+                <li key={key}>
+                    <a className="catalog-sidebar-item" href={category.slug_url}>{category.category_name}</a>    
                 </li>
                 );
         });

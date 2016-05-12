@@ -4,6 +4,9 @@ html, body {
     min-height: 100%;
     width: 100%;
 }
+ul {
+    list-style-type: none;
+}
 a:hover {
     text-decoration: none;
 }
@@ -317,23 +320,29 @@ header .header-content .header-content-inner p {
     vertical-align: middle;
 }
 .catalog-book-info {
-    min-height: 70px;
+    height: 70px;
 }
 
 .catalog-sidebar {
     margin-bottom: 30px;
 }
 .catalog-sidebar > ul {
-    padding-left: 10px;
+    padding-left: 0px;
 }
 .catalog-sidebar-title {
-    color: #9a9a9a;
-    font-size: 16px;
-    letter-spacing: 1.2px;
+    color: #2d2d2d;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 .catalog-sidebar-item {
-    display: inherit;
     margin: 5px 0px;
+    color: #2d2d2d;
+    display: block;
+    padding: 8px 0 8px 15px;;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
 }
 /*------------ Catalog Ends ---------------*/
 /*------------ ItemPage Starts ---------------*/
