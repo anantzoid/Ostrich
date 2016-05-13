@@ -30,17 +30,19 @@ class User(Prototype):
         if not self.data: 
             self.data = {}
         else:
+            # TODO shift this to getAddressInfo
             self.data['address'] = []
             obj_cursor.execute("SELECT * FROM user_addresses WHERE \
                     user_id = %d" % (self.user_id))
             num_address = obj_cursor.rowcount
             for i in range(num_address):
-                self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
+                address_data = Utils.fetchOneAssoc(obj_cursor)
+                address_data.update(Utils.getDeliveryCharge(address_data['distance']))
+                self.data['address'].append(address_data)
    
 
     @staticmethod
     def createUser(user_data):
-       
         conn = mysql.connect()
         #TODO place order type validation
         username = user_data['username'] if 'username' in user_data else ''
@@ -122,21 +124,25 @@ class User(Prototype):
             landmark = Utils.getParam(address_obj, 'landmark')
             is_valid = Utils.getParam(address_obj, 'is_valid')
             delivery_message = Utils.getParam(address_obj, 'delivery_message')
-            
+            distance = Utils.calculateDistance(lat, lng)
+
             conn = mysql.connect()
             insert_add_cursor = conn.cursor()
-
+            print "=====", distance
+            print mode
+            # TODO remove mode and use ON DUPLICATE KEY UPDATE 
             if mode == 'insert':
+                print "heredfdf"
                 insert_add_cursor.execute("""INSERT INTO user_addresses 
                 (user_id, address, description, locality, landmark, latitude, longitude,
-                is_valid, delivery_message) 
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)""",
-                (self.user_id, address, description, locality, landmark, lat, lng, is_valid, delivery_message))
+                is_valid, delivery_message, distance) 
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)""",
+                (self.user_id, address, description, locality, landmark, lat, lng, is_valid, delivery_message, distance))
             elif mode == 'edit' and address_id:
                 insert_add_cursor.execute("""UPDATE user_addresses SET address = %s,
                 description = %s, landmark = %s, latitude = %s, longitude = %s,
-                is_valid = %s, delivery_message = %s
-                WHERE address_id = %s""", (address, description, landmark, lat, lng, address_id, is_valid, delivery_message))
+                is_valid = %s, delivery_message = %s, distance = %s
+                WHERE address_id = %s""", (address, description, landmark, lat, lng, is_valid, delivery_message, distance, address_id))
             conn.commit()
         
             address_ids.append(int(insert_add_cursor.lastrowid))
@@ -180,8 +186,8 @@ class User(Prototype):
         address_cusor.execute("""SELECT * FROM user_addresses
                 WHERE address_id = %d""" %(address_id))
         address_obj = Utils.fetchOneAssoc(address_cusor)
+        address_obj.update(Utils.getDeliveryCharge(address_obj['distance']))
         return address_obj if address_obj else {}
-
 
     def validateUserAddress(self, address_obj):
         address_valid = False

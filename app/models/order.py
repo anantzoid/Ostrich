@@ -135,7 +135,9 @@ class Order():
             order_data['address']['address_id'] = int(order_data['address_id'])
         else:
             order_data['address'] = json.loads(order_data['address'])
-            
+        if 'delivery_charge' not in order_data['address']:
+            order_data['address'] = User.getAddressInfo(order_data['address']['address_id']) 
+
         order_data['payment_mode'] = Utils.getParam(order_data, 'payment_mode',
                 default = 'cash')
         order_data['order_placed'] = Utils.getCurrentTimestamp()
@@ -145,7 +147,7 @@ class Order():
 
         custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
-        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'])
+        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'] + order_data['address']['delivery_charge'])
 
         #check order validity
         # TODO check if item exists
