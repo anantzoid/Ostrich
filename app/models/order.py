@@ -147,7 +147,7 @@ class Order():
 
         custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
-        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'] + order_data['address']['delivery_charge'])
+        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'])# + order_data['address']['delivery_charge'])
 
         #check order validity
         # TODO check if item exists

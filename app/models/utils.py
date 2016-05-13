@@ -76,7 +76,7 @@ class Utils():
             return {'delivery_charge': 0}
 
         delivery_charge_slab = OrderedDict()
-        delivery_charge_slab['4'] = 10
+        delivery_charge_slab['4'] = 0
         delivery_charge_slab['6'] = 10
         delivery_charge_slab['8'] = 20
         delivery_charge_slab['10'] = 30
