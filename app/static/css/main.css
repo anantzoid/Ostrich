@@ -10,6 +10,9 @@ ul {
 a:hover {
     text-decoration: none;
 }
+.clear {
+    clear: both;
+}
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default {
     background-color: transparent;
@@ -302,6 +305,9 @@ header .header-content .header-content-inner p {
 #catalog .search-elements {
     margin-top: 15px;
     margin-left: 60px;
+}
+.catalog-element {
+    margin-bottom: 30px;
 }
 .catalog-book-container {
     padding-top: 10px;

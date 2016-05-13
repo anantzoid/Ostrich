@@ -1,4 +1,4 @@
-from app import mysql
+from app import mysql, webapp
 from app.models import *
 import json
 
@@ -171,7 +171,7 @@ class Collection(Prototype):
         Website Related functions
     '''
     @staticmethod
-    def getHomepageCollections():
+    def getHomepageCollections(items=False):
         # List of collections to be displayed on homepage
         from app import cache
         cache_key = 'homepage_collections'
@@ -180,9 +180,16 @@ class Collection(Prototype):
             homepage_collection_ids = [1, 2, 3, 4, 5, 10, 19]
             homepage_collections = []
             for col_id in homepage_collection_ids:
-                col_obj = Collection(col_id).getObj()
+                col_obj = Collection(col_id)
+                if items:
+                    col_obj = col_obj.getExpandedObj()
+                    for i, item in enumerate(col_obj['items']):
+                        col_obj['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
+                else:
+                    col_obj = col_obj.getObj()
 
-                url = webapp.config['HOST'] + '/books/collection/'+str(col_obj['collection_id']) 
+                url = webapp.config['HOST'] + '/books/collection/' + str(col_obj['collection_id']) 
+
                 if col_obj['slug_url']:
                     col_obj['slug_url'] = url + '-' + col_obj['slug_url']
                 if col_obj['image']:

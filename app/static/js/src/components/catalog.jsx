@@ -3,8 +3,24 @@ import Navbar from './navbar';
 import Footer from './footer';
 
 const Catalog = React.createClass({
+    _renderListElements(items) {
+        let item_list = null;
+        if (items.length) {
+            item_list = items.map((book) => {
+                let key = 'book-'+book.item_id;
+                return (
+                    <li className="catalog-book-container text-center" key={key}>
+                            <a href={book.item_url}>
+                                <img className="catalog-book-image" src={book.img_small} />
+                                <div className="catalog-book-info">{book.item_name}</div>
+                            </a>
+                        </li>
+                    );
+            }); 
+        }
+        return item_list;
+    },
     render() {
-
         let categories = this.props.categories.map((category) => {
             let key = 'category-'+category.category_id;
             return(
@@ -14,20 +30,24 @@ const Catalog = React.createClass({
                 );
         });
 
-        let results = [];
-        if(this.props.search_results.items.length) {
-            results = this.props.search_results.items.map((book) => {
-                let key = 'book-'+book.item_id;
-                return(
-                    <li className="catalog-book-container text-center" key={key}>
-                        <a href={book.item_url}>
-                            <img className="catalog-book-image" src={book.img_small} />
-                            <div className="catalog-book-info">{book.item_name}</div>
-                        </a>
-                    </li>
-                    );
+        let catalog = null;
+        if(this.props.catalog.length) {
+            catalog = this.props.catalog.map((list) => {
+            return(
+                    <div className="catalog-element">
+                        <h3>{list.name}</h3>
+                        <ul>{this._renderListElements(list.items)}</ul>
+                        <div className="clear"></div>
+                    </div>
+                  ); 
             });
         }
+
+        let results = null;
+        if(this.props.search_results.hasOwnProperty('items') && this.props.search_results.items.length) {
+            results = this._renderListElements(this.props.search_results.items);
+        }
+
         return(
             <div id="catalog">
                 <Navbar {...this.props} />
@@ -41,7 +61,9 @@ const Catalog = React.createClass({
                                 </div>  
                             </div>
                             {this.props.catalog.length ?
-                                null
+                                <div className="col-lg-9">
+                                    {catalog}
+                                </div>
                                 :
                                 <div className="col-lg-9">
                                     <div className="search-result-title">

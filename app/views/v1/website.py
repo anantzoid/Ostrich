@@ -53,7 +53,7 @@ def catalog(**kwargs):
         query = collection.name
         results = WebUtils.fetchSearchResults(query, 'collection')   
     else:
-        catalog = {} #Search.fetchWebCatalog()
+        catalog = WebUtils.fetchWebCatalog()
     props = kwargs['props']
     props.update({
             'search_results': results,

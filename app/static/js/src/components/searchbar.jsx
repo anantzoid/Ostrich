@@ -9,7 +9,7 @@ const SearchBar = React.createClass({
         return(<div className="col-lg-6 search-elements">
                 <form onSubmit={this._onClick}>
                     <div className="form-group has-feedback">
-                        <input className="search-input form-control" type="text" placeholder="What do you want to read today?" value={this.props.query} />
+                        <input type="text" className="search-input form-control" placeholder="What do you want to read today?" value={this.props.query} />
                         <i className="glyphicon glyphicon-search form-control-feedback" onClick={this._onClick}></i>
                     </div>
                 </form>
