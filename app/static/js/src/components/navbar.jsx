@@ -5,7 +5,7 @@ import gAuth from '../google_auth.js';
 const Navbar = React.createClass({
     startAuth() {
         gAuth().then(function(response) {
-            $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
+            console.log("User Logged in!");
         });
     },
     render() {

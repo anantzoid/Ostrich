@@ -11,14 +11,19 @@ class WebUtils():
             results = search.collectionsSearch()
         else: 
             results = search.basicSearch()
-
-        for i, item in enumerate(results['items']):
-            results['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
-            results['items'][i]['item_url'] = Item.getItemPageUrl(item)
+        results['items'] = WebUtils.extendItemWebProperties(results['items'])
         return results 
 
     @staticmethod
-    def fetchWebCatalog():
-        # NOTE For now
-        return Collection.getHomepageCollections(items=True)
+    def extendItemWebProperties(items):
+        for i, item in enumerate(items):
+            items[i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
+            items[i]['item_url'] = webapp.config['HOST']  + '/book/rent/' + str(item['item_id'])
+            # NOTE remove this later. Only for Test environment becuase we're poor
+            try:
+                if item['slug_url']:
+                    items[i]['item_url'] += '-' + item['slug_url']
+            except:
+                pass
+        return items
 

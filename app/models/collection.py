@@ -183,8 +183,7 @@ class Collection(Prototype):
                 col_obj = Collection(col_id)
                 if items:
                     col_obj = col_obj.getExpandedObj()
-                    for i, item in enumerate(col_obj['items']):
-                        col_obj['items'][i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
+                    col_obj['items'] = WebUtils.extendItemWebProperties(col_obj['items'])
                 else:
                     col_obj = col_obj.getObj()
 

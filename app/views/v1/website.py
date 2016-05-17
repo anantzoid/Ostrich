@@ -53,7 +53,7 @@ def catalog(**kwargs):
         query = collection.name
         results = WebUtils.fetchSearchResults(query, 'collection')   
     else:
-        catalog = WebUtils.fetchWebCatalog()
+        catalog = Collection.getHomepageCollections(items=True)
     props = kwargs['props']
     props.update({
             'search_results': results,
@@ -79,7 +79,8 @@ def itemPage(**kwargs):
     item_data.update(Item.getCustomProperties([item_data]))
     props = kwargs['props']
     props.update({
-        'item_data': item_data 
+        'item_data': item_data,
+        'page': 'product'
         })
     store['props'] = json.dumps(props)
     rendered = render_component(path(store['component']), props=props)

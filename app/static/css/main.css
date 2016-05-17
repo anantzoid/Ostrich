@@ -302,7 +302,8 @@ header .header-content .header-content-inner p {
 }
 
 /*------------ Catalog Starts ---------------*/
-#catalog .search-elements {
+#catalog .search-elements,
+#itempage .search-elements {
     margin-top: 15px;
     margin-left: 60px;
 }
@@ -366,7 +367,27 @@ header .header-content .header-content-inner p {
     margin: 10px;
     padding: 0px 10px;
 }
-
+.order-info-container,
+.order-confirm-container {
+    padding: 10px 20px;
+    background-color: #f4f4f4;
+    border: 1px solid #9a9a9a;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+.order-info-container > div {
+    margin: 10px 20px;
+}
+.payment-options {
+    margin: 5px 10px;
+}
+.payment-options > label {
+    margin-left: 10px;
+}
+.order-now {
+    width: 100%;
+    margin-top: 20px;
+}
 /*------------ ItemPage Ends ---------------*/
 
 .footer {

@@ -143,14 +143,3 @@ class Item(Prototype):
         conn.commit()
         Search(item_id).unindexItem() 
 
-    @staticmethod
-    def getItemPageUrl(item):
-        item_url = webapp.config['HOST']  + '/book/rent/' + str(item['item_id'])
-        # NOTE remove this later. Only for Test environment becuase we're poor
-        try:
-            if item['slug_url']:
-                item_url += '-' + item['slug_url']
-        except:
-            pass
-        return item_url
-            

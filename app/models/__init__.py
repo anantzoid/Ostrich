@@ -7,6 +7,7 @@ from mailer import *
 from notifications import *
 from review import *
 from search import *
+from webutils import *
 from collection import *
 from item import *
 from user import *
@@ -15,4 +16,3 @@ from lend import *
 from admin import *
 from crawler import *
 from cache import *
-from webutils import *

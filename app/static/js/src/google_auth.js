@@ -9,6 +9,7 @@ let gAuth = function(){
                     url: '/googlesignin',
                     data: {'data': authResult['code']},
                     success: function(response) {
+                        $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
                         resolve(response);
                     }
                 });

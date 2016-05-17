@@ -10,6 +10,10 @@ const Item = React.createClass({
         });
     },
     _placeOrder() {
+        let pay_option = $('input[name=payment-option]:checked').val();
+        if (typeof pay_option == "undefined") {
+            alert("Please select payment option");
+        }
         let order_data = {
         
         };
@@ -23,6 +27,13 @@ const Item = React.createClass({
         let categories = this.props.item_data.categories.map((genre) => {
             return <span>{genre}</span>;
         });
+
+        let addresses = null;
+        if (this.props.user) {
+            addresses = this.props.user.addresses.map((address) => {
+                  
+            });
+        }
 
         return(
             <div id="itempage">
@@ -64,7 +75,7 @@ const Item = React.createClass({
                                 </div>
                             </div>
                             <div className="col-lg-3">
-                                <div className="order-container">
+                                <div className="order-info-container">
                                     <div>
                                         M.R.P: ₹ {this.props.item_data.price}
                                     </div>
@@ -75,16 +86,27 @@ const Item = React.createClass({
                                         for: {this.props.item_data.custom_return_days} days 
                                     </div>
                                 </div>
-                                <div className="userinfo-container">
+                                <div className="order-confirm-container">
                                     {this.props.user ? 
                                         <div>
-                                            <span>Pay by:</span>
-                                            <input type="radio" name="payment-option" id="payment_cash" />
-                                            <label id="payment_cash">Cash</label>
-                                            <input type="radio" name="payment-option" id="payment_credits" />
-                                            <label id="payment_credits">Credits: ₹ {this.props.user.wallet_balance}</label>
+                                            <div>
+                                               Select Address: 
+                                            </div>
+                                            <select id="category_id" className="category-picker" multiple onChange={this._onChange}>
+                                                <option id="default" disabled="disabled" value="default">Select address</option>
+                                                {addresses}
+                                            </select>
+                                            <div>Payment Method:</div>
+                                            <div className="payment-options">
+                                                <input type="radio" name="payment-option" id="payment_cash" value="cash"/>
+                                                <label htmlFor="payment_cash">Cash</label>
+                                            </div>
+                                            <div className="payment-options">
+                                                <input type="radio" name="payment-option" id="payment_credits" value="credits"/>
+                                                <label htmlFor="payment_credits">Credits: ₹ {this.props.user.wallet_balance}</label>
+                                            </div>
 
-                                            <button onClick={this._placeOrder}>Order Now</button>
+                                            <button className="btn btn-success order-now" onClick={this._placeOrder}>Order Now</button>
                                         </div>
                                     : <a href="#" onClick={this.startAuth}>Sign in with Google</a> }
             
