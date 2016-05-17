@@ -323,7 +323,10 @@ class User(Prototype):
         cursor.execute("""INSERT INTO b2b_users (email, phone, book_id, organization, address) VALUES
             (%s, %s, %s, %s, %s)""", (user_data['email'], user_data['phone'], user_data['book_id'], user_data['org'], address))
         conn.commit()
-        Utils.notifyAdmin(-1, 'B2B User')
+        notif_message = 'B2B User'
+        if user_data['org']:
+            notif_message = org + ' user'
+        Utils.notifyAdmin(-1, notif_message)
         return True
 
     @staticmethod
