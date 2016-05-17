@@ -9,7 +9,15 @@ let gAuth = function(){
                     url: '/googlesignin',
                     data: {'data': authResult['code']},
                     success: function(response) {
-                        $(".auth-container").html('<a id="userProfile"><img src="'+response.data.picture_url+'"/></a>');
+                        window.renderApp($.extend(true, JSON.parse(store.props), response.data));
+                        /*
+                        var headerAuth = new CustomEvent('headerAuth', {'detail': response.data.user});
+                        window.dispatchEvent(headerAuth);
+
+                        var orderAuth = new CustomEvent('orderAuth', {'detail': response.data.user});
+                        window.dispatchEvent(orderAuth);
+                        */
+
                         resolve(response);
                     }
                 });

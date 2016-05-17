@@ -69,9 +69,8 @@ class User(Prototype):
 
             if user_exists_id and len(user_exists_id):
                 user_exists = User(int(user_exists_id[0]), 'user_id')
-                user_obj = user_exists.getObj()
-                user_obj['existed'] = "true"
-                return user_obj
+                user_exists.existed = "true"
+                return user_exists
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("""INSERT INTO users (username, password, name,
@@ -103,7 +102,7 @@ class User(Prototype):
         # Welcome Mail
         Mailer.welcomeMailer(user)
         user.removeFromUnregistered()
-        return user.getObj()
+        return user
 
 
     def addAddress(self, address, mode='insert'):

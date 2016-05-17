@@ -34,10 +34,9 @@ const Catalog = React.createClass({
         if(this.props.catalog.length) {
             catalog = this.props.catalog.map((list) => {
             return(
-                    <div className="catalog-element">
+                    <div className="catalog-element clearfix">
                         <h3>{list.name}</h3>
                         <ul>{this._renderListElements(list.items)}</ul>
-                        <div className="clear"></div>
                     </div>
                   ); 
             });

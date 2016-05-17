@@ -3,6 +3,17 @@ import SearchBar from './searchbar';
 import gAuth from '../google_auth.js'; 
 
 const Navbar = React.createClass({
+    /*
+    getInitialState() {
+        return {'user': this.props.user};
+    },
+    componentDidMount() {
+        window.addEventListener('headerAuth', this._postAuth);
+    }, 
+    _postAuth(event) {
+        this.setState({'user': event.detail})
+    },
+    */
     startAuth() {
         gAuth().then(function(response) {
             console.log("User Logged in!");

@@ -74,9 +74,18 @@ def catalog(**kwargs):
 @user_session
 def itemPage(**kwargs):
     store = {'component': 'item.jsx'}
-    item_data = Item(kwargs['item_id']).getObj()
+    item_data = Search().getById([kwargs['item_id']]) 
+    if item_data:
+        item_data = item_data[0]
+    else:
+        # redirect to 404
+        return '0'
+
+    # NOTE switchable: elasticsearch/DB
+    #item_data = Item(kwargs['item_id']).getObj()
+    #item_data.update(Item.getCustomProperties([item_data]))
+
     item_data['img_small'] = webapp.config['S3_HOST'] + item_data['img_small'] 
-    item_data.update(Item.getCustomProperties([item_data]))
     props = kwargs['props']
     props.update({
         'item_data': item_data,
@@ -110,9 +119,10 @@ def googlesignin():
         'picture': user_document['picture']
         }
     user = User.createUser(user_data)
-    session['_user'] = user
+    user.getOrderSlots()
+    session['_user'] = user.getObj()
     visible_user_data = {
-            'picture_url': user_document['picture']
+            'user': session['_user']
     }
     return jsonify(data=visible_user_data)
 

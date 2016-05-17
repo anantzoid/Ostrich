@@ -35,7 +35,7 @@ const SearchResults = React.createClass({
                         <div className="catalog-sidebar-title">Recent Searches</div>
                     </div>
                 </div>
-                <div className="col-lg-9">
+                <div className="col-lg-9 clearfix">
                     <ul>
                         {results}
                     </ul>

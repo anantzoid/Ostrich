@@ -76,6 +76,7 @@ def userSignup():
     user_data['app_version'] = int(request.headers.get('App-Version')) if 'App-Version' in request.headers else 0
 
     user = User.createUser(user_data)
+    user = user.getObj()
     if 'user_id' in user:
         return jsonify(user)
     else:

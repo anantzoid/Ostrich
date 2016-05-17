@@ -1,15 +1,26 @@
 import React from 'react';
 import Navbar from './navbar';
+import OrderModal from './orderModal';
 import Footer from './footer';
 import gAuth from '../google_auth.js'; 
 
 const Item = React.createClass({
-    startAuth() {
-        gAuth().then(function(response) {
-            //TODO Fetching user action box - add address, credits etc.
-        });
+    getInitialState() {
+        return {'show_order_modal': false};
     },
-    _placeOrder() {
+    /*
+    componentDidMount() {
+        window.addEventListener('orderAuth', this._postAuth);
+    },
+    _postAuth(event) {
+        this.setState({'user': event.detail})
+    },
+    */
+    startAuth() {
+        gAuth().then(function(response) {});
+    },
+    _toggleOrderModal() {
+        /*
         let pay_option = $('input[name=payment-option]:checked').val();
         if (typeof pay_option == "undefined") {
             alert("Please select payment option");
@@ -22,18 +33,14 @@ const Item = React.createClass({
             url: '/order',
             data: order_data
         });
+        */
+        this.setState({'show_order_modal': !this.state.show_order_modal});
     },
     render() {
+        console.log("render");
         let categories = this.props.item_data.categories.map((genre) => {
-            return <span>{genre}</span>;
+            return <span className="genre-tag"><a href="#">{genre}</a></span>;
         });
-
-        let addresses = null;
-        if (this.props.user) {
-            addresses = this.props.user.addresses.map((address) => {
-                  
-            });
-        }
 
         return(
             <div id="itempage">
@@ -50,7 +57,7 @@ const Item = React.createClass({
                                         <h2>{this.props.item_data.item_name}</h2>
                                         <h4>{this.props.item_data.author}</h4>
 
-                                        <div className="itemmeta-container">
+                                        <div className="itemmeta-container mt20">
                                             <div className="item-ratings">
                                                 Ratings: {this.props.item_data.ratings}
                                             </div>
@@ -62,13 +69,13 @@ const Item = React.createClass({
                                             </div>
                                         </div>
                                         { categories.length ? 
-                                            <div className="category-container">
+                                            <div className="category-container clearfix mt20">
                                                 Categories: {categories}
                                             </div>
                                         : null }
                                         { this.props.item_data.summary ?
-                                            <div className="summary">
-                                                {this.props.item_data.summary}
+                                            <div className="summary mt20">
+                                                Summary: {this.props.item_data.summary}
                                             </div>
                                         : null }
                                     </div>
@@ -85,8 +92,27 @@ const Item = React.createClass({
                                     <div>
                                         for: {this.props.item_data.custom_return_days} days 
                                     </div>
+                                    <div className="action-container">
+                                        { this.props.user ? 
+                                        <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Order Now</button>
+                                        : <a href="#" onClick={this.startAuth}>Sign in with Google</a> }
+                                    </div>
                                 </div>
-                                <div className="order-confirm-container">
+                                
+                            </div>
+                        </div>
+                   </div> 
+                   <OrderModal show={this.state.show_order_modal} user={this.props.user} hide={this._toggleOrderModal}/>
+                </section>
+                <Footer />
+            </div>
+            );
+    }
+});
+
+module.exports = Item;
+/*
+                            <div className="order-confirm-container">
                                     {this.props.user ? 
                                         <div>
                                             <div>
@@ -111,15 +137,4 @@ const Item = React.createClass({
                                     : <a href="#" onClick={this.startAuth}>Sign in with Google</a> }
             
                                 </div>
-                            </div>
-                        </div>
-                   </div> 
-                </section>
-                <Footer />
-            </div>
-            );
-    }
-});
-
-module.exports = Item;
-
+*/

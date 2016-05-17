@@ -7,11 +7,22 @@ html, body {
 ul {
     list-style-type: none;
 }
-a:hover {
+label {
+    font-weight: 500;
+}
+a:hover, a:focus {
     text-decoration: none;
 }
-.clear {
+.clearfix:after {
     clear: both;
+    content: ".";
+    display: block;
+    height: 0;
+    line-height: 0;
+    visibility: hidden;
+}
+.mt20 {
+    margin-top: 20px;
 }
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default {
@@ -364,9 +375,16 @@ header .header-content .header-content-inner p {
 }
 .itemmeta-container > div {
     display: inline-block;
-    margin: 10px;
-    padding: 0px 10px;
+    margin-right: 20px;
 }
+.genre-tag {
+    margin: 5px 2px;
+    background-color: #f4f4f4;
+    padding: 2px 5px;
+    border: 1px solid #9a9a9a;
+    border-radius: 3px;
+}
+
 .order-info-container,
 .order-confirm-container {
     padding: 10px 20px;
@@ -380,6 +398,8 @@ header .header-content .header-content-inner p {
 }
 .payment-options {
     margin: 5px 10px;
+    width: 45%;
+    float: left;
 }
 .payment-options > label {
     margin-left: 10px;
