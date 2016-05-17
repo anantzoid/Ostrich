@@ -77,14 +77,13 @@ class Utils():
 
         delivery_charge_slab = OrderedDict()
         delivery_charge_slab['4'] = 0
-        delivery_charge_slab['6'] = 10
-        delivery_charge_slab['8'] = 20
-        delivery_charge_slab['10'] = 30
-        delivery_charge_slab['50'] = 40
+        delivery_charge_slab['6'] = 20
+        delivery_charge_slab['10'] = 40
 
         for km in delivery_charge_slab.keys():
             if int(km) >= int(distance):
                 return {'delivery_charge': delivery_charge_slab[km]}
+        return {'delivery_charge': 0}
 
     @staticmethod
     def getCurrentTimestamp():

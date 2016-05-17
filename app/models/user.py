@@ -325,7 +325,7 @@ class User(Prototype):
         conn.commit()
         notif_message = 'B2B User'
         if user_data['org']:
-            notif_message = org + ' user'
+            notif_message = user_data['org'] + ' user'
         Utils.notifyAdmin(-1, notif_message)
         return True
 
