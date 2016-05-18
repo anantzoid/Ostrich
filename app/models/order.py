@@ -52,6 +52,7 @@ class Order():
             # Buy Book data: temporary
             order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items'] if _['price']])) 
             order_info['order_type'] = 64 if order_info['bought'] else 16
+            order_info['selling_percentage'] = 80
         return order_info
 
     @staticmethod
@@ -397,7 +398,8 @@ class Order():
     def purchaseItem(data):
         conn = mysql.connect()
         cursor = conn.cursor()
-        cursor.execute("""UPDATE orders SET bought = 1, charge = charge + %s 
+        cursor.execute("""UPDATE orders SET bought = 1, charge = charge + %s, 
+                bought_on = CURRENT_TIMESTAMP 
                 WHERE order_id = %s""", (int(data['price']), data['order_id']))
         conn.commit()
         return True
