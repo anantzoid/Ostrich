@@ -78,7 +78,7 @@ class Utils():
         delivery_charge_slab = OrderedDict()
         delivery_charge_slab['4'] = 0
         delivery_charge_slab['6'] = 20
-        delivery_charge_slab['10'] = 40
+        delivery_charge_slab['8'] = 40
 
         for km in delivery_charge_slab.keys():
             if int(km) >= int(distance):

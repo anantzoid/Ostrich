@@ -50,7 +50,7 @@ class Order():
                 order_info = Order.clubOrders(order_info, fetch_all)
             
             # Buy Book data: temporary
-            order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items']])) 
+            order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items'] if _['price']])) 
             order_info['order_type'] = 64 if order_info['bought'] else 16
         return order_info
 
