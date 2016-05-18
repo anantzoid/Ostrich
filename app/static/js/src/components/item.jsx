@@ -8,36 +8,13 @@ const Item = React.createClass({
     getInitialState() {
         return {'show_order_modal': false};
     },
-    /*
-    componentDidMount() {
-        window.addEventListener('orderAuth', this._postAuth);
-    },
-    _postAuth(event) {
-        this.setState({'user': event.detail})
-    },
-    */
     startAuth() {
         gAuth().then(function(response) {});
     },
     _toggleOrderModal() {
-        /*
-        let pay_option = $('input[name=payment-option]:checked').val();
-        if (typeof pay_option == "undefined") {
-            alert("Please select payment option");
-        }
-        let order_data = {
-        
-        };
-        $.ajax({
-            type: 'POST',
-            url: '/order',
-            data: order_data
-        });
-        */
         this.setState({'show_order_modal': !this.state.show_order_modal});
     },
     render() {
-        console.log("render");
         let categories = this.props.item_data.categories.map((genre) => {
             return <span className="genre-tag"><a href="#">{genre}</a></span>;
         });
@@ -102,7 +79,7 @@ const Item = React.createClass({
                             </div>
                         </div>
                    </div> 
-                   <OrderModal show={this.state.show_order_modal} user={this.props.user} hide={this._toggleOrderModal}/>
+                   <OrderModal show={this.state.show_order_modal} {...this.props} hide={this._toggleOrderModal}/>
                 </section>
                 <Footer />
             </div>

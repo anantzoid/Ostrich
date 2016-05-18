@@ -27,13 +27,12 @@
     </head>
     <body>
         {% block content %}Loading...{% endblock %}
-        {% block postscript %}
+        {% block postscript %}{% endblock %}
         <script>
             var store = {{ store | safe }}; 
         </script>
         <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
 
-        {% endblock %}
     </body>
 </html>
 

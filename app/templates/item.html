@@ -1,4 +1,11 @@
 {% extends "base.html" %}
 
 {% block title %} {{title}} {% endblock %}
+{% block headResources %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/css/bootstrap-select.min.css">
+{% endblock %}
+
 {% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
+{% block postscript %} 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.10.0/js/bootstrap-select.min.js"></script>
+{% endblock %}
