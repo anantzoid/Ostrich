@@ -270,9 +270,12 @@ class User(Prototype):
             if order_list[i]['parent_id']: 
                 order_list[i] = Order.clubOrders(order_list[i]) 
 
-        order_statuses = {"ordered":[], "reading":[], "previous":[]}
+        order_statuses = {"ordered":[], "reading":[], "previous":[], "bought":[]}
         for order in order_list:
-            if order['order_status'] in [1, 2, 3]:
+            # Bought books: temporary
+            if order['bought']:
+                order_statuses['bought'].append(order)
+            elif order['order_status'] in [1, 2, 3]:
                 order_statuses['ordered'].append(order)
             elif order['order_status'] == 4:
                 order_statuses['reading'].append(order)

@@ -48,7 +48,10 @@ class Order():
                 else:
                     fetch_all = False
                 order_info = Order.clubOrders(order_info, fetch_all)
-
+            
+            # Buy Book data: temporary
+            order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items']])) 
+            order_info['order_type'] = 64 if order_info['bought'] else 16
         return order_info
 
     @staticmethod
@@ -147,7 +150,9 @@ class Order():
 
         custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
-        order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['price'])# + order_data['address']['delivery_charge'])
+        order_data['order_amount'] = Utils.getParam(order_data, 'price', default=custom_data['price'])# + order_data['address']['delivery_charge'])
+        order_data['bought'] = 1 if Utils.getParam(order_data, 'buy', default='false') == 'true' else 0
+
 
         #check order validity
         # TODO check if item exists
@@ -170,8 +175,9 @@ class Order():
                 pickup_slot, 
                 payment_mode,
                 from_collection, 
-                charge) 
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                charge,
+                bought) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
@@ -181,7 +187,8 @@ class Order():
                     order_data['delivery_slot'], 
                     order_data['payment_mode'],
                     order_data['collection_id'],
-                    order_data['order_amount']))
+                    order_data['order_amount'],
+                    order_data['bought']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()
@@ -386,7 +393,15 @@ class Order():
 
         return order_info
 
-           
+    @staticmethod
+    def purchaseItem(data):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""UPDATE orders SET bought = 1, charge = charge + %s 
+                WHERE order_id = %s""", (int(data['price']), data['order_id']))
+        conn.commit()
+        return True
+
     @staticmethod    
     def getTimeSlot(slot_id=None, active=0):
         query_cond = " WHERE active = 1" if active else ""
@@ -657,6 +672,10 @@ class Order():
                 7: {
                     "Status": "Returned",
                     "Description": "Order has been retured to the inventory."
+                    },
+                8: {
+                    "Status": "Book Purchased",
+                    "Description": "Enjoy reading your book and don't forget to rate it."
                     }
                 }
         

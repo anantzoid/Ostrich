@@ -118,7 +118,13 @@ class Admin():
             order_info['picked_by'] = order_data[5]
             order_info['pickup_amount'] = order_data[6]
 
-            next_order_status = int(order_info['order_status'])+1
+            if order_info['bought']:
+                if int(order_info['order_status']) in [3,5]:
+                    next_order_status = 8
+                else:
+                    next_order_status = int(order_info['order_status'])+1  
+            else:
+                next_order_status = int(order_info['order_status'])+1  
             order_info['change_status'] = {
                     'status_id': next_order_status, 
                     'status': Order.getOrderStatusDetails(next_order_status)['Status']

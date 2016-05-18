@@ -32,6 +32,7 @@ class Lend():
         lend_data['pickup_slot'] = int(Utils.getParam(lend_data, 'pickup_slot',
                default = Utils.getDefaultTimeSlot()))
         lend_data['delivery_slot'] = lend_data['pickup_slot']
+        offer_credits = Utils.getParam(lend_data, 'price', default=Lend.getOfferCredits(lend_data['item_id']))
 
         # Item conditions is a list of {"name":"condition", "selected": "True/False"}
         item_conditions = Utils.getParam(lend_data, 'item_condition', default=None)
@@ -75,8 +76,9 @@ class Lend():
             Lend.rollbackLend(lend_data['inventory_id'])
             return {}
 
+        
         Wallet.creditTransaction(user.wallet_id, user.user_id, 'lend', 
-                lend_data['inventory_id'], Lend.getOfferCredits(lend_data['item_id'])) 
+                lend_data['inventory_id'], offer_credits) 
        
         Lend.sendLendNotification(status_id=1,user=user)
         Utils.notifyAdmin(user.user_id, 'Lend')
