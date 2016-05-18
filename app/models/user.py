@@ -214,18 +214,19 @@ class User(Prototype):
                         time_slots[selected_area['area_id']] = Order.getTimeSlotsForOrder(selected_area['hours'])
                     elif selected_area['day']:
                         dates = []
-                        prev_date = datetime.now(pytz.timezone('Asia/Calcutta'))
+                        prev_date = 0
                         while len(dates) <= 4:
-                            prev_date = prev_date + timedelta(days=selected_area['day'])
-                            dates.append(prev_date.strftime("%A"))
+                            prev_date = prev_date + selected_area['day']
+                            dates.append(Utils.fetchNextDayVerbose(prev_date))
                         
                         if selected_area['day'] == 1:
-                            dates[0] = "Tomorrow"
+                            dates[0] = Utils.fetchNextDayVerbose('Today')
 
                         time_slots[selected_area['area_id']] = []
                         for date in dates:
                             ts = Order.getTimeSlot(selected_area['slot'])
-                            ts['formatted'] = date+' '+Utils.cleanTimeSlot(ts)
+                            ts['formatted'] = date['day']+' '+Utils.cleanTimeSlot(ts)
+                            ts['delivery_date'] = date['date']
                             time_slots[selected_area['area_id']].append(ts)
 
                 self.address[i]['time_slot'] = time_slots[selected_area['area_id']]

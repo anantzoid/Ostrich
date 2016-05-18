@@ -1,50 +1,45 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
+import Select from 'react-select';
 
 const OrderModal = React.createClass({
     getInitialState() {
-        let state = {'default_address': {}};
+        let state = {default_address: {}};
         if (this.props.user) {
             state['user'] = this.props.user;
-            // TODO set defautlt_address
-            if (this.props.user.address.length) {
-                state['default_address'] = this.props.user.address[0];
-            }
         } else {
             state['user'] = {};
         }
         return state;
     },
     componentDidMount() {
-        /*
-        $(".address-selector").selectpicker({
-            width: 500
-        });
-        */
-        $(document).ready(function() {
-            $(".time-selector").selectpicker();
-        });
     },
     componentDidUpdate() {
-        $(".time-selector").selectpicker('refresh'); 
     },
-    _addressChange(event) {
-        for(let address of this.state.user.address) {
-            if (address.address_id == event.target.value) {
-                this.setState({'default_address': address});
-                break;
-            }
-        }    
+    _addressChange(option) {
+        if (this.state.user.address) {
+            for(let address of this.state.user.address) {
+                if (address.address_id == option.value) {
+                    this.setState({default_address: address});
+                    break;
+                }
+            }    
+        }
+    },
+    _slotChange(option) {
+        this.state.default_address.default_timeslot = option.value;
+        this.setState({default_address: this.state.default_address});
     },
     _placeOrder() {
-        let time_slot = $(".time-selector").val();
+        let delivery_info = this.state.default_address.default_timeslot.split(":");
         let pay_option = $('input[name=payment-option]:checked').val();
         let order_data = {
             item_id: this.props.item_data.item_id,
             user_id: this.props.user.user_id,
             address_id: this.state.default_address.address_id,
             payment_mode: pay_option,
-            delivery_slot: time_slot
+            delivery_slot: delivery_info[0],
+            delivery_date: delivery_info[1]
         };
         $.ajax({
             type: 'POST',
@@ -58,37 +53,52 @@ const OrderModal = React.createClass({
         });
     },
     render() {
-        let addresses = this.state.user.address.map((address) => {
-            let key = "address-"+address.address_id;
-            return (<option key={key} value={address.address_id}>
-                        {address.locality}
-                    </option>);
-        });
+        let addresses = [];
+        if (this.state.user.address) {
+            for(let address of this.state.user.address) {
+                addresses.push({
+                    value: address.address_id, 
+                    label: address.description+', '+address.locality
+                }); 
+            }
+        }
 
-        let time_slots = this.state.default_address.time_slot.map((slot) => {
-                let key = "slot-"+slot.slot_id;
-                return <option key={key} value={slot.slot_id}>{slot.formatted}</option>;    
-        });
-
+        let time_slots = [];
+        if (this.state.default_address.hasOwnProperty('time_slot')) {
+            for(let slot of this.state.default_address.time_slot) {
+                time_slots.push({
+                    value: slot.slot_id + ":" + slot.delivery_date, 
+                    label: slot.formatted
+                });
+            }
+        }
         return (
                 <Modal show={this.props.show} onHide={this.props.hide}>
                     <Modal.Header closeButton>
                         <Modal.Title>Placing order</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
-                        <div>
-                            Select Address: 
-                            <select className="address-selector" onChange={this._addressChange} value={this.state.default_address.address_id}>
-                                <option id="default" disabled="disabled" value="default">Select a category</option>
-                                {addresses}
-                            </select>
-                        </div>
-                        <div>
-                            Select Time:
-                            <select className="time-selector" >
-                                {time_slots}
-                            </select>
-                        </div>
+                        <Select
+                            name="address-selector"
+                            value={ this.state.default_address.hasOwnProperty('address_id') 
+                                ? this.state.default_address.address_id : null}
+                            options={addresses}
+                            onChange={this._addressChange}
+                            searchable={false}
+                            clearable={false}
+                            placeholder="Select Delivery Address..."
+                        />
+                        <Select
+                            name="time-selector"
+                            value={ this.state.default_address.hasOwnProperty('default_timeslot') 
+                                ? this.state.default_address.default_timeslot : null}
+                            options={time_slots}
+                            onChange={this._slotChange}
+                            searchable={false}
+                            clearable={false}
+                            placeholder="Select Delivery Time..."
+                            disabled={!this.state.default_address.hasOwnProperty('time_slot')}
+                        />
                         <div className="payment-section clearfix mt20">
                             <div><strong>Payment Method:</strong></div>
                             <div className="payment-options">
