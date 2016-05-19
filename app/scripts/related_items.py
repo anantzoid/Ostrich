@@ -55,12 +55,6 @@ def getRelatedItems(item_id):
         db.related_item_ids.insert_one({"_id":item_id,"item_ids":related_items_ids})
         
 
-#### Helper Functions ####
-def prepareSoup(url):
-    resp = requests.get(url)
-    soup = bs(resp.text, "html.parser") 
-    return soup
-
 def checkForPaperback(item_url):
     soup = prepareSoup(item_url)
     book_type = soup.findAll('li', {'class': 'swatchElement'})
