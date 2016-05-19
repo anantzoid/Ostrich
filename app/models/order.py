@@ -511,6 +511,12 @@ class Order():
                 status = True if update_cursor.rowcount else False
 
         if 'order_return' in order_data:
+            # Wallet validity 
+            if 'extend_payment_mode' in order_data and order_data['extend_payment_mode'] == 'wallet':
+                user = User(order_info['user_id'])
+                if 'extend_charges' in order_data and int(order_data['extend_charges']) > user.wallet_balance:
+                    return False
+
             old_order_return = datetime.datetime.strptime(order_info['order_return'], "%Y-%m-%d %H:%M:%S")
             new_order_return = datetime.datetime.strptime(order_data['order_return'], "%Y-%m-%d %H:%M:%S")
             diff = new_order_return - old_order_return
@@ -555,7 +561,6 @@ class Order():
                         (order_info['inventory_ids'][i], item['item_id'], child_order_id))
                     conn.commit()
                 if 'extend_payment_mode' in order_data and order_data['extend_payment_mode'] == 'wallet':
-                    user = User(order_info['user_id'])
                     debit_amount = order_data['extend_charges'] if 'extend_charges' in order_data else order_info['charge'] 
                     Wallet.debitTransaction(user.wallet_id, user.user_id, 'order', child_order_id, debit_amount) 
 
