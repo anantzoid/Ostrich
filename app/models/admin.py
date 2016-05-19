@@ -90,8 +90,7 @@ class Admin():
         order_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'order_status >= 4 AND order_status < 7' if pickups else 'order_status < 4'
-        query_condition += '  ORDER BY order_id ASC' 
+        query_condition = 'order_status >= 4 AND order_status < 7 ORDER BY order_return ASC' if pickups else 'order_status < 4 ORDER BY order_id ASC'
         cursor.execute("""SELECT o.order_id,
                 co.comment, co.edited, co.delivered_by, co.delivery_amount,
                 co.picked_by, co.pickup_amount

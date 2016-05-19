@@ -12,7 +12,7 @@ def returnDateExtensionReminder():
     cursor.execute("""SELECT order_id, user_id
         FROM orders 
         WHERE DATE(order_return) = DATE('%s') AND order_status >=4 AND
-        order_id NOT IN (SELECT DISTINCT parent_id FROM orders)
+        order_id NOT IN (SELECT DISTINCT parent_id FROM orders) AND bought = 0
         """ % (return_date))
     num_items = cursor.rowcount
 
