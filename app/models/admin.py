@@ -403,7 +403,12 @@ class Admin():
         numrows = cursor.rowcount
         data = []
         for i in range(numrows):
-            data.append(Utils.fetchOneAssoc(cursor))
+            row = Utils.fetchOneAssoc(cursor)
+            if row['user_id'] != -1:
+                row['username'] = User(row['user_id']).name 
+            else:
+                row['username'] = ''
+            data.append(row)
         return data
     
     @staticmethod
