@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from flask import request, jsonify, render_template, redirect, url_for, session
+from flask import request, jsonify, render_template, redirect, url_for, session, abort
 from react.render import render_component
 from apiclient import discovery
 import httplib2
@@ -88,7 +88,7 @@ def itemPage(**kwargs):
         # get reviews
         # get metadata info
     else:
-        return redirect(url_for('404'))
+        abort(404)
 
     # NOTE switchable: elasticsearch/DB
     #item_data = Item(kwargs['item_id']).getObj()

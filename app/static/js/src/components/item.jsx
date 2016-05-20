@@ -19,11 +19,18 @@ const Item = React.createClass({
         this.setState({'show_order_modal': !this.state.show_order_modal});
     },
     render() {
-        let categories = this.props.item_data.categories.map((category) => {
+        let categories = this.props.item_data.categories.map((category, i) => {
             let key = 'category-'+category.category_id;
-            return <span className="category-tag" key={key}><a href={category.slug_url}>{category.category_name}</a></span>;
+            let last_el = this.props.item_data.categories.length-1 !== i ? ', ': ''; 
+            return <span className="category-tag" key={key}><a href={category.slug_url}>{category.category_name}</a>{last_el}</span>;
         });
-        
+       
+        let ratings = Array.apply(null, Array(parseInt(this.props.item_data.ratings))).map((_, i) => {
+            return <span className="glyphicon glyphicon-star" aria-hidden="true"></span>;
+        });
+        if (ratings.length < this.props.item_data.ratings) {
+            ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
+        }
         return(
             <div id="itempage">
                 <Navbar {...this.props} />
@@ -37,27 +44,27 @@ const Item = React.createClass({
                                     </div> 
                                     <div className="col-lg-9 iteminfo-container">
                                         <h2>{this.props.item_data.item_name}</h2>
-                                        <h4>{this.props.item_data.author}</h4>
+                                        {this.props.item_data.author ? 
+                                        <h4>by {this.props.item_data.author}</h4>
+                                        : null}
 
                                         <div className="itemmeta-container mt20">
                                             <div className="item-ratings">
-                                                Ratings: {this.props.item_data.ratings}
+                                                {ratings}
                                             </div>
                                             <div className="item-num-ratings">
-                                                No. Ratings: {this.props.item_data.num_ratings}
+                                                <i>{this.props.item_data.num_ratings} ratings</i>
                                             </div>
-                                            <div className="item-num-reviews">
-                                                No. Reviews: {this.props.item_data.num_reviews}
-                                            </div>
+                                            { categories.length ? 
+                                                <div className="category-container clearfix pull-right">
+                                                    {categories}
+                                                </div>
+                                            : null }
                                         </div>
-                                        { categories.length ? 
-                                            <div className="category-container clearfix mt20">
-                                                Categories: {categories}
-                                            </div>
-                                        : null }
+                                        
                                         { this.props.item_data.summary ?
                                             <div className="summary mt20">
-                                                Summary: {this.props.item_data.summary}
+                                                {this.props.item_data.summary}
                                             </div>
                                         : null }
                                     </div>
@@ -65,19 +72,22 @@ const Item = React.createClass({
                             </div>
                             <div className="col-lg-3">
                                 <div className="order-info-container">
-                                    <div>
-                                        M.R.P: ₹ {this.props.item_data.price}
+                                    <div className="clearfix">
+                                        <div className="price-label">M.R.P:</div> 
+                                        <div className="price-value">₹ {this.props.item_data.price}</div>
                                     </div>
-                                    <div>
-                                        Rental At: ₹ {this.props.item_data.custom_price} 
+                                    <div className="clearfix">
+                                        <div className="price-label">Rental Amount:</div> 
+                                        <div className="price-value">₹ {this.props.item_data.custom_price}</div>
                                     </div>
-                                    <div>
-                                        for: {this.props.item_data.custom_return_days} days 
+                                    <div className="clearfix">
+                                        <div className="price-label">Rental Period:</div> 
+                                        <div className="price-value">{this.props.item_data.custom_return_days ? this.props.item_data.custom_return_days: 21} days</div>
                                     </div>
                                     <div className="action-container">
                                         { this.props.user ? 
                                         <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Order Now</button>
-                                        : <a href="#" onClick={this.startAuth}>Sign in with Google</a> }
+                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" /></a> }
                                     </div>
                                 </div>
                                 

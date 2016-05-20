@@ -78,7 +78,7 @@ class Item(Prototype):
             query_cond = 'slug_url'
             entity = slug
         elif name:
-            cache_key = 'category_'+slug.replace(' ','_')
+            cache_key = 'category_'+name.replace(' ','_')
             query_cond = 'category_name'
             entity = name
         else:

@@ -37,7 +37,7 @@ const Navbar = React.createClass({
                     </li>
                     <li className="auth-container">
                         { this.props.user === null ?
-                            <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in with Google</a>
+                            <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in</a>
                             :
                             <a id="userProfile"><img src={this.props.user.picture_url}/></a>
                         }

@@ -3,6 +3,7 @@ html, body {
     height: 100%;
     min-height: 100%;
     width: 100%;
+    color: #2d2d2d;
 }
 ul {
     list-style-type: none;
@@ -368,15 +369,39 @@ header .header-content .header-content-inner p {
     min-height: 500px;
 }
 .item-container {
-    border-right: 1px solid #f4f4f4;
+    border-right: 1px solid #eee;
 }
 .img-container img {
     width: 100%;
+    margin: 20px 0px;
+}
+.item-container h2, h4{
+    font-weight: 400;
 }
 .itemmeta-container > div {
     display: inline-block;
-    margin-right: 20px;
 }
+.item-ratings {
+    margin-right: 10px;
+}
+.star-half {
+    position: relative;
+}
+.star-half:after {
+    content:'';
+    position:absolute;
+    z-index:1;
+    background:white;
+    width: 50%;
+    height: 100%;
+    left: 47%;
+}
+.summary {
+    line-height: 21px;
+    font-size: 15px;
+    text-align: justify;
+}
+/*
 .category-tag {
     margin: 5px 2px;
     background-color: #f4f4f4;
@@ -384,17 +409,42 @@ header .header-content .header-content-inner p {
     border: 1px solid #9a9a9a;
     border-radius: 3px;
 }
-
+*/
+/*
+.data-label {
+    color: #2d2d2d;
+    text-transform: uppercase;
+    font-weight: bold;
+    font-size: 12px;
+    margin-right: 10px;
+}
+*/
 .order-info-container,
 .order-confirm-container {
+    margin-top: 96px;
+    font-size: 16px;
+    /*
     padding: 10px 20px;
     background-color: #f4f4f4;
     border: 1px solid #9a9a9a;
     border-radius: 4px;
     margin-bottom: 20px;
+    */
 }
 .order-info-container > div {
-    margin: 10px 20px;
+    margin-bottom: 10px;
+}
+.price-label {
+    float: left;
+    color: #9a9a9a;
+}
+.price-value {
+    float: right;
+    font-weight: bold;
+}
+.action-container {
+    border-top: 1px solid #eee;
+    margin-top: 20px;
 }
 .payment-options {
     margin: 5px 10px;
@@ -403,6 +453,9 @@ header .header-content .header-content-inner p {
 }
 .payment-options > label {
     margin-left: 10px;
+}
+.order-gauth {
+    width: 260px;
 }
 .order-now {
     width: 100%;
