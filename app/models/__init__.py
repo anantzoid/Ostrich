@@ -6,8 +6,8 @@ from wallet import *
 from mailer import *
 from notifications import *
 from review import *
-from search import *
 from webutils import *
+from search import *
 from collection import *
 from item import *
 from user import *

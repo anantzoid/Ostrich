@@ -178,9 +178,7 @@ class Search():
             cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
             for i in range(cursor.rowcount):
                 category = Utils.fetchOneAssoc(cursor)
-                url = webapp.config['HOST']  + '/books/category/' + str(category['category_id'])
-                if category['slug_url']: 
-                    category['slug_url'] = url + '-' + category['slug_url']
+                category = WebUtils.extendCategoryProperties(category)
                 categories.append(category)
             cache.set(cache_key, categories)
         return categories

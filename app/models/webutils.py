@@ -4,6 +4,7 @@ from app.models import *
 class WebUtils():
     @staticmethod
     def fetchSearchResults(query, search_type):
+        from app.models import Search
         search = Search(query)
         if search_type == 'category':
             results = search.categorySearch()
@@ -26,4 +27,14 @@ class WebUtils():
             except:
                 pass
         return items
+
+    @staticmethod
+    def extendCategoryProperties(category):
+        url = webapp.config['HOST']  + '/books/category/'
+        if category['slug_url']: 
+            category['slug_url'] = url + category['slug_url']
+        else:
+            category['slug_url'] = url + category['category_id']
+        return category
+
 

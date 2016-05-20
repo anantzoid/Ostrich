@@ -32,8 +32,11 @@ def homepage(props):
             store=store)
 
 @webapp.route('/books')
+@webapp.route('/book')
+@webapp.route('/books/category')
 @webapp.route('/books/category/<int:category_id>')
-@webapp.route('/books/category/<int:category_id>-<slug>')
+@webapp.route('/books/category/<category_slug>')
+@webapp.route('/books/collection')
 @webapp.route('/books/collection/<int:collection_id>')
 @webapp.route('/books/collection/<int:collection_id>-<slug>')
 @user_session
@@ -45,8 +48,9 @@ def catalog(**kwargs):
     results, catalog = [], []
     if query:
         results = WebUtils.fetchSearchResults(query, search_type)  
-    elif 'category_id' in kwargs:
-        query = Item.fetchCategoryById(kwargs['category_id'])['category_name']
+    elif 'category_slug' in kwargs or 'category_id' in kwargs:
+        entity = 'category_id' if 'category_id' in kwargs else 'category_slug'
+        query = Item.fetchCategory(slug=kwargs[entity])['category_name']
         results = WebUtils.fetchSearchResults(query, 'category')  
     elif 'collection_id' in kwargs:
         collection = Collection(kwargs['collection_id'])
@@ -77,9 +81,14 @@ def itemPage(**kwargs):
     item_data = Search().getById([kwargs['item_id']]) 
     if item_data:
         item_data = item_data[0]
+        categories = []
+        for category in item_data['categories']:
+            categories.append(Item.fetchCategory(name=category)) 
+        item_data['categories'] = categories
+        # get reviews
+        # get metadata info
     else:
-        # redirect to 404
-        return '0'
+        return redirect(url_for('404'))
 
     # NOTE switchable: elasticsearch/DB
     #item_data = Item(kwargs['item_id']).getObj()
@@ -125,6 +134,10 @@ def googlesignin():
             'user': session['_user']
     }
     return jsonify(data=visible_user_data)
+
+@webapp.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 '''
 # Old google auth flow using tokeninfo and signIn listener (client)

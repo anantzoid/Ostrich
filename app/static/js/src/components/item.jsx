@@ -8,6 +8,10 @@ const Item = React.createClass({
     getInitialState() {
         return {'show_order_modal': false};
     },
+    componentDidMount() {
+        //fetch collection object
+        //fetch similar items
+    },
     startAuth() {
         gAuth().then(function(response) {});
     },
@@ -15,10 +19,11 @@ const Item = React.createClass({
         this.setState({'show_order_modal': !this.state.show_order_modal});
     },
     render() {
-        let categories = this.props.item_data.categories.map((genre) => {
-            return <span className="genre-tag"><a href="#">{genre}</a></span>;
+        let categories = this.props.item_data.categories.map((category) => {
+            let key = 'category-'+category.category_id;
+            return <span className="category-tag" key={key}><a href={category.slug_url}>{category.category_name}</a></span>;
         });
-
+        
         return(
             <div id="itempage">
                 <Navbar {...this.props} />

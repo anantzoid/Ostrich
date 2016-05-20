@@ -67,14 +67,28 @@ class Item(Prototype):
         return True
 
     @staticmethod
-    def fetchCategoryById(category_id):
+    def fetchCategory(category_id=0, slug='',name=''):
         from app import cache
-        cache_key = 'category_'+str(category_id)
+        if category_id:
+            cache_key = 'category_'+str(category_id)
+            query_cond = 'category_id'
+            entity = category_id
+        elif slug:
+            cache_key = 'category_'+slug
+            query_cond = 'slug_url'
+            entity = slug
+        elif name:
+            cache_key = 'category_'+slug.replace(' ','_')
+            query_cond = 'category_name'
+            entity = name
+        else:
+            return {}
         category = cache.get(cache_key)
         if not category:
             cursor = mysql.connect().cursor()
-            cursor.execute("SELECT * FROM categories WHERE category_id = %s", (category_id,))
+            cursor.execute("SELECT * FROM categories WHERE "+query_cond+" = %s", (entity,))
             category = Utils.fetchOneAssoc(cursor)
+            category = WebUtils.extendCategoryProperties(category)
             cache.set(cache_key, category)
         return category
 
