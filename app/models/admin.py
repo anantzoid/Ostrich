@@ -270,6 +270,7 @@ class Admin():
         data = {}
         for i in range(cursor.rowcount):
             row = Utils.fetchOneAssoc(cursor)
+            row['date_added'] = row['date_added'].split(' ')[0]
             if row['name'] in data:
                 data[row['name']].append(row)
             else:
