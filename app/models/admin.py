@@ -259,6 +259,24 @@ class Admin():
         return True
 
     @staticmethod
+    def getAdminWishlist():
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT u.name, i.item_name, w.date_added
+                FROM wishlist w
+                INNER JOIN users u ON u.user_id = w.user_id
+                INNER JOIN items i ON i.item_id = w.item_id
+                WHERE w.active = 1""")
+        data = {}
+        for i in range(cursor.rowcount):
+            row = Utils.fetchOneAssoc(cursor)
+            if row['name'] in data:
+                data[row['name']].append(row)
+            else:
+                data[row['name']] = [row]
+        return data
+
+    @staticmethod
     def insertItem(data):        
         conn = mysql.connect()
         cursor = conn.cursor()

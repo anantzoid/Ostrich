@@ -206,3 +206,6 @@ def upload():
     return jsonify(status=True)
     
     
+@webapp.route('/getAllWishlist')
+def getAllWishlist():
+    return jsonify(wishlists=Admin.getAdminWishlist())
