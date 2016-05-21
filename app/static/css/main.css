@@ -319,31 +319,46 @@ header .header-content .header-content-inner p {
     margin-top: 15px;
     margin-left: 60px;
 }
-.catalog-element {
-    margin-bottom: 30px;
+.catalog-section {
+    margin-bottom: 40px;
+}
+.catalog-element h3 {
+    margin-left: 50px;
+    font-size: 21px;
 }
 .catalog-book-container {
     padding-top: 10px;
-    width: 110px;
+    width: 144px;
     float: left;
     min-height: 209px;
-    margin-right: 40px;
     display: inline;
     padding: 20px 0 0;
+}
+.catalog-book-container a {
+    display: block;
+    vertical-align: bottom;
+    text-align: center;
 }
 .catalog-book-image {
     width: auto;
     height: auto;
-    max-width: 133px;
-    height: 200px;
+    max-width: 110px;
+    height: 175px;
     vertical-align: middle;
 }
 .catalog-book-info {
-    height: 70px;
+    height: 45px;
+    overflow: hidden;
+    white-space: normal;
+    margin-top: 7px;
+    padding: 0 4px;
 }
-
+.sidebar-col {
+    border-right: 1px solid #eee;
+}
 .catalog-sidebar {
     margin-bottom: 30px;
+    margin-top: 22px;
 }
 .catalog-sidebar > ul {
     padding-left: 0px;

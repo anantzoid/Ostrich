@@ -177,7 +177,7 @@ class Collection(Prototype):
         cache_key = 'homepage_collections'
         homepage_collections = cache.get(cache_key)
         if not homepage_collections:
-            homepage_collection_ids = [1, 2, 3, 4, 5, 10, 19]
+            homepage_collection_ids = [25, 26, 27, 28]
             homepage_collections = []
             for col_id in homepage_collection_ids:
                 col_obj = Collection(col_id)

@@ -34,7 +34,7 @@ const Catalog = React.createClass({
         if(this.props.catalog.length) {
             catalog = this.props.catalog.map((list) => {
             return(
-                    <div className="catalog-element clearfix">
+                    <div className="catalog-element mt20 clearfix">
                         <h3>{list.name}</h3>
                         <ul>{this._renderListElements(list.items)}</ul>
                     </div>
@@ -53,14 +53,14 @@ const Catalog = React.createClass({
                 <section className="catalog-section">
                     <div className="container-fluid">
                         <div className="row">
-                            <div className="col-lg-2">
+                            <div className="col-lg-2 sidebar-col">
                                 <div className="catalog-sidebar">
                                     <div className="catalog-sidebar-title">Popular Categories</div>
                                     <ul>{categories}</ul>
                                 </div>  
                             </div>
                             {this.props.catalog.length ?
-                                <div className="col-lg-9">
+                                <div className="col-lg-10">
                                     {catalog}
                                 </div>
                                 :
