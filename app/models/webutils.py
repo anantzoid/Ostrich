@@ -9,7 +9,7 @@ class WebUtils():
         search = Search(query)
         if search_type == 'category':
             results = search.categorySearch()
-        elif search_type == 'collections':
+        elif search_type == 'collection':
             results = search.collectionsSearch()
         else: 
             results = search.basicSearch()
@@ -20,7 +20,8 @@ class WebUtils():
     def extendItemWebProperties(items):
         for i, item in enumerate(items):
             items[i]['item_name'] = re.sub("\(.*\)", "", item['item_name']).strip()
-            items[i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
+            if item['img_small']:
+                items[i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
             items[i]['item_url'] = webapp.config['HOST']  + '/book/rent/' + str(item['item_id'])
             # NOTE remove this later. Only for Test environment becuase we're poor
             try:

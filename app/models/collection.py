@@ -8,27 +8,23 @@ class Collection(Prototype):
     
     def getData(self, collection_id):
         from app import cache
-        cache_key = 'collection_'+str(collection_id)
-        self.data = cache.get(cache_key)
-        if not self.data:
-            cursor = mysql.connect().cursor()
-            cursor.execute("""SELECT c.*, 
-                (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
-                where ci.collection_id = c.collection_id) as item_ids,
-                (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
-                where cm.collection_id = c.collection_id) as metadata
-                FROM collections c WHERE c.collection_id = %s""", (collection_id,))
-            self.data = Utils.fetchOneAssoc(cursor)
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT c.*, 
+            (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
+            where ci.collection_id = c.collection_id) as item_ids,
+            (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
+            where cm.collection_id = c.collection_id) as metadata
+            FROM collections c WHERE c.collection_id = %s""", (collection_id,))
+        self.data = Utils.fetchOneAssoc(cursor)
 
-            if self.data['metadata']:
-                collections_metadata_raw = self.data['metadata']
-                self.data['metadata'] = {}
-                for props in collections_metadata_raw.split('&'):
-                    props_formatted = props.split(':')
-                    self.data['metadata'][props_formatted[0]] = props_formatted[1]
-            if not self.data:
-                self.data = {}
-            cache.set(cache_key, self.data)
+        if self.data['metadata']:
+            collections_metadata_raw = self.data['metadata']
+            self.data['metadata'] = {}
+            for props in collections_metadata_raw.split('&'):
+                props_formatted = props.split(':')
+                self.data['metadata'][props_formatted[0]] = props_formatted[1]
+        if not self.data:
+            self.data = {}
 
     def getExpandedObj(self):
         collection_object = self.getObj()
@@ -174,7 +170,7 @@ class Collection(Prototype):
     def getHomepageCollections(items=False):
         # List of collections to be displayed on homepage
         from app import cache
-        cache_key = 'homepage_collections'
+        cache_key = 'homepage_collections'+('_items' if items else '')
         homepage_collections = cache.get(cache_key)
         if not homepage_collections:
             homepage_collection_ids = [25, 26, 27, 28]
@@ -188,12 +184,20 @@ class Collection(Prototype):
                     col_obj = col_obj.getObj()
 
                 url = webapp.config['HOST'] + '/books/collection/' + str(col_obj['collection_id']) 
-
                 if col_obj['slug_url']:
-                    col_obj['slug_url'] = url + '-' + col_obj['slug_url']
+                    url = url + '-' + col_obj['slug_url']
+                col_obj['slug_url'] = url
+
                 if col_obj['image']:
                     col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
                 homepage_collections.append(col_obj)
+            if not items:
+                mock_collection = {
+                        'slug_url': webapp.config['HOST'] + '/books',
+                        'collection_id': -99,
+                        'name': 'Browse'
+                        }
+                homepage_collections = [mock_collection] + homepage_collections
             cache.set(cache_key, homepage_collections)
         return homepage_collections
 

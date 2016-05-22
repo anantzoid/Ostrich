@@ -194,7 +194,7 @@ header .header-content .header-content-inner p {
 }
 
 /*------------ SearchBar Ends ---------------*/
-
+/*------------ Homepage Starts ---------------*/
 .collection-heading {
     margin-top: 40px;
     margin-bottom: 15px;
@@ -313,6 +313,7 @@ header .header-content .header-content-inner p {
     margin-top: 30px;
 }
 
+/*------------ Homepage Ends ---------------*/
 /*------------ Catalog Starts ---------------*/
 #catalog .search-elements,
 #itempage .search-elements {
@@ -332,7 +333,7 @@ header .header-content .header-content-inner p {
     float: left;
     min-height: 209px;
     display: inline;
-    padding: 20px 0 0;
+    padding: 15px 0;
 }
 .catalog-book-container a {
     display: block;
@@ -377,6 +378,10 @@ header .header-content .header-content-inner p {
     padding: 8px 0 8px 15px;;
     border-bottom: 1px solid #f0f0f0;
     font-size: 14px;
+}
+.query-display {
+    font-weight: bold;
+    font-size: 16px;
 }
 /*------------ Catalog Ends ---------------*/
 /*------------ ItemPage Starts ---------------*/

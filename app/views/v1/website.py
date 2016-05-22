@@ -55,7 +55,11 @@ def catalog(**kwargs):
     elif 'collection_id' in kwargs:
         collection = Collection(kwargs['collection_id'])
         query = collection.name
-        results = WebUtils.fetchSearchResults(query, 'collection')   
+        #results = WebUtils.fetchSearchResults(query, 'collection')   
+        # NOTE alternate source: from DB
+        # TODO do profiling and check which is faster
+        results = collection.getExpandedObj()
+        results['items'] = WebUtils.extendItemWebProperties(results['items'])
     else:
         catalog = Collection.getHomepageCollections(items=True)
     props = kwargs['props']

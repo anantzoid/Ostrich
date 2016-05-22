@@ -31,10 +31,11 @@ const Catalog = React.createClass({
         });
 
         let catalog = null;
+
         if(this.props.catalog.length) {
             catalog = this.props.catalog.map((list) => {
             return(
-                    <div className="catalog-element mt20 clearfix">
+                    <div className="catalog-element clearfix">
                         <h3>{list.name}</h3>
                         <ul>{this._renderListElements(list.items)}</ul>
                     </div>
@@ -65,8 +66,8 @@ const Catalog = React.createClass({
                                 </div>
                                 :
                                 <div className="col-lg-9">
-                                    <div className="search-result-title">
-                                        Showing results for: <span>{this.props.query}</span>
+                                    <div className="search-result-title mt20">
+                                        Showing results for: <span className="query-display">{this.props.query}</span>
                                     </div>
                                     <ul>
                                         {results}
