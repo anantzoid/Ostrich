@@ -289,8 +289,6 @@ class Admin():
         else:
             author = ''
 
-        if 'goodreads' in data and 'language' in data['goodreads'] and data['goodreads']['language'].lower() != 'english':
-            return {}
 
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], author))
         match = cursor.fetchone()

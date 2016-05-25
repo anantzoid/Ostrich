@@ -112,7 +112,7 @@ class Utils():
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
         if current_timestamp.hour >= 18 or current_timestamp.hour < 6:
-            return 2 
+            return 3 
 
         next_timestamp = current_timestamp + timedelta(hours=interval)
         next_timestamp = str(next_timestamp.time())
