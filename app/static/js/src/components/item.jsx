@@ -24,12 +24,10 @@ const Item = React.createClass({
         this.setState({'show_order_modal': !this.state.show_order_modal});
     },
     _toggleAppModal(title) {
-        console.log(title);
         this.setState({
             'app_modal_title': title,
             'show_app_modal': !this.state.show_app_modal
         });
-        console.log(this.state);
     },
     render() {
         let categories = this.props.item_data.categories.map((category, i) => {

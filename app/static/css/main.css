@@ -25,6 +25,11 @@ a:hover, a:focus {
 .mt20 {
     margin-top: 20px;
 }
+.loader-img {
+    margin: auto;
+    width: 25%;
+    margin-top: 20px;
+}
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default {
     background-color: transparent;

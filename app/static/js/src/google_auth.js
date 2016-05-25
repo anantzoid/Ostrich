@@ -8,7 +8,12 @@ let gAuth = function(){
                     type: 'POST',
                     url: '/googlesignin',
                     data: {'data': authResult['code']},
+                    beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
+                        // NOTE temporary. Since prop changes are not passed down to child.
+                        // Will have to look into it.
+                        location.reload();
+
                         window.renderApp($.extend(true, JSON.parse(store.props), response.data));
                         /*
                         var headerAuth = new CustomEvent('headerAuth', {'detail': response.data.user});
@@ -19,6 +24,10 @@ let gAuth = function(){
                         */
 
                         resolve(response);
+                        loaderBackdrop(false);       
+                    },
+                    error: () => {
+                        loaderBackdrop(false);       
                     }
                 });
             } else {
@@ -26,6 +35,15 @@ let gAuth = function(){
             }
         } 
     });
+
+    function loaderBackdrop(state) {
+        const loader = '<div class="loader modal-backdrop fade in"><div class="loader-img"><img src="/static/img/loading.gif"></div></div>';
+        if(state) {
+            $('body').append(loader);
+        } else {
+            $('.loader').remove();
+        }
+    }
 }
 module.exports = gAuth;
 

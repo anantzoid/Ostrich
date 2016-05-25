@@ -13,9 +13,9 @@ const OrderModal = React.createClass({
         }
         return state;
     },
-    componentDidMount() {
+    componentWillUpdate() {
     },
-    componentDidUpdate() {
+    componentWillReceiveProps() {
     },
     _addressChange(option) {
         if (this.state.user.address) {
