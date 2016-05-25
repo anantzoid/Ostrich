@@ -3,4 +3,6 @@
 *.swo
 .htaccess
 .DS_Store
+*.rdb
+*.log
 node_modules/

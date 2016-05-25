@@ -385,28 +385,16 @@ header .header-content .header-content-inner p {
 }
 /*------------ Catalog Ends ---------------*/
 /*------------ ItemPage Starts ---------------*/
-.itempage-section {
-    min-height: 500px;
-}
-.item-container {
-    border-right: 1px solid #eee;
-}
+.itempage-section { min-height: 500px; }
+.item-container { border-right: 1px solid #eee; }
 .img-container img {
     width: 100%;
     margin: 20px 0px;
 }
-.item-container h2, h4{
-    font-weight: 400;
-}
-.itemmeta-container > div {
-    display: inline-block;
-}
-.item-ratings {
-    margin-right: 10px;
-}
-.star-half {
-    position: relative;
-}
+.item-container h2, h4{ font-weight: 400; }
+.itemmeta-container > div { display: inline-block; }
+.item-ratings { margin-right: 10px; }
+.star-half { position: relative; }
 .star-half:after {
     content:'';
     position:absolute;
@@ -451,9 +439,7 @@ header .header-content .header-content-inner p {
     margin-bottom: 20px;
     */
 }
-.order-info-container > div {
-    margin-bottom: 10px;
-}
+.order-info-container > div { margin-bottom: 10px; }
 .price-label {
     float: left;
     color: #9a9a9a;
@@ -474,16 +460,13 @@ header .header-content .header-content-inner p {
 .payment-options > label {
     margin-left: 10px;
 }
-.order-gauth {
-    width: 260px;
-}
+.faded { color: #9a9a9a; }
+.order-gauth { width: 260px; }
 .order-now {
     width: 100%;
     margin-top: 20px;
 }
-.Select {
-    margin-bottom: 20px;
-}
+.Select { margin-bottom: 20px; }
 /*------------ ItemPage Ends ---------------*/
 
 .footer {

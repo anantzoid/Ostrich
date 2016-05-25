@@ -323,18 +323,19 @@ class Order():
     def isUserValidForOrder(user, order_data):
         if user.getObj() is None:
             return {'message': 'User does not exist'}
-       
-        # IF the user is already possessing the book
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT COUNT(*) FROM orders o
-            INNER JOIN order_history oh ON oh.order_id=o.order_id
-            WHERE o.user_id = %s AND  oh.item_id IN (%s) AND o.order_status < 5""",
-            (user.user_id, ','.join([str(_) for _ in order_data['item_id']])))
-        if cursor.fetchone()[0]:
-            return ({
-                'title': 'Book Already Ordered',
-                'message': 'It seems you have already ordered this book from Ostrich. Please check the "My Orders" section.'}, 
-                'HTTP_STATUS_CODE_CLIENT_ERROR')
+      
+        if webapp.config['APP_ENV'] != 'dev': 
+            # IF the user is already possessing the book
+            cursor = mysql.connect().cursor()
+            cursor.execute("""SELECT COUNT(*) FROM orders o
+                INNER JOIN order_history oh ON oh.order_id=o.order_id
+                WHERE o.user_id = %s AND  oh.item_id IN (%s) AND o.order_status < 5""",
+                (user.user_id, ','.join([str(_) for _ in order_data['item_id']])))
+            if cursor.fetchone()[0]:
+                return ({
+                    'title': 'Book Already Ordered',
+                    'message': 'It seems you have already ordered this book from Ostrich. Please check the "My Orders" section.'}, 
+                    'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # User can only own 2 book @ a time
         if webapp.config['USER_BOOKS_LIMIT']:

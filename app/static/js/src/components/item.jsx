@@ -1,12 +1,17 @@
 import React from 'react';
 import Navbar from './navbar';
 import OrderModal from './orderModal';
+import AppModal from './appModal';
 import Footer from './footer';
 import gAuth from '../google_auth.js'; 
 
 const Item = React.createClass({
     getInitialState() {
-        return {'show_order_modal': false};
+        return {
+            'show_order_modal': false,
+            'show_app_modal': false,
+            'app_modal_title': 'Download Ostrich'
+        };
     },
     componentDidMount() {
         //fetch collection object
@@ -17,6 +22,14 @@ const Item = React.createClass({
     },
     _toggleOrderModal() {
         this.setState({'show_order_modal': !this.state.show_order_modal});
+    },
+    _toggleAppModal(title) {
+        console.log(title);
+        this.setState({
+            'app_modal_title': title,
+            'show_app_modal': !this.state.show_app_modal
+        });
+        console.log(this.state);
     },
     render() {
         let categories = this.props.item_data.categories.map((category, i) => {
@@ -94,7 +107,8 @@ const Item = React.createClass({
                             </div>
                         </div>
                    </div> 
-                   <OrderModal show={this.state.show_order_modal} {...this.props} hide={this._toggleOrderModal}/>
+                   <OrderModal show={this.state.show_order_modal} {...this.props} hide={this._toggleOrderModal} appModal={this._toggleAppModal}/>
+                   <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title={this.state.app_modal_title}/>
                 </section>
                 <Footer />
             </div>
@@ -103,30 +117,4 @@ const Item = React.createClass({
 });
 
 module.exports = Item;
-/*
-                            <div className="order-confirm-container">
-                                    {this.props.user ? 
-                                        <div>
-                                            <div>
-                                               Select Address: 
-                                            </div>
-                                            <select id="category_id" className="category-picker" multiple onChange={this._onChange}>
-                                                <option id="default" disabled="disabled" value="default">Select address</option>
-                                                {addresses}
-                                            </select>
-                                            <div>Payment Method:</div>
-                                            <div className="payment-options">
-                                                <input type="radio" name="payment-option" id="payment_cash" value="cash"/>
-                                                <label htmlFor="payment_cash">Cash</label>
-                                            </div>
-                                            <div className="payment-options">
-                                                <input type="radio" name="payment-option" id="payment_credits" value="credits"/>
-                                                <label htmlFor="payment_credits">Credits: ₹ {this.props.user.wallet_balance}</label>
-                                            </div>
 
-                                            <button className="btn btn-success order-now" onClick={this._placeOrder}>Order Now</button>
-                                        </div>
-                                    : <a href="#" onClick={this.startAuth}>Sign in with Google</a> }
-            
-                                </div>
-*/

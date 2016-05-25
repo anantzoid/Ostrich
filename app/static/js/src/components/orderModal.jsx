@@ -1,6 +1,7 @@
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 import Select from 'react-select';
+import OrderUtils from '../utils/orderUtils';
 
 const OrderModal = React.createClass({
     getInitialState() {
@@ -30,7 +31,7 @@ const OrderModal = React.createClass({
         this.state.default_address.default_timeslot = option.value;
         this.setState({default_address: this.state.default_address});
     },
-    _placeOrder() {
+    sendOrderData() {
         let delivery_info = this.state.default_address.default_timeslot.split(":");
         let pay_option = $('input[name=payment-option]:checked').val();
         let order_data = {
@@ -41,17 +42,9 @@ const OrderModal = React.createClass({
             delivery_slot: delivery_info[0],
             delivery_date: delivery_info[1]
         };
-        $.ajax({
-            type: 'POST',
-            url: '/order',
-            data: order_data,
-            success:((response) => {
-                if (response.hasOwnProperty('order_id')) {
-                    //TODO render app download banner
-                }
-            })
-        });
-    },
+        console.log(order_data);
+        OrderUtils.placeOrder(order_data, this.props.hide, this.props.appModal);
+    }, 
     render() {
         let addresses = [];
         if (this.state.user.address) {
@@ -107,12 +100,12 @@ const OrderModal = React.createClass({
                             </div>
                             <div className="payment-options">
                                 <input type="radio" name="payment-option" id="payment_credits" value="wallet"/>
-                                <label htmlFor="payment_credits">Credits: ₹ {this.state.user.wallet_balance}</label>
+                                <label htmlFor="payment_credits">Wallet <span className="faded">(₹ {this.state.user.wallet_balance})</span></label>
                             </div>
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <button className="btn btn-success" onClick={this._placeOrder}>Place Order Now.</button>
+                        <button className="btn btn-success" onClick={this.sendOrderData}>Place Order Now.</button>
                     </Modal.Footer>
                 </Modal>
             );
