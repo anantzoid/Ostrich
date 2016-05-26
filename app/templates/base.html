@@ -1,14 +1,46 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <!-- INSERT HEAD TAGS -->
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>{% block title %}{% endblock %} « Ostrich - Rent Books</title>
-        <!-- TODO :Enter Site Description and other essential meta -->
 
-        {% block head %}{% endblock %}
+        <meta name="application-name" content="Ostrich - Rent Books">
+        <meta name="keywords" content="books, rent, borrow, bangalore, book, comics">
+        <meta name="description" content="Dicover and Rent Books in Bangalore. Delivered to your doorstep. Rent Books for as cheap as a coffee.">
+        <meta name="subject" content="Dicover and Rent Books in Bangalore">
+
+        <meta name="twitter:app:name:googleplay" content="Ostrich"></meta>
+        <meta name="twitter:app:id:googleplay" content="in.hasslefree.ostrichbooks"></meta>
+        <meta property="fb:app_id" content="907060102697169"></meta>
+        <meta property="og:title" content="Ostrich"></meta>
+        <meta property="og:type" content="website"></meta>
+        <meta property="og:url" content="www.ostrichapp.in"></meta>
+        <meta property="og:site_name" content="Ostrich"></meta>
+        <meta property="og:description" content="Dicover and Rent Books in Bangalore. Delivered to your doorstep. Rent Books for as cheap as a coffee."></meta>
+        <meta property="og:image" content="/static/img/logo.png"></meta>
+
+        <meta name="twitter:card" content="Dicover and Rent Books in Bangalore">
+        <meta name="twitter:site" content="@ostrichappin">
+        <meta name="twitter:url" content="www.ostrichapp.in">
+        <meta name="twitter:title" content="Ostrich">
+        <meta name="twitter:description" content="Dicover and Rent Books in Bangalore">
+        <meta name="twitter:image" content="/static/img/logo.png">
+
+        <link rel="icon" href="/static/img/favicons/favicon-16.png" sizes="16x16" type="image/png">
+        <link rel="icon" href="/static/img/favicons/favicon-32.png" sizes="32x32" type="image/png">
+        <link rel="icon" href="/static/img/favicons/favicon-48.png" sizes="48x48" type="image/png">
+        <link rel="icon" href="/static/img/favicons/favicon-62.png" sizes="62x62" type="image/png">
+
+        <!--Android-->
+        <meta name="theme-color" content="#00bcd4">
+        <meta name="mobile-web-app-capable" content="yes">
+
+        <meta property="al:android:url" content="https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en">
+        <meta property="al:android:app_name" content="Ostrich - Rent Books">
+        <meta property="al:android:package" content="in.hasslefree.ostrichbooks">
+
         <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>

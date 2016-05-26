@@ -6,6 +6,7 @@ let OrderUtils = {
             type: 'POST',
             url: '/order',
             data: order_data,
+            beforeSend: () => { OrderUtils.orderLoader(true); },
             success:((response) => {
                 if (response.hasOwnProperty('order_id')) {
                     hideOrderModal();
@@ -14,10 +15,20 @@ let OrderUtils = {
             }),
             error: ((jqXHR) => {
                 let error = JSON.parse(jqXHR.responseText);
-                // TODO show error
+                // TODO show error if appropriate code, else generic msg
+                // remove loading
                 console.log(error);
+                OrderUtils.orderLoader(false); 
             })
         });
+    },
+    orderLoader(flag) {
+        // TODO replace with loder
+        if (flag) {
+           $('.place-order').text('Placing...');  
+        } else {
+           $('.place-order').text('Place the Order');  
+        }
     }
 }
 

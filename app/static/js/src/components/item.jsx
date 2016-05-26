@@ -73,11 +73,13 @@ const Item = React.createClass({
                                             : null }
                                         </div>
                                         
+                                        <div className="summary mt20">
                                         { this.props.item_data.summary ?
-                                            <div className="summary mt20">
-                                                {this.props.item_data.summary}
-                                            </div>
-                                        : null }
+                                            this.props.item_data.summary
+                                        : <i className="summary-placeholder">
+                                            No description given.    
+                                        </i> }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -97,7 +99,7 @@ const Item = React.createClass({
                                     </div>
                                     <div className="action-container">
                                         { this.props.user ? 
-                                        <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Order Now</button>
+                                        <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Rent Now</button>
                                         : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" /></a> }
                                     </div>
                                 </div>

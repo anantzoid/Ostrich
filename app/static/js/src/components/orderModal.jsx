@@ -13,10 +13,6 @@ const OrderModal = React.createClass({
         }
         return state;
     },
-    componentWillUpdate() {
-    },
-    componentWillReceiveProps() {
-    },
     _addressChange(option) {
         if (this.state.user.address) {
             for(let address of this.state.user.address) {
@@ -32,18 +28,23 @@ const OrderModal = React.createClass({
         this.setState({default_address: this.state.default_address});
     },
     sendOrderData() {
-        let delivery_info = this.state.default_address.default_timeslot.split(":");
-        let pay_option = $('input[name=payment-option]:checked').val();
-        let order_data = {
-            item_id: this.props.item_data.item_id,
-            user_id: this.props.user.user_id,
-            address_id: this.state.default_address.address_id,
-            payment_mode: pay_option,
-            delivery_slot: delivery_info[0],
-            delivery_date: delivery_info[1]
-        };
-        console.log(order_data);
-        OrderUtils.placeOrder(order_data, this.props.hide, this.props.appModal);
+        if($.isEmptyObject(this.state.default_address)) {
+            this._renderError('address');
+        } else if(!this.state.default_address.hasOwnProperty('default_timeslot')) {
+            this._renderError('time');
+        } else {
+            let delivery_info = this.state.default_address.default_timeslot.split(":");
+            let pay_option = $('input[name=payment-option]:checked').val();
+            let order_data = {
+                item_id: this.props.item_data.item_id,
+                user_id: this.props.user.user_id,
+                address_id: this.state.default_address.address_id,
+                payment_mode: pay_option,
+                delivery_slot: delivery_info[0],
+                delivery_date: delivery_info[1]
+            };
+            OrderUtils.placeOrder(order_data, this.props.hide, this.props.appModal);
+        }
     }, 
     render() {
         let addresses = [];
@@ -80,6 +81,7 @@ const OrderModal = React.createClass({
                             searchable={false}
                             clearable={false}
                             placeholder="Select Delivery Address..."
+                            onFocus={this._removeError}
                         />
                         <Select
                             name="time-selector"
@@ -91,6 +93,7 @@ const OrderModal = React.createClass({
                             clearable={false}
                             placeholder="Select Delivery Time..."
                             disabled={!this.state.default_address.hasOwnProperty('time_slot')}
+                            onFocus={this._removeError}
                         />
                         <div className="payment-section clearfix mt20">
                             <div><strong>Payment Method:</strong></div>
@@ -105,11 +108,24 @@ const OrderModal = React.createClass({
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
-                        <button className="btn btn-success" onClick={this.sendOrderData}>Place Order Now.</button>
+                        <button className="btn btn-success place-order" onClick={this.sendOrderData}>Place the Order</button>
                     </Modal.Footer>
                 </Modal>
             );
-    }
+    },
+    _renderError(type) {
+        switch(type) {
+            case 'address':
+                $('.Select-control').first().addClass('error');
+                break;
+            case 'time':
+                $('.Select-control').last().addClass('error');
+                break;
+        }
+    },
+    _removeError() {
+        $('.error').removeClass('error'); 
+    },
 });
 
 export default OrderModal; 

@@ -188,7 +188,7 @@ header .header-content .header-content-inner p {
 .form-control-feedback {
     top: 3px;
     right: 3px;
-    font-size: 20px;
+    font-size: 16px;
     color: #9a9a9a;
     pointer-events: auto;
     cursor: pointer;
@@ -349,7 +349,7 @@ header .header-content .header-content-inner p {
     vertical-align: middle;
 }
 .catalog-book-info {
-    height: 45px;
+    height: 40px;
     overflow: hidden;
     white-space: normal;
     margin-top: 7px;
@@ -410,6 +410,7 @@ header .header-content .header-content-inner p {
     font-size: 15px;
     text-align: justify;
 }
+.summary-placeholder { color: #999; }
 /*
 .category-tag {
     margin: 5px 2px;
@@ -468,6 +469,8 @@ header .header-content .header-content-inner p {
     margin-top: 20px;
 }
 .Select { margin-bottom: 20px; }
+.Select:hover { cursor: pointer; }
+.error { border: 1px solid #cb2b2d !important; }
 /*------------ ItemPage Ends ---------------*/
 
 .footer {
