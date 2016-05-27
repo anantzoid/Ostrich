@@ -353,8 +353,9 @@ class Admin():
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
                         VALUES (%s, %s)""",(item_id, global_categories[genre]))
                     else:
-                        cursor.execute("""INSERT INTO categories (category_name) VALUES (%s)""",
-                                (genre,))
+                        genre_slug = slugify(genre)
+                        cursor.execute("""INSERT INTO categories (category_name, slug_url) VALUES (%s, %s)""",
+                                (genre, genre_slug))
                         conn.commit()
                         global_categories[genre] = cursor.lastrowid
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
