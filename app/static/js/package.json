@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "webpack --watch & forever  --watch --watchDirectory ./static/js/src ./render_server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pack": "webpack -p"
   },
   "keywords": [],
   "author": "",

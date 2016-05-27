@@ -173,7 +173,11 @@ class Collection(Prototype):
         cache_key = 'homepage_collections'+('_items' if items else '')
         homepage_collections = cache.get(cache_key)
         if not homepage_collections:
-            homepage_collection_ids = [25, 26, 27, 28]
+            # NOTE temp
+            if webapp.config['APP_ENV'] != 'prod':
+                homepage_collection_ids = [38, 40, 41, 42]
+            else:
+                homepage_collection_ids = [25, 26, 27, 28]
             homepage_collections = []
             for col_id in homepage_collection_ids:
                 col_obj = Collection(col_id)
