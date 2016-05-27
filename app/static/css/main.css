@@ -386,7 +386,7 @@ header .header-content .header-content-inner p {
 }
 /*------------ Catalog Ends ---------------*/
 /*------------ ItemPage Starts ---------------*/
-.itempage-section { min-height: 500px; }
+.itempage-section { min-height: 700px; }
 .item-container { border-right: 1px solid #eee; }
 .img-container img {
     width: 100%;
@@ -469,7 +469,7 @@ header .header-content .header-content-inner p {
     margin-top: 20px;
 }
 .Select { margin-bottom: 20px; }
-.Select:hover { cursor: pointer; }
+.Select-control { cursor: pointer; }
 .error { border: 1px solid #cb2b2d !important; }
 /*------------ ItemPage Ends ---------------*/
 
