@@ -35,12 +35,15 @@ const Item = React.createClass({
             let last_el = this.props.item_data.categories.length-1 !== i ? ', ': ''; 
             return <span className="category-tag" key={key}><a href={category.slug_url}>{category.category_name}</a>{last_el}</span>;
         });
-       
-        let ratings = Array.apply(null, Array(parseInt(this.props.item_data.ratings))).map((_, i) => {
-            return <span className="glyphicon glyphicon-star" aria-hidden="true"></span>;
-        });
-        if (ratings.length < this.props.item_data.ratings) {
-            ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
+      
+        let ratings = null;
+        if(this.props.item_data.ratings) { 
+            ratings = Array.apply(null, Array(parseInt(this.props.item_data.ratings))).map((_, i) => {
+                return <span className="glyphicon glyphicon-star" aria-hidden="true"></span>;
+            });
+            if (ratings.length < this.props.item_data.ratings) {
+                ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
+            }
         }
         return(
             <div id="itempage">
@@ -59,13 +62,14 @@ const Item = React.createClass({
                                         <h4>by {this.props.item_data.author}</h4>
                                         : null}
 
-                                        <div className="itemmeta-container mt20">
+                                        <div className="itemmeta-container clearfix mt20">
                                             <div className="item-ratings">
                                                 {ratings}
                                             </div>
+                                            { ratings ? 
                                             <div className="item-num-ratings">
                                                 <i>{this.props.item_data.num_ratings} ratings</i>
-                                            </div>
+                                            </div> : null }
                                             { categories.length ? 
                                                 <div className="category-container clearfix pull-right">
                                                     {categories}

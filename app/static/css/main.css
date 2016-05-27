@@ -393,6 +393,7 @@ header .header-content .header-content-inner p {
     margin: 20px 0px;
 }
 .item-container h2, h4{ font-weight: 400; }
+.itemmeta-container { margin-border: 20px; }
 .itemmeta-container > div { display: inline-block; }
 .item-ratings { margin-right: 10px; }
 .star-half { position: relative; }
@@ -405,6 +406,7 @@ header .header-content .header-content-inner p {
     height: 100%;
     left: 47%;
 }
+.category-container { width: 400px; }
 .summary {
     line-height: 21px;
     font-size: 15px;
