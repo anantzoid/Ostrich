@@ -20,8 +20,8 @@ const Footer = React.createClass({
                         <div className="row footer-bottom">
                             <div className="col-lg-3">
                                 <div className="left-info">
-                                    <a href="#">Contact Us</a>
-                                    <a href="#">Terms and Conditions</a>
+                                    <a href="mailto:contact@ostrichapp.in">Contact Us</a>
+                                    <a href="/terms">Terms and Conditions</a>
                                 </div>
                             </div>
                             <div className="col-lg-6">

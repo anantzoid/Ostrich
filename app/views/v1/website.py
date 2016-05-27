@@ -111,6 +111,18 @@ def itemPage(**kwargs):
             title=item_data['item_name'],
             store=store)
 
+@webapp.route('/terms')
+@user_session
+def terms(props):
+    store = {'component': 'terms.jsx'}
+    store['props'] = json.dumps(props)
+    rendered = render_component(path(store['component']), props=props)
+    return render_template('terms.html',
+            rendered=rendered,
+            title='Terms and Conditions',
+            store=store) 
+
+
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
     auth_code = Utils.getParam(request.form, 'data', '')
@@ -138,6 +150,7 @@ def googlesignin():
             'user': session['_user']
     }
     return jsonify(data=visible_user_data)
+
 
 @webapp.errorhandler(404)
 def page_not_found(e):

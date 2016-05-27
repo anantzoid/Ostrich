@@ -39,7 +39,7 @@ class WebUtils():
         if category['slug_url']: 
             category['slug_url'] = url + category['slug_url']
         else:
-            category['slug_url'] = url + category['category_id']
+            category['slug_url'] = url + str(category['category_id'])
         return category
 
 
