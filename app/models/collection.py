@@ -156,7 +156,7 @@ class Collection(Prototype):
             (tuple([collection_id]) + tuple(item_ids)))
         conn.commit()
 
-        Indexer().indexCollections(query_condition='c.collection_id='+collection_id)
+        Indexer().indexCollections(query_condition='c.collection_id='+str(collection_id))
         #NOTE for start session cals
         if collection_id in [4, 5]:
             Notifications().startDataUpdate() 
