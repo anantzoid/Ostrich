@@ -8,7 +8,7 @@ import requests
 import string
 
 class Search():
-    def __init__(self, query='', user_info={}, flow='borrow', size=20):
+    def __init__(self, query='', user_info={}, flow='borrow', size=24):
         self.es_url  = webapp.config['ES_NODES'].split(',')
         self.es = Elasticsearch(self.es_url)
         self.query = query
