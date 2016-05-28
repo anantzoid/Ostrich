@@ -10,7 +10,8 @@ from app import webapp
 from app.models import *
 from app.decorators import user_session
 
-components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'src', 'components')
+root_path = os.getcwd() if webapp.config['APP_ENV'] == 'dev' else '/var/www/app'
+components_path = os.path.join(root_path, 'app', 'static', 'js', 'src', 'components')
 
 def path(js_file):
     return os.path.join(components_path, js_file)
@@ -141,7 +142,8 @@ def googlesignin():
         'name': user_document['name'],
         'email': user_document['email'],
         'google_id': credentials.id_token['sub'],
-        'picture': user_document['picture']
+        'picture': user_document['picture'],
+        'source': 'web'
         }
     user = User.createUser(user_data)
     user.getOrderSlots()

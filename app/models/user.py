@@ -60,6 +60,7 @@ class User(Prototype):
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
         picture_url = user_data['picture_url'] if 'picture_url' in user_data else ''
+        source = Utils.getParam(user_data, 'source', default='android')
         
         if email:
             check_email_cursor = conn.cursor()
@@ -70,6 +71,13 @@ class User(Prototype):
             if user_exists_id and len(user_exists_id):
                 user_exists = User(int(user_exists_id[0]), 'user_id')
                 user_exists.existed = "true"
+
+                # NOTE updating picture_url
+                if not user_exists.picture_url:
+                    insert_pic_cursor = conn.cursor()
+                    insert_pic_cursor.execute("""UPDATE users SET picture_url = %s
+                        WHERE user_id = %s""", (picture_url, user_exists.user_id))
+                    conn.commit()
                 return user_exists
 
         create_user_cursor = conn.cursor()
