@@ -10,6 +10,7 @@ let gAuth = function(){
                     data: {'data': authResult['code']},
                     beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
+                        loaderBackdrop(false);       
                         // NOTE temporary. Since prop changes are not passed down to child.
                         // Will have to look into it.
                         location.reload();
@@ -24,7 +25,6 @@ let gAuth = function(){
                         */
 
                         resolve(response);
-                        loaderBackdrop(false);       
                     },
                     error: () => {
                         loaderBackdrop(false);       

@@ -49,7 +49,8 @@ const OrderModal = React.createClass({
     render() {
         let addresses = [];
         if (this.state.user.hasOwnProperty('address')) {
-            for(let address of this.state.user.address) {
+            for(let address in this.state.user.address) {
+                address = this.state.user.address[address];
                 addresses.push({
                     value: address.address_id, 
                     label: address.description+', '+address.locality

@@ -25,7 +25,7 @@ let OrderUtils = {
     orderLoader(flag) {
         // TODO replace with loder
         if (flag) {
-           $('.place-order').text('Placing...');  
+           $('.place-order').text('<img class="order-loader" src="/static/img/loading.gif" />');  
         } else {
            $('.place-order').text('Place the Order');  
         }

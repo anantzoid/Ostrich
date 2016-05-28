@@ -63,16 +63,20 @@ const Item = React.createClass({
                                         : null}
 
                                         <div className="itemmeta-container clearfix mt20">
-                                            <div className="item-ratings">
-                                                {ratings}
+                                            <div className="col-lg-5">
+                                                <div className="item-ratings">
+                                                    {ratings}
+                                                </div>
+                                                { ratings ? 
+                                                <div className="item-num-ratings">
+                                                    <i>{this.props.item_data.num_ratings} ratings</i>
+                                                </div> : null }
                                             </div>
-                                            { ratings ? 
-                                            <div className="item-num-ratings">
-                                                <i>{this.props.item_data.num_ratings} ratings</i>
-                                            </div> : null }
                                             { categories.length ? 
-                                                <div className="category-container clearfix pull-right">
-                                                    {categories}
+                                                <div className="col-lg-7">
+                                                    <div className="category-container clearfix pull-right">
+                                                        {categories}
+                                                    </div>
                                                 </div>
                                             : null }
                                         </div>

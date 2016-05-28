@@ -37,9 +37,6 @@ class User(Prototype):
             for i in range(num_address):
                 self.data['address'].append(Utils.fetchOneAssoc(obj_cursor))
 
-            if not self.picture_url:
-                self.picture_url = '/static/img/profile_default.jpg'
-   
 
     @staticmethod
     def createUser(user_data):
@@ -60,7 +57,9 @@ class User(Prototype):
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
         picture_url = user_data['picture_url'] if 'picture_url' in user_data else ''
+        picture_url = Utils.getParam(user_data, 'picture', default='/static/img/profile_default.png')
         source = Utils.getParam(user_data, 'source', default='android')
+        app_version = Utils.getParam(user_data, 'app_version', default=None)
         
         if email:
             check_email_cursor = conn.cursor()
@@ -78,6 +77,7 @@ class User(Prototype):
                     insert_pic_cursor.execute("""UPDATE users SET picture_url = %s
                         WHERE user_id = %s""", (picture_url, user_exists.user_id))
                     conn.commit()
+                    user.picture_url = picture_url
                 return user_exists
 
         create_user_cursor = conn.cursor()
@@ -85,7 +85,7 @@ class User(Prototype):
                 email, phone, google_id, gcm_id, picture_url, last_app_version, 
                 last_used_timestamp) 
                 VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
-            (username, password, name, email, phone, google_id, gcm_id, picture_url, user_data['app_version']))
+            (username, password, name, email, phone, google_id, gcm_id, picture_url, app_version))
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)

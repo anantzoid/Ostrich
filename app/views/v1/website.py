@@ -10,8 +10,7 @@ from app import webapp
 from app.models import *
 from app.decorators import user_session
 
-root_path = os.getcwd() if webapp.config['APP_ENV'] == 'dev' else '/var/www/app'
-components_path = os.path.join(root_path, 'app', 'static', 'js', 'src', 'components')
+components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'src', 'components')
 
 def path(js_file):
     return os.path.join(components_path, js_file)
