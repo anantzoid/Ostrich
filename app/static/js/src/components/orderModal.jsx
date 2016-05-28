@@ -102,8 +102,8 @@ const OrderModal = React.createClass({
                                 <label htmlFor="payment_cash">Cash</label>
                             </div>
                             <div className="payment-options">
-                                <input type="radio" name="payment-option" id="payment_credits" value="wallet"/>
-                                <label htmlFor="payment_credits">Wallet <span className="faded">(₹ {this.state.user.wallet_balance})</span></label>
+                                <input type="radio" name="payment-option" id="payment_credits" value="wallet" disabled={!this.state.user.wallet_balance}/>
+                                <label htmlFor="payment_credits">Wallet {this.state.user.wallet_balance ? <span className="faded">(₹ {this.state.user.wallet_balance})</span> : null }</label>
                             </div>
                         </div>
                     </Modal.Body>
