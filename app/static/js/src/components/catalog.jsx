@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './navbar';
 import Footer from './footer';
+import CatalogUtils from '../utils/catalogUtils';
 
 const Catalog = React.createClass({
     _renderListElements(items) {
@@ -20,6 +21,23 @@ const Catalog = React.createClass({
         }
         return item_list;
     },
+    _loadMore() {
+        CatalogUtils.loadMore(this.state.page+1).then((response) => {
+            this.setState({
+                page: this.state.page + 1,
+                items: this.state.items.concat(response.items)});
+        }, () => {
+            console.log('error');  
+        }); 
+    },
+    getInitialState() {
+        let state = {is_search:  this.props.search_results.hasOwnProperty('items')};
+        if (state.is_search) {
+            state.page =  this.props.page_num;
+            state.items = this.props.search_results.items;
+        }
+        return state; 
+    },
     render() {
         let categories = this.props.categories.map((category) => {
             let key = 'category-'+category.category_id;
@@ -30,22 +48,20 @@ const Catalog = React.createClass({
                 );
         });
 
-        let catalog = null;
-
-        if(this.props.catalog.length) {
-            catalog = this.props.catalog.map((list) => {
-            return(
-                    <div className="catalog-element clearfix">
-                        <h3>{list.name}</h3>
-                        <ul>{this._renderListElements(list.items)}</ul>
-                    </div>
-                  ); 
-            });
-        }
-
         let results = null;
-        if(this.props.search_results.hasOwnProperty('items') && this.props.search_results.items.length) {
-            results = this._renderListElements(this.props.search_results.items);
+
+        if(!this.state.is_search) {
+            results = this.props.catalog.map((list) => {
+                let key = 'collection-'+list.collection_id; 
+                return(
+                        <div className="catalog-element clearfix" key={key}>
+                            <h3>{list.name}</h3>
+                            <ul>{this._renderListElements(list.items)}</ul>
+                        </div>
+                        ); 
+            });
+        } else {
+            results = this._renderListElements(this.state.items);
         }
 
         return(
@@ -60,9 +76,9 @@ const Catalog = React.createClass({
                                     <ul>{categories}</ul>
                                 </div>  
                             </div>
-                            {this.props.catalog.length ?
+                            {!this.state.is_search ?
                                 <div className="col-lg-10">
-                                    {catalog}
+                                    {results}
                                 </div>
                                 :
                                 <div className="col-lg-9">
@@ -72,6 +88,9 @@ const Catalog = React.createClass({
                                     <ul>
                                         {results}
                                     </ul>
+                                    { this.state.items.length < this.props.search_results.total ? 
+                                        <button className="btn load-more" onClick={this._loadMore}>Load More</button>
+                                    : null }
                                 </div>
                             }
                         </div>

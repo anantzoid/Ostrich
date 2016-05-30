@@ -1,18 +1,27 @@
 from app import webapp
 from app.models import *
+from flask import session
 import re
 
 class WebUtils():
     @staticmethod
-    def fetchSearchResults(query, search_type):
+    def fetchSearchResults(query, search_type, page):
         from app.models import Search
-        search = Search(query)
+
+        user_info = {'user_id': -1, 'uuid': 'web:-1', 'gcm_id': None}
+        user_data = session.get('_user', None)
+        if user_data:
+            user_info['user_id'] = user_data['user_id'] 
+            user_info['uuid'] = 'web:'+str(user_data['user_id']) 
+
+        search = Search(query, user_info)
+        page = page - 1
         if search_type == 'category':
-            results = search.categorySearch()
+            results = search.categorySearch(page)
         elif search_type == 'collection':
-            results = search.collectionsSearch()
+            results = search.collectionsSearch(page)
         else: 
-            results = search.basicSearch()
+            results = search.basicSearch(page)
         results['items'] = WebUtils.extendItemWebProperties(results['items'])
         return results 
 

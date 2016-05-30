@@ -39,8 +39,8 @@ class Search():
                 }
         try:
             self.user_id = user_info['user_id']
-            self.gcm_id = user_info['gcm_id']
             self.uuid = user_info['uuid']
+            self.gcm_id = user_info['gcm_id']
         except:
             pass
 
@@ -185,6 +185,7 @@ class Search():
 
     @async
     def reportFail(self, phrase_fail, query_fail, search_type='free'):
+        print "hererer"
         if self.user_id in Utils.getAdmins():
             return
         if not phrase_fail and not query_fail:

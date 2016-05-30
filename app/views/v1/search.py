@@ -1,5 +1,5 @@
 from app import webapp, mysql
-from app.models import Search , Utils, Collection
+from app.models import Search , Utils, Collection, WebUtils
 from flask import request, jsonify
 from flask.ext.jsonpify import jsonify as jsonp
 import json
@@ -27,10 +27,14 @@ def searchString():
     flow = Utils.getParam(request.args, 'flow', default='borrow')
     gcm_id = Utils.getParam(request.args, 'gcm_id', default=None)
     uuid = Utils.getParam(request.args, 'distinct_id', default=None)
+    ref = Utils.getParam(request.args, 'ref', default='mobile')
 
     if not query:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
-    
+   
+    if ref == 'web':
+        return json.dumps(WebUtils.fetchSearchResults(query, search_type, page))
+
     user_info = {'user_id': user_id, 'gcm_id': gcm_id, 'uuid': uuid}
     search = Search(query, user_info, flow)
     if search_type == 'free':

@@ -1,6 +1,6 @@
 from threading import Thread
 from functools import wraps
-from flask import session
+from flask import session, request
 
 def async(func):
     @wraps(func)
@@ -12,7 +12,11 @@ def async(func):
 def user_session(func):
     @wraps(func)
     def wrapper(**kwargs):
-        #session.clear()
+        # TODO put admin check
+        from app.models import Utils
+        if Utils.getParam(request.args, 'session', default=None):
+            session.clear()
+
         user_data = session.get('_user', None)
         kwargs['props'] = {'user': user_data}
         return func(**kwargs)

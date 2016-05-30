@@ -391,6 +391,15 @@ header .header-content .header-content-inner p {
     font-weight: bold;
     font-size: 16px;
 }
+.load-more {
+    margin-left: 40%;
+    padding: 10px 30px;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 20px;
+}
+.load-more:focus, .load-more:hover {color: white;}
 /*------------ Catalog Ends ---------------*/
 /*------------ ItemPage Starts ---------------*/
 .itempage-section { min-height: 700px; }

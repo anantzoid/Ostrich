@@ -44,18 +44,19 @@ def catalog(**kwargs):
     store = {'component': 'catalog.jsx'}
     query = Utils.getParam(request.args, 'q', default='')
     search_type = Utils.getParam(request.args, 'type', default='free')
+    page = Utils.getParam(request.args, 'page', var_type='int', default=1)
    
     results, catalog = [], []
     if query:
-        results = WebUtils.fetchSearchResults(query, search_type)  
+        results = WebUtils.fetchSearchResults(query, search_type, page)  
     elif 'category_slug' in kwargs or 'category_id' in kwargs:
         entity = 'category_id' if 'category_id' in kwargs else 'category_slug'
         query = Item.fetchCategory(slug=kwargs[entity])['category_name']
-        results = WebUtils.fetchSearchResults(query, 'category')  
+        results = WebUtils.fetchSearchResults(query, 'category', page)  
     elif 'collection_id' in kwargs:
         collection = Collection(kwargs['collection_id'])
         query = collection.name
-        #results = WebUtils.fetchSearchResults(query, 'collection')   
+        #results = WebUtils.fetchSearchResults(query, 'collection', page)   
         # NOTE alternate source: from DB
         # TODO do profiling and check which is faster
         results = collection.getExpandedObj()
@@ -68,9 +69,10 @@ def catalog(**kwargs):
             'catalog': catalog,
             'categories': Search.getAllSearchCategories(),
             'query': query,
-            'page': 'catalog'
+            'page': 'catalog',
+            'page_num': page
             })
-    store['props'] =json.dumps(props)
+    store['props'] = json.dumps(props)
     rendered = render_component(path(store['component']), props=props)
     return render_template('catalog.html',
             rendered=rendered,

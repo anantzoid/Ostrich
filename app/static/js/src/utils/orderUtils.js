@@ -1,11 +1,13 @@
+import loaderPlaceholder from './loader'; 
 
 let OrderUtils = {
     placeOrder(order_data, hideOrderModal, showAppModal) {
+        let className = '.place-order';
         $.ajax({
             type: 'POST',
             url: '/order',
             data: order_data,
-            beforeSend: () => { OrderUtils.orderLoader(true); },
+            beforeSend: () => { loaderPlaceholder(true, className); },
             success:((response) => {
                 if (response.hasOwnProperty('order_id')) {
                     hideOrderModal();
@@ -17,18 +19,10 @@ let OrderUtils = {
                 // TODO show error if appropriate code, else generic msg
                 // remove loading
                 console.log(error);
-                OrderUtils.orderLoader(false); 
+                loaderPlaceholder(false, className, 'Place the Order'); 
             })
         });
     },
-    orderLoader(flag) {
-        // TODO replace with loder
-        if (flag) {
-           $('.place-order').html('<img class="order-loader" src="/static/img/loading.gif" />');  
-        } else {
-           $('.place-order').text('Place the Order');  
-        }
-    }
 }
 
 export default OrderUtils;
