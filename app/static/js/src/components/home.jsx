@@ -80,18 +80,27 @@ const Homepage = React.createClass({
                     <div className="container">
                         <div className="row howto-heading">
                             <div className="col-lg-12 text-center">
-                                <h3>What's so great about Ostrich?</h3>
+                                <h3>How Ostrich helps you</h3>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-lg-4">
-                                <img src="/static/img/tmp/click_120.png" />
+                                <div className="text-center">
+                                    <img className="howto-img" src="/static/img/tmp/click_120.png" />
+                                    <div className="mt20">You can search for your favourite book and get a premium copy of the title at your doorstep.</div>
+                                </div>
                             </div>
                             <div className="col-lg-4">
-                                <img src="/static/img/tmp/door_120.png" />
+                                <div className="text-center">
+                                    <img className="howto-img" src="/static/img/tmp/door_120.png" />
+                                    <div className="mt20">We will deliver books at a time and place decided by you.</div>
+                                </div>
                             </div>
                             <div className="col-lg-4">
-                                <img src="/static/img/tmp/pay_r_120.png" />
+                                <div className="text-center">
+                                    <img className="howto-img" src="/static/img/tmp/pay_r_120.png" />
+                                    <div className="mt20">Because nothing should come in the way of reading.</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -104,14 +113,13 @@ const Homepage = React.createClass({
                             </div>
                         </div>
                         <div className="row">
-                            <div className="col-lg-4">
-                                <a target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' width="196" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                            <div className="col-lg-6 text-center">
+                                <img className="app-img" src="/static/img/tmp/showcase.png" />
+                                <div className="app-link"><a target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' width="196" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a></div>
                             </div>
-                            <div className="col-lg-4">
-                                <a href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img alt="Add to Slack" height="55" width="196" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
-                            </div>
-                            <div className="col-lg-4">
-                                <span>Coming Soon:<br/> Facebook Messenger App</span>
+                            <div className="col-lg-6 text-center">
+                                <img className="app-img" src="/static/img/tmp/slack-demo.png" />
+                                <div className="app-link"><a href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img alt="Add to Slack" height="55" width="196" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a></div>
                             </div>
                         </div>
                     </div>

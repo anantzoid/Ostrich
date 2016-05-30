@@ -13,6 +13,7 @@ label {
 }
 a:hover, a:focus {
     text-decoration: none;
+    outline: none;
 }
 .clearfix:after {
     clear: both;
@@ -77,7 +78,7 @@ a:hover, a:focus {
 
 /*------------ NavBar Ends ---------------*/
 
-/*------------ Header Ends ---------------*/
+/*------------ Header Starts ---------------*/
 .header-section {
   height: 500px;
   position: relative;
@@ -248,8 +249,8 @@ header .header-content .header-content-inner p {
 
     text-transform: uppercase;
     color: #fff;
-    font-size: 20px;
-    font-weight: 600;
+    font-size: 16px;
+    font-weight: 400;
 }
 
 @media (max-width: 800px) {
@@ -313,7 +314,13 @@ header .header-content .header-content-inner p {
     margin-bottom: 50px;
     margin-top: 30px;
 }
-
+.howto-img { min-height: 120px; }
+.app-img { width: 300px; }
+.app-link {
+    margin: auto;
+    width: 25%;
+    margin-top: 20px;
+}
 /*------------ Homepage Ends ---------------*/
 /*------------ Catalog Starts ---------------*/
 #catalog .search-elements,
@@ -480,10 +487,11 @@ header .header-content .header-content-inner p {
     width: 40px;
 }
 .error { border: 1px solid #cb2b2d !important; }
-@media (min-width: 768px)
-.modal-sm {
-    width: 420px;
-    margin-top: 100px;
+@media (min-width: 768px) {
+    .modal-sm {
+        width: 420px !important;
+        margin-top: 100px;
+    }
 }
 .gold { color: gold; }
 .install-container {
