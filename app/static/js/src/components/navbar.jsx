@@ -1,12 +1,13 @@
 import React from 'react';
 import SearchBar from './searchbar';
+import AppModal from './appModal';
 import gAuth from '../google_auth.js'; 
 
 const Navbar = React.createClass({
-    /*
     getInitialState() {
-        return {'user': this.props.user};
+        return {'show_app_modal': this.props.show_app_modal};
     },
+    /*
     componentDidMount() {
         window.addEventListener('headerAuth', this._postAuth);
     }, 
@@ -14,6 +15,11 @@ const Navbar = React.createClass({
         this.setState({'user': event.detail})
     },
     */
+    _toggleAppModal(title) {
+        this.setState({
+            'show_app_modal': !this.state.show_app_modal
+        });
+    },
     startAuth() {
         gAuth().then(function(response) {
             console.log("User Logged in!");
@@ -39,7 +45,7 @@ const Navbar = React.createClass({
                         { this.props.user === null ?
                             <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in</a>
                             :
-                            <a id="userProfile" href="#"><img src={this.props.user.picture_url}/></a>
+                            <a id="userProfile" href="#" onClick={this._toggleAppModal}><img src={this.props.user.picture_url}/></a>
                         }
                     </li>
                </ul>
@@ -50,6 +56,7 @@ const Navbar = React.createClass({
                 }
             </div>
         </div>
+        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Download Ostrich" />
         </nav>
         );
     }
