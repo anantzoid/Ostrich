@@ -83,7 +83,7 @@ class Item(Prototype):
             entity = name
         else:
             return {}
-        category = cache.get(cache_key)
+        category = None#cache.get(cache_key)
         if not category:
             cursor = mysql.connect().cursor()
             cursor.execute("SELECT * FROM categories WHERE "+query_cond+" = %s", (entity,))

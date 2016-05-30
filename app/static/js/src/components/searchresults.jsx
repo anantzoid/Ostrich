@@ -1,7 +1,11 @@
 import React from 'react';
 
 const SearchResults = React.createClass({
+    getInitialState() {
+        return { page: 1 };
+    },
     render() {
+        console.log(this.state.page*this.props.search_results.items.length, this.props.search_results.count);
         let results = this.props.search_results.items.map((book) => {
             let key = 'book-'+book.item_id;
             return(
@@ -36,9 +40,12 @@ const SearchResults = React.createClass({
                     </div>
                 </div>
                 <div className="col-lg-9 clearfix">
-                    <ul>
+                    <ul className="clearfix">
                         {results}
                     </ul>
+                    { this.state.page*this.props.search_results.items.length < this.props.search_results.count ? 
+                        <button className="" onClick={this._}>Load More</button>
+                    : null }
                 </div>
             </div>
             );

@@ -480,6 +480,16 @@ header .header-content .header-content-inner p {
     width: 40px;
 }
 .error { border: 1px solid #cb2b2d !important; }
+@media (min-width: 768px)
+.modal-sm {
+    width: 420px;
+    margin-top: 100px;
+}
+.gold { color: gold; }
+.install-container {
+    margin: auto;
+    width: 40%;
+}
 /*------------ ItemPage Ends ---------------*/
 
 .footer {

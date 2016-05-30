@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './navbar';
 import OrderModal from './orderModal';
+//TODO use appModal included in navbar itself
 import AppModal from './appModal';
 import Footer from './footer';
 import gAuth from '../google_auth.js'; 

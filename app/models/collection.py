@@ -174,7 +174,7 @@ class Collection(Prototype):
         homepage_collections = cache.get(cache_key)
         if not homepage_collections:
             # NOTE temp
-            if webapp.config['APP_ENV'] != 'prod':
+            if webapp.config['APP_ENV'] != 'dev':
                 homepage_collection_ids = [38, 40, 41, 42]
             else:
                 homepage_collection_ids = [25, 26, 27, 28]
