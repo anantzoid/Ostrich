@@ -7,7 +7,7 @@ const AppModal = React.createClass({
         return (
             <Modal show={this.props.show} onHide={this.props.hide} bsSize="sm">
                 <Modal.Header closeButton>
-                    <Modal.Title>{this.props.title}</Modal.Title>
+                    <Modal.Title>Order Placed Successfully</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                    

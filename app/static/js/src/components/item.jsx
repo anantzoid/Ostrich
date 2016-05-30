@@ -10,8 +10,7 @@ const Item = React.createClass({
     getInitialState() {
         return {
             'show_order_modal': false,
-            'show_app_modal': false,
-            'app_modal_title': 'Download Ostrich'
+            'show_app_modal': false
         };
     },
     componentDidMount() {
@@ -26,7 +25,6 @@ const Item = React.createClass({
     },
     _toggleAppModal(title) {
         this.setState({
-            'app_modal_title': title,
             'show_app_modal': !this.state.show_app_modal
         });
     },
@@ -117,7 +115,7 @@ const Item = React.createClass({
                         </div>
                    </div> 
                    <OrderModal show={this.state.show_order_modal} {...this.props} hide={this._toggleOrderModal} appModal={this._toggleAppModal}/>
-                   <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title={this.state.app_modal_title}/>
+                   <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} />
                 </section>
                 <Footer />
             </div>

@@ -56,7 +56,6 @@ class User(Prototype):
     
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
-        picture_url = user_data['picture_url'] if 'picture_url' in user_data else ''
         picture_url = Utils.getParam(user_data, 'picture', default='/static/img/profile_default.png')
         source = Utils.getParam(user_data, 'source', default='android')
         app_version = Utils.getParam(user_data, 'app_version', default=None)

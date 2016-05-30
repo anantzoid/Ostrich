@@ -1,5 +1,4 @@
 
-
 let OrderUtils = {
     placeOrder(order_data, hideOrderModal, showAppModal) {
         $.ajax({
@@ -10,7 +9,7 @@ let OrderUtils = {
             success:((response) => {
                 if (response.hasOwnProperty('order_id')) {
                     hideOrderModal();
-                    showAppModal('Order Placed Successfully');
+                    showAppModal();
                 }
             }),
             error: ((jqXHR) => {
@@ -25,7 +24,7 @@ let OrderUtils = {
     orderLoader(flag) {
         // TODO replace with loder
         if (flag) {
-           $('.place-order').text('<img class="order-loader" src="/static/img/loading.gif" />');  
+           $('.place-order').html('<img class="order-loader" src="/static/img/loading.gif" />');  
         } else {
            $('.place-order').text('Place the Order');  
         }
