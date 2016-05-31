@@ -600,7 +600,7 @@ class Admin():
                     fk_delivery = %s,
                     fk_price = %s""", tuple(row + row[1:]))
                 conn.commit() 
-            except e:
+            except Exception as e:
                 print str(e)
 
         return True
