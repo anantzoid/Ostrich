@@ -15,6 +15,18 @@ a:hover, a:focus {
     text-decoration: none;
     outline: none;
 }
+::-webkit-input-placeholder {
+font-style: italic;
+}
+:-moz-placeholder {
+    font-style: italic;  
+}
+::-moz-placeholder {
+    font-style: italic;  
+}
+:-ms-input-placeholder {  
+    font-style: italic; 
+}
 .clearfix:after {
     clear: both;
     content: ".";
@@ -489,8 +501,25 @@ header .header-content .header-content-inner p {
     margin-top: 20px;
 }
 .Select { margin-bottom: 20px; }
-.Select-control { cursor: pointer; }
+.Select-control { cursor: pointer !important; }
 .place-order { width: 140px; }
+
+.add-address {
+    background-color: #eee;
+    border: 1px solid #9a9a9a;
+}
+.add-address:hover { background-color: #C0C0C0 !important; }
+.address-description,
+.address-landmark {
+    height: 30px;
+    width: 100%;
+    border-radius: 2px;
+    border: 1px solid #ccc;
+    padding: 15px 10px;
+    margin-top: 10px;
+}
+.confirm-address { width: 120px; }
+
 .order-loader {
     margin: auto;
     width: 40px;

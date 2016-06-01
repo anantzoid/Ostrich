@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchBar from './searchbar';
 import AppModal from './appModal';
-import gAuth from '../google_auth.js'; 
+import gAuth from '../utils/loginUtils.js'; 
 
 const Navbar = React.createClass({
     getInitialState() {

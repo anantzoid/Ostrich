@@ -11,9 +11,6 @@ let gAuth = function(){
                     beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
                         loaderBackdrop(false);       
-                        // NOTE temporary. Since prop changes are not passed down to child.
-                        // Will have to look into it.
-                        location.reload();
 
                         window.renderApp($.extend(true, JSON.parse(store.props), response.data));
                         /*

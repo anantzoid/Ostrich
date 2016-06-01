@@ -2,6 +2,8 @@ const React = require('react');
 const ReactDOM = require('react-dom');
 window.renderApp = function(props) {
     const component = require('./src/components/'+store.component);
-    ReactDOM.render(React.createFactory(component)(props), document.getElementById('app-container'));
+    const domContainerNode = document.getElementById('app-container');
+    ReactDOM.unmountComponentAtNode(domContainerNode);
+    ReactDOM.render(React.createFactory(component)(props), domContainerNode);
 }
 renderApp(JSON.parse(store.props));

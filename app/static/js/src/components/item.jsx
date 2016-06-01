@@ -2,15 +2,17 @@ import React from 'react';
 import Navbar from './navbar';
 import OrderModal from './orderModal';
 //TODO use appModal included in navbar itself
+import AddressModal from './addressModal';
 import AppModal from './appModal';
 import Footer from './footer';
-import gAuth from '../google_auth.js'; 
+import gAuth from '../utils/loginUtils.js'; 
 
 const Item = React.createClass({
     getInitialState() {
         return {
-            'show_order_modal': false,
-            'show_app_modal': false
+            show_order_modal: false,
+            show_app_modal: false,
+            show_address_modal: false
         };
     },
     componentDidMount() {
@@ -21,12 +23,20 @@ const Item = React.createClass({
         gAuth().then(function(response) {});
     },
     _toggleOrderModal() {
-        this.setState({'show_order_modal': !this.state.show_order_modal});
+        this.setState({show_order_modal: !this.state.show_order_modal});
     },
-    _toggleAppModal(title) {
+    _toggleAddressModal() {
+        this.setState({ show_address_modal: !this.state.show_address_modal });
+    },
+    _toggleAppModal() {
+        this.setState({ show_app_modal: !this.state.show_app_modal });
+    },
+    _hideAllModal() {
         this.setState({
-            'show_app_modal': !this.state.show_app_modal
-        });
+            show_order_modal: false,
+            show_app_modal: false,
+            show_address_modal: false
+        })
     },
     render() {
         let categories = this.props.item_data.categories.map((category, i) => {
@@ -114,8 +124,13 @@ const Item = React.createClass({
                             </div>
                         </div>
                    </div> 
-                   <OrderModal show={this.state.show_order_modal} {...this.props} hide={this._toggleOrderModal} appModal={this._toggleAppModal}/>
+                   <OrderModal show={this.state.show_order_modal} 
+                                {...this.props} 
+                                hide={this._toggleOrderModal} 
+                                appModal={this._toggleAppModal}
+                                _toggleAddressModal={this._toggleAddressModal}/>
                    <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" />
+                   <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal}/>
                 </section>
                 <Footer />
             </div>

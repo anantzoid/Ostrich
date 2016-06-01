@@ -53,11 +53,11 @@ const OrderModal = React.createClass({
                 address = this.state.user.address[address];
                 addresses.push({
                     value: address.address_id, 
-                    label: address.description+', '+address.locality
+                    label: address.description+', '+address.locality,
+                    disabled: address.is_valid ? false : true
                 }); 
             }
         }
-
         let time_slots = [];
         if (this.state.default_address.hasOwnProperty('time_slot')) {
             for(let slot of this.state.default_address.time_slot) {
@@ -74,7 +74,7 @@ const OrderModal = React.createClass({
                     </Modal.Header>
                     <Modal.Body>
                         <Select
-                            name="address-selector"
+                            className="address-selector"
                             value={ this.state.default_address.hasOwnProperty('address_id') 
                                 ? this.state.default_address.address_id : null}
                             options={addresses}
@@ -85,7 +85,7 @@ const OrderModal = React.createClass({
                             onFocus={this._removeError}
                         />
                         <Select
-                            name="time-selector"
+                            className="time-selector"
                             value={ this.state.default_address.hasOwnProperty('default_timeslot') 
                                 ? this.state.default_address.default_timeslot : null}
                             options={time_slots}
@@ -109,6 +109,7 @@ const OrderModal = React.createClass({
                         </div>
                     </Modal.Body>
                     <Modal.Footer>
+                        <button className="btn add-address pull-left" onClick={this.props._toggleAddressModal}>+ Add New Address</button>
                         <button className="btn btn-success place-order" onClick={this.sendOrderData}>Place the Order</button>
                     </Modal.Footer>
                 </Modal>
@@ -117,10 +118,10 @@ const OrderModal = React.createClass({
     _renderError(type) {
         switch(type) {
             case 'address':
-                $('.Select-control').first().addClass('error');
+                $('.address-selector').addClass('error');
                 break;
             case 'time':
-                $('.Select-control').last().addClass('error');
+                $('.time-selector').addClass('error');
                 break;
         }
     },

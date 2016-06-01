@@ -568,6 +568,7 @@ class Order():
 
     @staticmethod
     def getAreasForOrder():
+        # TODO cache here
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM areas WHERE active=1""")
         num_areas = cursor.rowcount

@@ -1,6 +1,6 @@
 from app import webapp
-from app.models import User, Utils, Notifications
-from flask import request, jsonify
+from app.models import User, Utils, Notifications, Order
+from flask import request, jsonify, session
 import json
 
 @webapp.route('/preregister', methods=['GET'])
@@ -88,10 +88,14 @@ def userSignup():
     @params
         user_id: The current user's id
         address: {
-                    'address': descriptive address,
                     'longitude',
                     'latitude',
-                    'address_id': optional, while editing address
+                    'address_id': optional, while editing address,
+                    'description': descriptive address,
+                    'locality': delviery area,
+                    'landmark': optional,
+                    'is_valid': flag,
+                    'delivery_message': Description for is_valid flag
                     }
     @response
         status, address_id (on success)
@@ -99,13 +103,21 @@ def userSignup():
 @webapp.route('/addAddress', methods=['POST'])
 def addAddress():
     response = {'status': 'False'}
+    ref = Utils.getParam(request.form, 'ref')
+    if not ref:
+        user_id = Utils.getParam(request.form, 'user_id')
+        if not user_id:
+            response['message'] = 'User ID missing'
+            return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
+    else:
+        user_data = session.get('_user', None)
+        if user_data:
+            user_id = user_data['user_id']
+        else:
+            response['message'] = 'User ID missing'
+            return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
-    user_id = Utils.getParam(request.form, 'user_id')
-    if not user_id:
-        response['message'] = 'User ID missing'
-        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
-
-    address = request.form['address']  if 'address' in request.form else ''
+    address = Utils.getParam(request.form, 'address')
     if not address:
         response['message'] = 'Address missing'
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
@@ -116,6 +128,7 @@ def addAddress():
 
     address_id = user.addAddress(address)
     if address_id:
+        # TODO refresh session data
         user = User(user_id, 'user_id')
         user.getOrderSlots()
         address_obj = [_ for _ in user.address if _['address_id'] == address_id[0]][0]
@@ -208,6 +221,10 @@ def addToWishlist():
 def removeFromWishlist():
     User.removeFromWishlist(request.form)
     return jsonify(status='True')
+
+@webapp.route('/fetchAreas')
+def fetchAreas():
+    return jsonify(Order.getAreasForOrder())
 
 '''
     Log on inviting another user
