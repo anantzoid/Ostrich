@@ -544,31 +544,41 @@ header .header-content .header-content-inner p {
     padding-top: 20px;
     padding-bottom: 20px;
 }
-.footer-top { border-bottom: 1px solid #ddd; }
+.footer-top { 
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 20px;
+}
+.footer-logo { width: 55px; }
 .footer-bottom { margin-top: 10px; }
 .footer-brand-name {
-    font-size: 31px;
+    font-size: 40px;
     font-weight: bold;
-    margin-top: 0px;
+    margin-top: 20px;
     color: rgba(0,171,193,0.7);
 }
-.left-info { margin-top: 10px; }
-.left-info a {
-    font-size: 15px;
-    margin-right: 10px;
-    color: #999;
+.footer-info-li {
+    float: left;
+    margin-right: 40px;
 }
-.left-info a:hover { color: #666; }
+.footer-info-li h4 {
+    color: #9a9a9a;
+    margin-bottom: 10px;
+    font-size: 17px;
+}
+.footer-info-subul { padding: 0px; }
+.footer-info-subul li { margin-bottom: 3px; }
+.left-info { margin-top: 10px; }
+.copy { color: #9a9a9a; }
 #play-store{
     width: 140px;
-    float: left;
     margin-top: -5px;
+    margin-left: 20px;
 }
 #slack-app-footer {
-    width: 100px;
-    margin-top: -30px;
+    width: 130px;
+    height: 40px;
+    margin-top: 2px;
 }
-.social-container { padding-right: 45px; }
     
 svg {
     width: 30px;
