@@ -2,6 +2,7 @@ from app import webapp
 from app.models import *
 from flask import request, jsonify
 from app.models import Notifications
+from app.decorators import user_session
 import json
 
 '''
@@ -22,13 +23,19 @@ import json
 
 '''
 @webapp.route('/order', methods=['POST'])
-def OrderItem():
+@user_session
+def orderItem(props):
    
     order_data = {}
     for key in request.form:
         order_data[key] = request.form[key]
-    order_placed = Order.placeOrder(order_data)
 
+    from_web = Utils.getParam(order_data, 'ref') == 'web'
+    if from_web:
+        if props['user'] and props['user']['user_id'] != int(order_data['user_id']):
+            return Utils.errorResponse({'status': 'false'}, 'HTTP_STATUS_CODE_CLIENT_ERROR')
+
+    order_placed = Order.placeOrder(order_data)
     if 'order_id' in order_placed and order_placed['order_id']:
         if 'App-Version' in request.headers:
             Admin.updateOrderComment({'order_id': order_placed['order_id'], 

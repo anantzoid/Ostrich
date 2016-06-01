@@ -73,6 +73,7 @@ const OrderModal = React.createClass({
                         <Modal.Title>Placing order</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <div className="order-error-msg collapse"></div>
                         <Select
                             className="address-selector"
                             value={ this.state.default_address.hasOwnProperty('address_id') 
@@ -127,6 +128,7 @@ const OrderModal = React.createClass({
     },
     _removeError() {
         $('.error').removeClass('error'); 
+        $('.order-error-msg').slideUp('slow');
     },
 });
 

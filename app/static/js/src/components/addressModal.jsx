@@ -57,6 +57,7 @@ const AddressModal = React.createClass({
                         <Modal.Title>Add New Address</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
+                        <div className="address-error-msg collapse"></div>
                         <Select
                             className="area-selector"
                             value={ this.state.new_address.hasOwnProperty('area_id') 
@@ -100,6 +101,7 @@ const AddressModal = React.createClass({
     },
     _removeError() {
         $('.error').removeClass('error'); 
+        $('.address-error-msg').slideUp('slow');
     },
 });
 

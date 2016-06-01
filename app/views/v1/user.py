@@ -1,5 +1,6 @@
 from app import webapp
 from app.models import User, Utils, Notifications, Order
+from app.decorators import user_session
 from flask import request, jsonify, session
 import json
 
@@ -101,19 +102,17 @@ def userSignup():
         status, address_id (on success)
 '''
 @webapp.route('/addAddress', methods=['POST'])
-def addAddress():
+@user_session
+def addAddress(props):
     response = {'status': 'False'}
-    ref = Utils.getParam(request.form, 'ref')
-    if not ref:
+    if Utils.getParam(order_data, 'ref') == 'web':
+        if props['user']:
+            user_id = props['user']['user_id']
+        else:
+            return Utils.errorResponse({'status': 'false'}, 'HTTP_STATUS_CODE_CLIENT_ERROR')
+    else:    
         user_id = Utils.getParam(request.form, 'user_id')
         if not user_id:
-            response['message'] = 'User ID missing'
-            return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
-    else:
-        user_data = session.get('_user', None)
-        if user_data:
-            user_id = user_data['user_id']
-        else:
             response['message'] = 'User ID missing'
             return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
@@ -128,9 +127,10 @@ def addAddress():
 
     address_id = user.addAddress(address)
     if address_id:
-        # TODO refresh session data
         user = User(user_id, 'user_id')
         user.getOrderSlots()
+        # TODO refresh cache when implemented
+        session['_user'] = user.getObj()
         address_obj = [_ for _ in user.address if _['address_id'] == address_id[0]][0]
         return jsonify(address_obj)
     else:

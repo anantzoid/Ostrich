@@ -146,7 +146,7 @@ class Order():
         custom_data = Item.getCustomProperties(order_data['item_id'], collection if order_data['collection_id'] else None)
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['custom_return_days'])) 
         order_data['order_amount'] = Utils.getParam(order_data, 'order_amount', 'int', custom_data['custom_price'])
-
+        order_data['source'] = Utils.getParam(order_data, 'ref', default='android')
         #check order validity
         # TODO check if item exists
         # TODO check for timeslot (exists or not)
@@ -168,8 +168,9 @@ class Order():
                 pickup_slot, 
                 payment_mode,
                 from_collection, 
-                charge) 
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                charge,
+                source) 
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
@@ -179,7 +180,8 @@ class Order():
                     order_data['delivery_slot'], 
                     order_data['payment_mode'],
                     order_data['collection_id'],
-                    order_data['order_amount']))
+                    order_data['order_amount'],
+                    order_data['source']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
         insert_data_cursor.close()

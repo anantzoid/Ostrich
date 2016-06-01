@@ -3,6 +3,7 @@ import loaderPlaceholder from './loader';
 let OrderUtils = {
     placeOrder(order_data, hideOrderModal, showAppModal) {
         let className = '.place-order';
+        order_data.ref = 'web';
         $.ajax({
             type: 'POST',
             url: '/order',
@@ -15,10 +16,7 @@ let OrderUtils = {
                 }
             }),
             error: ((jqXHR) => {
-                let error = JSON.parse(jqXHR.responseText);
-                // TODO show error if appropriate code, else generic msg
-                // remove loading
-                console.log(error);
+                OrderUtils.handleError(jqXHR, '.order-error-msg');
                 loaderPlaceholder(false, className, 'Place the Order'); 
             })
         });
@@ -50,11 +48,19 @@ let OrderUtils = {
                 window.renderApp(props);
                 hideModal();
             }),
-            error: (() => {
-                // TODO error message on modal
+            error: ((jqXHR) => {
+                OrderUtils.handleError(jqXHR, '.address-error-msg');
                 loaderPlaceholder(false, className, 'Add Address'); 
             })
         });
+    },
+    handleError(jqXHR, className) {
+        let error = "Something went wrong. Please contact us.";
+        if (jqXHR.status >= 400 && jqXHR.status <= 460) {
+            let error_msg = JSON.parse(jqXHR.responseText);
+            error = error_msg.hasOwnProperty('message') ? error_msg.message : error;
+        }
+        $(className).text(error).slideDown('slow');
     }
 }
 
