@@ -171,7 +171,7 @@ class Collection(Prototype):
         # List of collections to be displayed on homepage
         from app import cache
         cache_key = 'homepage_collections'+('_items' if items else '')
-        homepage_collections = cache.get(cache_key)
+        homepage_collections = None#cache.get(cache_key)
         if not homepage_collections:
             # NOTE temp
             if webapp.config['APP_ENV'] != 'dev':
@@ -193,13 +193,14 @@ class Collection(Prototype):
                 col_obj['slug_url'] = url
 
                 if col_obj['image']:
-                    col_obj['image'] = webapp.config['HOST'] + col_obj['image'] 
+                    col_obj['image'] = webapp.config['HOST'] + '/static/img/collections/' + col_obj['image'] 
                 homepage_collections.append(col_obj)
             if not items:
                 mock_collection = {
                         'slug_url': webapp.config['HOST'] + '/books',
                         'collection_id': -99,
-                        'name': 'Browse'
+                        'name': 'Browse',
+                        'image': webapp.config['HOST'] + '/static/img/collections/Browse.png' 
                         }
                 homepage_collections = [mock_collection] + homepage_collections
             cache.set(cache_key, homepage_collections)

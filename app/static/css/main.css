@@ -246,11 +246,10 @@ header .header-content .header-content-inner p {
     word-wrap: break-word;
     white-space: normal;
     position: relative;
-
-    text-transform: uppercase;
     color: #fff;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
+    letter-spacing: 1px;
 }
 
 @media (max-width: 800px) {
@@ -262,16 +261,9 @@ header .header-content .header-content-inner p {
 }
 
 .collection-span {
-    text-align: center;
-    position: relative;
-    display: inline-block;
-    min-width: 145px;
-
-    /* NOTE Make do. Pleaes change */
-    width: 225px;
-    height: 100px;
     padding: 20px;
     position: absolute;
+    width: 218px;
     top: 58%;
     left: 83%;
     margin: -70px 0 0 -170px;
@@ -279,11 +271,7 @@ header .header-content .header-content-inner p {
 }
 
 .collection-img {
-    width: auto;
-    height: auto;
-    max-width: 270px;
-    max-height: 200px;
-    vertical-align: middle;
+    width: 180px;
 }
 
 .slick-left {
