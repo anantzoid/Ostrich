@@ -58,7 +58,7 @@
         {% block content %}Loading...{% endblock %}
         {% block postscript %}{% endblock %}
         <script>
-            var store = {{ store | safe }}; 
+            var store = {{ store| tojson | safe }}; 
         </script>
         <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
 

@@ -41,6 +41,7 @@ const AddressModal = React.createClass({
             landmark: landmark, 
             is_valid: 1,
             delivery_message: 'Delivery Available'},
+            this.props.user.user_id,
             this.props.toggle);
     },
     render() {

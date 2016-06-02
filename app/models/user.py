@@ -14,11 +14,11 @@ class User(Prototype):
 
     def getData(self, user_id, login_type):
 
-        get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
-                u.gcm_id, u.picture_url, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u \
-                LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id \
-                LEFT JOIN user_wallet uw ON uw.user_id = u.user_id \
-                WHERE u.%s = %d" 
+        get_data_query = """SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, 
+                u.gcm_id, u.picture_url, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u 
+                LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id 
+                LEFT JOIN user_wallet uw ON uw.user_id = u.user_id 
+                WHERE u.%s = %d"""
         if login_type != 'user_id':
             get_data_query = get_data_query.replace("%d", "'%s'")
         else:
@@ -330,7 +330,7 @@ class User(Prototype):
         return True
 
     @staticmethod
-    def getWishlist(user_id):
+    def getWishlist(user_id, item_obj=True):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT item_id FROM wishlist WHERE user_id = %s AND active = 1""",
                 (user_id,))
@@ -339,6 +339,8 @@ class User(Prototype):
         wishlist = []
         if item_ids:
             item_ids = [int(_[0]) for _ in item_ids]
+            if not item_obj:
+                return item_ids
             wishlist = Search().getById(item_ids)
         return wishlist
 

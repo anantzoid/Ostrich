@@ -11,8 +11,8 @@ let gAuth = function(){
                     beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
                         loaderBackdrop(false);       
-
-                        window.renderApp($.extend(true, JSON.parse(store.props), response.data));
+                        store.props = $.extend(true, store.props, response.data);
+                        window.renderApp(store.props);
                         /*
                         var headerAuth = new CustomEvent('headerAuth', {'detail': response.data.user});
                         window.dispatchEvent(headerAuth);

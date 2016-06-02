@@ -5,6 +5,15 @@ import re
 
 class WebUtils():
     @staticmethod
+    def storeUserSession(user):
+        from app.models import User
+        # TODO refresh cache when implemented
+        user.getOrderSlots()
+        user_obj = user.getObj()
+        user_obj['wishlist'] = User.getWishlist(user_obj['user_id'], False)
+        session['_user'] = user_obj
+
+    @staticmethod
     def fetchSearchResults(query, search_type, page):
         from app.models import Search
 

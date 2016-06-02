@@ -5,6 +5,7 @@ import Footer from './footer';
 
 const Homepage = React.createClass({
     componentDidMount() {
+        /*
         $('.collection-ul').slick({
             infinite: false,
             slidesToShow: 5,
@@ -46,6 +47,7 @@ const Homepage = React.createClass({
 
         });
         $('.slick-left').hide();
+        */
 
     },
     render() {

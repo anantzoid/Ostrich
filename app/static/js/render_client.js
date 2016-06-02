@@ -6,4 +6,4 @@ window.renderApp = function(props) {
     ReactDOM.unmountComponentAtNode(domContainerNode);
     ReactDOM.render(React.createFactory(component)(props), domContainerNode);
 }
-renderApp(JSON.parse(store.props));
+renderApp(store.props);

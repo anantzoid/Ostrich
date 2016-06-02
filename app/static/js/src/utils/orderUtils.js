@@ -31,21 +31,20 @@ let OrderUtils = {
             });
         });
     },
-    addAddress(address, hideModal) {
+    addAddress(address, user_id, hideModal) {
         let className=".confirm-address";
         $.ajax({
             url: '/addAddress',
             type: 'POST',
             data: {
+                user_id: user_id,
                 address: JSON.stringify(address),
                 'ref': 'web'    
             },
             beforeSend: () => { loaderPlaceholder(true, className); },
             success:((response) => {
-                //TODO store permanently
-                let props = JSON.parse(store.props);
-                props.user.address.push(response);
-                window.renderApp(props);
+                store.props.user.address.push(response);
+                window.renderApp(store.props);
                 hideModal();
             }),
             error: ((jqXHR) => {
@@ -53,6 +52,36 @@ let OrderUtils = {
                 loaderPlaceholder(false, className, 'Add Address'); 
             })
         });
+    },
+    addToWishlist(user_id, item_id) {
+        $.ajax({
+            url: '/addToWishlist',
+            type: 'POST',
+            data: {
+                user_id: user_id,
+                item_id: item_id,
+                'ref': 'web'
+            },
+            success: ((response) => {
+                store.props.user.wishlist.push(item_id);
+                renderApp(store.props);
+            }) 
+        }); 
+    },
+    removeFromWishlist(user_id, item_id) {
+        $.ajax({
+            url: '/removeFromWishlist',
+            type: 'POST',
+            data: {
+                user_id: user_id,
+                item_id: item_id,
+                'ref': 'web'
+            },
+            success: ((response) => {
+                store.props.user.wishlist.splice(store.props.user.wishlist.indexOf(item_id), 1);
+                renderApp(store.props);
+            }) 
+        }); 
     },
     handleError(jqXHR, className) {
         let error = "Something went wrong. Please contact us.";

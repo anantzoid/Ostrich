@@ -85,7 +85,7 @@ const Catalog = React.createClass({
                                     <div className="search-result-title mt20">
                                         Showing results for: <span className="query-display">{this.props.query}</span>
                                     </div>
-                                    <ul>
+                                    <ul className="clearfix">
                                         {results}
                                     </ul>
                                     { this.state.items.length < this.props.search_results.total ? 

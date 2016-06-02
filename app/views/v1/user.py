@@ -1,6 +1,6 @@
 from app import webapp
-from app.models import User, Utils, Notifications, Order
-from app.decorators import user_session
+from app.models import * 
+from app.decorators import is_user
 from flask import request, jsonify, session
 import json
 
@@ -102,19 +102,14 @@ def userSignup():
         status, address_id (on success)
 '''
 @webapp.route('/addAddress', methods=['POST'])
-@user_session
-def addAddress(props):
+@is_user
+def addAddress():
     response = {'status': 'False'}
-    if Utils.getParam(order_data, 'ref') == 'web':
-        if props['user']:
-            user_id = props['user']['user_id']
-        else:
-            return Utils.errorResponse({'status': 'false'}, 'HTTP_STATUS_CODE_CLIENT_ERROR')
-    else:    
-        user_id = Utils.getParam(request.form, 'user_id')
-        if not user_id:
-            response['message'] = 'User ID missing'
-            return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
+
+    user_id = Utils.getParam(request.form, 'user_id')
+    if not user_id:
+        response['message'] = 'User ID missing'
+        return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
 
     address = Utils.getParam(request.form, 'address')
     if not address:
@@ -128,6 +123,7 @@ def addAddress(props):
     address_id = user.addAddress(address)
     if address_id:
         user = User(user_id, 'user_id')
+        WebUtils.storeUserSession(user)
         user.getOrderSlots()
         # TODO refresh cache when implemented
         session['_user'] = user.getObj()
@@ -213,13 +209,17 @@ def getWishlist():
     return Utils.errorResponse(response)
 
 @webapp.route('/addToWishlist', methods=['POST'])
+@is_user
 def addToWishlist():
     User.addToWishlist(request.form)
+    WebUtils.storeUserSession(User(Utils.getParam(request.form, 'user_id', 'int')))
     return jsonify(status='True')
 
 @webapp.route('/removeFromWishlist', methods=['POST'])
+@is_user
 def removeFromWishlist():
     User.removeFromWishlist(request.form)
+    WebUtils.storeUserSession(User(Utils.getParam(request.form, 'user_id', 'int')))
     return jsonify(status='True')
 
 @webapp.route('/fetchAreas')

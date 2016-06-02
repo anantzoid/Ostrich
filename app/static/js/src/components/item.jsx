@@ -5,6 +5,7 @@ import OrderModal from './orderModal';
 import AddressModal from './addressModal';
 import AppModal from './appModal';
 import Footer from './footer';
+import OrderUtils from '../utils/orderUtils.js';
 import gAuth from '../utils/loginUtils.js'; 
 
 const Item = React.createClass({
@@ -37,6 +38,12 @@ const Item = React.createClass({
             show_app_modal: false,
             show_address_modal: false
         })
+    },
+    _wishlistAdd() {
+        OrderUtils.addToWishlist(this.props.user.user_id, this.props.item_data.item_id);
+    },
+    _wishlistRemove() {
+        OrderUtils.removeFromWishlist(this.props.user.user_id, this.props.item_data.item_id);
     },
     render() {
         let categories = this.props.item_data.categories.map((category, i) => {
@@ -116,7 +123,13 @@ const Item = React.createClass({
                                     </div>
                                     <div className="action-container">
                                         { this.props.user ? 
-                                        <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Rent Now</button>
+                                        <div>
+                                            <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Rent Now</button>
+                                            { this.props.user.wishlist.length &&  this.props.user.wishlist.indexOf(this.props.item_data.item_id) > -1 ?
+                                                <button className="btn wishlist-remove" onClick={this._wishlistRemove}>Remove from Wishlist</button>
+                                              : <button className="btn wishlist-add" onClick={this._wishlistAdd}>Add to Wishlist</button>
+                                            }
+                                        </div>
                                         : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" /></a> }
                                     </div>
                                 </div>
@@ -130,7 +143,7 @@ const Item = React.createClass({
                                 appModal={this._toggleAppModal}
                                 _toggleAddressModal={this._toggleAddressModal}/>
                    <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" />
-                   <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal}/>
+                   <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>
                 </section>
                 <Footer />
             </div>

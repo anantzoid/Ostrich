@@ -24,7 +24,7 @@ def homepage(props):
         'collections': collections,
         'page': 'home'
         })
-    store['props'] = json.dumps(props)
+    store['props'] = props
     rendered = render_component(path(store['component']), props=props)
     return render_template('index.html', 
             rendered=rendered, 
@@ -72,7 +72,7 @@ def catalog(**kwargs):
             'page': 'catalog',
             'page_num': page
             })
-    store['props'] = json.dumps(props)
+    store['props'] = props
     rendered = render_component(path(store['component']), props=props)
     return render_template('catalog.html',
             rendered=rendered,
@@ -106,7 +106,7 @@ def itemPage(**kwargs):
         'item_data': item_data,
         'page': 'product'
         })
-    store['props'] = json.dumps(props)
+    store['props'] = props
     rendered = render_component(path(store['component']), props=props)
     return render_template('item.html',
             rendered=rendered,
@@ -117,7 +117,7 @@ def itemPage(**kwargs):
 @user_session
 def terms(props):
     store = {'component': 'terms.jsx'}
-    store['props'] = json.dumps(props)
+    store['props'] = props
     rendered = render_component(path(store['component']), props=props)
     return render_template('terms.html',
             rendered=rendered,
@@ -147,10 +147,9 @@ def googlesignin():
         'source': 'web'
         }
     user = User.createUser(user_data)
-    user.getOrderSlots()
-    session['_user'] = user.getObj()
+    WebUtils.storeUserSession(user)
     visible_user_data = {
-            'user': session['_user']
+        'user': session['_user']
     }
     return jsonify(data=visible_user_data)
 
