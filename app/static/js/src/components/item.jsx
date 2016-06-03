@@ -16,10 +16,6 @@ const Item = React.createClass({
             show_address_modal: false
         };
     },
-    componentDidMount() {
-        //fetch collection object
-        //fetch similar items
-    },
     startAuth() {
         gAuth().then(function(response) {});
     },
@@ -45,6 +41,10 @@ const Item = React.createClass({
     _wishlistRemove() {
         OrderUtils.removeFromWishlist(this.props.user.user_id, this.props.item_data.item_id);
     },
+    _readMore(e) {
+        e.preventDefault();
+        $('.summary').text(this.props.item_data.summary); 
+    },
     render() {
         let categories = this.props.item_data.categories.map((category, i) => {
             let key = 'category-'+category.category_id;
@@ -61,6 +61,9 @@ const Item = React.createClass({
                 ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
             }
         }
+        let xs = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 768;
+        let summary = xs ? this.props.item_data.summary.slice(0, 150) : this.props.item_data.summary;
+
         return(
             <div id="itempage">
                 <Navbar {...this.props} />
@@ -99,7 +102,11 @@ const Item = React.createClass({
                                         
                                         <div className="summary mt20">
                                         { this.props.item_data.summary ?
-                                            this.props.item_data.summary
+                                            <span>{summary}
+                                            { xs && this.props.item_data.summary.length > 150 ?
+                                                <span>...<a href="#" className="read-more" onClick={this._readMore}>read more &gt;</a></span>
+                                            : null}
+                                            </span>
                                         : <i className="summary-placeholder">
                                             No description given.    
                                         </i> }

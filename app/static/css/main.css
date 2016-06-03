@@ -46,7 +46,7 @@ font-style: italic;
 
 .navbar-default {
     background-color: rgba(0,171,193,0.7);
-    height: 75px;
+    min-height: 75px;
     border-radius: 0px;
     border: none;
 }
@@ -559,10 +559,13 @@ svg {
 }
 @media (max-width: 768px) {
     .navbar-header { float: left; }
-    .navbar-collapse { float: right; }
     .nav>li { float: left; }
     .navbar-default .nav > li > a { padding-top: 15px; }
-    .search-elements { display: none; } 
+    .search-elements {
+        margin-top: 75px !important;
+        margin-left: 0px !important;
+        margin-bottom: 10px;
+    }
 
     header .header-content .header-content-inner h1 {
         font-size: 30px;
@@ -579,4 +582,5 @@ svg {
    
     .img-container { padding: 0px 100px; } 
     .sidebar-col { display: none; }
+    .footer-links{ padding-left: 10px; }
 }

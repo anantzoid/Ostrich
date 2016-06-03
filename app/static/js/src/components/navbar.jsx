@@ -28,7 +28,7 @@ const Navbar = React.createClass({
                 </a>
             </div>
 
-            <div className="navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div className="navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav navbar-right">
                     <li className="">
                         <a className="page-scroll" href="#about">About</a>
@@ -41,12 +41,10 @@ const Navbar = React.createClass({
                         }
                     </li>
                </ul>
-               { this.props.hasOwnProperty('page') && this.props.page !== 'home' ? 
-                    <SearchBar {...this.props} />
-                   :
-                    null
-                }
             </div>
+            { this.props.hasOwnProperty('page') && this.props.page !== 'home' ? 
+                <SearchBar {...this.props} />
+                : null }
         </div>
         <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Download Ostrich" />
         </nav>

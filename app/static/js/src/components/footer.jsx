@@ -7,7 +7,7 @@ const Footer = React.createClass({
                     <div className="container">
                         <div className="row footer-top">
                             <div className="col-lg-9 col-xs-12">
-                                <ul className="clearfix">
+                                <ul className="clearfix footer-links">
                                     <li key="about" className="footer-info-li">
                                         <h4>About</h4>
                                         <ul className="footer-info-subul">
