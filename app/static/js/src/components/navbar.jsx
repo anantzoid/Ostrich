@@ -7,14 +7,6 @@ const Navbar = React.createClass({
     getInitialState() {
         return {'show_app_modal': this.props.show_app_modal};
     },
-    /*
-    componentDidMount() {
-        window.addEventListener('headerAuth', this._postAuth);
-    }, 
-    _postAuth(event) {
-        this.setState({'user': event.detail})
-    },
-    */
     _toggleAppModal(title) {
         this.setState({
             'show_app_modal': !this.state.show_app_modal
@@ -36,7 +28,7 @@ const Navbar = React.createClass({
                 </a>
             </div>
 
-            <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <div className="navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav navbar-right">
                     <li className="">
                         <a className="page-scroll" href="#about">About</a>

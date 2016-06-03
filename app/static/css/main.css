@@ -84,9 +84,7 @@ font-style: italic;
     width: 30px;
     margin-top: -7px;
 }
-@media (min-width: 768px) {
 
-}
 
 /*------------ NavBar Ends ---------------*/
 
@@ -140,20 +138,6 @@ header .header-content .header-content-inner p {
     margin-right: auto;
     margin-bottom: 100px;
   }
-@media (max-width: 768px) {
-    header .header-content .header-content-inner h1 {
-        font-size: 30px;
-        margin-bottom: 30px;
-    }
-    header .header-content .header-content-inner p {
-        font-weight: 300;
-        font-size: 18px;
-    }
-    header .header-content .header-content-inner p {
-        max-width: 100%;
-        margin-bottom:50px;
-    }
-}
 /*------------ Header Ends ---------------*/
 
 /*------------ SearchBar Starts ---------------*/
@@ -252,13 +236,6 @@ header .header-content .header-content-inner p {
     letter-spacing: 1px;
 }
 
-@media (max-width: 800px) {
-    .collection-li {
-        width: 130px;
-        height: 130px !important;
-        margin: 0 5px;
-    }
-}
 
 .collection-span {
     padding: 20px;
@@ -518,12 +495,6 @@ header .header-content .header-content-inner p {
     width: 40px;
 }
 .error { border: 1px solid #cb2b2d !important; }
-@media (min-width: 768px) {
-    .modal-sm {
-        width: 420px !important;
-        margin-top: 100px;
-    }
-}
 .gold { color: gold; }
 .install-container {
     margin: auto;
@@ -579,32 +550,33 @@ svg {
     float: right;
 }
 
-/*
-.slick-prev, .slick-next {
-    display: block;
-    width: 75px;
-    height: 536px;
-    background: url(https://asla.org/sustainablelandscapes/images/LargeSlideLEFT.png) no-repeat;
-    margin: 5px 0 0 0;
-    float: left;
-    transition: .6s linear;
-    -moz-transition: .6s linear;
-    -webkit-transition: .6s linear;
-    cursor: pointer;
-    top: 35%;
-}
-
-.slick-prev {
-        left: -6%;
+@media (min-width: 768px) {
+    .modal-sm {
+        width: 420px !important;
+        margin-top: 100px;
     }
+    .footer-app-links { float: right; }
+}
+@media (max-width: 768px) {
+    .navbar-header { float: left; }
+    .navbar-collapse { float: right; }
+    .nav>li { float: left; }
+    .navbar-default .nav > li > a { padding-top: 15px; }
+    .search-elements { display: none; } 
 
-
-    .slick-next {
-        background: url(https://asla.org/sustainablelandscapes/images/LargeSlideRIGHT.png) no-repeat !important;
-        clear: right;
-        margin-left: 10px;
-        right: -10%;
-                }
-
-
-*/
+    header .header-content .header-content-inner h1 {
+        font-size: 30px;
+        margin-bottom: 30px;
+    }
+    header .header-content .header-content-inner p {
+        font-weight: 300;
+        font-size: 18px;
+    }
+    header .header-content .header-content-inner p {
+        max-width: 100%;
+        margin-bottom:50px;
+    }
+   
+    .img-container { padding: 0px 100px; } 
+    .sidebar-col { display: none; }
+}

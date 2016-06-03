@@ -6,8 +6,8 @@ const Footer = React.createClass({
                 <footer className="footer">
                     <div className="container">
                         <div className="row footer-top">
-                            <div className="col-lg-9">
-                                <ul>
+                            <div className="col-lg-9 col-xs-12">
+                                <ul className="clearfix">
                                     <li key="about" className="footer-info-li">
                                         <h4>About</h4>
                                         <ul className="footer-info-subul">
@@ -48,7 +48,7 @@ const Footer = React.createClass({
 
                                 </ul>
                             </div>
-                            <div className="col-lg-3">
+                            <div className="col-lg-3 col-xs-12">
                                 <img className="footer-logo pull-left mt20" src="/static/img/logo.png" />
                                 <div className="pull-left footer-brand-name">Ostrich</div>
                             </div>
@@ -59,10 +59,10 @@ const Footer = React.createClass({
                             </div>
                             <div className="col-lg-5">
                             </div>
-                            <div className="col-lg-4">
-                                <a className="pull-right" target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+                            <div className="col-lg-4 col-xs-12">
+                                <a className="footer-app-links" target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
 
-                                <a className="pull-right" href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img id="slack-app-footer" alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+                                <a className="footer-app-links" href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img id="slack-app-footer" alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
                             </div>
                         </div>
                     </div>
