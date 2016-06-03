@@ -205,9 +205,6 @@ header .header-content .header-content-inner p {
 .collection-container{
     width: 100%;
     min-height: 220px;
-    white-space: nowrap;
-    overflow: hidden;
-    position: relative;
     margin: 0;
 }
 .collection-ul {
@@ -224,7 +221,7 @@ header .header-content .header-content-inner p {
     overflow: hidden;
     vertical-align: top;
     display: inline-block;
-    margin: 0px 20px;
+    margin: 0px 15px;
     border-radius: 4px;
     text-align: center;
     word-wrap: break-word;
@@ -238,7 +235,7 @@ header .header-content .header-content-inner p {
 
 
 .collection-span {
-    padding: 20px;
+    padding: 20px 30px;
     position: absolute;
     width: 218px;
     top: 58%;
@@ -566,7 +563,7 @@ svg {
         margin-left: 0px !important;
         margin-bottom: 10px;
     }
-    .navbar .search-input { padding: 0 15px; }
+    .search-input { padding: 0 15px; }
     .navbar .search-form {
         width: 94%;
         float: left;
@@ -588,6 +585,19 @@ svg {
     header .header-content .header-content-inner p {
         max-width: 100%;
         margin-bottom:50px;
+    }
+    .collection-li {
+        margin-bottom: 20px;
+        width: 90%;
+        height: 100px !important;
+    }
+    .collection-span {
+        top: 72%;
+        left: 70%;
+    }
+    .collection-img {
+        width: 100%;
+        height: 100%;
     }
     .catalog-element h3 { 
         margin: auto;
