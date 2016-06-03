@@ -36,11 +36,17 @@ class Utils():
     @staticmethod
     def getParam(obj, var, var_type=None, default=''):
         param = obj[var] if var in obj else default
-        if var_type == 'int' and param != default:
-            if not param.isdigit() and not param >= 0:
-                param = default
-            else:
-                param = int(param)
+        if var_type is not None and param != default:
+            if var_type == 'int':
+                try:
+                    param = int(param)
+                except: 
+                    param = default
+            elif var_type == 'float':
+                try:
+                    param = float(param)
+                except:
+                    param = default
         return param
 
     @staticmethod
