@@ -561,12 +561,22 @@ svg {
     .navbar-header { float: left; }
     .nav>li { float: left; }
     .navbar-default .nav > li > a { padding-top: 15px; }
-    .search-elements {
+    .navbar .search-elements {
         margin-top: 75px !important;
         margin-left: 0px !important;
         margin-bottom: 10px;
     }
-
+    .navbar .search-input { padding: 0 15px; }
+    .navbar .search-form {
+        width: 94%;
+        float: left;
+    }
+    .glyphicon-filter {
+        color: white;
+        font-size: 18px;
+        right: -10px;
+        margin-top: 10px;
+    }
     header .header-content .header-content-inner h1 {
         font-size: 30px;
         margin-bottom: 30px;
@@ -579,8 +589,26 @@ svg {
         max-width: 100%;
         margin-bottom:50px;
     }
-   
-    .img-container { padding: 0px 100px; } 
+    .catalog-element h3 { 
+        margin: auto;
+        text-align: center;
+        margin-top: 20px;
+    }
+    .catalog-element ul { 
+        text-align: center;
+        padding-left: 30px; 
+    }
     .sidebar-col { display: none; }
+    .img-container { 
+        width: 200px;
+        margin: auto;
+    } 
+    .categories-col { margin-top: 10px;}
+    .order-info-container {
+        margin-top: 20px;
+        margin-bottom: 40px;
+        border-top: 1px solid #eee;
+        padding-top: 20px;
+    }
     .footer-links{ padding-left: 10px; }
 }

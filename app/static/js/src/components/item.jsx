@@ -13,8 +13,12 @@ const Item = React.createClass({
         return {
             show_order_modal: false,
             show_app_modal: false,
-            show_address_modal: false
+            show_address_modal: false,
+            xs: false
         };
+    },
+    componentDidMount() {
+        this.setState({xs:Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 768});
     },
     startAuth() {
         gAuth().then(function(response) {});
@@ -61,8 +65,7 @@ const Item = React.createClass({
                 ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
             }
         }
-        let xs = Math.max(document.documentElement.clientWidth, window.innerWidth || 0) <= 768;
-        let summary = xs ? this.props.item_data.summary.slice(0, 150) : this.props.item_data.summary;
+        let summary = this.state.xs ? this.props.item_data.summary.slice(0, 150) : this.props.item_data.summary;
 
         return(
             <div id="itempage">
@@ -92,7 +95,7 @@ const Item = React.createClass({
                                                 </div> : null }
                                             </div>
                                             { categories.length ? 
-                                                <div className="col-lg-7">
+                                                <div className="col-lg-7 categories-col">
                                                     <div className="category-container clearfix pull-right">
                                                         {categories}
                                                     </div>
@@ -103,7 +106,7 @@ const Item = React.createClass({
                                         <div className="summary mt20">
                                         { this.props.item_data.summary ?
                                             <span>{summary}
-                                            { xs && this.props.item_data.summary.length > 150 ?
+                                            { this.state.xs && this.props.item_data.summary.length > 150 ?
                                                 <span>...<a href="#" className="read-more" onClick={this._readMore}>read more &gt;</a></span>
                                             : null}
                                             </span>
