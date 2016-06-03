@@ -117,7 +117,7 @@ class Utils():
 
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
-        if current_timestamp.hour >= 18 or current_timestamp.hour < 6:
+        if current_timestamp.hour >= 17 or current_timestamp.hour < 6:
             return 3 
 
         next_timestamp = current_timestamp + timedelta(hours=interval)
@@ -164,7 +164,7 @@ class Utils():
             min_next_slot = min(next_slots, key=itemgetter('diff'))
             return min_next_slot['slot_id']
        
-        return 2
+        return 3
 
     @staticmethod
     def getNextTimeslots(start_time, timeslots, num):
@@ -216,7 +216,7 @@ class Utils():
             return day_after_tomo.strftime("%A")
         else:
             days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            return days[days.index(day)+1]
+            return days[(days.index(day)+1)%7]
 
     @staticmethod
     def cleanTimeSlot(ts):
