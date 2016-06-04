@@ -90,8 +90,7 @@ class Admin():
         order_list = []
         cursor = mysql.connect().cursor()
         date = "'"+Utils.getCurrentTimestamp().split(' ')[0]+"'"
-        query_condition = 'order_status >= 4 AND order_status < 7' if pickups else 'order_status < 4'
-        query_condition += '  ORDER BY order_id ASC' 
+        query_condition = 'order_status >= 4 AND order_status < 7 ORDER BY order_return ASC' if pickups else 'order_status < 4 ORDER BY order_id ASC'
         cursor.execute("""SELECT o.order_id,
                 co.comment, co.edited, co.delivered_by, co.delivery_amount,
                 co.picked_by, co.pickup_amount
@@ -117,8 +116,13 @@ class Admin():
             order_info['delivery_amount'] = order_data[4]
             order_info['picked_by'] = order_data[5]
             order_info['pickup_amount'] = order_data[6]
-
-            next_order_status = int(order_info['order_status'])+1
+            if order_info['bought']:
+                if int(order_info['order_status']) in [3,5]:
+                    next_order_status = 8
+                else:
+                    next_order_status = int(order_info['order_status'])+1  
+            else:
+                next_order_status = int(order_info['order_status'])+1  
             order_info['change_status'] = {
                     'status_id': next_order_status, 
                     'status': Order.getOrderStatusDetails(next_order_status)['Status']
@@ -254,6 +258,25 @@ class Admin():
         return True
 
     @staticmethod
+    def getAdminWishlist():
+        conn = mysql.connect()
+        cursor = conn.cursor()
+        cursor.execute("""SELECT u.name, i.item_name, w.date_added
+                FROM wishlist w
+                INNER JOIN users u ON u.user_id = w.user_id
+                INNER JOIN items i ON i.item_id = w.item_id
+                WHERE w.active = 1""")
+        data = {}
+        for i in range(cursor.rowcount):
+            row = Utils.fetchOneAssoc(cursor)
+            row['date_added'] = row['date_added'].split(' ')[0]
+            if row['name'] in data:
+                data[row['name']].append(row)
+            else:
+                data[row['name']] = [row]
+        return data
+
+    @staticmethod
     def insertItem(data):        
         conn = mysql.connect()
         cursor = conn.cursor()
@@ -328,8 +351,9 @@ class Admin():
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
                         VALUES (%s, %s)""",(item_id, global_categories[genre]))
                     else:
-                        cursor.execute("""INSERT INTO categories (category_name) VALUES (%s)""",
-                                (genre,))
+                        genre_slug = slugify(genre)
+                        cursor.execute("""INSERT INTO categories (category_name, slug_url) VALUES (%s, %s)""",
+                                (genre, genre_slug))
                         conn.commit()
                         global_categories[genre] = cursor.lastrowid
                         cursor.execute("""INSERT INTO items_categories (item_id, category_id)
@@ -398,7 +422,12 @@ class Admin():
         numrows = cursor.rowcount
         data = []
         for i in range(numrows):
-            data.append(Utils.fetchOneAssoc(cursor))
+            row = Utils.fetchOneAssoc(cursor)
+            if row['user_id'] != -1:
+                row['username'] = User(row['user_id']).name 
+            else:
+                row['username'] = ''
+            data.append(row)
         return data
     
     @staticmethod
@@ -521,3 +550,58 @@ class Admin():
             Notifications(address[2]).startDataUpdate()
         return True
 
+    @staticmethod
+    def updateBookShotsData(rows):
+        ####### Rows #########
+        # Book id (optional)
+        # Book Title
+        # Genre 1
+        # Genre 2
+        # Genre 3
+        # meta_description
+        # for_whom
+        # read_by
+        # num_readers
+        # trivia
+        # amzn_link
+        # amzn_delivery
+        # amzn_price
+        # fk_link
+        # fk_delivery
+        # fk_price
+        ###########
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        for row in rows:
+            try:
+                if not row[0] or (row[0] and not row[0].isdigit()):
+                    cursor.execute("SELECT item_id FROM items WHERE item_name = %s", (row[1],))
+                    row[0] = cursor.fetchone()[0]
+                del(row[1])
+                del(row[7])
+                cursor.execute("""INSERT INTO bs_items (item_id, genre1, genre2, genre3,
+                    meta_description, for_whom, read_by, trivia, amzn_link, 
+                    amzn_delivery, amzn_price, fk_link, fk_delivery, fk_price) VALUES
+                    (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s) ON DUPLICATE KEY UPDATE
+                    genre1 = %s,
+                    genre2 = %s,
+                    genre3 = %s,
+                    meta_description = %s,
+                    for_whom = %s,
+                    read_by = %s,
+                    trivia = %s,
+                    amzn_link = %s,
+                    amzn_delivery = %s,
+                    amzn_price = %s,
+                    fk_link = %s,
+                    fk_delivery = %s,
+                    fk_price = %s""", tuple(row + row[1:]))
+                conn.commit() 
+            except Exception as e:
+                print str(e)
+
+        return True
+        #cursor.execute("SELECT * FROM bs_items")
+        #rows = [list(row) for row in cursor.fetchall()]
+        #return rows 

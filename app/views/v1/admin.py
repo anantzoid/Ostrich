@@ -1,7 +1,9 @@
 from app import webapp
 from app.models import *
-from flask import request
+from flask import request, make_response
 from flask.ext.jsonpify import jsonify
+import csv
+import StringIO
 
 @webapp.route('/push', methods=['POST'])
 def pushNotification():
@@ -97,6 +99,16 @@ def crawlItem():
     final_data = Admin.insertItem(book_data)
     return jsonify(final_data) 
 
+@webapp.route('/authorCrawl')
+def authorCrawl():
+    amzn_url = Utils.getParam(request.args, 'url')
+    all_data = crawlAuthor(amzn_url)
+    for data in all_data:
+        if 'status' in data['goodreads'] and data['goodreads']['status'] == 'error':
+            continue
+        Admin.insertItem(data)
+    return jsonify({'status': 'True'})
+
 @webapp.route('/getCollectionsList')
 def getCollectionsList():
    return jsonify(Collection.getPreview()) 
@@ -118,6 +130,11 @@ def setCollection():
 def addCollectionCategory():
     category = Collection.addCategory(request.args)
     return jsonify(category)
+
+@webapp.route('/deleteCollection')
+def deleteCollection():
+    Collection.removeCollection(request.args.get('collection_id'))
+    return jsonify(status=True)
 
 @webapp.route('/getContent')
 def getContent():
@@ -168,3 +185,27 @@ def orderComment():
         comment_data[key] = request.args[key]
     Admin.updateOrderComment(comment_data)
     return jsonify(status=True)
+
+
+@webapp.route('/uploadBookshotsData', methods=['POST'])
+def upload():
+    uploaded_file = request.files['0']
+    reader = [row for row in csv.reader(uploaded_file.read().splitlines())]
+    rows = [row for row in reader[1:] if ''.join(row)]
+    rows = Admin.updateBookShotsData(rows)
+
+    '''
+    si = StringIO.StringIO()
+    writer = csv.writer(si)
+    writer.writerows(rows)
+    output = make_response(si.getvalue())
+    output.headers["Content-Disposition"] = "attachment; filename=bs_items.csv"
+    output.headers["Content-type"] = "text/csv"
+    return output
+    '''
+    return jsonify(status=True)
+    
+    
+@webapp.route('/getAllWishlist')
+def getAllWishlist():
+    return jsonify(wishlists=Admin.getAdminWishlist())

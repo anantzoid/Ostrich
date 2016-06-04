@@ -11,6 +11,25 @@ def handleUnicode(text):
         text = unicode(text, "latin-1")
     return unicodedata.normalize("NFKD", text).encode('utf-8')
 
+def prepareSoup(url):
+    response = requests.get(url)
+    if response.status_code != 200:
+        return {'status':'error', 'code': response.status_code}
+    soup = BeautifulSoup(response.text, "html.parser")
+    return soup
+
+def crawlAuthor(url):
+    soup = prepareSoup(url)
+    all_data = []
+    cards = soup.findAll('li', {'class': 'a-carousel-card'})
+    for card in cards:
+        link = card.find('a', {'class':'a-link-normal'})
+        if link:
+            item_link = link.attrs['href']
+            item_link = item_link if 'amazon.in' in item_link else 'http://www.amazon.in'+item_link
+            all_data.append(getAggregatedBookDetails(item_link)) 
+    return all_data
+
 def getAggregatedBookDetails(amzn_url):
     book_data = {'amazon': {}, 'goodreads': {}}
     book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
@@ -30,11 +49,7 @@ class AmazonCrawler():
         self.title = title
 
     def crawlPage(self):
-        response = requests.get(self.url)
-        if response.status_code != 200:
-            return {'status':'error', 'code': response.status_code}
-        response = BeautifulSoup(response.text, "html.parser")
-        
+        response = prepareSoup(self.url)
         isbn13, isbn10 = '',''
         detail_div = response.find('div', {'id': 'detail_bullets_id'})
         detail_list = detail_div.findAll('li')
@@ -165,11 +180,7 @@ class GoodreadsCrawler():
         if not url:
             return {'status':'error'}
 
-        response = requests.get(url)
-        if response.status_code != 200:
-            return {'status':'error', 'code': response.status_code}
-
-        soup = BeautifulSoup(response.text, "html.parser")
+        soup = prepareSoup(url)
         if self.title:
             data = self.crawlSearchPage(soup)
         else:
@@ -213,7 +224,7 @@ class GoodreadsCrawler():
             
         # Average Rating
         avg_rating_el = soup.find("span",{"class":"value rating"})
-        avg_rating = avg_rating_el.text if avg_rating_el else 0
+        avg_rating = avg_rating_el.text if avg_rating_el else ''
     
         # Num ratings and reviewers 
         num_rating = ''

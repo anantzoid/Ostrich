@@ -17,7 +17,11 @@ class Indexer():
         cursor = mysql.connect().cursor()
         condition = 'WHERE c.partial_order = 0'
         if query_condition:
-            condition = ' AND '+query_condition
+            condition += ' AND '+query_condition
+        print """SELECT c.*,
+           (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
+           WHERE ci.collection_id = c.collection_id) AS item_ids
+           FROM collections c """+condition
         cursor.execute("""SELECT c.*,
            (select group_concat(ci.item_id SEPARATOR ',') FROM collections_items ci
            WHERE ci.collection_id = c.collection_id) AS item_ids
@@ -136,6 +140,7 @@ class Indexer():
         if item['num_reviews']:
             item['num_reviews_int'] = int(item['num_reviews'].replace(',',''))
 
+        item['selling_price'] = int(0.8*item['price']) if item['price'] else 100
         #TODO item_name_prettify
         return item
 

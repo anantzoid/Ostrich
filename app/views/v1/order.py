@@ -106,6 +106,11 @@ def fetchOrder():
     else:
         return Utils.errorResponse(response)
 
+@webapp.route('/buy', methods=['POST'])
+def buyBook():
+    Order.purchaseItem(request.form)
+    return jsonify({'status': "True"})
+
 '''
     Get the status of a current order
     @params

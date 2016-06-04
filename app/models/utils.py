@@ -5,6 +5,7 @@ import pytz
 import copy
 import math
 from operator import itemgetter
+from collections import OrderedDict
 from app import webapp
 from app import mysql
 from flask import make_response, jsonify
@@ -38,11 +39,17 @@ class Utils():
     @staticmethod
     def getParam(obj, var, var_type=None, default=''):
         param = obj[var] if var in obj else default
-        if var_type == 'int' and param != default:
-            if not param.isdigit() and not param >= 0:
-                param = default
-            else:
-                param = int(param)
+        if var_type is not None and param != default:
+            if var_type == 'int':
+                try:
+                    param = int(param)
+                except: 
+                    param = default
+            elif var_type == 'float':
+                try:
+                    param = float(param)
+                except:
+                    param = default
         return param
 
     @staticmethod
@@ -53,6 +60,39 @@ class Utils():
     @staticmethod
     def getSlabbedAmount(amount, rate):
         return int(math.ceil((amount*rate)/5)*5)
+
+    @staticmethod
+    def calculateDistance(lat, lon):
+        # Haversine formula: http://www.movable-type.co.uk/scripts/latlong.html
+        R = 6373.0
+        # Office: 58, 1st Cross, 17th Main, Krmgla 5th block
+        # 12.933117, 77.622249
+        lat1 = math.radians(12.933117)
+        lon1 = math.radians(77.622249)
+        lat2 = math.radians(float(lat))
+        lon2 = math.radians(float(lon))
+
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+        a = (math.sin(dlat/2))**2 + math.cos(lat1) * math.cos(lat2) * (math.sin(dlon/2))**2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+        distance = R * c
+        return round(distance, 2) 
+
+    @staticmethod
+    def getDeliveryCharge(distance):
+        if not distance:
+            return {'delivery_charge': 0}
+
+        delivery_charge_slab = OrderedDict()
+        delivery_charge_slab['4'] = 0
+        delivery_charge_slab['6'] = 20
+        delivery_charge_slab['8'] = 40
+
+        for km in delivery_charge_slab.keys():
+            if int(km) >= int(distance):
+                return {'delivery_charge': delivery_charge_slab[km]}
+        return {'delivery_charge': 0}
 
     @staticmethod
     def getCurrentTimestamp():
@@ -83,8 +123,8 @@ class Utils():
 
         # NOTE temp workaround
         # making next timestamp to nextday afternoon if the order is made latenight
-        if current_timestamp.hour >= 18 or current_timestamp.hour < 6:
-            return 2 
+        if current_timestamp.hour >= 17 or current_timestamp.hour < 6:
+            return 3 
 
         next_timestamp = current_timestamp + timedelta(hours=interval)
         next_timestamp = str(next_timestamp.time())
@@ -130,7 +170,7 @@ class Utils():
             min_next_slot = min(next_slots, key=itemgetter('diff'))
             return min_next_slot['slot_id']
        
-        return 2
+        return 3
 
     @staticmethod
     def getNextTimeslots(start_time, timeslots, num):
@@ -184,6 +224,8 @@ class Utils():
             day = 1 if day == 'Tomorrow' else day
             day_after_tomo = current_timestamp + timedelta(days=day+1)
             return {'day': day_after_tomo.strftime("%A"), 'date': str(day_after_tomo.date())}
+            #days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            #return days[(days.index(day)+1)%7]
 
     @staticmethod
     def cleanTimeSlot(ts):

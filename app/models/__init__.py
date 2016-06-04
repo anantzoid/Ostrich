@@ -8,8 +8,8 @@ from notifications import *
 from review import *
 from webutils import *
 from search import *
-from collection import *
 from item import *
+from collection import *
 from user import *
 from order import *
 from lend import *

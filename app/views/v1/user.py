@@ -11,7 +11,7 @@ def preregister():
     user_data = {}
     user_data['email'] = Utils.getParam(request.args, 'email')
     user_data['phone'] = Utils.getParam(request.args, 'phone')
-    user_data['book_id'] = Utils.getParam(request.args, 'bookid', 'int')
+    user_data['book_id'] = Utils.getParam(request.args, 'bookid')
     user_data['org'] = Utils.getParam(request.args, 'org')
 
     for key in user_data.keys():

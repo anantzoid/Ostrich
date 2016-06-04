@@ -27,7 +27,7 @@ def pickupSchedule():
         Utils.notifyAdmin(-1, "PICKUPS DUE TODAY!!")
 
     cursor.execute("""SELECT COUNT(*)
-        FROM b2b_users WHERE DATE(timestamp) = %s""", (Utils.getDefaultReturnTimestamp(current_ts, -21),))
+        FROM b2b_users WHERE DATE(timestamp) = %s""", (Utils.getDefaultReturnTimestamp(current_ts, -21).split(' ')[0],))
     order_ids = cursor.fetchone()
     if order_ids[0] > 0:
         Utils.notifyAdmin(-1, "B2B PICKUPS DUE!!")
