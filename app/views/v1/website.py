@@ -31,12 +31,12 @@ def homepage(props):
             title='Home', 
             store=store)
 
-@webapp.route('/books')
-@webapp.route('/book')
-@webapp.route('/books/category')
+@webapp.route('/books/')
+@webapp.route('/book/')
+@webapp.route('/books/category/')
 @webapp.route('/books/category/<int:category_id>')
 @webapp.route('/books/category/<category_slug>')
-@webapp.route('/books/collection')
+@webapp.route('/books/collection/')
 @webapp.route('/books/collection/<int:collection_id>')
 @webapp.route('/books/collection/<int:collection_id>-<slug>')
 @user_session
@@ -54,12 +54,10 @@ def catalog(**kwargs):
         query = Item.fetchCategory(slug=kwargs[entity])['category_name']
         results = WebUtils.fetchSearchResults(query, 'category', page)  
     elif 'collection_id' in kwargs:
-        collection = Collection(kwargs['collection_id'])
-        query = collection.name
+        results = Collection(kwargs['collection_id']).getObj()
+        query = results['name']
         #results = WebUtils.fetchSearchResults(query, 'collection', page)   
         # NOTE alternate source: from DB
-        # TODO do profiling and check which is faster
-        results = collection.getExpandedObj()
         results['items'] = WebUtils.extendItemWebProperties(results['items'])
     else:
         catalog = Collection.getHomepageCollections(items=True)
@@ -113,7 +111,7 @@ def itemPage(**kwargs):
             title=item_data['item_name'],
             store=store)
 
-@webapp.route('/terms')
+@webapp.route('/terms/')
 @user_session
 def terms(props):
     store = {'component': 'terms.jsx'}
@@ -138,16 +136,22 @@ def googlesignin():
     http_auth = credentials.authorize(httplib2.Http())
     users_service = discovery.build('oauth2', 'v2', http=http_auth)
     user_document = users_service.userinfo().get().execute()
-    user_data = {
-        'username': user_document['email'],
-        'name': user_document['name'],
-        'email': user_document['email'],
-        'google_id': credentials.id_token['sub'],
-        'picture': user_document['picture'],
-        'source': 'web'
-        }
-    user = User.createUser(user_data)
-    WebUtils.storeUserSession(user)
+
+    from app import cache
+    cache_key = credentials.id_token['sub']
+    user = cache.get(cache_key)
+    if not user:
+        user_data = {
+            'username': user_document['email'],
+            'name': user_document['name'],
+            'email': user_document['email'],
+            'google_id': credentials.id_token['sub'],
+            'picture': user_document['picture'],
+            'source': 'web'
+            }
+
+        user = User.createUser(user_data)
+        WebUtils.storeUserSession(user, key=cache_key)
     visible_user_data = {
         'user': session['_user']
     }
@@ -157,30 +161,3 @@ def googlesignin():
 @webapp.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
-
-'''
-# Old google auth flow using tokeninfo and signIn listener (client)
-
-@webapp.route('/1googlesignin', methods=['POST'])
-def tokensignin():
-    idtoken = Utils.getParam(request.form, 'data', '')
-    if not idtoken:
-        return False
-
-    # TODO replace with apiclient
-    req = requests.get('https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+idtoken)
-    resp = json.loads(req.text)
-    if resp['aud'] == webapp.config['GOOGLE_AUTH_CLIENT_ID']:
-        user_data = {
-                'username': resp['email'],
-                'name': resp['name'],
-                'email': resp['email'],
-                'google_id': resp['sub']
-                }
-        user = User.createUser(user_data)
-        session['authenticated'] = True
-        session['_user'] = user
-        return jsonify(session['_user'])
-    return jsonify({})
-
-'''

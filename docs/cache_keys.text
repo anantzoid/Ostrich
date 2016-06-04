@@ -1,0 +1,10 @@
+
+category_<id>: Category (without items) 
+category_<slug>: Category (without items) 
+category_<name>: Category (without items) 
+
+collection_<id>: Collection
+homepage_collections: getHomepageCollections
+homepage_collections_items: getHomepageCollections (items=True)
+
+areas: getAreasForOrder

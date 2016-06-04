@@ -124,10 +124,8 @@ def addAddress():
     if address_id:
         user = User(user_id, 'user_id')
         WebUtils.storeUserSession(user)
-        user.getOrderSlots()
-        # TODO refresh cache when implemented
-        session['_user'] = user.getObj()
-        address_obj = [_ for _ in user.address if _['address_id'] == address_id[0]][0]
+        user = session['_user']
+        address_obj = [_ for _ in user['address'] if _['address_id'] == address_id[0]][0]
         return jsonify(address_obj)
     else:
         return Utils.errorResponse(response)

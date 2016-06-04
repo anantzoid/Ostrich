@@ -570,7 +570,11 @@ class Order():
 
     @staticmethod
     def getAreasForOrder():
-        # TODO cache here
+        from app import cache
+        cache_key = 'areas'
+        areas = cache.get(cache_key)
+        if areas:
+            return areas
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM areas WHERE active=1""")
         num_areas = cursor.rowcount
@@ -579,6 +583,7 @@ class Order():
         for area in range(num_areas):
             area_data = Utils.fetchOneAssoc(cursor)
             areas[area_data['name']] = area_data
+        cache.set(cache_key, areas)
         return areas
 
     @staticmethod

@@ -172,15 +172,16 @@ class Search():
         from app import cache
         cache_key = 'search_categories'
         categories = cache.get(cache_key)
-        if not categories:
-            categories = []
-            cursor = mysql.connect().cursor()
-            cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
-            for i in range(cursor.rowcount):
-                category = Utils.fetchOneAssoc(cursor)
-                category = WebUtils.extendCategoryProperties(category)
-                categories.append(category)
-            cache.set(cache_key, categories)
+        if categories:
+            return categories
+        categories = []
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM categories WHERE web_display = 1""")
+        for i in range(cursor.rowcount):
+            category = Utils.fetchOneAssoc(cursor)
+            category = WebUtils.extendCategoryProperties(category)
+            categories.append(category)
+        cache.set(cache_key, categories)
         return categories
 
     @async
@@ -228,7 +229,6 @@ class Search():
         else:
             return [_ for _ in refined_content if _['key'] == key][0]['items']
 
-    # TODO confirm and remove this
     def mostRecommended(self):
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
         item_ids = { "ids": self.query }
@@ -241,7 +241,6 @@ class Search():
     
         return reco_list
 
-    # TODO confirm and remove this
     def mostSearched(self):
         self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
         item_ids = { "ids": self.query }

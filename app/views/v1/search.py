@@ -78,7 +78,6 @@ def searchFail():
     Search(q, {'user_id': user_id}, flow).reportFail(True,True,q_type)
     return jsonify(status='true')
 
-# TODO confirm and remove thses and their respective functions
 @webapp.route('/recommended', methods=['GET'])
 def recommended():
     return json.dumps(Search([]).mostRecommended())
@@ -94,6 +93,6 @@ def getMultiplePanels():
         partial_order = 1 ORDER BY collection_id DESC""")
     panels = []
     for col_id in cursor.fetchall():
-        panels.append(Collection(col_id).getExpandedObj())
+        panels.append(Collection(col_id).getObj())
     return json.dumps(panels)
 

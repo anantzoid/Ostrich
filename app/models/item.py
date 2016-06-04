@@ -6,7 +6,6 @@ class Item(Prototype):
         self.getData(item_id) 
 
     def getData(self, item_id):
-        #TODO cache this
         obj_cursor = mysql.connect().cursor()
         query = """SELECT i.*,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
@@ -83,13 +82,15 @@ class Item(Prototype):
             entity = name
         else:
             return {}
-        category = None#cache.get(cache_key)
-        if not category:
-            cursor = mysql.connect().cursor()
-            cursor.execute("SELECT * FROM categories WHERE "+query_cond+" = %s", (entity,))
-            category = Utils.fetchOneAssoc(cursor)
-            category = WebUtils.extendCategoryProperties(category)
-            cache.set(cache_key, category)
+        category = cache.get(cache_key)
+        if category:
+            return category
+
+        cursor = mysql.connect().cursor()
+        cursor.execute("SELECT * FROM categories WHERE "+query_cond+" = %s", (entity,))
+        category = Utils.fetchOneAssoc(cursor)
+        category = WebUtils.extendCategoryProperties(category)
+        cache.set(cache_key, category)
         return category
 
     @staticmethod

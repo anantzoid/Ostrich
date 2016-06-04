@@ -17,8 +17,8 @@ def startSession():
 
     reading_multiplier = webapp.config['NEW_READING_RATE'] if app_version >= 6030000 else webapp.config['NEW_READING_RATE'] - 0.01
     data = {
-        'most_searched': Collection(4).getExpandedObj()['items'],
-        'recommendations': Collection(5).getExpandedObj()['items'],
+        'most_searched': Collection(4).getObj()['items'],
+        'recommendations': Collection(5).getObj()['items'],
         'categories': Search.getSearchCategories(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
         'reading_multiplier': reading_multiplier,
