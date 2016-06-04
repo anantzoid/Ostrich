@@ -136,8 +136,8 @@ const Item = React.createClass({
                                         <div>
                                             <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Rent Now</button>
                                             { this.props.user.wishlist.length &&  this.props.user.wishlist.indexOf(this.props.item_data.item_id) > -1 ?
-                                                <button className="btn wishlist-remove" onClick={this._wishlistRemove}>Remove from Wishlist</button>
-                                              : <button className="btn wishlist-add" onClick={this._wishlistAdd}>Add to Wishlist</button>
+                                                <button className="btn wishlist" onClick={this._wishlistRemove}>Remove from Wishlist</button>
+                                              : <button className="btn wishlist" onClick={this._wishlistAdd}>Add to Wishlist</button>
                                             }
                                         </div>
                                         : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" /></a> }

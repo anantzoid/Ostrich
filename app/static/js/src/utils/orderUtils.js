@@ -54,9 +54,11 @@ let OrderUtils = {
         });
     },
     addToWishlist(user_id, item_id) {
+        let className = '.wishlist';
         $.ajax({
             url: '/addToWishlist',
             type: 'POST',
+            beforeSend: () => { loaderPlaceholder(true, className); },
             data: {
                 user_id: user_id,
                 item_id: item_id,
@@ -69,9 +71,11 @@ let OrderUtils = {
         }); 
     },
     removeFromWishlist(user_id, item_id) {
+        let className = '.wishlist';
         $.ajax({
             url: '/removeFromWishlist',
             type: 'POST',
+            beforeSend: () => { loaderPlaceholder(true, className); },
             data: {
                 user_id: user_id,
                 item_id: item_id,

@@ -452,14 +452,13 @@ header .header-content .header-content-inner p {
     margin-top: 20px;
     font-size: 18px;
 }
-.wishlist-add,
-.wishlist-remove {
+.wishlist {
     width: 100%;
     margin-top: 20px;
     background: #fff;
     border: 1px solid #ddd;
 }
-.wishlist-add:hover { border: 1px solid #999; }
+.wishlist:hover { border: 1px solid #999; }
 .Select { margin-bottom: 20px; }
 .Select-control { cursor: pointer !important; }
 .place-order { width: 140px; }
