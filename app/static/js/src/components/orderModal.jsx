@@ -5,7 +5,10 @@ import OrderUtils from '../utils/orderUtils';
 
 const OrderModal = React.createClass({
     getInitialState() {
-        let state = {default_address: {}};
+        let state = {
+            default_address: {},
+            total_amount: this.props.item_data.custom_price
+        };
         if (this.props.user) {
             state['user'] = this.props.user;
         } else {
@@ -21,6 +24,9 @@ const OrderModal = React.createClass({
                     break;
                 }
             }    
+            if (this.state.default_address.hasOwnProperty('delivery_charge')) {
+                this.setState({total_amount: this.state.total_amount + this.state.default_address.delivery_charge});
+            }
         }
     },
     _slotChange(option) {
@@ -106,6 +112,24 @@ const OrderModal = React.createClass({
                             <div className="payment-options">
                                 <input type="radio" name="payment-option" id="payment_credits" value="wallet" disabled={!this.state.user.wallet_balance}/>
                                 <label htmlFor="payment_credits">Wallet {this.state.user.wallet_balance ? <span className="faded">(₹ {this.state.user.wallet_balance})</span> : null }</label>
+                            </div>
+                        </div>
+                        <div className="bill-section">
+                            <div className="bill-entity clearfix">
+                                <div className="bill-label">Rental Amount:</div>
+                                <div className="bill-amount">₹ {this.props.item_data.custom_price}</div>
+                            </div>
+                            {this.state.default_address.hasOwnProperty('delivery_charge') ?
+
+                                <div className="bill-entity clearfix">
+                                    <div className="bill-label">Delivery Charge:</div>
+                                    <div className="bill-amount">₹ {this.state.default_address.delivery_charge}</div>
+                                </div> 
+                                : null }
+
+                            <div className="bill-entity bill-total clearfix">
+                                <div className="bill-label">Total Amount:</div>
+                                <div className="bill-amount">₹ {this.state.total_amount}</div>
                             </div>
                         </div>
                     </Modal.Body>

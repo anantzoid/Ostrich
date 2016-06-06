@@ -483,8 +483,22 @@ header .header-content .header-content-inner p {
     padding: 15px 10px;
     margin-top: 10px;
 }
+.bill-section {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 10px;
+}
+.bill-entity {
+    margin-bottom: 5px;
+    padding: 0 5px;
+}
+.bill-label {
+    float: left;
+    font-weight: 500;
+}
+.bill-amount { float: right; }
+.bill-total>div { font-weight: 700; }
 .confirm-address { width: 120px; }
-
 .order-loader {
     margin: auto;
     width: 40px;
