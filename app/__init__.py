@@ -19,15 +19,6 @@ mail = Mail(webapp)
 #cache = Cache(app)
 Session(webapp)
 
-if webapp.config['APP_ENV'] == 'dev':
-    webapp.config['HOST'] = 'http://localhost:5000'
-elif webapp.config['APP_ENV'] == 'staging':
-    webapp.config['HOST'] = 'http://52.74.20.228'
-    from flask.ext.cors import CORS
-    CORS(webapp)
-else:
-    webapp.config['HOST'] = 'http://52.32.104.299'
-
 import app.models
 import app.views
 

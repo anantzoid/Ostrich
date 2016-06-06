@@ -196,13 +196,13 @@ class Utils():
                 if int(ts['start_time'].split(":")[0]) - int(now_time.hour) > 0:
                     start_day = {'day': 'Today', 'date': str(now_time.date())}
                 else:
-                    start_day = Utils.fetchNextDayVerbose('Today')
+                    start_day = Utils.fetchNextDayVerbose(0)
                 day = start_day
             else:
                 if int(ts['start_time'].split(":")[0]) - int(order_timeslots[i-1]['start_time'].split(":")[0]) >= 0:
                     day = start_day
                 else:
-                    day = Utils.fetchNextDayVerbose(start_day['day'])
+                    day = Utils.fetchNextDayVerbose(start_day['counter'])
                 start_day = day
 
             # Format Timeslots
@@ -217,6 +217,13 @@ class Utils():
     @staticmethod
     def fetchNextDayVerbose(day):
         current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
+        date = current_timestamp + timedelta(days=day+1)
+        if day == 0:
+            return {'day': 'Tomorrow', 'date': str(date.date()), 'counter': 1}
+        else:
+            return {'day': date.strftime("%A"), 'date': str(date.date()), 'counter': day+1}
+            
+
         if day == 'Today':
             date = current_timestamp + timedelta(days=1)
             return {'day': 'Tomorrow', 'date': str(date.date())}

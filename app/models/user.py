@@ -224,13 +224,13 @@ class User(Prototype):
                         time_slots[selected_area['area_id']] = Order.getTimeSlotsForOrder(selected_area['hours'])
                     elif selected_area['day']:
                         dates = []
-                        prev_date = 0
+                        prev_date = -1
                         while len(dates) <= 4:
                             prev_date = prev_date + selected_area['day']
-                            dates.append(Utils.fetchNextDayVerbose(prev_date))
+                            dates.append(Utils.fetchNextDayVerbose(int(prev_date)))
                         
                         if selected_area['day'] == 1:
-                            dates[0] = Utils.fetchNextDayVerbose('Today')
+                            dates[0] = Utils.fetchNextDayVerbose(0)
 
                         time_slots[selected_area['area_id']] = []
                         for date in dates:
