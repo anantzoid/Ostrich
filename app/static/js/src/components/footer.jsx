@@ -12,10 +12,10 @@ const Footer = React.createClass({
                                         <h4>About</h4>
                                         <ul className="footer-info-subul">
                                             <li>
-                                                <a href="#">About Ostrich</a>
+                                                <a href="mailto:contact@ostrichapp.in">Contact Us</a>
                                             </li>
                                             <li>
-                                                <a href="mailto:contact@ostrichapp.in">Contact Us</a>
+                                                <a href="/terms">Terms and Conditions</a>
                                             </li>
                                         </ul>
                                     </li>
@@ -37,11 +37,8 @@ const Footer = React.createClass({
                                         </ul>
                                     </li>
                                     <li key="legal" className="footer-info-li">
-                                        <h4>Legal</h4>
+                                        <h4></h4>
                                         <ul className="footer-info-subul">
-                                            <li>
-                                                <a href="/terms">Terms and Conditions</a>
-                                            </li>
                                         </ul>
                                     </li>
 

@@ -15,7 +15,7 @@ const SearchBar = React.createClass({
         $('.sidebar-col').show();
     },
     render() {
-        return(<div className="col-lg-6 search-elements">
+        return(<div className="col-lg-6 col-sm-7 search-elements">
                 <form className="search-form" onSubmit={this._onClick}>
                     <div className="form-group has-feedback">
                         <input type="text" className="search-input form-control" placeholder="What do you want to read today?" defaultValue={this.props.query} />

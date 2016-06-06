@@ -75,17 +75,17 @@ const Item = React.createClass({
                         <div className="row">
                             <div className="col-lg-9 item-container">
                                 <div className="row">
-                                    <div className="col-lg-3 img-container">
+                                    <div className="col-lg-3 col-sm-3 img-container">
                                         <img src={this.props.item_data.img_small} />
                                     </div> 
-                                    <div className="col-lg-9 iteminfo-container">
+                                    <div className="col-lg-9 col-sm-9 iteminfo-container">
                                         <h2>{this.props.item_data.item_name}</h2>
                                         {this.props.item_data.author ? 
                                         <h4>by {this.props.item_data.author}</h4>
                                         : null}
 
                                         <div className="itemmeta-container clearfix mt20">
-                                            <div className="col-lg-5">
+                                            <div className="col-lg-5 col-sm-5">
                                                 <div className="item-ratings">
                                                     {ratings}
                                                 </div>
@@ -95,7 +95,7 @@ const Item = React.createClass({
                                                 </div> : null }
                                             </div>
                                             { categories.length ? 
-                                                <div className="col-lg-7 categories-col">
+                                                <div className="col-lg-7 col-sm-7 categories-col">
                                                     <div className="category-container clearfix pull-right">
                                                         {categories}
                                                     </div>

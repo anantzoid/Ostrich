@@ -29,18 +29,22 @@ const Navbar = React.createClass({
             </div>
 
             <div className="navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
-                <ul className="nav navbar-nav navbar-right">
-                    <li className="">
-                        <a className="page-scroll" href="#about">About</a>
-                    </li>
-                    <li className="auth-container">
-                        { this.props.user === null ?
+                { this.props.user === null ?
+                    <ul className="nav navbar-nav navbar-right">
+                        <li className="">
+                            <a className="page-scroll" href="#" onClick={this._toggleAppModal}>Get App</a>
+                        </li>
+                        <li className="auth-container">
                             <a id="googleAuth" href="#" onClick={this.startAuth}>Sign in</a>
-                            :
+                        </li>
+                    </ul>
+                    :
+                    <ul className="nav navbar-nav navbar-right">
+                        <li className="auth-container">
                             <a id="userProfile" href="#" onClick={this._toggleAppModal}><img src={this.props.user.picture_url}/></a>
-                        }
-                    </li>
-               </ul>
+                        </li>
+                    </ul>
+                    }
             </div>
             { this.props.hasOwnProperty('page') && this.props.page !== 'home' ? 
                 <SearchBar {...this.props} />

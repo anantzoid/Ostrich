@@ -70,18 +70,18 @@ const Catalog = React.createClass({
                 <section className="catalog-section">
                     <div className="container-fluid">
                         <div className="row">
-                            <div className="col-lg-2 sidebar-col">
+                            <div className="col-lg-2 col-sm-3 sidebar-col">
                                 <div className="catalog-sidebar">
                                     <div className="catalog-sidebar-title">Popular Categories</div>
                                     <ul>{categories}</ul>
                                 </div>  
                             </div>
                             {!this.state.is_search ?
-                                <div className="col-lg-10">
+                                <div className="col-lg-10 col-sm-9">
                                     {results}
                                 </div>
                                 :
-                                <div className="col-lg-9">
+                                <div className="col-lg-9 col-sm-9">
                                     <div className="search-result-title mt20">
                                         Showing results for: <span className="query-display">{this.props.query}</span>
                                     </div>

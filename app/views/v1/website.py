@@ -10,7 +10,7 @@ from app import webapp
 from app.models import *
 from app.decorators import user_session
 
-components_path = os.path.join(os.getcwd(), 'app', 'static', 'js', 'src', 'components')
+components_path = os.path.join(os.path.dirname(__file__), '../../', 'static', 'js', 'src', 'components')
 
 def path(js_file):
     return os.path.join(components_path, js_file)
@@ -151,7 +151,7 @@ def googlesignin():
             }
 
         user = User.createUser(user_data)
-        WebUtils.storeUserSession(user, key=cache_key)
+        WebUtils.storeUserSession(user)
     visible_user_data = {
         'user': session['_user']
     }

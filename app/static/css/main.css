@@ -221,7 +221,7 @@ header .header-content .header-content-inner p {
     overflow: hidden;
     vertical-align: top;
     display: inline-block;
-    margin: 0px 15px;
+    margin: 10px 15px;
     border-radius: 4px;
     text-align: center;
     word-wrap: break-word;
@@ -235,13 +235,12 @@ header .header-content .header-content-inner p {
 
 
 .collection-span {
-    padding: 20px 30px;
     position: absolute;
-    width: 218px;
-    top: 58%;
-    left: 83%;
-    margin: -70px 0 0 -170px;
-
+    top: 0;
+    left: 0;
+    margin: auto;
+    width: 100%;
+    margin-top: 40px;
 }
 
 .collection-img {
@@ -553,6 +552,9 @@ svg {
     }
     .footer-app-links { float: right; }
 }
+@media (min-width: 768px) and (max-width: 1192px) {
+    .search-elements { margin-left: 0px !important; }
+} 
 @media (max-width: 768px) {
     .navbar-header { float: left; }
     .nav>li { float: left; }
@@ -591,12 +593,11 @@ svg {
         height: 100px !important;
     }
     .collection-span {
-        top: 72%;
-        left: 70%;
     }
     .collection-img {
         width: 100%;
-        height: 100%;
+        height: auto;
+        margin-top: -100px;
     }
     .catalog-element h3 { 
         margin: auto;
