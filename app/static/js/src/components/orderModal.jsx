@@ -25,7 +25,7 @@ const OrderModal = React.createClass({
                 }
             }    
             if (this.state.default_address.hasOwnProperty('delivery_charge')) {
-                this.setState({total_amount: this.state.total_amount + this.state.default_address.delivery_charge});
+                this.setState({total_amount: this.props.item_data.custom_price + this.state.default_address.delivery_charge});
             }
         }
     },
