@@ -118,7 +118,6 @@ class User(Prototype):
         address = json.loads(address)
         if isinstance(address, dict):
             address = [address]
-
         address_ids = []
         for address_obj in address:
             address_id = Utils.getParam(address_obj, 'address_id')

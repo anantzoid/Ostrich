@@ -133,7 +133,7 @@ def addAddress():
 @webapp.route('/validateLocality', methods=['POST'])
 def validateLocality():
     response = {'status': 'False'}
-
+    
     locality = Utils.getParam(request.form, 'locality', '')
     if not locality:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')

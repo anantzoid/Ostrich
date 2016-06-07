@@ -41,6 +41,16 @@ font-style: italic;
     width: 10%;
     margin-top: 190px;
 }
+.loader-overlay {
+    position: absolute;
+    top:0; left:0; right:0; bottom:0;
+    background-color: #fff;
+    opacity: 0.6;
+}
+.inner-loader-img {
+    width: 10%;
+    margin: 20% 0 0 40%;
+}
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default { background-color: transparent; }
 
@@ -474,7 +484,9 @@ header .header-content .header-content-inner p {
     border: 1px solid #9a9a9a;
 }
 .add-address:hover { background-color: #C0C0C0 !important; }
+.map-container { margin: 10px 0px; }
 .address-description,
+.area-picker,
 .address-landmark {
     height: 30px;
     width: 100%;
@@ -483,6 +495,10 @@ header .header-content .header-content-inner p {
     padding: 15px 10px;
     margin-top: 10px;
 }
+.locality-name, .locality-valid { font-weight: bold; }
+.glyphicon-ok, .glyphicon-ban-circle { margin-right: 5px; }
+.glyphicon-ok { color: #449d44; }
+.glyphicon-ban-circle { color: #cb2b2d; }
 .bill-section {
     border-top: 1px solid #eee;
     padding-top: 10px;
@@ -499,6 +515,7 @@ header .header-content .header-content-inner p {
 .bill-amount { float: right; }
 .bill-total>div { font-weight: 700; }
 .confirm-address { width: 120px; }
+.check-address { width: 150px; }
 .order-loader {
     margin: auto;
     width: 40px;
@@ -635,4 +652,10 @@ svg {
         padding-top: 20px;
     }
     .footer-links{ padding-left: 10px; }
+}
+.pac-container { z-index: 100000 !important; }
+.map-picker {
+    margin-top: 10px;
+    width: 100%; 
+    height: 200px;
 }

@@ -1,4 +1,4 @@
-import loaderPlaceholder from './loader'; 
+import {loaderPlaceholder, loaderOverlay} from './loader'; 
 
 let OrderUtils = {
     placeOrder(order_data, hideOrderModal, showAppModal) {
@@ -31,6 +31,21 @@ let OrderUtils = {
             });
         });
     },
+    validateLocality(locality) {
+        let className = ".modal-body";
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/validateLocality',
+                type: 'POST',
+                data: {'locality': locality},
+                beforeSend: () => { loaderOverlay(true, className); },
+                success: ((response) => {
+                    loaderOverlay(false, className); 
+                    resolve(response);
+                })
+            });
+        });
+    },
     addAddress(address, user_id, hideModal) {
         let className=".confirm-address";
         $.ajax({
@@ -46,6 +61,7 @@ let OrderUtils = {
                 store.props.user.address.push(response);
                 window.renderApp(store.props);
                 hideModal();
+                alert("Address Saved Successfully");
             }),
             error: ((jqXHR) => {
                 OrderUtils.handleError(jqXHR, '.address-error-msg');

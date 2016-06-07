@@ -6,6 +6,7 @@ import OrderUtils from '../utils/orderUtils';
 const OrderModal = React.createClass({
     getInitialState() {
         let state = {
+            show: this.props.show,
             default_address: {},
             total_amount: this.props.item_data.custom_price
         };

@@ -194,7 +194,7 @@ class Utils():
             if i == 0:
                 now_time = datetime.now(pytz.timezone('Asia/Calcutta'))
                 if int(ts['start_time'].split(":")[0]) - int(now_time.hour) > 0:
-                    start_day = {'day': 'Today', 'date': str(now_time.date())}
+                    start_day = {'day': 'Today', 'date': str(now_time.date()), 'counter': 0}
                 else:
                     start_day = Utils.fetchNextDayVerbose(0)
                 day = start_day
@@ -223,7 +223,7 @@ class Utils():
         else:
             return {'day': date.strftime("%A"), 'date': str(date.date()), 'counter': day+1}
             
-
+        '''
         if day == 'Today':
             date = current_timestamp + timedelta(days=1)
             return {'day': 'Tomorrow', 'date': str(date.date())}
@@ -233,7 +233,7 @@ class Utils():
             return {'day': day_after_tomo.strftime("%A"), 'date': str(day_after_tomo.date())}
             #days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
             #return days[(days.index(day)+1)%7]
-
+        '''
     @staticmethod
     def cleanTimeSlot(ts):
         format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")

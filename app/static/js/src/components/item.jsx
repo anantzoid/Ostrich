@@ -147,13 +147,19 @@ const Item = React.createClass({
                             </div>
                         </div>
                    </div> 
-                   <OrderModal show={this.state.show_order_modal} 
+                   {this.state.show_order_modal ?
+                        <OrderModal show={this.state.show_order_modal} 
                                 {...this.props} 
                                 hide={this._toggleOrderModal} 
                                 appModal={this._toggleAppModal}
                                 _toggleAddressModal={this._toggleAddressModal}/>
-                   <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" />
-                   <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>
+                    : null }
+                   {this.state.show_app_modal ?
+                        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" />
+                    : null }
+                   {this.state.show_address_modal ?
+                        <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>
+                    : null }
                 </section>
                 <Footer />
             </div>
