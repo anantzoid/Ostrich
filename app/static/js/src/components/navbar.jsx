@@ -23,7 +23,7 @@ const Navbar = React.createClass({
         <div className="container-fluid">
             <div className="navbar-header">
                <a className="navbar-brand page-scroll" href="/">
-                    <img className="navbar-logo pull-left" src="/static/img/logo.png" />
+                    <img className="navbar-logo pull-left" src="/static/img/logo.png" alt="Ostrich Logo" />
                     <div className="pull-left navbar-brand-name">Ostrich</div>
                 </a>
             </div>
@@ -41,7 +41,7 @@ const Navbar = React.createClass({
                     :
                     <ul className="nav navbar-nav navbar-right">
                         <li className="auth-container">
-                            <a id="userProfile" href="#" onClick={this._toggleAppModal}><img src={this.props.user.picture_url}/></a>
+                            <a id="userProfile" href="#" onClick={this._toggleAppModal}><img src={this.props.user.picture_url} alt="User Avatar" /></a>
                         </li>
                     </ul>
                     }

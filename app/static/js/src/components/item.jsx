@@ -76,7 +76,7 @@ const Item = React.createClass({
                             <div className="col-lg-9 item-container">
                                 <div className="row">
                                     <div className="col-lg-3 col-sm-3 img-container">
-                                        <img src={this.props.item_data.img_small} />
+                                        <img src={this.props.item_data.img_small} alt={this.props.item_data.item_name} />
                                     </div> 
                                     <div className="col-lg-9 col-sm-9 iteminfo-container">
                                         <h2>{this.props.item_data.item_name}</h2>
@@ -140,7 +140,7 @@ const Item = React.createClass({
                                               : <button className="btn wishlist" onClick={this._wishlistAdd}>Add to Wishlist</button>
                                             }
                                         </div>
-                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" /></a> }
+                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" alt="Ostrich Sign in" /></a> }
                                     </div>
                                 </div>
                                 

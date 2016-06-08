@@ -46,7 +46,7 @@ const Footer = React.createClass({
                                 </ul>
                             </div>
                             <div className="col-lg-3 col-xs-12">
-                                <img className="footer-logo pull-left mt20" src="/static/img/logo.png" />
+                                <img className="footer-logo pull-left mt20" src="/static/img/logo.png" alt="Ostrich Logo"/>
                                 <div className="pull-left footer-brand-name">Ostrich</div>
                             </div>
                         </div>

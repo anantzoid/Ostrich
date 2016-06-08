@@ -53,7 +53,7 @@ font-style: italic;
 }
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default { background-color: transparent; }
-
+#home h2 { font-size: 24px; }
 .navbar-default {
     background-color: rgba(0,171,193,0.7);
     min-height: 75px;
@@ -281,8 +281,8 @@ header .header-content .header-content-inner p {
     margin-bottom: 70px;
 }
 .howto-heading,
-.apps-section #play-store { width: 160px; }
 .apps-heading { margin-bottom: 50px; }
+.apps-section #play-store { width: 160px; }
 .howto-img { min-height: 120px; }
 .app-img { width: 100%; }
 .app-list-container { 

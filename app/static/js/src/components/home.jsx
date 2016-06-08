@@ -55,7 +55,7 @@ const Homepage = React.createClass({
             return (
                 <a href={panel.slug_url}>
                     <div className="collection-li" key={panel.collection_id}>
-                    <img src={panel.image} className="collection-img"/>
+                    <img src={panel.image} className="collection-img" alt={panel.name}/>
                     <span className="collection-span">
                         {panel.name}
                     </span></div>
@@ -71,7 +71,7 @@ const Homepage = React.createClass({
                 <section className="collection-section">
                     <div className="container">
                         <div className="row"><div className="col-lg-12 text-center">
-                            <h3 className="collection-heading">Don't know what to read?</h3>
+                            <h2 className="collection-heading">Don't know what to read?</h3>
                             <h4 className="collection-subheading">Browse through our curated collection</h4>
                         </div></div>
                         <div className="row">
@@ -84,7 +84,7 @@ const Homepage = React.createClass({
                     <div className="container">
                         <div className="row howto-heading">
                             <div className="col-lg-12 text-center">
-                                <h3>How Ostrich helps you</h3>
+                                <h2>How Ostrich helps you</h3>
                             </div>
                         </div>
                         <div className="row">
@@ -113,12 +113,12 @@ const Homepage = React.createClass({
                     <div className="container">
                         <div className="row apps-heading">
                             <div className="col-lg-12 text-center">
-                            <h3>Download our apps to enjoy a holisitic experience</h3>
+                            <h2>Download our apps to enjoy a holisitic experience</h3>
                             </div>
                         </div>
                         <div className="row">
                             <div className="col-lg-6 text-center">
-                                <img className="app-img" src="/static/img/tmp/showcase.png" />
+                                <img className="app-img" src="/static/img/tmp/showcase.png" alt="Ostrich Android App" />
                             </div>
                             <div className="col-lg-2"></div>
                             <div className="col-lg-6">

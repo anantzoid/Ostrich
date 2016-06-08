@@ -12,7 +12,7 @@ const Catalog = React.createClass({
                 return (
                     <li className="catalog-book-container text-center" key={key}>
                             <a href={book.item_url}>
-                                <img className="catalog-book-image" src={book.img_small} />
+                                <img className="catalog-book-image" src={book.img_small} alt={book.item_name} />
                                 <div className="catalog-book-info">{book.item_name}</div>
                             </a>
                         </li>
