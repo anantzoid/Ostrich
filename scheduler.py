@@ -60,3 +60,8 @@ def getMixpanelId():
     yesterday = date.today() - timedelta(1)
     yesterday = yesterday.strftime('%Y-%m-%d')
     import_data(yesterday, str(date.today()))
+
+@periodic_task(run_every=(crontab(hour="01", minute="30")))
+def userFollowup():
+    from app.scripts.user_followup import user_followup
+    user_followup()
