@@ -209,7 +209,7 @@ header .header-content .header-content-inner p {
 }
 .collection-subheading {
     font-weight: 300;
-    margin-bottom: 75px;
+    margin-bottom: 45px;
 }
 
 .collection-container{
@@ -281,15 +281,19 @@ header .header-content .header-content-inner p {
     margin-bottom: 70px;
 }
 .howto-heading,
-.apps-heading {
-    margin-bottom: 50px;
-    margin-top: 30px;
-}
+.apps-section #play-store { width: 160px; }
+.apps-heading { margin-bottom: 50px; }
 .howto-img { min-height: 120px; }
-.app-img { width: 300px; }
+.app-img { width: 100%; }
+.app-list-container { 
+    margin-top: 60px; 
+    font-size: 18px;
+    line-height: 2;
+    font-weight: 500;
+}
 .app-link {
     margin: auto;
-    width: 25%;
+    width: 45%;
     margin-top: 20px;
 }
 /*------------ Homepage Ends ---------------*/
@@ -521,7 +525,10 @@ header .header-content .header-content-inner p {
     width: 40px;
 }
 .error { border: 1px solid #cb2b2d !important; }
-.gold { color: gold; }
+.gold { 
+    color: gold; 
+    margin-right: 5px; 
+}
 .install-container {
     margin: auto;
     width: 40%;
@@ -582,6 +589,7 @@ svg {
         margin-top: 100px;
     }
     .footer-app-links { float: right; }
+    .app-list-container { margin-left: 90px; }
 }
 @media (min-width: 768px) and (max-width: 1192px) {
     .search-elements { margin-left: 0px !important; }
