@@ -22,9 +22,9 @@ class Mailer():
         return True
 
     @staticmethod
-    def genericMailer(mail_obj):
+    def genericMailer(mail_obj, recipients=['contact@ostrichapp.in']):
         email = Message(mail_obj['subject'],
-                    recipients=['contact@ostrichapp.in'])
+                    recipients=recipients)
         email.body = mail_obj['body']
         mail.send(email)
         return True
