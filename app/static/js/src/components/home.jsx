@@ -71,7 +71,7 @@ const Homepage = React.createClass({
                 <section className="collection-section">
                     <div className="container">
                         <div className="row"><div className="col-lg-12 text-center">
-                            <h2 className="collection-heading">Don't know what to read?</h3>
+                            <h2 className="collection-heading">Don't know what to read?</h2>
                             <h4 className="collection-subheading">Browse through our curated collection</h4>
                         </div></div>
                         <div className="row">
@@ -84,7 +84,7 @@ const Homepage = React.createClass({
                     <div className="container">
                         <div className="row howto-heading">
                             <div className="col-lg-12 text-center">
-                                <h2>How Ostrich helps you</h3>
+                                <h2>How Ostrich helps you</h2>
                             </div>
                         </div>
                         <div className="row">
@@ -113,7 +113,7 @@ const Homepage = React.createClass({
                     <div className="container">
                         <div className="row apps-heading">
                             <div className="col-lg-12 text-center">
-                            <h2>Download our apps to enjoy a holisitic experience</h3>
+                            <h2>Download our apps to enjoy a holisitic experience</h2>
                             </div>
                         </div>
                         <div className="row">
