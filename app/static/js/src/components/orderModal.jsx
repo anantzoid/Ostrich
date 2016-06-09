@@ -17,6 +17,13 @@ const OrderModal = React.createClass({
         }
         return state;
     },
+    componentWillMount() {
+        if (this.state.user.hasOwnProperty('address')) {
+            if (!this.state.user.address.length) {
+                this.props._toggleAddressModal();    
+            }
+        }
+    },
     _addressChange(option) {
         if (this.state.user.address) {
             for(let address of this.state.user.address) {
