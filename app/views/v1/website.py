@@ -22,6 +22,7 @@ def homepage(props):
     collections = Collection.getHomepageCollections() 
     props.update({
         'collections': collections,
+        'categories': Search.getAllSearchCategories(),
         'page': 'home'
         })
     store['props'] = props
@@ -102,6 +103,7 @@ def itemPage(**kwargs):
     props = kwargs['props']
     props.update({
         'item_data': item_data,
+        'categories': Search.getAllSearchCategories(),
         'page': 'item'
         })
     store['props'] = props
@@ -157,6 +159,9 @@ def googlesignin():
     }
     return jsonify(data=visible_user_data)
 
+@webapp.route('/robots.txt')
+def robotsFile():
+    return render_template('robots.txt')
 
 @webapp.errorhandler(404)
 def page_not_found(e):

@@ -161,7 +161,7 @@ const Item = React.createClass({
                         <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>
                     : null }
                 </section>
-                <Footer />
+                <Footer categories={this.props.categories} />
             </div>
             );
     }

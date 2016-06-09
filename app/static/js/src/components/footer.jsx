@@ -1,7 +1,20 @@
 import React from 'react';
 
 const Footer = React.createClass({
+    componentDidMount() {
+        $('.search-links').hide();
+    },
     render() {
+        let search_links = [];
+        if (this.props.hasOwnProperty('categories')) {
+            for(let category of this.props.categories) {
+                let link_title = 'Rent '+category.category_name+' books in Bangalore';
+                search_links.push(<a className="" href={category.slug_url} title={link_title}>{link_title}</a>);
+                link_title = 'Rent '+category.category_name+' books in Bengaluru';
+                search_links.push(<a className="" href={category.slug_url} title={link_title}>{link_title}</a>);
+            }
+        } 
+    
         return (
                 <footer className="footer">
                     <div className="container">
@@ -62,6 +75,9 @@ const Footer = React.createClass({
                                 <a className="footer-app-links" href="https://slack.com/oauth/authorize?scope=users:read,incoming-webhook,commands&client_id=4256151918.31600537060&redirect_uri=https://ostrich-slack.herokuapp.com/oauth"><img id="slack-app-footer" alt="Add to Slack" src="https://platform.slack-edge.com/img/add_to_slack.png" srcSet="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
                             </div>
                         </div>
+                    </div>
+                    <div className="search-links">
+                        <section role="group">{search_links}</section>
                     </div>
                 </footer>
             );

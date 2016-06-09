@@ -126,6 +126,7 @@ const Homepage = React.createClass({
                                     <ul className="app-list">
                                         <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Rent any book in a few taps</li>
                                         <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Keep track and extend your orders</li>
+                                        <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Offer used books and get free credits</li>
                                         <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Order Collection Sets</li>
                                         <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Share with your friends</li>
                                     </ul>
@@ -136,7 +137,7 @@ const Homepage = React.createClass({
                         </div>
                     </div>
                 </section>
-                <Footer />
+                <Footer categories={this.props.categories} />
            </div>
             );
     }
