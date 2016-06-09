@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './navbar';
-import Header from './banner';
+import Banner from './banner';
 import Footer from './footer';
 
 const Homepage = React.createClass({
@@ -66,7 +66,7 @@ const Homepage = React.createClass({
             <div id="home">
                 <section className="header-section">
                     <Navbar {...this.props} />
-                    <Header />
+                    <Banner />
                 </section>
                 <section className="collection-section">
                     <div className="container">
@@ -130,7 +130,7 @@ const Homepage = React.createClass({
                                         <li><span className="glyphicon glyphicon-star gold" aria-hidden="true"></span>Share with your friends</li>
                                     </ul>
                                 </div>
-                                <div className="app-link"><a target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' width="196" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a></div>
+                                <div className="app-link"><a target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' width="196" src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' data-source='home'/></a></div>
                             </div>
                             
                         </div>

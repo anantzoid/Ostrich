@@ -8,4 +8,9 @@
 {% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
 {% block postscript %} 
     <script src="{{ url_for('static', filename='vendor/slick/slick/slick.min.js') }}"></script>
+    <script>
+        mixpanel.track('pageview', {
+            'page': 'home'
+        }); 
+    </script>
 {% endblock %}

@@ -102,7 +102,7 @@ def itemPage(**kwargs):
     props = kwargs['props']
     props.update({
         'item_data': item_data,
-        'page': 'product'
+        'page': 'item'
         })
     store['props'] = props
     rendered = render_component(path(store['component']), props=props)
