@@ -12,10 +12,11 @@ def async(func):
 def user_session(func):
     @wraps(func)
     def wrapper(**kwargs):
-        # TODO put admin check
         from app.models import Utils
         if Utils.getParam(request.args, 'session', default=None):
-            session.clear()
+            user_data = session.get('_user', None)
+            if user_data['user_id'] in Utils.getAdmins():
+                session.clear()
 
         user_data = session.get('_user', None)
         kwargs['props'] = {'user': user_data}
