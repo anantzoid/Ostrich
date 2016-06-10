@@ -103,7 +103,7 @@ const Homepage = React.createClass({
                             <div className="col-lg-4">
                                 <div className="text-center">
                                     <img className="howto-img" src="/static/img/tmp/pay_r_120.png" />
-                                    <div className="mt20">Because nothing should come in the way of reading.</div>
+                                    <div className="mt20">Rental charges are as cheap as a coffee, because nothing should come in the way of reading.</div>
                                 </div>
                             </div>
                         </div>
