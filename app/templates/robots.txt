@@ -1,4 +1,5 @@
 <pre style="word-wrap: break-word; white-space: pre-wrap;">
 User-agent: *
 Disallow: /static
+Disallow: /search
 </pre>
