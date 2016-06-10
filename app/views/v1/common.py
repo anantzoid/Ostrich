@@ -19,7 +19,7 @@ def startSession():
     data = {
         'most_searched': Collection(4).getObj()['items'],
         'recommendations': Collection(5).getObj()['items'],
-        'categories': Search.getSearchCategories(),
+        'categories': Search.getSearchCategoriesForApp(),
         'return_days': webapp.config['DEFAULT_RETURN_DAYS'],
         'reading_multiplier': reading_multiplier,
         'time_slots': Order.getTimeSlotsForOrder(),
