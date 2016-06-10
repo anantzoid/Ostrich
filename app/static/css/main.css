@@ -283,6 +283,7 @@ header .header-content .header-content-inner p {
 .howto-heading,
 .apps-heading { margin-bottom: 50px; }
 .apps-section #play-store { width: 160px; }
+.howto-content { font-size: 16px; }
 .howto-img { min-height: 120px; }
 .app-img { width: 100%; }
 .app-list-container { 

@@ -87,7 +87,7 @@ const Homepage = React.createClass({
                                 <h2>How Ostrich helps you</h2>
                             </div>
                         </div>
-                        <div className="row">
+                        <div className="row howto-content">
                             <div className="col-lg-4">
                                 <div className="text-center">
                                     <img className="howto-img" src="/static/img/tmp/click_120.png" />
