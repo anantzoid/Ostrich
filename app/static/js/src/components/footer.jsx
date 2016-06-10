@@ -8,9 +8,9 @@ const Footer = React.createClass({
         let search_links = [];
         if (this.props.hasOwnProperty('categories')) {
             for(let category of this.props.categories) {
-                let link_title = 'Rent '+category.category_name+' books in Bangalore';
+                let link_title = 'Rent '+category.category_name+' books in Bangalore, ';
                 search_links.push(<a className="" href={category.slug_url} title={link_title}>{link_title}</a>);
-                link_title = 'Rent '+category.category_name+' books in Bengaluru';
+                link_title = 'Rent '+category.category_name+' books in Bengaluru, ';
                 search_links.push(<a className="" href={category.slug_url} title={link_title}>{link_title}</a>);
             }
         } 
