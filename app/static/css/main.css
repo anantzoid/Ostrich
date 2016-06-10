@@ -503,6 +503,12 @@ header .header-content .header-content-inner p {
 .glyphicon-ok, .glyphicon-ban-circle { margin-right: 5px; }
 .glyphicon-ok { color: #449d44; }
 .glyphicon-ban-circle { color: #cb2b2d; }
+.invalid-address-msg {
+    font-size: 12px;
+    margin-top: 5px;
+    color: #999;
+    font-style: italic;
+}
 .bill-section {
     border-top: 1px solid #eee;
     padding-top: 10px;

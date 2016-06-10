@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from flask import request, jsonify, render_template, redirect, url_for, session, abort
+from flask import request, jsonify, render_template, redirect, url_for, session, abort, send_from_directory
 from react.render import render_component
 from apiclient import discovery
 import httplib2
@@ -160,8 +160,9 @@ def googlesignin():
     return jsonify(data=visible_user_data)
 
 @webapp.route('/robots.txt')
-def robotsFile():
-    return render_template('robots.txt')
+@webapp.route('/sitemap.xml')
+def static_from_root():
+    return send_from_directory(webapp.static_folder, request.path[1:])
 
 @webapp.errorhandler(404)
 def page_not_found(e):

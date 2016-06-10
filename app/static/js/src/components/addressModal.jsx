@@ -144,6 +144,11 @@ const AddressModal = React.createClass({
                                 {this.state.new_address.delivery_msg}
                                 </div>
                             </div>
+                            {this.state.new_address.is_valid ? null : 
+                                <div className="invalid-address-msg">
+                                    Ostrich currently delivers in Central & South Bangalore. We'll inform you when we start serving your area.
+                                </div>
+                            }
                             </div>
                         : null }
            
