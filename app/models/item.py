@@ -102,7 +102,7 @@ class Item(Prototype):
                 collection_custom_data = {'custom_price': collection['price'], 'custom_return_days': collection['return_days'] if collection['return_days'] else default_return_days}
                 return collection_custom_data
 
-        charges, days = [], []
+        charges, days, sp = [], [], []
         for item_id in item_ids:
             item = Item(item_id).getObj() if isinstance(item_id, int) else item_id
             if item['categories'] and 'Comics' in item['categories']:
@@ -123,7 +123,14 @@ class Item(Prototype):
                 else:
                     charges.append(45)
                 days.append(default_return_days)
-        return {'custom_price': sum(charges), 'custom_return_days': max(days)}
+            
+            if len(item_ids) == 1:
+                sp = int(0.8*item['price']) if item['price'] else 100
+
+        return {'custom_price': sum(charges), 
+                'custom_return_days': max(days),
+                'selling_price': sp 
+                }
 
     @staticmethod
     def getExtendRentalChargesSlab(order_data):

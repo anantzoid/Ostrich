@@ -139,8 +139,6 @@ class Indexer():
 
         if item['num_reviews']:
             item['num_reviews_int'] = int(item['num_reviews'].replace(',',''))
-
-        item['selling_price'] = int(0.8*item['price']) if item['price'] else 100
         #TODO item_name_prettify
         return item
 
