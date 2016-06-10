@@ -154,6 +154,7 @@ class Order():
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['return_days'])) 
         order_data['order_amount'] = custom_data['price'] + order_data['address']['delivery_charge']#Utils.getParam(order_data, 'price', 'float', default=custom_data['price'] + order_data['address']['delivery_charge'])
         order_data['bought'] = 1 if Utils.getParam(order_data, 'buy', default='false') == 'true' else 0
+        order_data['source'] = Utils.getParam(order_data, 'ref', default='android')
 
 
         #check order validity
@@ -178,8 +179,9 @@ class Order():
                 payment_mode,
                 from_collection, 
                 charge,
+                source, 
                 bought) 
-                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
+                VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"""  
                 ,(order_data['user_id'], 
                     order_data['address']['address_id'], 
                     order_data['order_placed'], 
@@ -190,6 +192,7 @@ class Order():
                     order_data['payment_mode'],
                     order_data['collection_id'],
                     order_data['order_amount'],
+                    order_data['source'],
                     order_data['bought']))
         connect.commit()
         order_id = insert_data_cursor.lastrowid
@@ -334,18 +337,19 @@ class Order():
     def isUserValidForOrder(user, order_data):
         if user.getObj() is None:
             return {'message': 'User does not exist'}
-       
-        # IF the user is already possessing the book
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT COUNT(*) FROM orders o
-            INNER JOIN order_history oh ON oh.order_id=o.order_id
-            WHERE o.user_id = %s AND  oh.item_id IN (%s) AND o.order_status < 5""",
-            (user.user_id, ','.join([str(_) for _ in order_data['item_id']])))
-        if cursor.fetchone()[0]:
-            return ({
-                'title': 'Book Already Ordered',
-                'message': 'It seems you have already ordered this book from Ostrich. Please check the "My Orders" section.'}, 
-                'HTTP_STATUS_CODE_CLIENT_ERROR')
+      
+        if webapp.config['APP_ENV'] != 'dev': 
+            # IF the user is already possessing the book
+            cursor = mysql.connect().cursor()
+            cursor.execute("""SELECT COUNT(*) FROM orders o
+                INNER JOIN order_history oh ON oh.order_id=o.order_id
+                WHERE o.user_id = %s AND  oh.item_id IN (%s) AND o.order_status < 5""",
+                (user.user_id, ','.join([str(_) for _ in order_data['item_id']])))
+            if cursor.fetchone()[0]:
+                return ({
+                    'title': 'Book Already Ordered',
+                    'message': 'It seems you have already ordered this book from Ostrich. Please check the "My Orders" section.'}, 
+                    'HTTP_STATUS_CODE_CLIENT_ERROR')
 
         # User can only own 2 book @ a time
         if webapp.config['USER_BOOKS_LIMIT']:
@@ -463,7 +467,7 @@ class Order():
             conn.commit()
 
         elif status_id == 4:
-            item_return_days = Item.getCustomProperties(order_info['items'], order_info['collection'] if order_info['from_collection'] else None)['return_days']
+            item_return_days = Item.getCustomProperties(order_info['items'], order_info['collection'] if order_info['from_collection'] else None)['custom_return_days']
             new_order_return = Utils.getDefaultReturnTimestamp(current_ts, item_return_days)
             update_cursor.execute("""UPDATE orders SET delivery_date = %s, 
                     order_return = %s WHERE order_id = %s""",
@@ -592,6 +596,11 @@ class Order():
 
     @staticmethod
     def getAreasForOrder():
+        from app import cache
+        cache_key = 'areas'
+        areas = cache.get(cache_key)
+        if areas:
+            return areas
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM areas WHERE active=1""")
         num_areas = cursor.rowcount
@@ -600,6 +609,7 @@ class Order():
         for area in range(num_areas):
             area_data = Utils.fetchOneAssoc(cursor)
             areas[area_data['name']] = area_data
+        cache.set(cache_key, areas)
         return areas
 
     @staticmethod

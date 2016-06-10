@@ -1,4 +1,4 @@
-from app import webapp, cache
+from app import webapp
 from flask import request, jsonify, render_template, Response
 import json
 import requests
@@ -110,6 +110,7 @@ def viewbook():
 
 @webapp.route('/slack/rent', methods=['POST'])
 def rentbook():
+    from app import cache
     data = request.form['text']
     if not data:
         return "Please enter book_id and locality after /rent"
@@ -130,6 +131,7 @@ def rentbook():
 
 @webapp.route('/slack/contact', methods=['POST'])
 def contact():
+    from app import cache
     contact = request.form['text']
     if not contact:
         return "Please enter address and phone after /contact"

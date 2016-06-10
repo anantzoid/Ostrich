@@ -65,8 +65,8 @@ class Indexer():
 
     def indexItems(self, query_condition='', limit='', custom_keys={}):
 
-        search_query = """SELECT i.item_id, i.item_name, i.author, i.price,
-        i.ratings, i.num_ratings, i.num_reviews, i.img_small, i.asin, i.goodreads_id, i.summary,
+        search_query = """SELECT i.item_id, i.item_name, i.author, i.price,i.ratings, 
+        i.num_ratings, i.num_reviews, i.img_small, i.asin, i.goodreads_id, i.summary, i.slug_url,
         (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
         INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
         ic.item_id = i.item_id) AS categories
@@ -124,10 +124,7 @@ class Indexer():
                 item['in_collections'].append(c_name[1])
                 c_ids.append(c_name[0])
 
-        item_custom_props = Item.getCustomProperties([item])
-        for prop in item_custom_props.keys():
-            item['custom_'+prop] = item_custom_props[prop] 
-        
+        item.update(Item.getCustomProperties([item]))
         if custom_keys:
             for key in custom_keys.keys():
                 item[key] = custom_keys[key]

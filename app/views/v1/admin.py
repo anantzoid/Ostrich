@@ -115,7 +115,7 @@ def getCollectionsList():
 
 @webapp.route('/getCollection')
 def getCollection():
-    return jsonify(Collection(request.args.get('id')).getExpandedObj())
+    return jsonify(Collection(request.args.get('id')).getObj())
 
 @webapp.route('/saveCollection')
 def setCollection():
@@ -146,7 +146,7 @@ def getNewContent():
     # NOTE make this generic in dashboard
     # hard coded panel ids for now
     for panel_id in [3,4,5]:
-        all_content.append(Collection(panel_id).getExpandedObj())
+        all_content.append(Collection(panel_id).getObj())
     return jsonify(all_content)
 
 @webapp.route('/saveContent')

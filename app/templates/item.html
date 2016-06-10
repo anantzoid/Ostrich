@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block headResources %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='js/node_modules/react-select/dist/react-select.min.css') }}">
+{% endblock %}
+
+{% block title %} {{title}} {% endblock %}
+{% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
+{% block postscript %} 
+<script type="text/javascript" src='http://maps.google.com/maps/api/js?sensor=false&libraries=places'></script>
+<script src="{{ url_for('static', filename='vendor/locationpicker.jquery.min.js') }}"></script> 
+<script>
+    mixpanel.track('pageview', {
+        'page': 'item'
+    }); 
+    $(document).on('click', '.order-now', function() {
+        mixpanel.track('pageview', {
+            'page': 'ordermodal'
+        });
+    });
+    $(document).on('click', '.add-address', function() {
+        mixpanel.track('pageview', {
+            'page': 'addressmodal'
+        });
+    });
+    $(document).on('click', '.order-gauth', function() {
+        mixpanel.track('auth', {
+            'page': 'item',
+            'source': 'button'
+        });
+    });
+
+</script>
+{% endblock %}

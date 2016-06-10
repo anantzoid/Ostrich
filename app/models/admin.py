@@ -116,7 +116,6 @@ class Admin():
             order_info['delivery_amount'] = order_data[4]
             order_info['picked_by'] = order_data[5]
             order_info['pickup_amount'] = order_data[6]
-
             if order_info['bought']:
                 if int(order_info['order_status']) in [3,5]:
                     next_order_status = 8
@@ -288,7 +287,6 @@ class Admin():
             author = data['amazon']['author']
         else:
             author = ''
-
 
         cursor.execute("""SELECT item_id FROM items WHERE item_name LIKE %s AND author LIKE %s""", (data['amazon']['title'], author))
         match = cursor.fetchone()

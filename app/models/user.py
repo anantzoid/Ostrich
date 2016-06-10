@@ -14,11 +14,11 @@ class User(Prototype):
 
     def getData(self, user_id, login_type):
 
-        get_data_query = "SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, \
-                u.gcm_id, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u \
-                LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id \
-                LEFT JOIN user_wallet uw ON uw.user_id = u.user_id \
-                WHERE u.%s = %d" 
+        get_data_query = """SELECT u.user_id, u.username, u.name, u.email, u.phone, u.google_id, 
+                u.gcm_id, u.picture_url, u.date_created, ui.invite_code, uw.wallet_id, uw.amount as wallet_balance FROM users u 
+                LEFT JOIN user_invite_codes ui ON ui.user_id = u.user_id 
+                LEFT JOIN user_wallet uw ON uw.user_id = u.user_id 
+                WHERE u.%s = %d"""
         if login_type != 'user_id':
             get_data_query = get_data_query.replace("%d", "'%s'")
         else:
@@ -56,10 +56,11 @@ class User(Prototype):
 
         address = Utils.getParam(user_data, 'address')
     
-        #TODO handle facebook_id
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
-
+        picture_url = Utils.getParam(user_data, 'picture', default='/static/img/profile_default.png')
+        source = Utils.getParam(user_data, 'source', default='android')
+        app_version = Utils.getParam(user_data, 'app_version', default=None)
         
         if email:
             check_email_cursor = conn.cursor()
@@ -69,16 +70,23 @@ class User(Prototype):
 
             if user_exists_id and len(user_exists_id):
                 user_exists = User(int(user_exists_id[0]), 'user_id')
-                user_obj = user_exists.getObj()
-                user_obj['existed'] = "true"
-                return user_obj
+                user_exists.existed = "true"
+
+                # NOTE updating picture_url
+                if not user_exists.picture_url:
+                    insert_pic_cursor = conn.cursor()
+                    insert_pic_cursor.execute("""UPDATE users SET picture_url = %s
+                        WHERE user_id = %s""", (picture_url, user_exists.user_id))
+                    conn.commit()
+                    user.picture_url = picture_url
+                return user_exists
 
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("""INSERT INTO users (username, password, name,
-                email, phone, google_id, gcm_id, last_app_version, 
+                email, phone, google_id, gcm_id, picture_url, last_app_version, 
                 last_used_timestamp) 
-                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
-            (username, password, name, email, phone, google_id, gcm_id, user_data['app_version']))
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
+            (username, password, name, email, phone, google_id, gcm_id, picture_url, app_version))
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)
@@ -103,14 +111,13 @@ class User(Prototype):
         # Welcome Mail
         Mailer.welcomeMailer(user)
         user.removeFromUnregistered()
-        return user.getObj()
+        return user
 
 
     def addAddress(self, address, mode='insert'):
         address = json.loads(address)
         if isinstance(address, dict):
             address = [address]
-
         address_ids = []
         for address_obj in address:
             address_id = Utils.getParam(address_obj, 'address_id')
@@ -128,11 +135,8 @@ class User(Prototype):
 
             conn = mysql.connect()
             insert_add_cursor = conn.cursor()
-            print "=====", distance
-            print mode
             # TODO remove mode and use ON DUPLICATE KEY UPDATE 
             if mode == 'insert':
-                print "heredfdf"
                 insert_add_cursor.execute("""INSERT INTO user_addresses 
                 (user_id, address, description, locality, landmark, latitude, longitude,
                 is_valid, delivery_message, distance) 
@@ -219,18 +223,19 @@ class User(Prototype):
                         time_slots[selected_area['area_id']] = Order.getTimeSlotsForOrder(selected_area['hours'])
                     elif selected_area['day']:
                         dates = []
-                        prev_date = datetime.now(pytz.timezone('Asia/Calcutta'))
+                        prev_date = -1
                         while len(dates) <= 4:
-                            prev_date = prev_date + timedelta(days=selected_area['day'])
-                            dates.append(prev_date.strftime("%A"))
+                            prev_date = prev_date + selected_area['day']
+                            dates.append(Utils.fetchNextDayVerbose(int(prev_date)))
                         
                         if selected_area['day'] == 1:
-                            dates[0] = "Tomorrow"
+                            dates[0] = Utils.fetchNextDayVerbose(0)
 
                         time_slots[selected_area['area_id']] = []
                         for date in dates:
                             ts = Order.getTimeSlot(selected_area['slot'])
-                            ts['formatted'] = date+' '+Utils.cleanTimeSlot(ts)
+                            ts['formatted'] = date['day']+' '+Utils.cleanTimeSlot(ts)
+                            ts['delivery_date'] = date['date']
                             time_slots[selected_area['area_id']].append(ts)
 
                 self.address[i]['time_slot'] = time_slots[selected_area['area_id']]
@@ -333,7 +338,7 @@ class User(Prototype):
         return True
 
     @staticmethod
-    def getWishlist(user_id):
+    def getWishlist(user_id, item_obj=True):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT item_id FROM wishlist WHERE user_id = %s AND active = 1""",
                 (user_id,))
@@ -342,6 +347,8 @@ class User(Prototype):
         wishlist = []
         if item_ids:
             item_ids = [int(_[0]) for _ in item_ids]
+            if not item_obj:
+                return item_ids
             wishlist = Search().getById(item_ids)
         return wishlist
 

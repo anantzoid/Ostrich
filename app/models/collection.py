@@ -1,4 +1,4 @@
-from app import mysql
+from app import mysql, webapp
 from app.models import *
 from app.scripts import Indexer
 import json
@@ -6,9 +6,15 @@ from slugify import slugify
 
 class Collection(Prototype):
     def __init__(self, collection_id):
-        self.getData(collection_id)
+        self.data = self.getData(collection_id)
     
     def getData(self, collection_id):
+        from app import cache
+        cache_key = 'collection_'+str(collection_id)
+        collection_data = cache.get(cache_key)
+        if collection_data:
+            return collection_data
+
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT c.*, 
             (select group_concat(ci.item_id order by ci.sort_order asc separator ',') from collections_items ci 
@@ -16,25 +22,25 @@ class Collection(Prototype):
             (select group_concat(concat(cm.meta_key,":",cm.meta_value) separator '&') from collections_metadata cm 
             where cm.collection_id = c.collection_id) as metadata
             FROM collections c WHERE c.collection_id = %s""", (collection_id,))
-        self.data = Utils.fetchOneAssoc(cursor)
+        data = Utils.fetchOneAssoc(cursor)
 
-        if self.data['metadata']:
-            collections_metadata_raw = self.data['metadata']
-            self.data['metadata'] = {}
+        if data['metadata']:
+            collections_metadata_raw = data['metadata']
+            data['metadata'] = {}
             for props in collections_metadata_raw.split('&'):
                 props_formatted = props.split(':')
-                self.data['metadata'][props_formatted[0]] = props_formatted[1]
-        if not self.data:
-            self.data = {}
-  
-    def getExpandedObj(self):
-        collection_object = self.getObj()
-        if collection_object['item_ids']:
-            collection_object['item_ids'] = [int(_) for _ in collection_object['item_ids'].split(',')]
-            collection_object['items'] = Search().getById(collection_object['item_ids']) 
+                data['metadata'][props_formatted[0]] = props_formatted[1]
+
+        if data['item_ids']:
+            data['item_ids'] = [int(_) for _ in data['item_ids'].split(',')]
+            data['items'] = Search().getById(data['item_ids']) 
         else:
-            collection_object['items'] = []
-        return collection_object
+            data['items'] = []
+
+        if not data:
+            data = {}
+        cache.set(cache_key, data)
+        return data
 
     @staticmethod
     def getByCategory():
@@ -50,7 +56,7 @@ class Collection(Prototype):
             category['collections'] = []
             if category['collection_ids'] is not None:
                 for col_id in category['collection_ids'].split(','):
-                    items = Collection(col_id).getExpandedObj()
+                    items = Collection(col_id).getObj()
                     if items:
                         category['collections'].append(items)
                 collections_categories.append(category)
@@ -75,18 +81,6 @@ class Collection(Prototype):
         for i in range(num_rows):
             collections_data['collections_categories'].append(Utils.fetchOneAssoc(cursor))
         return collections_data
-
-    # NOTE not used anymore
-    @staticmethod
-    def getCollectionPropertiesByItemId(item_id):
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT c.price, c.return_days FROM collections c INNER JOIN 
-            collections_items ci ON ci.collection_id = c.collection_id
-            WHERE ci.item_id = %s""", (item_id,))
-        rental_data = cursor.fetchone()
-        if rental_data:
-            rental_data = {'price': int(rental_data[0]), 'return_days': int(rental_data[1])} 
-        return rental_data
 
     @staticmethod
     def saveCollectionData(data, collection_item_ids=''):
@@ -180,4 +174,49 @@ class Collection(Prototype):
         response = {'category_name': data['name']}
         response['category_id'] = cursor.lastrowid
         return response
-    
+  
+    '''
+        Website Related functions
+    '''
+    @staticmethod
+    def getHomepageCollections(items=False):
+        # List of collections to be displayed on homepage
+        from app import cache
+        cache_key = 'homepage_collections'+('_items' if items else '')
+        homepage_collections = cache.get(cache_key)
+        if homepage_collections:
+            return homepage_collections
+
+        # NOTE temp
+        if webapp.config['APP_ENV'] != 'dev':
+            homepage_collection_ids = [38, 40, 41, 42]
+        else:
+            homepage_collection_ids = [25, 26, 27, 28]
+        homepage_collections = []
+        for col_id in homepage_collection_ids:
+            col_obj = Collection(col_id)
+            if items:
+                col_obj = col_obj.getObj()
+                col_obj['items'] = WebUtils.extendItemWebProperties(col_obj['items'])
+            else:
+                col_obj = col_obj.getObj()
+
+            url = webapp.config['HOST'] + '/books/collection/' + str(col_obj['collection_id']) 
+            if col_obj['slug_url']:
+                url = url + '-' + col_obj['slug_url']
+            col_obj['slug_url'] = url
+
+            if col_obj['image']:
+                col_obj['image'] = webapp.config['HOST'] + '/static/img/collections/' + col_obj['image'] 
+            homepage_collections.append(col_obj)
+        if not items:
+            mock_collection = {
+                    'slug_url': webapp.config['HOST'] + '/books',
+                    'collection_id': -99,
+                    'name': 'Browse',
+                    'image': webapp.config['HOST'] + '/static/img/collections/Browse.png' 
+                    }
+            homepage_collections = [mock_collection] + homepage_collections
+        cache.set(cache_key, homepage_collections)
+        return homepage_collections
+

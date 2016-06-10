@@ -1,5 +1,5 @@
 from app import webapp, mysql
-from app.models import Search , Utils, Collection
+from app.models import Search , Utils, Collection, WebUtils
 from flask import request, jsonify
 from flask.ext.jsonpify import jsonify as jsonp
 import json
@@ -27,10 +27,14 @@ def searchString():
     flow = Utils.getParam(request.args, 'flow', default='borrow')
     gcm_id = Utils.getParam(request.args, 'gcm_id', default=None)
     uuid = Utils.getParam(request.args, 'distinct_id', default=None)
+    ref = Utils.getParam(request.args, 'ref', default='mobile')
 
     if not query:
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
-    
+   
+    if ref == 'web':
+        return json.dumps(WebUtils.fetchSearchResults(query, search_type, page))
+
     user_info = {'user_id': user_id, 'gcm_id': gcm_id, 'uuid': uuid}
     search = Search(query, user_info, flow)
     if search_type == 'free':
@@ -54,7 +58,7 @@ def searchString():
 
 @webapp.route('/getCategories')
 def getCategories():
-    categories = Search.getSearchCategories()
+    categories = Search.getSearchCategoriesForApp()
     return json.dumps(categories)
 
 @webapp.route('/getCollectionCategory')
@@ -74,7 +78,6 @@ def searchFail():
     Search(q, {'user_id': user_id}, flow).reportFail(True,True,q_type)
     return jsonify(status='true')
 
-# TODO confirm and remove thses and their respective functions
 @webapp.route('/recommended', methods=['GET'])
 def recommended():
     return json.dumps(Search([]).mostRecommended())
@@ -90,6 +93,6 @@ def getMultiplePanels():
         partial_order = 1 ORDER BY collection_id DESC""")
     panels = []
     for col_id in cursor.fetchall():
-        panels.append(Collection(col_id).getExpandedObj())
+        panels.append(Collection(col_id).getObj())
     return json.dumps(panels)
 

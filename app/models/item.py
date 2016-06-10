@@ -66,12 +66,40 @@ class Item(Prototype):
         return True
 
     @staticmethod
+    def fetchCategory(category_id=0, slug='',name=''):
+        from app import cache
+        if category_id:
+            cache_key = 'category_'+str(category_id)
+            query_cond = 'category_id'
+            entity = category_id
+        elif slug:
+            cache_key = 'category_'+slug
+            query_cond = 'slug_url'
+            entity = slug
+        elif name:
+            cache_key = 'category_'+name.replace(' ','_')
+            query_cond = 'category_name'
+            entity = name
+        else:
+            return {}
+        category = cache.get(cache_key)
+        if category:
+            return category
+
+        cursor = mysql.connect().cursor()
+        cursor.execute("SELECT * FROM categories WHERE "+query_cond+" = %s", (entity,))
+        category = Utils.fetchOneAssoc(cursor)
+        category = WebUtils.extendCategoryProperties(category)
+        cache.set(cache_key, category)
+        return category
+
+    @staticmethod
     def getCustomProperties(item_ids, collection=None):
         default_return_days = webapp.config['DEFAULT_RETURN_DAYS']
 
         if collection:
             if collection['price']:
-                collection_custom_data = {'price': collection['price'], 'return_days': collection['return_days'] if collection['return_days'] else default_return_days}
+                collection_custom_data = {'custom_price': collection['price'], 'custom_return_days': collection['return_days'] if collection['return_days'] else default_return_days}
                 return collection_custom_data
 
         charges, days = [], []
@@ -95,7 +123,7 @@ class Item(Prototype):
                 else:
                     charges.append(45)
                 days.append(default_return_days)
-        return {'price': sum(charges), 'return_days': max(days)}
+        return {'custom_price': sum(charges), 'custom_return_days': max(days)}
 
     @staticmethod
     def getExtendRentalChargesSlab(order_data):

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block headResources %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/slick/slick/slick.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/slick/slick/slick-theme.css') }}">
+{% endblock %}
+{% block title %} {{title}} {% endblock %}
+{% block content %}<div id="app-container">{{rendered|safe}}</div>{% endblock %}
+{% block postscript %} 
+    <script src="{{ url_for('static', filename='vendor/slick/slick/slick.min.js') }}"></script>
+    <script>
+        mixpanel.track('pageview', {
+            'page': 'home'
+        }); 
+    </script>
+{% endblock %}

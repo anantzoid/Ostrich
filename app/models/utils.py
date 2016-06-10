@@ -17,7 +17,10 @@ Generic helpers
 class Utils():
     @staticmethod
     def getAdmins():
-        return [1,5,6,8,9,27,28,0]
+        if webapp.config['APP_ENV'] == 'dev':
+            return [93]
+        else:
+            return [1,5,6,8,9,27,28,0]
 
     @staticmethod
     def fetchOneAssoc(cursor):
@@ -100,7 +103,10 @@ class Utils():
     @staticmethod
     def getDefaultReturnTimestamp(current_timestamp, num_days):
         if isinstance(current_timestamp, str) or isinstance(current_timestamp, unicode):
-            current_timestamp = datetime.strptime(current_timestamp, "%Y-%m-%d %H:%M:%S")
+            try:
+                current_timestamp = datetime.strptime(current_timestamp, "%Y-%m-%d %H:%M:%S")
+            except:
+                current_timestamp = datetime.strptime(current_timestamp, "%Y-%m-%d")
 
         next_week_timestamp = str(current_timestamp + timedelta(days=num_days))
         order_return = next_week_timestamp.split('.')[0]
@@ -186,21 +192,23 @@ class Utils():
         new_timeslots = []
         for i,ts in enumerate(order_timeslots):
             if i == 0:
-                if int(ts['start_time'].split(":")[0]) - int(datetime.now(pytz.timezone('Asia/Calcutta')).hour) > 0:
-                    start_day = 'Today'
+                now_time = datetime.now(pytz.timezone('Asia/Calcutta'))
+                if int(ts['start_time'].split(":")[0]) - int(now_time.hour) > 0:
+                    start_day = {'day': 'Today', 'date': str(now_time.date()), 'counter': 0}
                 else:
-                    start_day = 'Tomorrow'
+                    start_day = Utils.fetchNextDayVerbose(0)
                 day = start_day
             else:
                 if int(ts['start_time'].split(":")[0]) - int(order_timeslots[i-1]['start_time'].split(":")[0]) >= 0:
                     day = start_day
                 else:
-                    day = Utils.fetchNextDayVerbose(start_day)
+                    day = Utils.fetchNextDayVerbose(start_day['counter'])
                 start_day = day
 
             # Format Timeslots
             formatted_time = Utils.cleanTimeSlot(ts)
-            ts['formatted'] = day+' '+formatted_time
+            ts['formatted'] = day['day']+' '+formatted_time
+            ts['delivery_date'] = day['date']
 
             # NOTE creating a new object to avoid pass-by-reference
             new_timeslots.append(copy.copy(ts))
@@ -208,16 +216,24 @@ class Utils():
 
     @staticmethod
     def fetchNextDayVerbose(day):
-        if day == 'Today':
-            return 'Tomorrow'
-        elif day == 'Tomorrow':
-            current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
-            day_after_tomo = current_timestamp + timedelta(days=2)
-            return day_after_tomo.strftime("%A")
+        current_timestamp = datetime.now(pytz.timezone('Asia/Calcutta'))
+        date = current_timestamp + timedelta(days=day+1)
+        if day == 0:
+            return {'day': 'Tomorrow', 'date': str(date.date()), 'counter': 1}
         else:
-            days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-            return days[(days.index(day)+1)%7]
-
+            return {'day': date.strftime("%A"), 'date': str(date.date()), 'counter': day+1}
+            
+        '''
+        if day == 'Today':
+            date = current_timestamp + timedelta(days=1)
+            return {'day': 'Tomorrow', 'date': str(date.date())}
+        else:
+            day = 1 if day == 'Tomorrow' else day
+            day_after_tomo = current_timestamp + timedelta(days=day+1)
+            return {'day': day_after_tomo.strftime("%A"), 'date': str(day_after_tomo.date())}
+            #days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+            #return days[(days.index(day)+1)%7]
+        '''
     @staticmethod
     def cleanTimeSlot(ts):
         format_start_time = datetime.strptime(ts['start_time'],"%H:%M:%S").strftime("%I:%M")

@@ -2,6 +2,7 @@ from app import webapp
 from app.models import *
 from flask import request, jsonify
 from app.models import Notifications
+from app.decorators import is_user
 import json
 
 '''
@@ -22,13 +23,14 @@ import json
 
 '''
 @webapp.route('/order', methods=['POST'])
-def OrderItem():
+@is_user
+def orderItem():
    
     order_data = {}
     for key in request.form:
         order_data[key] = request.form[key]
-    order_placed = Order.placeOrder(order_data)
 
+    order_placed = Order.placeOrder(order_data)
     if 'order_id' in order_placed and order_placed['order_id']:
         if 'App-Version' in request.headers:
             Admin.updateOrderComment({'order_id': order_placed['order_id'], 
@@ -175,18 +177,7 @@ def editOrderDetails():
 '''
 @webapp.route('/requestItem', methods=['POST'])
 def requestItem():
-    #item_type = Utils.getParam(request.form, 'item_type')
-    
-    # ISBN in case of books
-    #TODO look into this for genericity
-    #item_id = Utils.getParam(request.form, 'item_id')
-    #item_name = Utils.getParam(request.form, 'item_name')
-
-    #if not(item_name and item_type and item_id):
-    #    return Utils.errorResponse({'status': 'False'}, 'HTTP_STATUS_CODE_DATA_MISSING')
-
     Item.storeItemRequest(request.form)
-
     return jsonify(status='True')
 
 
