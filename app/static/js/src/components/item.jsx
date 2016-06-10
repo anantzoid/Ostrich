@@ -131,7 +131,7 @@ const Item = React.createClass({
                                         <div className="price-label">Rental Period:</div> 
                                         <div className="price-value">{this.props.item_data.custom_return_days ? this.props.item_data.custom_return_days: 21} days</div>
                                     </div>
-                                    <div className="action-container">
+                                    <div className="action-container text-center">
                                         { this.props.user ? 
                                         <div>
                                             <button className="btn btn-success order-now" onClick={this._toggleOrderModal}>Rent Now</button>
@@ -140,7 +140,7 @@ const Item = React.createClass({
                                               : <button className="btn wishlist" onClick={this._wishlistAdd}>Add to Wishlist</button>
                                             }
                                         </div>
-                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/sign-in-with-google.png" alt="Ostrich Sign in" /></a> }
+                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/auth/btn_google_signin_dark_normal_web.png" alt="Ostrich Sign in" srcSet="/static/img/auth/btn_google_signin_dark_normal_web@2x.png 2x"/></a> }
                                     </div>
                                 </div>
                                 
