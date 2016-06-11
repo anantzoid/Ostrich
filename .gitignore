@@ -6,3 +6,4 @@
 *.rdb
 *.log
 node_modules/
+dist/
