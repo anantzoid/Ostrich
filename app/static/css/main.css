@@ -329,6 +329,14 @@ header .header-content .header-content-inner p {
     vertical-align: bottom;
     text-align: center;
 }
+.catalog-book-image-container {
+    background-image: url('/static/img/book_placeholder.png');
+    width: 110px;
+    height: 175px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin: auto;
+}
 .catalog-book-image {
     width: auto;
     height: auto;

@@ -12,7 +12,9 @@ const Catalog = React.createClass({
                 return (
                     <li className="catalog-book-container text-center" key={key}>
                             <a href={book.item_url}>
-                                <img className="catalog-book-image" src={book.img_small} alt={book.item_name} />
+                                <div className="catalog-book-image-container">
+                                    <img className="catalog-book-image" src={book.img_small} alt={book.item_name} />
+                                </div>
                                 <div className="catalog-book-info">{book.item_name}</div>
                             </a>
                         </li>
@@ -81,7 +83,7 @@ const Catalog = React.createClass({
                                     {results}
                                 </div>
                                 :
-                                <div className="col-lg-9 col-sm-9">
+                                <div className="col-lg-10 col-sm-9">
                                     <div className="search-result-title mt20">
                                         Showing results for: <span className="query-display">{this.props.query}</span>
                                     </div>

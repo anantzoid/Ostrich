@@ -69,15 +69,25 @@ const OrderModal = React.createClass({
     }, 
     render() {
         let addresses = [];
+        let invalid_addresses = [];
         if (this.state.user.hasOwnProperty('address')) {
             for(let address in this.state.user.address) {
                 address = this.state.user.address[address];
-                addresses.push({
-                    value: address.address_id, 
-                    label: address.description+', '+address.locality,
-                    disabled: address.is_valid ? false : true
-                }); 
+                if (address.is_valid) {
+                    addresses.push({
+                        value: address.address_id, 
+                        label: address.description+', '+address.locality,
+                        disabled: false
+                    }); 
+                } else {
+                    invalid_addresses.push({
+                        value: address.address_id, 
+                        label: address.description+', '+address.locality,
+                        disabled: true
+                    });
+                }
             }
+            addresses = addresses.concat(invalid_addresses);
         }
         let time_slots = [];
         if (this.state.default_address.hasOwnProperty('time_slot')) {
