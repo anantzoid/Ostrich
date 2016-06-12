@@ -18,9 +18,9 @@ class Utils():
     @staticmethod
     def getAdmins():
         if webapp.config['APP_ENV'] == 'dev':
-            return [93]
+            return [96]
         else:
-            return [1,5,6,8,9,27,28,0]
+            return [1,5,6,8,9,27,28,0,96]
 
     @staticmethod
     def fetchOneAssoc(cursor):
@@ -51,6 +51,17 @@ class Utils():
                 except:
                     param = default
         return param
+
+    @staticmethod
+    def getUserName(user):
+        if user.name:
+            name = user.name.split(" ")[0]
+            if len(name) <=3:
+                name = user.name
+        else:
+            name = 'there'
+        name = name.capitalize()
+        return name
 
     @staticmethod
     def generateCode(size=4):

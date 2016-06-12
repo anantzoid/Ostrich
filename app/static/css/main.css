@@ -55,7 +55,7 @@ font-style: italic;
 #home .navbar-default { background-color: transparent; }
 #home h2 { font-size: 24px; }
 .navbar-default {
-    background-color: rgba(0,171,193,0.7);
+    background-color: #006073;
     min-height: 75px;
     border-radius: 0px;
     border: none;
@@ -65,19 +65,19 @@ font-style: italic;
 .navbar-default .nav > li > a {
   text-transform: uppercase;
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 1.0);
 }
 .navbar-brand-name:hover, 
 .navbar-default .nav > li > a:focus,
 .navbar-default .nav > li > a:hover {
-  color: rgba(255, 255, 255, 1.0);
+  color: rgba(255, 255, 255, 0.8);
 } 
 .navbar-brand {
   width: 210px;
     font-size: 20px;
 }
 .navbar-default .nav > li > a {
-  font-size: 13px;
+  font-size: 15px;
   padding-top: 27px;
 } 
 
@@ -93,6 +93,7 @@ font-style: italic;
     border-radius: 50px;
     width: 30px;
     margin-top: -7px;
+    margin-right: 10px;
 }
 
 
@@ -109,7 +110,7 @@ font-style: italic;
   background-size: cover;
   -o-background-size: cover;
   background-position: center;
-  background-image: url('../img/header.png');
+  background-image: url('https://d3i8lg6krdgeel.cloudfront.net/website/header.png');
   text-align: center;
   color: white;
 }
@@ -291,14 +292,14 @@ header .header-content .header-content-inner p {
 .howto-img { min-height: 120px; }
 .app-img { width: 100%; }
 .app-list-container { 
-    margin-top: 60px; 
     font-size: 18px;
     line-height: 2;
     font-weight: 500;
 }
+.app-list-container img { margin-right: 10px; } 
 .app-link {
     margin: auto;
-    width: 45%;
+    width: 15%;
     margin-top: 20px;
 }
 /*------------ Homepage Ends ---------------*/
@@ -599,7 +600,7 @@ svg {
         margin-top: 100px;
     }
     .footer-app-links { float: right; }
-    .app-list-container { margin-left: 90px; }
+    .app-list-container { margin-left: 70px; }
 }
 @media (min-width: 768px) and (max-width: 1192px) {
     .search-elements { margin-left: 0px !important; }

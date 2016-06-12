@@ -10,6 +10,7 @@ class WebUtils():
         from app import cache
         user.getOrderSlots()
         user_obj = user.getObj()
+        user_obj['first_name'] = Utils.getUserName(user)
         user_obj['wishlist'] = User.getWishlist(user_obj['user_id'], False)
         session['_user'] = user_obj
         cache.set(user.google_id, user_obj)

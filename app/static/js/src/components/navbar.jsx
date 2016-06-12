@@ -41,7 +41,10 @@ const Navbar = React.createClass({
                     :
                     <ul className="nav navbar-nav navbar-right">
                         <li className="auth-container">
-                            <a id="userProfile" href="#" onClick={this._toggleAppModal}><img src={this.props.user.picture_url} alt="User Avatar" /></a>
+                            <a id="userProfile" href="#" onClick={this._toggleAppModal}>
+                                <img src={this.props.user.picture_url} alt="User Avatar" />
+                                <span>{this.props.user.first_name}</span>
+                                </a>
                         </li>
                     </ul>
                     }

@@ -5,6 +5,7 @@ from app import mail
 from app import webapp
 from app.decorators import async
 from premailer import Premailer, transform
+from app.models import Utils
 
 class Mailer():
     @staticmethod
@@ -30,22 +31,11 @@ class Mailer():
             mail.send(email)
         return True
 
-    @staticmethod
-    def getUserName(user):
-        if user.name:
-            name = user.name.split(" ")[0]
-            if len(name) <=3:
-                name = user.name
-        else:
-            name = 'there'
-        name = name.capitalize()
-        return name
-
 
     @staticmethod
     @async
     def welcomeMailer(user):
-        name = Mailer.getUserName(user)
+        name = Utils.getUserName(user)
         with webapp.app_context():
             email = Message('Welcome to Ostrich!',
                         recipients=[user.email])
