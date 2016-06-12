@@ -42,7 +42,7 @@ const Terms = React.createClass({
 
                     <p>Jurisdiction  For all legal matters will be subjected to the jurisdiction of Jaipur court. </p>
                 </div></section>
-                <Footer />
+                <Footer {...this.props} />
             </div>
             );
     }

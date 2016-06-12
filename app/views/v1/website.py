@@ -17,8 +17,10 @@ def path(js_file):
 
 @webapp.route('/')
 @user_session
-def homepage(props):
-    store = {'component': 'home.jsx'}
+def homepage(**kwargs):
+    store = kwargs['store']
+    props = kwargs['props']
+    store['component'] = 'home.jsx'
     collections = Collection.getHomepageCollections() 
     props.update({
         'collections': collections,
@@ -42,7 +44,10 @@ def homepage(props):
 @webapp.route('/books/collection/<int:collection_id>-<slug>')
 @user_session
 def catalog(**kwargs):
-    store = {'component': 'catalog.jsx'}
+    store = kwargs['store']
+    props = kwargs['props']
+
+    store['component'] = 'catalog.jsx'
     query = Utils.getParam(request.args, 'q', default='')
     search_type = Utils.getParam(request.args, 'type', default='free')
     page = Utils.getParam(request.args, 'page', var_type='int', default=1)
@@ -62,7 +67,6 @@ def catalog(**kwargs):
         results['items'] = WebUtils.extendItemWebProperties(results['items'])
     else:
         catalog = Collection.getHomepageCollections(items=True)
-    props = kwargs['props']
     props.update({
             'search_results': results,
             'catalog': catalog,
@@ -82,7 +86,10 @@ def catalog(**kwargs):
 @webapp.route('/book/rent/<int:item_id>-<slug>')
 @user_session
 def itemPage(**kwargs):
-    store = {'component': 'item.jsx'}
+    store = kwargs['store']
+    props = kwargs['props']
+
+    store['component'] = 'item.jsx'
     item_data = Search().getById([kwargs['item_id']]) 
     if item_data:
         item_data = item_data[0]
@@ -100,7 +107,6 @@ def itemPage(**kwargs):
     #item_data.update(Item.getCustomProperties([item_data]))
 
     item_data['img_small'] = webapp.config['S3_HOST'] + item_data['img_small'] 
-    props = kwargs['props']
     props.update({
         'item_data': item_data,
         'categories': Search.getAllSearchCategories(),

@@ -140,7 +140,7 @@ const Item = React.createClass({
                                               : <button className="btn wishlist" onClick={this._wishlistAdd}>Add to Wishlist</button>
                                             }
                                         </div>
-                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src="/static/img/auth/btn_google_signin_dark_normal_web.png" alt="Ostrich Sign in" srcSet="/static/img/auth/btn_google_signin_dark_normal_web@2x.png 2x"/></a> }
+                                        : <a href="#" onClick={this.startAuth}><img className="order-gauth mt20" src={this.props.cdn + "auth/btn_google_signin_dark_normal_web.png"} alt="Ostrich Sign in" srcSet={this.props.cdn + "auth/btn_google_signin_dark_normal_web@2x.png 2x"}/></a> }
                                     </div>
                                 </div>
                                 
@@ -161,7 +161,7 @@ const Item = React.createClass({
                         <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>
                     : null }
                 </section>
-                <Footer categories={this.props.categories} />
+                <Footer {...this.props} />
             </div>
             );
     }

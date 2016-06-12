@@ -1,6 +1,7 @@
 from threading import Thread
 from functools import wraps
 from flask import session, request
+from app import webapp
 
 def async(func):
     @wraps(func)
@@ -15,11 +16,13 @@ def user_session(func):
         from app.models import Utils
         if Utils.getParam(request.args, 'session', default=None):
             user_data = session.get('_user', None)
-            if user_data['user_id'] in Utils.getAdmins():
+            if user_data and user_data['user_id'] in Utils.getAdmins():
                 session.clear()
 
         user_data = session.get('_user', None)
-        kwargs['props'] = {'user': user_data}
+        kwargs['props'] = {'user': user_data,
+                            'cdn': webapp.config['S3_HOST']+'website/'}
+        kwargs['store'] = {'cdn': webapp.config['S3_HOST']+'website/'}
         return func(**kwargs)
     return wrapper
 

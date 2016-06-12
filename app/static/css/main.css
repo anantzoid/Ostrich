@@ -225,7 +225,7 @@ header .header-content .header-content-inner p {
     padding: 0; 
 }
 .collection-li {
-    background-image: url('../img/tmp/collection_blur.png');
+    background-image: url('https://d3i8lg6krdgeel.cloudfront.net/website/tmp/collection_blur.png');
     width: 180px;
     height: 180px !important;
     overflow: hidden;

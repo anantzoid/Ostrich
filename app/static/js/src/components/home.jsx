@@ -90,19 +90,19 @@ const Homepage = React.createClass({
                         <div className="row howto-content">
                             <div className="col-lg-4">
                                 <div className="text-center">
-                                    <img className="howto-img" src="/static/img/tmp/click_120.png" />
+                                    <img className="howto-img" src={this.props.cdn + "tmp/click_120.png"} />
                                     <div className="mt20">You can search for your favourite book and get a premium copy of the title at your doorstep.</div>
                                 </div>
                             </div>
                             <div className="col-lg-4">
                                 <div className="text-center">
-                                    <img className="howto-img" src="/static/img/tmp/door_120.png" />
+                                    <img className="howto-img" src={this.props.cdn + "tmp/door_120.png"} />
                                     <div className="mt20">We will deliver books at a time and place decided by you.</div>
                                 </div>
                             </div>
                             <div className="col-lg-4">
                                 <div className="text-center">
-                                    <img className="howto-img" src="/static/img/tmp/pay_r_120.png" />
+                                    <img className="howto-img" src={this.props.cdn + "tmp/pay_r_120.png"} />
                                     <div className="mt20">Rental charges are as cheap as a coffee, because nothing should come in the way of reading.</div>
                                 </div>
                             </div>
@@ -118,7 +118,7 @@ const Homepage = React.createClass({
                         </div>
                         <div className="row">
                             <div className="col-lg-6 text-center">
-                                <img className="app-img" src="/static/img/tmp/showcase.png" alt="Ostrich Android App" />
+                                <img className="app-img" src={this.props.cdn + "tmp/showcase.png"} alt="Ostrich Android App" />
                             </div>
                             <div className="col-lg-2"></div>
                             <div className="col-lg-6">
@@ -137,7 +137,7 @@ const Homepage = React.createClass({
                         </div>
                     </div>
                 </section>
-                <Footer categories={this.props.categories} />
+                <Footer {...this.props} />
            </div>
             );
     }

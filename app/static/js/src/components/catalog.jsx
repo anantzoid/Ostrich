@@ -98,7 +98,7 @@ const Catalog = React.createClass({
                          
                     </div>
                 </section>
-                <Footer categories={this.props.categories} />
+                <Footer {...this.props} />
             </div>
             );
     }

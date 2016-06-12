@@ -201,20 +201,21 @@ class Collection(Prototype):
             else:
                 col_obj = col_obj.getObj()
 
-            url = webapp.config['HOST'] + '/books/collection/' + str(col_obj['collection_id']) 
+            url = webapp.config['S3_HOST'] + 'books/collection/' + str(col_obj['collection_id']) 
+
             if col_obj['slug_url']:
                 url = url + '-' + col_obj['slug_url']
             col_obj['slug_url'] = url
 
             if col_obj['image']:
-                col_obj['image'] = webapp.config['HOST'] + '/static/img/collections/' + col_obj['image'] 
+                col_obj['image'] = webapp.config['S3_HOST'] + 'website/collections/' + col_obj['image'] 
             homepage_collections.append(col_obj)
         if not items:
             mock_collection = {
                     'slug_url': webapp.config['HOST'] + '/books',
                     'collection_id': -99,
                     'name': 'Browse',
-                    'image': webapp.config['HOST'] + '/static/img/collections/Browse.png' 
+                    'image': webapp.config['S3_HOST'] + 'website/collections/Browse.png' 
                     }
             homepage_collections = [mock_collection] + homepage_collections
         cache.set(cache_key, homepage_collections)
