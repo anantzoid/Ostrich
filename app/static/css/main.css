@@ -318,7 +318,7 @@ header .header-content .header-content-inner p {
 }
 .catalog-book-container {
     padding-top: 10px;
-    width: 144px;
+    width: 180px;
     float: left;
     min-height: 209px;
     display: inline;
@@ -495,6 +495,7 @@ header .header-content .header-content-inner p {
 .add-address:hover { background-color: #C0C0C0 !important; }
 .map-container { margin: 10px 0px; }
 .address-description,
+.phone-number,
 .area-picker,
 .address-landmark {
     height: 30px;
@@ -504,6 +505,7 @@ header .header-content .header-content-inner p {
     padding: 15px 10px;
     margin-top: 10px;
 }
+.phone-number { margin-top: 3px !important; }
 .locality-name, .locality-valid { font-weight: bold; }
 .glyphicon-ok, .glyphicon-ban-circle { margin-right: 5px; }
 .glyphicon-ok { color: #449d44; }
@@ -535,7 +537,10 @@ header .header-content .header-content-inner p {
     margin: auto;
     width: 40px;
 }
-.error { border: 1px solid #cb2b2d !important; }
+.error { 
+    border: 1px solid #cb2b2d !important;
+    border-radius: 5px;
+}
 .gold { 
     color: gold; 
     margin-right: 5px; 
@@ -637,6 +642,7 @@ svg {
         max-width: 100%;
         margin-bottom:50px;
     }
+    .catalog-book-container { width: 140px; }
     .collection-li {
         margin-bottom: 20px;
         width: 90%;

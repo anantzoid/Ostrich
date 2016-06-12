@@ -155,9 +155,11 @@ const AddressModal = React.createClass({
  
                     </Modal.Body>
                     <Modal.Footer>
-                        <div className="pull-left">
-                            <a href="#" onClick={this.props.toggle}>&lt; Back</a>
-                        </div>
+                        {this.props.user.address.length ?
+                            <div className="pull-left">
+                                <a href="#" onClick={this.props.toggle}>&lt; Back</a>
+                            </div>
+                        : null }
                         {this.state.new_address.hasOwnProperty('is_valid') ?
                             <button className="btn btn-success confirm-address" onClick={this._saveAddress}>Add Address</button>
                             : null }

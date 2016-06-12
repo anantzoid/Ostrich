@@ -8,7 +8,8 @@ const OrderModal = React.createClass({
         let state = {
             show: this.props.show,
             default_address: {},
-            total_amount: this.props.item_data.custom_price
+            total_amount: this.props.item_data.custom_price,
+            phone: this.props.user.phone
         };
         if (this.props.user) {
             state['user'] = this.props.user;
@@ -41,11 +42,16 @@ const OrderModal = React.createClass({
         this.state.default_address.default_timeslot = option.value;
         this.setState({default_address: this.state.default_address});
     },
+    _phoneChanged(event) {
+        this.setState({phone: event.target.value});
+    },
     sendOrderData() {
         if($.isEmptyObject(this.state.default_address)) {
             this._renderError('address');
         } else if(!this.state.default_address.hasOwnProperty('default_timeslot')) {
             this._renderError('time');
+        } else if (!this.state.phone) {
+            this._renderError('phone');
         } else {
             let delivery_info = this.state.default_address.default_timeslot.split(":");
             let pay_option = $('input[name=payment-option]:checked').val();
@@ -55,7 +61,8 @@ const OrderModal = React.createClass({
                 address_id: this.state.default_address.address_id,
                 payment_mode: pay_option,
                 delivery_slot: delivery_info[0],
-                delivery_date: delivery_info[1]
+                delivery_date: delivery_info[1],
+                phone: this.state.phone
             };
             OrderUtils.placeOrder(order_data, this.props.hide, this.props.appModal);
         }
@@ -111,6 +118,12 @@ const OrderModal = React.createClass({
                             disabled={!this.state.default_address.hasOwnProperty('time_slot')}
                             onFocus={this._removeError}
                         />
+
+                        <div className="phone-section mt20">
+                            <div><strong>Contact Number:</strong></div>
+                            <input className="phone-number" type="text" value={this.state.phone} placeholder="Enter your contact number" onChange={this._phoneChanged} /> 
+                        </div>
+
                         <div className="payment-section clearfix mt20">
                             <div><strong>Payment Method:</strong></div>
                             <div className="payment-options">
@@ -155,6 +168,9 @@ const OrderModal = React.createClass({
                 break;
             case 'time':
                 $('.time-selector').addClass('error');
+                break;
+            case 'phone':
+                $('.phone-number').addClass('error');
                 break;
         }
     },

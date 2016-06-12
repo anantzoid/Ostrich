@@ -198,6 +198,7 @@ class Collection(Prototype):
             if items:
                 col_obj = col_obj.getObj()
                 col_obj['items'] = WebUtils.extendItemWebProperties(col_obj['items'])
+                col_obj['items'] = col_obj['items'][:5]
             else:
                 col_obj = col_obj.getObj()
 

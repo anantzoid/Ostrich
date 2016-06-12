@@ -210,6 +210,9 @@ class Order():
 
         order.sendOrderNotification(1, user)
         Utils.notifyAdmin(user.user_id, 'Order')
+        
+        if Utils.getParam(order_data, 'phone', default=user.phone) != user.phone: 
+            user.editDetails({'phone': order_data['phone']})
         return response 
 
     @async
