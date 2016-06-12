@@ -56,9 +56,12 @@ const Homepage = React.createClass({
                 <a href={panel.slug_url}>
                     <div className="collection-li" key={panel.collection_id}>
                     <img src={panel.image} className="collection-img" alt={panel.name}/>
-                    <span className="collection-span">
-                        {panel.name}
-                    </span></div>
+                        <div className="collection-name-container">
+                            <span className="collection-span">
+                                {panel.name}
+                            </span>
+                        </div>
+                    </div>
                 </a>
                 );
         });

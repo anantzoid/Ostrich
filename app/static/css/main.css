@@ -242,21 +242,25 @@ header .header-content .header-content-inner p {
     font-weight: 400;
     letter-spacing: 1px;
 }
-
-
-.collection-span {
-    position: absolute;
-    top: 0;
-    left: 0;
-    margin: auto;
-    width: 100%;
-    margin-top: 40px;
-}
-
 .collection-img {
     width: 180px;
+    -webkit-filter: opacity(70%);
+    -moz-filter: opacity(70%);
+    -ms-filter: opacity(70%);
 }
-
+.collection-name-container {
+    position: absolute;
+    top: calc(50% - 24px);
+    left: 0;
+    line-height: 50px;
+    margin: auto;
+    width: 95%;
+}
+.collection-span {
+    display: inline-block;
+    line-height: 22px;
+    vertical-align: middle;
+}
 .slick-left {
     top: 45%;
     position: absolute;
