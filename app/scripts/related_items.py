@@ -21,12 +21,16 @@ def getRelatedItems(item_id):
     item = Item(item_id)
     url = amazon_search_url+item.item_name+' '+item.author
     soup = prepareSoup(url)
+    if isinstance(soup, dict):
+        return None
 
     link = soup.find('a', {'class':'s-access-detail-page'}) 
     if link and 'href' in link.attrs: 
         item_url = link.attrs['href'] 
         print item_url
         soup = checkForPaperback(item_url)
+        if not soup:
+            return None
         
         amazon_id = 0
         book_id = soup.find('input', {'id':'ASIN'})
@@ -57,6 +61,8 @@ def getRelatedItems(item_id):
 
 def checkForPaperback(item_url):
     soup = prepareSoup(item_url)
+    if isinstance(soup, dict):
+        return None
     book_type = soup.findAll('li', {'class': 'swatchElement'})
     for types in ["Paperback", "Hardcover"]:
         for b_type in book_type:
@@ -65,6 +71,8 @@ def checkForPaperback(item_url):
                     item_url = b_type.find('a')
                     if item_url:
                         soup = prepareSoup('http://www.amazon.in/'+item_url.attrs['href'])
+                        if isinstance(soup, dict):
+                            return None
                 return soup
     return soup
 

@@ -21,6 +21,8 @@ def prepareSoup(url):
 def crawlAuthor(url):
     soup = prepareSoup(url)
     all_data = []
+    if isinstance(soup, dict):
+        return all_data
     cards = soup.findAll('li', {'class': 'a-carousel-card'})
     for card in cards:
         link = card.find('a', {'class':'a-link-normal'})
@@ -50,6 +52,8 @@ class AmazonCrawler():
 
     def crawlPage(self):
         response = prepareSoup(self.url)
+        if isinstance(soup, dict):
+            return None
         isbn13, isbn10 = '',''
         detail_div = response.find('div', {'id': 'detail_bullets_id'})
         detail_list = detail_div.findAll('li')
@@ -181,6 +185,8 @@ class GoodreadsCrawler():
             return {'status':'error'}
 
         soup = prepareSoup(url)
+        if isinstance(soup, dict):
+            return None
         if self.title:
             data = self.crawlSearchPage(soup)
         else:
