@@ -22,6 +22,7 @@ const AddressModal = React.createClass({
             location: {latitude: 12.933074, longitude: 77.6221414},
             radius: 0,
             enableAutocomplete: true,
+            enableReverseGeocode: true,
             inputBinding: {
                 locationNameInput: $('.area-picker')
             },
@@ -73,7 +74,6 @@ const AddressModal = React.createClass({
             this.state.new_address.delivery_msg = 'Out of Delivery Area';
             this.setState({new_address: this.state.new_address});
         }
-        console.log(this.state);
     },
     _areaChange(option) {
         /*
@@ -120,7 +120,7 @@ const AddressModal = React.createClass({
                     <Modal.Header closeButton>
                         <Modal.Title>Add New Address</Modal.Title>
                     </Modal.Header>
-                    <Modal.Body>
+                    <Modal.Body bsClass="address-modal">
                         <div className="address-error-msg collapse"></div>
                         <div className="map-container">
                             <div><strong>Select Area:</strong></div>

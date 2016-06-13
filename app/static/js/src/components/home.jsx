@@ -128,15 +128,15 @@ const Homepage = React.createClass({
                                 <div className="app-list-container">
                                     <ul className="app-list">
                                         <li>
-                                            <img src="/static/img/modalImagesPick.png"/> 
+                                            <img src={this.props.cdn + "modalImagesPick.png"}/> 
                                             Rent any book in a few taps
                                         </li>
                                         <li>
-                                            <img src="/static/img/modalImagesTrack.png"/> 
+                                            <img src={this.props.cdn + "modalImagesTrack.png"}/> 
                                             Keep track and extend your orders
                                         </li>
                                         <li>
-                                            <img src="/static/img/modalImagesShare.png"/> 
+                                            <img src={this.props.cdn + "modalImagesShare.png"}/> 
                                             Share with your friends
                                         </li>
 

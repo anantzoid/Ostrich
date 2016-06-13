@@ -43,7 +43,7 @@ class WebUtils():
             if item['img_small']:
                 items[i]['img_small'] = webapp.config['S3_HOST'] + item['img_small'] 
             else:
-                items[i]['img_small'] = '/static/img/book_placeholder.png'
+                items[i]['img_small'] = webapp.config['S3_HOST'] + 'website/book_placeholder.png'
             items[i]['item_url'] = webapp.config['HOST']  + '/book/rent/' + str(item['item_id'])
             # NOTE remove this later. Only for Test environment becuase we're poor
             try:

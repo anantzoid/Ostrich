@@ -59,9 +59,8 @@ let OrderUtils = {
             beforeSend: () => { loaderPlaceholder(true, className); },
             success:((response) => {
                 store.props.user.address.push(response);
+                store.props.show_order_modal = true;
                 window.renderApp(store.props);
-                hideModal();
-                alert("Address Saved Successfully");
             }),
             error: ((jqXHR) => {
                 OrderUtils.handleError(jqXHR, '.address-error-msg');

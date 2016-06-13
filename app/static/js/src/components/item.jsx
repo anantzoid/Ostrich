@@ -11,7 +11,7 @@ import gAuth from '../utils/loginUtils.js';
 const Item = React.createClass({
     getInitialState() {
         return {
-            show_order_modal: false,
+            show_order_modal: false || this.props.hasOwnProperty('show_order_modal'),
             show_app_modal: false,
             show_address_modal: false,
             xs: false

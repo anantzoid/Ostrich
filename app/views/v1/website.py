@@ -64,6 +64,9 @@ def catalog(**kwargs):
         query = results['name']
         #results = WebUtils.fetchSearchResults(query, 'collection', page)   
         # NOTE alternate source: from DB
+
+        # NOTE temp case
+        results['items'] = results['items'][:5]
         results['items'] = WebUtils.extendItemWebProperties(results['items'])
     else:
         catalog = Collection.getHomepageCollections(items=True)
@@ -97,6 +100,7 @@ def itemPage(**kwargs):
         for category in item_data['categories']:
             categories.append(Item.fetchCategory(name=category)) 
         item_data['categories'] = categories
+        item_data = WebUtils.extendItemWebProperties([item_data])[0]
         # get reviews
         # get metadata info
     else:
@@ -106,7 +110,6 @@ def itemPage(**kwargs):
     #item_data = Item(kwargs['item_id']).getObj()
     #item_data.update(Item.getCustomProperties([item_data]))
 
-    item_data['img_small'] = webapp.config['S3_HOST'] + item_data['img_small'] 
     props.update({
         'item_data': item_data,
         'categories': Search.getAllSearchCategories(),

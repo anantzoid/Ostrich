@@ -58,7 +58,7 @@ class User(Prototype):
     
         google_id = user_data['google_id'] if 'google_id' in user_data else ''
         gcm_id = user_data['gcm_id'] if 'gcm_id' in user_data else ''
-        picture_url = Utils.getParam(user_data, 'picture', default='/static/img/profile_default.png')
+        picture_url = Utils.getParam(user_data, 'picture', default=webapp.config['S3_HOST'] + 'website/profile_default.png')
         source = Utils.getParam(user_data, 'source', default='android')
         app_version = Utils.getParam(user_data, 'app_version', default=None)
         
@@ -78,7 +78,7 @@ class User(Prototype):
                     insert_pic_cursor.execute("""UPDATE users SET picture_url = %s
                         WHERE user_id = %s""", (picture_url, user_exists.user_id))
                     conn.commit()
-                    user.picture_url = picture_url
+                    user_exists.picture_url = picture_url
                 return user_exists
 
         create_user_cursor = conn.cursor()

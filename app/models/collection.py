@@ -198,11 +198,12 @@ class Collection(Prototype):
             if items:
                 col_obj = col_obj.getObj()
                 col_obj['items'] = WebUtils.extendItemWebProperties(col_obj['items'])
+                # NOTE temp case
                 col_obj['items'] = col_obj['items'][:5]
             else:
                 col_obj = col_obj.getObj()
 
-            url = webapp.config['S3_HOST'] + 'books/collection/' + str(col_obj['collection_id']) 
+            url = webapp.config['HOST'] + '/books/collection/' + str(col_obj['collection_id']) 
 
             if col_obj['slug_url']:
                 url = url + '-' + col_obj['slug_url']
