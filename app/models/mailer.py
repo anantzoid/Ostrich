@@ -46,7 +46,7 @@ class Mailer():
     @staticmethod
     #TODO substitue @sync
     def thankyou(user):
-        name = Mailer.getUserName(user)
+        name = Utils.getUserName(user)
         email = Message('Thank you for offering your book.',
                     recipients=[user.email])
         email.html = render_template('mailers/inlined/thank_you.html', name=name)
@@ -57,7 +57,7 @@ class Mailer():
     @staticmethod
     @async
     def sendUpsellEmail(data):
-        name = Mailer.getUserName(data['user'])
+        name = Utils.getUserName(data['user'])
         with webapp.app_context():
             consumer_mail = render_template('mailers/extend_order.html',
                             name = name,
