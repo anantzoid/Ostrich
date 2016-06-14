@@ -127,9 +127,10 @@ class Collection(Prototype):
         insert_item_order = []
         item_ids = []
        
-        original_items = collection_item_ids.split(",")
+        original_items = collection_item_ids
         for item in data['items'].split(";"):
             key, value = item.split(":")
+            key = int(key)
             item_ids.append(key)
             if key in original_items:
                 update_item_order.append(tuple([value, collection_id, key]))
