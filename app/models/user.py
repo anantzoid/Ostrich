@@ -84,9 +84,9 @@ class User(Prototype):
         create_user_cursor = conn.cursor()
         create_user_cursor.execute("""INSERT INTO users (username, password, name,
                 email, phone, google_id, gcm_id, picture_url, last_app_version, 
-                last_used_timestamp) 
-                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)""",
-            (username, password, name, email, phone, google_id, gcm_id, picture_url, app_version))
+                last_used_timestamp, source) 
+                VALUES (%s, %s, %s,%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP, %s)""",
+            (username, password, name, email, phone, google_id, gcm_id, picture_url, app_version, source))
         conn.commit()
 
         user_id = int(create_user_cursor.lastrowid)

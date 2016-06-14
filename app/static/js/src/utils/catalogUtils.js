@@ -1,4 +1,4 @@
-import loaderPlaceholder from './loader'; 
+import { loaderPlaceholder } from './loader'; 
 
 let CatalogUtils = {
     loadMore(page) {

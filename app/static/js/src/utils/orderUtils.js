@@ -32,7 +32,7 @@ let OrderUtils = {
         });
     },
     validateLocality(locality) {
-        let className = ".modal-body";
+        let className = ".address-modal-body";
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: '/validateLocality',
