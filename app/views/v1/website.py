@@ -163,9 +163,9 @@ def googlesignin():
 
         user = User.createUser(user_data)
         WebUtils.storeUserSession(user)
-    visible_user_data = {
-        'user': session['_user']
-    }
+        users = session['_user']
+
+    visible_user_data = {'user': user}
     return jsonify(data=visible_user_data)
 
 @webapp.route('/robots.txt')

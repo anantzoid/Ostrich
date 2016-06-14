@@ -186,7 +186,7 @@ class Search():
 
     @async
     def reportFail(self, phrase_fail, query_fail, search_type='free'):
-        if self.user_id in Utils.getAdmins():
+        if self.user_id in Utils.getAdmins() or self.user_id == 0:
             return
         if not phrase_fail and not query_fail:
             return

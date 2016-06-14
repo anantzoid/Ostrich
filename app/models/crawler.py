@@ -4,6 +4,7 @@ import json
 import re
 import unicodedata
 import urllib2
+from app.models import Admin
 
 # TODO move this to utils
 def handleUnicode(text):
@@ -14,35 +15,39 @@ def handleUnicode(text):
 def prepareSoup(url):
     response = requests.get(url)
     if response.status_code != 200:
+        # NOTE 503s started appearing recently for amazon.
+        # TODO re-iterate this with tinyproxy
         return {'status':'error', 'code': response.status_code}
     soup = BeautifulSoup(response.text, "html.parser")
     return soup
 
 def crawlAuthor(url):
     soup = prepareSoup(url)
-    all_data = []
     if isinstance(soup, dict):
-        return all_data
+        return {'status': False}
     cards = soup.findAll('li', {'class': 'a-carousel-card'})
     for card in cards:
         link = card.find('a', {'class':'a-link-normal'})
         if link:
             item_link = link.attrs['href']
             item_link = item_link if 'amazon.in' in item_link else 'http://www.amazon.in'+item_link
-            all_data.append(getAggregatedBookDetails(item_link)) 
-    return all_data
+            data = getAggregatedBookDetails(item_link)
+            if 'status' in data['goodreads'] and data['goodreads']['status'] == 'error':
+                continue
+            Admin.insertItem(data)
+    return {'status': True}
 
 def getAggregatedBookDetails(amzn_url):
     book_data = {'amazon': {}, 'goodreads': {}}
     book_data['amazon'] = AmazonCrawler(url=amzn_url).crawlPage()
-
-    amazon_isbn = book_data['amazon']['isbn_13'] if 'isbn_13' in book_data['amazon'] else ''
-    book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
-    if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-        amazon_isbn = book_data['amazon']['isbn_10'] if 'isbn_10' in book_data['amazon'] else ''
+    if book_data['amazon']:
+        amazon_isbn = book_data['amazon']['isbn_13'] if 'isbn_13' in book_data['amazon'] else ''
         book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
         if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
-            book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
+            amazon_isbn = book_data['amazon']['isbn_10'] if 'isbn_10' in book_data['amazon'] else ''
+            book_data['goodreads'] = GoodreadsCrawler(isbn=amazon_isbn).startCrawl()
+            if 'status' in book_data['goodreads'] and book_data['goodreads']['status'] == 'error':
+                book_data['goodreads'] = GoodreadsCrawler(title=book_data['amazon']['title']).startCrawl()
     return book_data
  
 class AmazonCrawler():
@@ -52,8 +57,8 @@ class AmazonCrawler():
 
     def crawlPage(self):
         response = prepareSoup(self.url)
-        if isinstance(soup, dict):
-            return None
+        if isinstance(response, dict):
+            return {}
         isbn13, isbn10 = '',''
         detail_div = response.find('div', {'id': 'detail_bullets_id'})
         detail_list = detail_div.findAll('li')
@@ -186,7 +191,7 @@ class GoodreadsCrawler():
 
         soup = prepareSoup(url)
         if isinstance(soup, dict):
-            return None
+            return {}
         if self.title:
             data = self.crawlSearchPage(soup)
         else:

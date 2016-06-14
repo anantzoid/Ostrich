@@ -102,12 +102,7 @@ def crawlItem():
 @webapp.route('/authorCrawl')
 def authorCrawl():
     amzn_url = Utils.getParam(request.args, 'url')
-    all_data = crawlAuthor(amzn_url)
-    for data in all_data:
-        if 'status' in data['goodreads'] and data['goodreads']['status'] == 'error':
-            continue
-        Admin.insertItem(data)
-    return jsonify({'status': 'True'})
+    return jsonify(crawlAuthor(amzn_url))
 
 @webapp.route('/getCollectionsList')
 def getCollectionsList():
