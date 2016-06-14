@@ -32,7 +32,7 @@ def crawlAuthor(url):
             item_link = link.attrs['href']
             item_link = item_link if 'amazon.in' in item_link else 'http://www.amazon.in'+item_link
             data = getAggregatedBookDetails(item_link)
-            if 'status' in data['goodreads'] and data['goodreads']['status'] == 'error':
+            if not(data['amazon']) or ('status' in data['goodreads'] and data['goodreads']['status'] == 'error'):
                 continue
             Admin.insertItem(data)
     return {'status': True}

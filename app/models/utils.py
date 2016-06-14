@@ -20,7 +20,7 @@ class Utils():
         if webapp.config['APP_ENV'] == 'dev':
             return [96]
         else:
-            return [1,5,6,8,9,27,28,0,96]
+            return [1,5,6,8,9,27,28,0]
 
     @staticmethod
     def fetchOneAssoc(cursor):
