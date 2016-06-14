@@ -23,7 +23,7 @@ const Navbar = React.createClass({
         <div className="container-fluid">
             <div className="navbar-header">
                <a className="navbar-brand page-scroll" href="/">
-                    <img className="navbar-logo pull-left" src={this.props.cdn + "logo.png"} alt="Ostrich Logo" />
+                    <img className="navbar-logo pull-left" src={"https://s3-ap-southeast-1.amazonaws.com/ostrich-catalog/website/logo.png"} alt="Ostrich Logo" />
                     <div className="pull-left navbar-brand-name">Ostrich</div>
                 </a>
             </div>
@@ -53,7 +53,7 @@ const Navbar = React.createClass({
                 <SearchBar {...this.props} />
                 : null }
         </div>
-        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Download Ostrich" />
+        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} {...this.props} title="Download Ostrich" />
         </nav>
         );
     }

@@ -155,7 +155,7 @@ const Item = React.createClass({
                                 _toggleAddressModal={this._toggleAddressModal}/>
                     : null }
                    {this.state.show_app_modal ?
-                        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" />
+                        <AppModal show={this.state.show_app_modal} hide={this._toggleAppModal} title="Order Placed Successfully" {...this.props}/>
                     : null }
                    {this.state.show_address_modal ?
                         <AddressModal show={this.state.show_address_modal} toggle={this._toggleAddressModal} hide={this._hideAllModal} user={this.props.user}/>

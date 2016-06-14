@@ -73,30 +73,23 @@ font-style: italic;
   color: rgba(255, 255, 255, 0.8);
 } 
 .navbar-brand {
-  width: 210px;
+    width: 210px;
     font-size: 20px;
 }
 .navbar-default .nav > li > a {
   font-size: 15px;
   padding-top: 27px;
 } 
-
 .navbar-logo,
-.footer-logo {
-    width: 40px;
-}
+.footer-logo { width: 50px; }
 .navbar-brand-name,
-.footer-brand-name {
-    margin: 10px;
-}
+.footer-brand-name { margin: 15px 5px; }
 #userProfile img {
     border-radius: 50px;
     width: 30px;
     margin-top: -7px;
     margin-right: 10px;
 }
-
-
 /*------------ NavBar Ends ---------------*/
 
 /*------------ Header Starts ---------------*/
@@ -554,14 +547,44 @@ header .header-content .header-content-inner p {
     border: 1px solid #cb2b2d !important;
     border-radius: 5px;
 }
+.app-modal-body {
+    background-image: url('https://d3i8lg6krdgeel.cloudfront.net/website/modalPattern126.png');
+    height: 500px;
+    position: relative;
+}
+.app-image-container {
+    padding-top: 20px;
+    padding-left: 10px;
+}
+.app-image { width: 97%; }
+.app-features {
+    position: absolute;
+    background-color: #fff;
+    padding: 0 20px 20px 20px;
+    top: 185px;
+}
+.app-features h3 {
+    font-weight: 400;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 20px;
+}
+.app-features ul { padding-left: 20px; }
+.app-features li { margin: 5px 0px; }
 .gold { 
     color: gold; 
     margin-right: 5px; 
 }
-.install-container {
-    margin: auto;
-    width: 40%;
+.riptide {
+    color: #84ECB8;
+    margin-right: 5px; 
 }
+.app-link-container {     
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+.app-link-container #play-store { margin-left: 30%; }
 /*------------ ItemPage Ends ---------------*/
 
 .footer {
