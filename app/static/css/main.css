@@ -51,6 +51,26 @@ font-style: italic;
     width: 10%;
     margin: 20% 0 0 40%;
 }
+body:after{
+    content: "beta";
+    position: absolute;
+    width: 107px;
+    height: 25px;
+    background: #006073;
+    top: 17px;
+    right: -25px;
+    text-align: center;
+    font-size: 12px;
+    font-family: sans-serif;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #fff;
+    line-height: 27px;
+    -ms-transform:rotate(45deg);
+    -webkit-transform:rotate(45deg);
+    transform:rotate(45deg);
+    border: 1px dashed;
+}
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default { background-color: transparent; }
 #home h2 { font-size: 24px; }
@@ -72,6 +92,7 @@ font-style: italic;
 .navbar-default .nav > li > a:hover {
   color: rgba(255, 255, 255, 0.8);
 } 
+.navbar-right { margin-right: 15px !important; }
 .navbar-brand {
     width: 210px;
     font-size: 20px;
