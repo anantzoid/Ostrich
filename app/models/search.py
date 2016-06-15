@@ -45,15 +45,18 @@ class Search():
             pass
 
 
-    def basicSearch(self, page=0):
+    def basicSearch(self, page=0, source='app'):
         phrase_fail = False 
         query_fail = False
 
         phrase_results = self.matchPhrase(page)
         if len(phrase_results['items']) == 0:
             phrase_fail = True
-
-        if len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1:
+        if source == 'app':
+            condition = len(phrase_results['items']) in range(11) and len(phrase_results['items']) != 1
+        else:
+            condition = True
+        if condition:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
             queried_results = self.queryMatch(page, filter_ids)
             if phrase_fail and len(queried_results['items']) == 0 :

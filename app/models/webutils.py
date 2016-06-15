@@ -32,7 +32,7 @@ class WebUtils():
         elif search_type == 'collection':
             results = search.collectionsSearch(page)
         else: 
-            results = search.basicSearch(page)
+            results = search.basicSearch(page, source='web')
         results['items'] = WebUtils.extendItemWebProperties(results['items'])
         return results 
 
