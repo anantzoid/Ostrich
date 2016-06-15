@@ -237,6 +237,12 @@ class Admin():
     @staticmethod
     @async
     def updateOrderComment(data):
+        data['delivered_by'] = Utils.getParam(data, 'delivered_by', default='')
+        data['delivery_amount'] = Utils.getParam(data, 'delivery_amount', default=0)
+        data['picked_by'] = Utils.getParam(data, 'picked_by', default='')
+        data['pickup_amount'] = Utils.getParam(data, 'pickup_amount', default=0)
+        data['edited'] = Utils.getParam(data, 'edited', default=0)
+
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("""UPDATE orders_admin_notes SET 

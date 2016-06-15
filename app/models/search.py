@@ -38,7 +38,7 @@ class Search():
                     }
                 }
         try:
-            self.user_id = user_info['user_id']
+            self.user_id = user_info['user_id'] if user_info['user_id'] else 0
             self.uuid = user_info['uuid']
             self.gcm_id = user_info['gcm_id']
         except:
