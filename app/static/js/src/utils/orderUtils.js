@@ -12,6 +12,7 @@ let OrderUtils = {
             success:((response) => {
                 if (response.hasOwnProperty('order_id')) {
                     hideOrderModal();
+                    alert("Order Placed Successfully!");
                     showAppModal();
                 }
             }),

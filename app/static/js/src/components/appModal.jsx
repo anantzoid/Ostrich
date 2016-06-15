@@ -14,7 +14,7 @@ const AppModal = React.createClass({
                         <h3>Download our app to be a part of the easy reading experience</h3>
                         <ul>
                             <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Rent any book in a few taps</li>
-                            <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Keep track and extend your orders</li>
+                            <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Keep track of your order status and extend orders</li>
                             <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Offer used books and get free credits</li>
                             <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Order Collection Sets</li>
                             <li><span className="glyphicon glyphicon-star riptide" aria-hidden="true"></span>Share with your friends</li>

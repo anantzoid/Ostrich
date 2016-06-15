@@ -163,7 +163,7 @@ def googlesignin():
 
         user = User.createUser(user_data)
         WebUtils.storeUserSession(user)
-        users = session['_user']
+        user = session['_user']
 
     visible_user_data = {'user': user}
     return jsonify(data=visible_user_data)
