@@ -136,7 +136,7 @@ class Collection(Prototype):
                 update_item_order.append(tuple([value, collection_id, key]))
             else: 
                 insert_item_order.append(tuple([value, collection_id, key]))
-                
+             
         cursor.executemany("""UPDATE collections_items SET sort_order = %s, 
             date_edited = CURRENT_TIMESTAMP WHERE collection_id = %s AND item_id = %s""",
             update_item_order)
@@ -155,6 +155,10 @@ class Collection(Prototype):
         #NOTE for start session cals
         if collection_id in [4, 5]:
             Notifications().startDataUpdate() 
+
+        from app import cache
+        cache_key = 'collection_'+str(collection_id)
+        cache.set(cache_key, None)
         return True
 
     @staticmethod

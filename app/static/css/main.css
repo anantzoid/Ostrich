@@ -504,11 +504,11 @@ header .header-content .header-content-inner p {
 .phone-number,
 .area-picker,
 .address-landmark {
-    height: 30px;
+    height: auto;
+    padding: 4px 10px;
     width: 100%;
     border-radius: 2px;
     border: 1px solid #ccc;
-    padding: 15px 10px;
     margin-top: 10px;
 }
 .phone-number { margin-top: 3px !important; }
