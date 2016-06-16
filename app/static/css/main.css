@@ -326,9 +326,22 @@ header .header-content .header-content-inner p {
 .catalog-section {
     margin-bottom: 40px;
 }
-.catalog-element h3 {
-    margin-left: 50px;
+.catalog-element { margin-bottom: 30px; }
+.catalog-element-header {
+    margin: 20px 60px 0 0;
+}
+.catalog-element-header h3 {
+    margin: 0 0 10px 50px;
     font-size: 21px;
+    float: left;
+}
+.catalog-element-header span>a {
+    font-size: 13px;
+    color: #9a9a9a;
+    float: right
+}
+.catalog-element-header span>a:hover {
+    color: #000;
 }
 .catalog-book-container {
     padding-top: 10px;

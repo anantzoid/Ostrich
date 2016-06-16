@@ -53,7 +53,7 @@ const Homepage = React.createClass({
     render() {
         let collections = this.props.collections.map((panel) => {
             return (
-                <a href={panel.slug_url}>
+                <a href={"/books#collection-"+panel.collection_id}>
                     <div className="collection-li" key={panel.collection_id}>
                     <img src={panel.image} className="collection-img" alt={panel.name}/>
                         <div className="collection-name-container">

@@ -56,8 +56,11 @@ const Catalog = React.createClass({
             results = this.props.catalog.map((list) => {
                 let key = 'collection-'+list.collection_id; 
                 return(
-                        <div className="catalog-element clearfix" key={key}>
-                            <h3>{list.name}</h3>
+                        <div className="catalog-element clearfix" key={key} id={key}>
+                            <div className="catalog-element-header clearfix">
+                                <h3>{list.name}</h3>
+                                <span><a href={list.more_url}>View More</a></span>
+                            </div>
                             <ul>{this._renderListElements(list.items)}</ul>
                         </div>
                         ); 

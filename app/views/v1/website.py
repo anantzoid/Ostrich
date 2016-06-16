@@ -124,8 +124,11 @@ def itemPage(**kwargs):
 
 @webapp.route('/terms/')
 @user_session
-def terms(props):
-    store = {'component': 'terms.jsx'}
+def terms(**kwargs):
+    store = kwargs['store']
+    props = kwargs['props']
+
+    store['component'] = 'terms.jsx'
     store['props'] = props
     rendered = render_component(path(store['component']), props=props)
     return render_template('terms.html',
@@ -133,6 +136,10 @@ def terms(props):
             title='Terms and Conditions',
             store=store) 
 
+@webapp.route('/signout')
+def signout():
+    session.clear() 
+    return jsonify(status=True)
 
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
