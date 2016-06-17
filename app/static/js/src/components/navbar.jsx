@@ -1,7 +1,7 @@
 import React from 'react';
 import SearchBar from './searchbar';
 import AppModal from './appModal';
-import gAuth from '../utils/loginUtils.js'; 
+import { gAuth, signout} from '../utils/loginUtils.js'; 
 
 const Navbar = React.createClass({
     getInitialState() {
@@ -40,11 +40,18 @@ const Navbar = React.createClass({
                     </ul>
                     :
                     <ul className="nav navbar-nav navbar-right">
-                        <li className="auth-container">
-                            <a id="userProfile" href="#" onClick={this._toggleAppModal}>
+                        <li className="dropdown auth-container">
+                            <a data-toggle="dropdown" className="dropdown-toggle" id="userProfile" href="#" >
                                 <img src={this.props.user.picture_url} alt="User Avatar" />
-                                <span>{this.props.user.first_name}</span>
-                                </a>
+                                <span>{this.props.user.first_name}
+                                <b className="caret"></b>
+                                </span>
+                            </a>
+                            <ul className="dropdown-menu">
+                            <li><a className="disabled">My Orders (Coming Soon)</a></li>
+                            <li><a href="#" onClick={this._toggleAppModal}>Get App</a></li>
+                            <li><a href="#" onClick={signout}>Signout</a></li>
+                        </ul>
                         </li>
                     </ul>
                     }

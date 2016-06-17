@@ -103,11 +103,11 @@ body:after{
 #home h2 { font-size: 24px; }
 .navbar-default {
     background-color: #006073;
-    min-height: 75px;
+    min-height: 66px;
     border-radius: 0px;
     border: none;
 }
-
+.navbar-brand { padding-top: 10px; }
 .navbar-brand-name, 
 .navbar-default .nav > li > a {
   text-transform: uppercase;
@@ -119,14 +119,14 @@ body:after{
 .navbar-default .nav > li > a:hover {
   color: rgba(255, 255, 255, 0.8);
 } 
-.navbar-right { margin-right: 15px !important; }
+.navbar-right { margin-right: 50px !important; }
 .navbar-brand {
     width: 210px;
     font-size: 20px;
 }
 .navbar-default .nav > li > a {
   font-size: 15px;
-  padding-top: 27px;
+  padding-top: 22px;
 } 
 .navbar-logo,
 .footer-logo { width: 50px; }
@@ -135,9 +135,15 @@ body:after{
 #userProfile img {
     border-radius: 50px;
     width: 30px;
-    margin-top: -7px;
-    margin-right: 10px;
+    margin-right: 7px;
 }
+#userProfile span { 
+    margin-right: 3px; 
+    text-transform: none;
+    font-weight: 400;
+}
+.caret { margin-left: 7px; }
+.disabled { color: #9a9a9a !important; }
 /*------------ NavBar Ends ---------------*/
 
 /*------------ Header Starts ---------------*/

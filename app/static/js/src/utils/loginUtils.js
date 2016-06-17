@@ -33,16 +33,38 @@ let gAuth = function(){
         } 
     });
 
-    function loaderBackdrop(state) {
-        const loader = '<div class="loader modal-backdrop fade in"><div class="loader-img"><img src="'+store.cdn + 'loading.gif" /></div></div>';
-        if(state) {
-            $('body').append(loader);
-        } else {
-            $('.loader').remove();
+}
+
+let signout = function() {
+    $.ajax({
+        type: 'POST',
+        url: '/signout',
+        beforeSend: () => { loaderBackdrop(true) },
+        success: function(response) {
+            loaderBackdrop(false);       
+            store.props.user = null;
+            window.renderApp(store.props);
+        },
+        error: () => {
+            loaderBackdrop(false);       
         }
+    });
+ 
+}
+
+function loaderBackdrop(state) {
+    const loader = '<div class="loader modal-backdrop fade in"><div class="loader-img"><img src="'+store.cdn + 'loading.gif" /></div></div>';
+    if(state) {
+        $('body').append(loader);
+    } else {
+        $('.loader').remove();
     }
 }
-module.exports = gAuth;
+
+module.exports = {
+    gAuth: gAuth,
+    signout: signout
+};
 
 /*
 (function(global) {

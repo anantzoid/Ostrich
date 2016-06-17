@@ -6,7 +6,7 @@ import AddressModal from './addressModal';
 import AppModal from './appModal';
 import Footer from './footer';
 import OrderUtils from '../utils/orderUtils.js';
-import gAuth from '../utils/loginUtils.js'; 
+import { gAuth } from '../utils/loginUtils.js'; 
 
 const Item = React.createClass({
     getInitialState() {

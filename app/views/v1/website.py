@@ -136,11 +136,6 @@ def terms(**kwargs):
             title='Terms and Conditions',
             store=store) 
 
-@webapp.route('/signout')
-def signout():
-    session.clear() 
-    return jsonify(status=True)
-
 @webapp.route('/googlesignin', methods=['POST'])
 def googlesignin():
     auth_code = Utils.getParam(request.form, 'data', '')
@@ -174,6 +169,11 @@ def googlesignin():
 
     visible_user_data = {'user': user}
     return jsonify(data=visible_user_data)
+
+@webapp.route('/signout', methods=['POST'])
+def signout():
+    session.clear() 
+    return jsonify(status=True)
 
 @webapp.route('/robots.txt')
 @webapp.route('/sitemap.xml')

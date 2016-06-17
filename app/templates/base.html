@@ -39,7 +39,7 @@
 
         <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
-        <script src="{{ url_for('static', filename='vendor/jquery1.8.2.min.js') }}"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         {% block headResources %}{% endblock %}
         <script>
             // NOTE Strangely this doesn't work when put in be file and imported
@@ -114,6 +114,7 @@
         <!-- Beta Ribbon -->
         <div class="ribbon-wrapper"><div class="ribbon">BETA</div></div>
         {% block postscript %}{% endblock %}
+        <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
 
     </body>
