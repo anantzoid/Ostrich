@@ -13,7 +13,8 @@ def handleUnicode(text):
     return unicodedata.normalize("NFKD", text).encode('utf-8')
 
 def prepareSoup(url):
-    response = requests.get(url)
+    headers = {'User-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/21.0'}
+    response = requests.get(url, headers=headers)
     if response.status_code != 200:
         # NOTE 503s started appearing recently for amazon.
         # TODO re-iterate this with tinyproxy
@@ -199,7 +200,7 @@ class GoodreadsCrawler():
         return data
 
     def crawlSearchPage(self, soup):
-        error = {'status': 'error', 'code': 'results not found'}
+        error = {}
         trs = soup.find('table', {'class': 'tableList'}) 
         if not trs:
             return error 
@@ -227,7 +228,7 @@ class GoodreadsCrawler():
             title = re.sub('\(.*\)','',title)
             title = title.strip()            
         else: 
-            return {'status': 'error', 'code': 'page not found'}
+            return {}
 
         # Author
         author_el = soup.find("a", {"class":"authorName"})
