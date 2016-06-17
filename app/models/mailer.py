@@ -23,9 +23,10 @@ class Mailer():
         return True
 
     @staticmethod
-    def genericMailer(mail_obj, recipients=['contact@ostrichapp.in']):
+    def genericMailer(mail_obj, recipients=['anant718@gmail.com'], sender=webapp.config['MAIL_DEFAULT_SENDER']):
         with webapp.app_context():
             email = Message(mail_obj['subject'],
+                        sender=sender,
                         recipients=recipients)
             email.body = mail_obj['body']
             mail.send(email)

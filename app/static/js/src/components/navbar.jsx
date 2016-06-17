@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchBar from './searchbar';
 import AppModal from './appModal';
+import FeedbackUtils from '../utils/feedbackUtils.js';
 import { gAuth, signout} from '../utils/loginUtils.js'; 
 
 const Navbar = React.createClass({
@@ -20,6 +21,7 @@ const Navbar = React.createClass({
     render() {
         return(
         <nav className="navbar navbar-default">
+        <div className="ribbon-wrapper"><div className="ribbon" onClick={FeedbackUtils.toggleModal}>BETA</div></div>
         <div className="container-fluid">
             <div className="navbar-header">
                <a className="navbar-brand page-scroll" href="/">

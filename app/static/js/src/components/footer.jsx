@@ -1,8 +1,14 @@
 import React from 'react';
+import FeedbackModal from './feedbackModal';
+import FeedbackUtils from '../utils/feedbackUtils.js';
 
 const Footer = React.createClass({
     componentDidMount() {
         $('.search-links').hide();
+    },
+    _feedback(event) {
+        event.preventDefault();
+        FeedbackUtils.toggleModal();
     },
     render() {
         let search_links = [];
@@ -25,7 +31,7 @@ const Footer = React.createClass({
                                         <h4>About</h4>
                                         <ul className="footer-info-subul">
                                             <li>
-                                                <a href="mailto:contact@ostrichapp.in">Contact Us</a>
+                                                <a href="#" onClick={this._feedback}>Contact Us</a>
                                             </li>
                                             <li>
                                                 <a href="/terms">Terms and Conditions</a>
@@ -65,7 +71,7 @@ const Footer = React.createClass({
                         </div>
                         <div className="row footer-bottom">
                             <div className="col-lg-5">
-                                <div className="">This site is currently in Beta. Would love to hear your <a href="#">feedback</a>.</div>
+                                <div className="">This site is currently in Beta. Would love to hear your <a href="#" onClick={this._feedback}>feedback</a>.</div>
                                 <div className="copy">© 2016 Hassle Free Internet Pvt. Ltd.</div>
                             </div>
                             <div className="col-lg-3"></div>
@@ -76,6 +82,7 @@ const Footer = React.createClass({
                             </div>
                         </div>
                     </div>
+                    <FeedbackModal {...this.props} />
                     <div className="search-links">
                         <section role="group">{search_links}</section>
                     </div>

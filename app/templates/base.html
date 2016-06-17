@@ -78,6 +78,8 @@
         {% block content %}Loading...{% endblock %}
         <script>
             var store = {{ store| tojson | safe }}; 
+            store.props.feedback_form = false;
+
             if (store.props.user !== null) {
                 mixpanel.identify(store.props.user.user_id.toString());
                 mixpanel.people.set({
@@ -112,7 +114,6 @@
             });
         </script>
         <!-- Beta Ribbon -->
-        <div class="ribbon-wrapper"><div class="ribbon">BETA</div></div>
         {% block postscript %}{% endblock %}
         <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
         <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>

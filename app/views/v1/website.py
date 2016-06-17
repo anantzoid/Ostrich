@@ -175,6 +175,12 @@ def signout():
     session.clear() 
     return jsonify(status=True)
 
+@webapp.route('/feedback', methods=['POST'])
+def feedback():
+    Mailer.genericMailer({'subject': request.form['subject'], 
+        'body': request.form['description']}, sender=request.form['email'])
+    return jsonify(status=True)
+
 @webapp.route('/robots.txt')
 @webapp.route('/sitemap.xml')
 def static_from_root():

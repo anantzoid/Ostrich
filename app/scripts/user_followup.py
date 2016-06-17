@@ -41,4 +41,4 @@ def user_followup():
     if users:
         users = json.dumps({'users': users}, indent=4)
         Mailer.genericMailer({'subject': 'Dropped Users for '+str(ts), 'body': users},
-                    recipients=['anant718@gmail.com', 'divyankjn@gmail.com', 'achal.kothari@gmail.com'])
+                    recipients=['divyankjn@gmail.com', 'achal.kothari@gmail.com'])

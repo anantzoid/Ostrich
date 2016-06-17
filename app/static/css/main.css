@@ -74,29 +74,31 @@ body:after{
     */
 }
 .ribbon-wrapper {
-    width: 85px;
-    height: 88px;
+    width: 97px;
+    height: 138px;
     overflow: hidden;
     position: absolute;
-    top: -3px;
+    top: -13px;
     right: -3px;
 }
 .ribbon {
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
     -webkit-transform: rotate(45deg);
     -moz-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
     -o-transform: rotate(45deg);
     position: relative;
-    padding: 7px 0;
+    padding: 5px 64px;
     left: -5px;
     top: 15px;
-    width: 120px;
+    width: 124px;
+    height: 25px;
     background-color: #006073;
     color: #fff;
     z-index: 100;
     border: 1px dashed #fff;
+    cursor: pointer;
 }
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default { background-color: transparent; }
@@ -568,6 +570,8 @@ header .header-content .header-content-inner p {
     padding-bottom: 50px;
 }
 .map-container { margin: 10px 0px; }
+.feedback-form input,
+.feedback-form textarea,
 .address-description,
 .phone-number,
 .area-picker,
@@ -715,7 +719,8 @@ svg {
     margin-right: 10px;
     float: right;
 }
-
+.feedback-description { height: 100px !important; }
+.feedback-submit { width: 70px; }
 @media (min-width: 768px) {
     .modal-sm {
         width: 420px !important;

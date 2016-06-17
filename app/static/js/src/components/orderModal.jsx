@@ -131,7 +131,7 @@ const OrderModal = React.createClass({
 
                         <div className="phone-section mt20">
                             <div><strong>Contact Number:</strong></div>
-                            <input className="phone-number" type="text" value={this.state.phone} placeholder="Enter your contact number" onChange={this._phoneChanged} /> 
+                            <input className="phone-number" type="text" value={this.state.phone} placeholder="Enter your contact number" onChange={this._phoneChanged} onFocus={this._removeError}/> 
                         </div>
 
                         <div className="payment-section clearfix mt20">
