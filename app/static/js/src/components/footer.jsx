@@ -64,11 +64,11 @@ const Footer = React.createClass({
                             </div>
                         </div>
                         <div className="row footer-bottom">
-                            <div className="col-lg-3">
-                                <div className="copy mt20">© 2016 Hassle Free Internet Pvt. Ltd.</div>
-                            </div>
                             <div className="col-lg-5">
+                                <div className="">This site is currently in Beta. Would love to hear your <a href="#">feedback</a>.</div>
+                                <div className="copy">© 2016 Hassle Free Internet Pvt. Ltd.</div>
                             </div>
+                            <div className="col-lg-3"></div>
                             <div className="col-lg-4 col-xs-12">
                                 <a className="footer-app-links" target="_blank" href='https://play.google.com/store/apps/details?id=in.hasslefree.ostrichbooks&hl=en&utm_source=global_co&utm_medium=prtnr&utm_content=Mar2515&utm_campaign=PartBadge&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img id="play-store" alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' data-source='footer' /></a>
 

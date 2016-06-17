@@ -52,6 +52,7 @@ font-style: italic;
     margin: 20% 0 0 40%;
 }
 body:after{
+    /*
     content: "beta";
     position: absolute;
     width: 107px;
@@ -70,6 +71,32 @@ body:after{
     -webkit-transform:rotate(45deg);
     transform:rotate(45deg);
     border: 1px dashed;
+    */
+}
+.ribbon-wrapper {
+    width: 85px;
+    height: 88px;
+    overflow: hidden;
+    position: absolute;
+    top: -3px;
+    right: -3px;
+}
+.ribbon {
+    font-size: 13px;
+    text-align: center;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    position: relative;
+    padding: 7px 0;
+    left: -5px;
+    top: 15px;
+    width: 120px;
+    background-color: #006073;
+    color: #fff;
+    z-index: 100;
+    border: 1px dashed #fff;
 }
 /*------------ NavBar Starts ---------------*/
 #home .navbar-default { background-color: transparent; }
@@ -338,7 +365,8 @@ header .header-content .header-content-inner p {
 .catalog-element-header span>a {
     font-size: 13px;
     color: #9a9a9a;
-    float: right
+    float: right;
+    margin-top: 5px;
 }
 .catalog-element-header span>a:hover {
     color: #000;
@@ -545,6 +573,12 @@ header .header-content .header-content-inner p {
     border: 1px solid #ccc;
     margin-top: 10px;
 }
+.pac-container { z-index: 100000 !important; }
+.map-picker {
+    margin-top: 10px;
+    width: 100%; 
+    height: 200px;
+}
 .phone-number { margin-top: 3px !important; }
 .locality-name, .locality-valid { font-weight: bold; }
 .glyphicon-ok, .glyphicon-ban-circle { margin-right: 5px; }
@@ -632,7 +666,10 @@ header .header-content .header-content-inner p {
     padding-bottom: 20px;
 }
 .footer-logo { width: 55px; }
-.footer-bottom { margin-top: 10px; }
+.footer-bottom { 
+    margin-top: 10px; 
+    color: #9a9a9a;
+}
 .footer-brand-name {
     font-size: 40px;
     font-weight: bold;
@@ -651,7 +688,11 @@ header .header-content .header-content-inner p {
 .footer-info-subul { padding: 0px; }
 .footer-info-subul li { margin-bottom: 3px; }
 .left-info { margin-top: 10px; }
-.copy { color: #9a9a9a; }
+.copy { 
+    font-size: 12px;
+    font-style: italic;
+    margin-top: 10px;
+}
 #play-store{
     width: 140px;
     margin-top: -5px;
@@ -677,9 +718,11 @@ svg {
     .footer-app-links { float: right; }
     .app-list-container { margin-left: 70px; }
 }
+/* Mid Level Screens */
 @media (min-width: 768px) and (max-width: 1192px) {
     .search-elements { margin-left: 0px !important; }
 } 
+/* Phones */
 @media (max-width: 768px) {
     .navbar-header { float: left; }
     .nav>li { float: left; }
@@ -713,6 +756,9 @@ svg {
         margin-bottom:50px;
     }
     .catalog-book-container { width: 140px; }
+
+    .catalog-element-header { margin: 18px 0 0 0; }
+    .catalog-element-header span>a { margin-top: 25px; }
     .collection-li {
         margin-bottom: 20px;
         width: 90%;
@@ -748,9 +794,4 @@ svg {
     }
     .footer-links{ padding-left: 10px; }
 }
-.pac-container { z-index: 100000 !important; }
-.map-picker {
-    margin-top: 10px;
-    width: 100%; 
-    height: 200px;
-}
+
