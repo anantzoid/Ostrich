@@ -177,8 +177,9 @@ def signout():
 
 @webapp.route('/feedback', methods=['POST'])
 def feedback():
+    body = request.form['description'] + '\n Received from: '+ request.form['email']
     Mailer.genericMailer({'subject': request.form['subject'], 
-        'body': request.form['description']}, sender=request.form['email'])
+        'body': body})
     return jsonify(status=True)
 
 @webapp.route('/robots.txt')
