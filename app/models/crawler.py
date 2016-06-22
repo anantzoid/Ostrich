@@ -75,7 +75,7 @@ class AmazonCrawler():
             amazon_id = book_id.attrs['value']
 
         title = response.find('span', {'id':'productTitle'})
-        title = title.text if title.strip('\n').strip() else ''
+        title = title.text.strip('\n').strip() if title else ''
 
         offer_price, striked_price = self.extract_price_data(response)                
         img_small, img_large = self.extract_images(response)
@@ -220,6 +220,8 @@ class GoodreadsCrawler():
         book_id = soup.find('input',{'id':'book_id'})
         if book_id:
             gr_id = book_id.attrs['value']
+        else:
+            return {'status':'error'}
        
         title = ''
         title_el = soup.find("h1",{"id":"bookTitle"})
@@ -303,7 +305,7 @@ class GoodreadsCrawler():
 
         # Number of Pages
         num_page  = soup.find("span", {"itemprop":"numberOfPages"})    
-        num_page = num_page.text if num_page else 0
+        num_page = num_page.text.split(' ')[0] if num_page else 0
 
         # Publisher Details (including 1st published)
         pub_el = soup.find("div", {"id":"details"})
