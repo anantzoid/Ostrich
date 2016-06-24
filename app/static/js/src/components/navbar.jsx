@@ -9,6 +9,7 @@ const Navbar = React.createClass({
         return {'show_app_modal': this.props.show_app_modal};
     },
     _toggleAppModal(title) {
+        console.log("asd");
         this.setState({
             'show_app_modal': !this.state.show_app_modal
         });
@@ -24,13 +25,19 @@ const Navbar = React.createClass({
         <div className="ribbon-wrapper"><div className="ribbon" onClick={FeedbackUtils.toggleModal}>BETA</div></div>
         <div className="container-fluid">
             <div className="navbar-header">
-               <a className="navbar-brand page-scroll" href="/">
+                <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" aria-controls="navbar">
+                    <span className="sr-only">Toggle navigation</span>
+                    <span className="icon-bar"></span>
+                    <span className="icon-bar"></span>
+                    <span className="icon-bar"></span>
+                </button>
+                <a className="navbar-brand page-scroll" href="/">
                     <img className="navbar-logo pull-left" src={"https://s3-ap-southeast-1.amazonaws.com/ostrich-catalog/website/logo.png"} alt="Ostrich Logo" />
                     <div className="pull-left navbar-brand-name">Ostrich</div>
                 </a>
             </div>
 
-            <div className="navbar-collapse pull-right" id="bs-example-navbar-collapse-1">
+            <div className="navbar-collapse collapse text-left" id="bs-example-navbar-collapse-1">
                 { this.props.user === null ?
                     <ul className="nav navbar-nav navbar-right">
                         <li className="">

@@ -11,7 +11,7 @@ const Banner = React.createClass({
                         the book of your choice delivered to your place.</p>
 
                         <div className="row">
-                            <div className="col-lg-3"></div>
+                            <div className="col-lg-3 col-sm-2"></div>
                             <SearchBar />                            
                         </div>
                     </div>

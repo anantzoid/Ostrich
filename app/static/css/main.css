@@ -121,7 +121,7 @@ body:after{
 .navbar-default .nav > li > a:hover {
   color: rgba(255, 255, 255, 0.8);
 } 
-.navbar-right { margin-right: 50px !important; }
+.navbar-right { margin-right: 20px !important; }
 .navbar-brand {
     width: 210px;
     font-size: 20px;
@@ -146,6 +146,16 @@ body:after{
 }
 .caret { margin-left: 7px; }
 .disabled { color: #9a9a9a !important; }
+
+.navbar-header { height: 60px; }
+.navbar-toggle { border: 2px solid #fff; }
+.icon-bar { background-color: #fff !important; }
+.header-section .open>a, .open>a:focus, .open>a:hover { 
+    background: transparent !important;
+    color: #fff !important;
+}
+.dropdown-menu{ top: 80%; }
+
 /*------------ NavBar Ends ---------------*/
 
 /*------------ Header Starts ---------------*/
@@ -728,6 +738,7 @@ svg {
     }
     .footer-app-links { float: right; }
     .app-list-container { margin-left: 70px; }
+    .navbar-collapse { float: right; }
 }
 /* Mid Level Screens */
 @media (min-width: 768px) and (max-width: 1192px) {
@@ -735,14 +746,17 @@ svg {
 } 
 /* Phones */
 @media (max-width: 768px) {
-    .navbar-header { float: left; }
-    .nav>li { float: left; }
-    .navbar-default .nav > li > a { padding-top: 15px; }
+    .ribbon-wrapper { display: none; }
+    .navbar-default .nav > li > a { 
+        padding-top: 15px; 
+        color: #000 !important;
+    }
     .navbar .search-elements {
         margin-top: 75px !important;
         margin-left: 0px !important;
         margin-bottom: 10px;
     }
+    .navbar-collapse { background-color: #fff; }
     .search-input { padding: 0 15px; }
     .navbar .search-form {
         width: 94%;
