@@ -125,7 +125,7 @@ class Item(Prototype):
                 days.append(default_return_days)
             
             if len(item_ids) == 1:
-                sp = int(0.8*item['price']) if item['price'] else 100
+                sp = int(0.8*item['price']) if item['price'] else None
 
         return {'custom_price': sum(charges), 
                 'custom_return_days': max(days),
