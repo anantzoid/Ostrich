@@ -105,27 +105,25 @@ class Item(Prototype):
         charges, days, sp = [], [], []
         for item_id in item_ids:
             item = Item(item_id).getObj() if isinstance(item_id, int) else item_id
-            if item['price'] > 900:
-                if Item.checkStock(item['item_id']):
-                    charges.append(int(0.15 * item['price']))
-                else:
-                    charges.append(int(0.2 * item['price']))
-            elif item['price'] > 700:
-                charges.append(99)
-            elif item['price'] > 500:
-                charges.append(80)
-            elif item['price'] >= 250:
-                charges.append(60)
-            else:
-                charges.append(45)
-
             if item['categories'] and 'Comics' in item['categories']:
+                charges.append(100)
                 days.append(14)
-                if charges[-1] < 100:
-                    charges[-1] = 100
             else:
+                if item['price'] > 900:
+                    if Item.checkStock(item['item_id']):
+                        charges.append(int(0.15 * item['price']))
+                    else:
+                        charges.append(int(0.2 * item['price']))
+                elif item['price'] > 700:
+                    charges.append(99)
+                elif item['price'] > 500:
+                    charges.append(80)
+                elif item['price'] >= 250:
+                    charges.append(60)
+                else:
+                    charges.append(45)
                 days.append(default_return_days)
-
+            
             if len(item_ids) == 1:
                 sp = int(0.8*item['price']) if item['price'] else None
 
