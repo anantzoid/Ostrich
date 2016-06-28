@@ -5,7 +5,7 @@
 {% block postscript %} 
     <script>
         mixpanel.track('pageview', {
-            'page': 'catalog'
+            'page': store.props.page
         }); 
     </script>
 {% endblock %}

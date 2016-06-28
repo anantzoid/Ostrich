@@ -820,3 +820,17 @@ svg {
     .footer-links{ padding-left: 10px; }
 }
 
+
+.arbor-login { min-height: 350px; }
+.arbor-login h3 { color: #9a9a9a; }
+.login-container {
+    min-height: 150px;
+    border: 1px solid #ddd;
+    margin-top: 40px;
+}
+.login-container div {
+    width: 200px;
+    margin: auto;
+    line-height: 8;
+}
+

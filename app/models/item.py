@@ -145,7 +145,6 @@ class Item(Prototype):
                 '10': Utils.getSlabbedAmount(rental, 0.5),
                 '14': Utils.getSlabbedAmount(rental, 0.7)
                 }
-        
 
     @staticmethod
     def checkStock(item_id):
@@ -166,3 +165,16 @@ class Item(Prototype):
         conn.commit()
         Search(item_id).unindexItem() 
 
+    @staticmethod
+    def getArborBooks(client):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM arbor_inventory WHERE in_stock = 1 AND
+                 client=%s GROUP BY item_id""", (client.lower(),))
+        items = []
+        for _ in range(cursor.rowcount):
+            item = Utils.fetchOneAssoc(cursor)
+            item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
+            item['item'] = Item(item['item_id']).getObj()
+            items.append(item)
+
+        return items
