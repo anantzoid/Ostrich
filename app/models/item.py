@@ -106,7 +106,8 @@ class Item(Prototype):
         for item_id in item_ids:
             item = Item(item_id).getObj() if isinstance(item_id, int) else item_id
             if item['categories'] and 'Comics' in item['categories']:
-                charges.append(100)
+                charge = max(min(int(0.15 * item['price']), 200), 100)
+                charges.append(charge)
                 days.append(14)
             else:
                 if item['price'] > 900:
