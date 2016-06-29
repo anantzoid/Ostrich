@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ArborNavbar = React.createClass({
     getInitialState() {
         return {arbor_id: this.props.checkout_id};
@@ -37,11 +35,11 @@ const ArborNavbar = React.createClass({
             <div className="container-fluid">
                 <div className="navbar-header">
                     <a className="navbar-brand page-scroll" href="/">
-                        <img className="navbar-logo pull-left" src={"https://s3-ap-southeast-1.amazonaws.com/ostrich-catalog/website/logo.png"} alt="Ostrich Logo" />
+                        <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
                         <div className="pull-left navbar-brand-name">Ostrich</div>
                     </a>
                     <a className="navbar-brand navbar-brand-sec pull-right" href="/">
-                        <img className="navbar-logo pull-left" src={this.props.host + "static/img/arbor/paypal.png"} alt="paypal Logo" />
+                        <img className="navbar-logo pull-left" src={this.props.cdn+"arbor/paypal.png"} alt="paypal Logo" />
                     </a>
                 </div>
             </div>
