@@ -5,7 +5,7 @@ from app.models import *
 from app.decorators import user_session
 from app.views.v1.website import path
     
-@webapp.route('/paypal')
+@webapp.route('/paypal/')
 @user_session
 def arbor_index(**kwargs):
     client = request.path.strip("/").title()
@@ -34,10 +34,10 @@ def arbor_index(**kwargs):
 @user_session
 def arbor_admin(**kwargs):
     if not kwargs['props']['user']:
-        return redirect(url_for('/paypal'))
+        return redirect(url_for('/paypal/'))
 
     if not kwargs['props']['user']['is_admin']:
-        return redirect(url_for('/paypal'))
+        return redirect(url_for('/paypal/'))
     
     client = request.path.strip("/").split("/")[0].title()
     store = {}

@@ -6,7 +6,7 @@ let gAuth = function(){
             if(authResult['code']) {
                 $.ajax({
                     type: 'POST',
-                    url: '/googlesignin',
+                    url: store.props.host + 'googlesignin',
                     data: {'data': authResult['code']},
                     beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
