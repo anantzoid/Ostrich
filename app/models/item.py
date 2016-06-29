@@ -165,16 +165,4 @@ class Item(Prototype):
         conn.commit()
         Search(item_id).unindexItem() 
 
-    @staticmethod
-    def getArborBooks(client):
-        cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT * FROM arbor_inventory WHERE in_stock = 1 AND
-                 client=%s GROUP BY item_id""", (client.lower(),))
-        items = []
-        for _ in range(cursor.rowcount):
-            item = Utils.fetchOneAssoc(cursor)
-            item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
-            item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
-            items.append(item)
 
-        return items

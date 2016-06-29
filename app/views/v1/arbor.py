@@ -18,7 +18,7 @@ def arbor_index(**kwargs):
         rendered = render_component(path(store['component']), props=props)
     else:
         store['component'] = 'arborHome.jsx'
-        props['books'] = Item.getArborBooks(client)
+        props['books'] = Arbor.getArborBooks(client)
         rendered = render_component(path(store['component']), props=props)
 
     store['props'] = props
@@ -28,3 +28,24 @@ def arbor_index(**kwargs):
             store=store)
 
 
+@webapp.route('/arbor/checkout', methods=['POST'])
+@user_session
+def arbor_checkout(**kwargs):
+    response = {'status': False, 'message': 'Something went wrong'}
+    if not kwargs['props']['user']:
+        return jsonify(response)
+
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    if kwargs['props']['user']['user_id'] !=  user_id:
+        return jsonify(response)
+
+    arbor_id = Utils.getParam(request.form, 'arbor_id')
+   
+    status = Arbor.checkout(user_id, arbor_id)
+    if not status:
+        response['message'] = 'Sorry, that book is no longer available.'
+    else:
+        response['status'] = True
+        response['message'] = 'Success! Please pick up the book from the library.'
+
+    return jsonify(response)

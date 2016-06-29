@@ -7,6 +7,9 @@ const ArborNavbar = React.createClass({
     componentWillReceiveProps(nextProps) {
         this.setState({arbor_id: nextProps.checkout_id});
     },
+    setArborId(event) {
+        this.setState({arbor_id: event.target.value});
+    },
     checkout() {
         let arbor_id = $(".form-control").val();
         if (!arbor_id) {
@@ -21,7 +24,10 @@ const ArborNavbar = React.createClass({
                 arbor_id:  arbor_id
             },
             success: ((response) => {
-                alert("Success! Please pick up the book from the library");
+                alert(response['message']);
+                if (response['status'] == true) {
+                    location.reload();
+                } 
             })
         });
     },
@@ -55,7 +61,7 @@ const ArborNavbar = React.createClass({
                 <div className="navbar-collapse collapse text-left" id="bs-example-navbar-collapse-1">
                     <form className="navbar-form navbar-left" role="search">
                         <div className="form-group">
-                            <input type="text" className="form-control" placeholder="Search" value={this.state.arbor_id} />
+                            <input type="text" className="form-control" placeholder="Search" value={this.state.arbor_id} onChange={this.setArborId}/>
                         </div>
                         <button className="btn btn-default" onClick={this.checkout}>Submit</button>
                     </form>
