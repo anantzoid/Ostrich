@@ -99,8 +99,6 @@ const Catalog = React.createClass({
                                 </div>
                             }
                         </div>
-
-                         
                     </div>
                 </section>
                 <Footer {...this.props} />

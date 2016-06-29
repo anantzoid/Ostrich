@@ -5,13 +5,14 @@ import re
 
 class WebUtils():
     @staticmethod
-    def storeUserSession(user):
+    def storeUserSession(user, client=None):
         from app.models import User
         from app import cache
         user.getOrderSlots()
         user_obj = user.getObj()
         user_obj['first_name'] = Utils.getUserName(user)
         user_obj['wishlist'] = User.getWishlist(user_obj['user_id'], False)
+        user_obj['is_admin'] = user.fetchAdmin(client)
         session['_user'] = user_obj
         cache.set(user.google_id, user_obj)
 

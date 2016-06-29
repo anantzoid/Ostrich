@@ -16,13 +16,14 @@ def user_session(func):
         from app.models import Utils
         if Utils.getParam(request.args, 'session', default=None):
             user_data = session.get('_user', None)
-            if user_data and user_data['user_id'] in Utils.getAdmins():
+            if user_data and user_data['is_admin']:
                 session.clear()
 
         user_data = session.get('_user', None)
         kwargs['props'] = {'user': user_data,
-                            'cdn': webapp.config['S3_HOST']+'website/'}
-        kwargs['store'] = {'cdn': webapp.config['S3_HOST']+'website/'}
+                            'cdn': webapp.config['S3_HOST']+'website/',
+                            'host': webapp.config['HOST']+'/' 
+                          }
         return func(**kwargs)
     return wrapper
 

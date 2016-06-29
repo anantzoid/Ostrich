@@ -14,7 +14,7 @@ class Cache():
     def get(self, cache_key=''):
         if 'cache' in request.args and request.args.get('cache') == 'clear':
             user_data = session.get('_user', None)
-            if user_data and user_data['user_id'] in Utils.getAdmins():
+            if user_data and user_data['is_admin']:
                 return None
         return self.cache.get(cache_key)
 

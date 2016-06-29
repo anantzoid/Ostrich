@@ -1,7 +1,7 @@
 import os
 import requests
 import json
-from flask import request, jsonify, render_template, redirect, url_for, session, abort, send_from_directory
+from flask import request, jsonify, render_template, redirect, session, abort, send_from_directory
 from react.render import render_component
 from apiclient import discovery
 import httplib2
@@ -18,7 +18,7 @@ def path(js_file):
 @webapp.route('/')
 @user_session
 def homepage(**kwargs):
-    store = kwargs['store']
+    store = {}
     props = kwargs['props']
     store['component'] = 'home.jsx'
     collections = Collection.getHomepageCollections() 
@@ -44,7 +44,7 @@ def homepage(**kwargs):
 @webapp.route('/books/collection/<int:collection_id>-<slug>')
 @user_session
 def catalog(**kwargs):
-    store = kwargs['store']
+    store = {}
     props = kwargs['props']
 
     store['component'] = 'catalog.jsx'
@@ -89,7 +89,7 @@ def catalog(**kwargs):
 @webapp.route('/book/rent/<int:item_id>-<slug>')
 @user_session
 def itemPage(**kwargs):
-    store = kwargs['store']
+    store = {}
     props = kwargs['props']
 
     store['component'] = 'item.jsx'
@@ -125,7 +125,7 @@ def itemPage(**kwargs):
 @webapp.route('/terms/')
 @user_session
 def terms(**kwargs):
-    store = kwargs['store']
+    store = {}
     props = kwargs['props']
 
     store['component'] = 'terms.jsx'
@@ -164,7 +164,7 @@ def googlesignin():
             }
 
         user = User.createUser(user_data)
-        WebUtils.storeUserSession(user)
+        WebUtils.storeUserSession(user, client=Utils.getParam(request.form, 'client', default=None))
         user = session['_user']
 
     visible_user_data = {'user': user}

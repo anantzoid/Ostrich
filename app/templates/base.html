@@ -18,16 +18,16 @@
         <meta property="og:url" content="www.ostrichapp.in"></meta>
         <meta property="og:site_name" content="Ostrich"></meta>
         <meta property="og:description" content="Dicover and Rent Books in Bangalore. Delivered to your doorstep. Rent Books for as cheap as a coffee."></meta>
-        <meta property="og:image" content="{{store.cdn}}logo.png"></meta>
+        <meta property="og:image" content="{{store.props.cdn}}logo.png"></meta>
 
         <meta name="twitter:card" content="Dicover and Rent Books in Bangalore">
         <meta name="twitter:site" content="@ostrichappin">
         <meta name="twitter:url" content="www.ostrichapp.in">
         <meta name="twitter:title" content="Ostrich">
         <meta name="twitter:description" content="Dicover and Rent Books in Bangalore">
-        <meta name="twitter:image" content="{{store.cdn}}logo.png">
+        <meta name="twitter:image" content="{{store.props.cdn}}logo.png">
 
-        <link rel="icon" href="{{store.cdn}}favicon-62.png" type="image/png">
+        <link rel="icon" href="{{store.props.cdn}}favicon-62.png" type="image/png">
 
         <!--Android-->
         <meta name="theme-color" content="#00bcd4">
@@ -37,8 +37,8 @@
         <meta property="al:android:app_name" content="Ostrich - Rent Books">
         <meta property="al:android:package" content="in.hasslefree.ostrichbooks">
 
-        <link rel="stylesheet" href="{{ url_for('static', filename='vendor/bootstrap/css/bootstrap.min.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+        <link rel="stylesheet" href="{{store.props.host}}static/vendor/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="{{store.props.host}}static/css/main.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         {% block headResources %}{% endblock %}
         <script>
@@ -62,22 +62,20 @@
         ga('send', 'pageview');
 
         </script>
-            
-        <!-- start Mixpanel --><script type="text/javascript">(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
-            for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
-                if (location.hostname.indexOf('ostrich') > -1) {
-                    var token = "c69258926ef2ea0780c2e760df081812"
-                } else {
-                    var token = "3c52b341880525f6d09bcf20450a8d35";
-                }
-                mixpanel.init(token);</script><!-- end Mixpanel -->
+            <!-- start Mixpanel --><script type="text/javascript">(function(e,b){if(!b.__SV){var a,f,i,g;window.mixpanel=b;b._i=[];b.init=function(a,e,d){function f(b,h){var a=h.split(".");2==a.length&&(b=b[a[0]],h=a[1]);b[h]=function(){b.push([h].concat(Array.prototype.slice.call(arguments,0)))}}var c=b;"undefined"!==typeof d?c=b[d]=[]:d="mixpanel";c.people=c.people||[];c.toString=function(b){var a="mixpanel";"mixpanel"!==d&&(a+="."+d);b||(a+=" (stub)");return a};c.people.toString=function(){return c.toString(1)+".people (stub)"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");
+                for(g=0;g<i.length;g++)f(c,i[g]);b._i.push([a,e,d])};b.__SV=1.2;a=e.createElement("script");a.type="text/javascript";a.async=!0;a.src="undefined"!==typeof MIXPANEL_CUSTOM_LIB_URL?MIXPANEL_CUSTOM_LIB_URL:"file:"===e.location.protocol&&"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js".match(/^\/\//)?"https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js":"//cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";f=e.getElementsByTagName("script")[0];f.parentNode.insertBefore(a,f)}})(document,window.mixpanel||[]);
+            if (location.hostname.indexOf('ostrich') > -1) {
+                var token = "c69258926ef2ea0780c2e760df081812"
+            } else {
+                var token = "3c52b341880525f6d09bcf20450a8d35";
+            }
+            mixpanel.init(token);</script><!-- end Mixpanel -->
         <script>
             (function(h,e,a,t,m,p) {
-            m=e.createElement(a);m.async=!0;m.src=t;
-            p=e.getElementsByTagName(a)[0];p.parentNode.insertBefore(m,p);
+                m=e.createElement(a);m.async=!0;m.src=t;
+                p=e.getElementsByTagName(a)[0];p.parentNode.insertBefore(m,p);
             })(window,document,'script','https://u.heatmap.it/log.js');
         </script>
-
     </head>
     <body>
         <script src="https://apis.google.com/js/client:platform.js?&amp;onload=start" async="" defer="" gapi_processed="true"></script>
@@ -121,8 +119,8 @@
         </script>
         <!-- Beta Ribbon -->
         {% block postscript %}{% endblock %}
-        <script src="{{ url_for('static', filename='vendor/bootstrap/js/bootstrap.min.js') }}"></script>
-        <script src="{{ url_for('static', filename='js/dist/bundle.js') }}"></script>
+        <script src="{{store.props.host}}static/vendor/bootstrap/js/bootstrap.min.js"></script>
+        <script src="{{store.props.host}}static/js/dist/bundle.js"></script>
 
     </body>
 </html>

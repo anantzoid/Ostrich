@@ -145,7 +145,6 @@ class Item(Prototype):
                 '10': Utils.getSlabbedAmount(rental, 0.5),
                 '14': Utils.getSlabbedAmount(rental, 0.7)
                 }
-        
 
     @staticmethod
     def checkStock(item_id):
@@ -165,4 +164,5 @@ class Item(Prototype):
         cursor.execute("""UPDATE items SET active = 0 WHERE item_id = %s""",(item_id,))
         conn.commit()
         Search(item_id).unindexItem() 
+
 
