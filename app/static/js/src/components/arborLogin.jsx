@@ -13,7 +13,7 @@ const ArborLogin = React.createClass({
         return(
             <div className="arbor">
                 <ArborNavbar {...this.props} />
-                <section className="arbor-login">
+                <section className="arbor-section">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg-2"></div>

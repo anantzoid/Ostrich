@@ -12,7 +12,7 @@
 <!--    <script src="{{ url_for('static', filename='vendor/slick/slick/slick.min.js') }}"></script> -->
     <script>
         mixpanel.track('pageview', {
-            'page': 'home'
+            'page': store.props.page
         }); 
     </script>
 {% endblock %}

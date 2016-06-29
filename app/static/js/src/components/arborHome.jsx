@@ -62,7 +62,7 @@ const ArborHome = React.createClass({
             return  (
                 <div className="arbor">
                     <ArborNavbar {...this.props} checkout_id={this.state.checkout_id}/>
-                    <section className="arbor-login">
+                    <section className="arbor-section">
                         <div className="container-fluid">
                             <div className="row">
                                 <ul>{books}</ul>

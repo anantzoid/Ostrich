@@ -66,7 +66,7 @@ const ArborNavbar = React.createClass({
                         </form>
                         <ul className="nav navbar-nav navbar-right">
                                 { this.props.user.is_admin ?
-                                <li><a href="#">Admin</a></li> 
+                                <li><a href="/paypal/admin">Admin</a></li> 
                                 : null } 
                             <li><a href="#">My Orders</a></li> 
                             <li><a>{this.props.user.name}</a></li> 

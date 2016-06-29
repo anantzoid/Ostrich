@@ -845,11 +845,11 @@ svg {
     font-weight: 500;
     font-size: 17px;
 }
-.arbor-login { 
+.arbor-section { 
     min-height: 350px; 
     margin-bottom: 40px;
 }
-.arbor-login h3 { color: #9a9a9a; }
+.arbor-section h3 { color: #9a9a9a; }
 .login-container {
     min-height: 150px;
     border: 1px solid #ddd;
@@ -874,8 +874,7 @@ svg {
 }
 .arbor-book-image-container { margin-right: 10px; } 
 .arbor-book-image-container img { 
-    width: auto;
-    max-width: 100px;
+    width: 85px;
     height: 130px;
     vertical-align: middle;
 }

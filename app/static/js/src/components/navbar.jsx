@@ -9,7 +9,6 @@ const Navbar = React.createClass({
         return {'show_app_modal': this.props.show_app_modal};
     },
     _toggleAppModal(title) {
-        console.log("asd");
         this.setState({
             'show_app_modal': !this.state.show_app_modal
         });
