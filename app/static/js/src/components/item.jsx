@@ -6,6 +6,7 @@ import AddressModal from './addressModal';
 import AppModal from './appModal';
 import Footer from './footer';
 import OrderUtils from '../utils/orderUtils.js';
+import ItemUtils from '../utils/itemUtils.js';
 import { gAuth } from '../utils/loginUtils.js'; 
 
 const Item = React.createClass({
@@ -50,6 +51,7 @@ const Item = React.createClass({
         $('.summary').text(this.props.item_data.summary); 
     },
     render() {
+        /*
         let categories = this.props.item_data.categories.map((category, i) => {
             let key = 'category-'+category.category_id;
             let last_el = this.props.item_data.categories.length-1 !== i ? ', ': ''; 
@@ -65,6 +67,9 @@ const Item = React.createClass({
                 ratings.push(<span className="glyphicon glyphicon-star star-half" aria-hidden="true"></span>);
             }
         }
+        */
+        let categories = ItemUtils.getCategories(this.props.item_data.categories);
+        let ratings = ItemUtils.getRatings(this.props.item_data.ratings);
         let summary = this.state.xs ? this.props.item_data.summary.slice(0, 150) : this.props.item_data.summary;
 
         return(

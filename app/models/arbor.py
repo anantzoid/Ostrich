@@ -13,6 +13,11 @@ class Arbor():
             item = Utils.fetchOneAssoc(cursor)
             item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
             item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
+
+            categories = []
+            for category in item['item']['categories'][:3]:
+                categories.append(Item.fetchCategory(name=category)) 
+            item['item']['categories'] = categories
             items.append(item)
         return items
 

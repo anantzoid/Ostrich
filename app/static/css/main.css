@@ -482,7 +482,6 @@ header .header-content .header-content-inner p {
 .star-half:after {
     content:'';
     position:absolute;
-    z-index:1;
     background:white;
     width: 50%;
     height: 100%;
@@ -820,14 +819,36 @@ svg {
     .footer-links{ padding-left: 10px; }
 }
 
-.arbor .navbar-default { height: 100px; }
+.arbor .navbar-header { 
+    height: auto; 
+    float: none;
+}
+.arbor .navbar-logo { width: 40px; }
+.arbor .navbar-brand-name { margin: 10px 15px; }
+.navbar-brand-sec { width: 125px; }
+.navbar-brand-sec .navbar-logo { width: 90px; }
 .arbor .navbar-collapse { float: none !important; }
+.arbor .form-control { 
+    margin-right: 10px; 
+    width: 300px;
+}
 .sec-nav {     
     background-color: #ddd;
     height: 50px;
     margin-top: 3px;
 }
-.arbor-login { min-height: 350px; }
+.arbor .navbar-right { margin-right: inherit !important; }
+.arbor .navbar-default .nav > li > a {
+    text-transform: capitalize;
+    color: #2d2d2d;
+    padding: 15px;
+    font-weight: 500;
+    font-size: 17px;
+}
+.arbor-login { 
+    min-height: 350px; 
+    margin-bottom: 40px;
+}
 .arbor-login h3 { color: #9a9a9a; }
 .login-container {
     min-height: 150px;
@@ -841,20 +862,28 @@ svg {
 }
 
 .arbor-book-li {
-    width: 330px;
+    width: 385px;
     float: left;
-    min-height: 170px;
+    height: 142px;
     padding: 5px 10px;
-    border: 1px solid;
+    border: 1px solid #ddd;
+    box-shadow: 2px 2px 4px #ddd;
     margin-right: 20px;
+    margin-top: 25px;
     position: relative;
 }
 .arbor-book-image-container { margin-right: 10px; } 
 .arbor-book-image-container img { 
     width: auto;
     max-width: 100px;
-    height: 150px;
+    height: 130px;
     vertical-align: middle;
+}
+.arbor-book-name { font-weight: 600; }
+.arbor-book-meta { 
+    position: absolute;
+    left: 105px;
+    bottom: 5px;
 }
 .arbor-book-options-container {
     position: absolute;

@@ -16,7 +16,7 @@ def user_session(func):
         from app.models import Utils
         if Utils.getParam(request.args, 'session', default=None):
             user_data = session.get('_user', None)
-            if user_data and user_data['user_id'] in Utils.getAdmins():
+            if user_data and user_data['is_admin']:
                 session.clear()
 
         user_data = session.get('_user', None)

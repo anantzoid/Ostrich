@@ -164,7 +164,7 @@ def googlesignin():
             }
 
         user = User.createUser(user_data)
-        WebUtils.storeUserSession(user)
+        WebUtils.storeUserSession(user, client=Utils.getParam(request.form, 'client', default=None))
         user = session['_user']
 
     visible_user_data = {'user': user}

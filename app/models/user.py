@@ -526,6 +526,16 @@ class User(Prototype):
             cursor.execute("INSERT INTO preregisters (email) VALUES ('%s')" % (email))
             conn.commit()
 
+    def fetchAdmin(self, client=None):
+        if self.user_id in Utils.getAdmins():
+            return 1
+        if client:
+            if client.lower() == 'paypal':
+                # NOTE insert paypal admin user id here
+                if self.user_id in []:
+                    return 1
+        return 0
+
     @staticmethod
     def deleteUser(ids):
         from app.models import Order 

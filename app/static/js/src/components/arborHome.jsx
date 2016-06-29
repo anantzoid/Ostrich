@@ -1,6 +1,7 @@
 import React from 'react';
 import ArborNavbar from './arborNavbar';
 import Footer from './footer';
+import ItemUtils from '../utils/itemUtils.js';
 
 const ArborHome = React.createClass({
         getInitialState() {
@@ -27,10 +28,12 @@ const ArborHome = React.createClass({
         },
         selectBook(arbor_id) {
             this.setState({checkout_id: arbor_id}); 
-            console.log(this.state);
         },
         render() {
             let books = this.state.books.map((book) => {
+                let categories = ItemUtils.getCategories(book.item.categories);
+                let ratings = ItemUtils.getRatings(book.item.ratings);
+
                 return (
                        <li className="arbor-book-li" key={book.arbor_id} id={book.arbor_id} onMouseEnter={this.showOptions.bind(this, true)} onMouseLeave={this.showOptions.bind(this, false)} >
                         <div className="arbor-book-container clearfix">
@@ -38,8 +41,12 @@ const ArborHome = React.createClass({
                                 <img src={book.item.img_small} alt={book.item.item_name} />
                             </div>
                             <div>
-                                <span>{book.item.item_name}</span>
-                                <span>{book.item.author}</span>
+                                <div className="arbor-book-name">{book.item.item_name}</div>
+                                <div>{book.item.author}</div>
+                            </div>
+                            <div className="arbor-book-meta">
+                                <div>{ratings}</div>
+                                <div>{categories}</div>
                             </div>
                         </div>
                         { book.options ?
@@ -56,7 +63,7 @@ const ArborHome = React.createClass({
                 <div className="arbor">
                     <ArborNavbar {...this.props} checkout_id={this.state.checkout_id}/>
                     <section className="arbor-login">
-                        <div className="container">
+                        <div className="container-fluid">
                             <div className="row">
                                 <ul>{books}</ul>
                             </div>

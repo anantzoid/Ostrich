@@ -1,5 +1,5 @@
 import React from 'react';
-import Navbar from './navbar';
+import ArborNavbar from './arborNavbar';
 import Footer from './footer';
 import { gAuth } from '../utils/loginUtils.js'; 
 
@@ -12,7 +12,7 @@ const ArborLogin = React.createClass({
     render() {
         return(
             <div className="arbor">
-                <Navbar {...this.props} />
+                <ArborNavbar {...this.props} />
                 <section className="arbor-login">
                     <div className="container">
                         <div className="row">
