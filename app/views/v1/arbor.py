@@ -9,7 +9,7 @@ from app.views.v1.website import path
 @user_session
 def arbor_index(**kwargs):
     client = request.path.strip("/").title()
-    store = kwargs['store']
+    store = {}
     props = kwargs['props']
     props.update({'client': client})
 

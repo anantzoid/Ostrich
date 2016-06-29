@@ -53,7 +53,7 @@ let signout = function() {
 }
 
 function loaderBackdrop(state) {
-    const loader = '<div class="loader modal-backdrop fade in"><div class="loader-img"><img src="'+store.cdn + 'loading.gif" /></div></div>';
+    const loader = '<div class="loader modal-backdrop fade in"><div class="loader-img"><img src="'+store.props.cdn + 'loading.gif" /></div></div>';
     if(state) {
         $('body').append(loader);
     } else {

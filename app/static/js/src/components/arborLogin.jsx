@@ -11,7 +11,7 @@ const ArborLogin = React.createClass({
     },
     render() {
         return(
-            <div id="arborLogin">
+            <div className="arbor">
                 <Navbar {...this.props} />
                 <section className="arbor-login">
                     <div className="container">

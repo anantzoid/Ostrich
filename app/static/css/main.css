@@ -820,7 +820,13 @@ svg {
     .footer-links{ padding-left: 10px; }
 }
 
-
+.arbor .navbar-default { height: 100px; }
+.arbor .navbar-collapse { float: none !important; }
+.sec-nav {     
+    background-color: #ddd;
+    height: 50px;
+    margin-top: 3px;
+}
 .arbor-login { min-height: 350px; }
 .arbor-login h3 { color: #9a9a9a; }
 .login-container {
@@ -834,3 +840,33 @@ svg {
     line-height: 8;
 }
 
+.arbor-book-li {
+    width: 330px;
+    float: left;
+    min-height: 170px;
+    padding: 5px 10px;
+    border: 1px solid;
+    margin-right: 20px;
+    position: relative;
+}
+.arbor-book-image-container { margin-right: 10px; } 
+.arbor-book-image-container img { 
+    width: auto;
+    max-width: 100px;
+    height: 150px;
+    vertical-align: middle;
+}
+.arbor-book-options-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(154,154,154,0.4);
+}
+.arbor-book-options {
+    margin: auto;
+    width: 80px;
+    vertical-align: middle;
+    line-height: 11.5;
+}
