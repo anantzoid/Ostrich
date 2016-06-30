@@ -104,13 +104,15 @@ class Lend():
         lender_cusror = conn.cursor()
         lender_cusror.execute("""INSERT into lenders (
             inventory_id,
+            item_id,
             user_id,
             delivery_date,
             pickup_date,
             delivery_slot,
             pickup_slot,
-            address_id) VALUES (%d, %d, '%s', '%s', %d, %d, %d) """
-            %(lend_data['inventory_id'],
+            address_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)""",
+            (lend_data['inventory_id'],
+                lend_data['item_id'],
                 lend_data['user_id'],
                 lend_data['delivery_date'],
                 lend_data['pickup_date'],

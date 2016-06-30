@@ -1,3 +1,5 @@
+import React from 'react';
+
 const ArborNavbar = React.createClass({
     getInitialState() {
         return {arbor_id: this.props.checkout_id};
