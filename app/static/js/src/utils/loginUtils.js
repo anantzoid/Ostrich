@@ -3,11 +3,12 @@ let gAuth = function(){
         auth2.grantOfflineAccess({'redirect_uri':'postmessage'}).then(signInCallback);
 
         function signInCallback(authResult) {
+            let client = store.props.hasOwnProperty('client') ? store.props.client:null;
             if(authResult['code']) {
                 $.ajax({
                     type: 'POST',
                     url: store.props.host + 'googlesignin',
-                    data: {'data': authResult['code']},
+                    data: {'data': authResult['code'], 'client': client},
                     beforeSend: () => { loaderBackdrop(true) },
                     success: function(response) {
                         loaderBackdrop(false);       
