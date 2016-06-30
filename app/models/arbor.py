@@ -96,4 +96,7 @@ class Arbor():
         cursor.execute("""UPDATE arbor_orders SET order_returned = CURRENT_TIMESTAMP
             WHERE inventory_id = %s""", (inv_id, ))
         conn.commit()
+        cursor.execute("""UPDATE arbor_inventory SET in_stock = 1 WHERE 
+            inventory_id = %s""", (inv_id,))
+        conn.commit()
         return True

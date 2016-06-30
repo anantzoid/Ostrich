@@ -826,7 +826,7 @@ svg {
 .arbor .navbar-logo { width: 40px; }
 .arbor .navbar-brand-name { margin: 10px 15px; }
 .navbar-brand-sec { width: 125px; }
-.navbar-brand-sec .navbar-logo { width: 90px; }
+.navbar-brand-sec .navbar-logo { width: 100px; }
 .arbor .navbar-collapse { float: none !important; }
 .arbor .form-control { 
     margin-right: 10px; 
@@ -842,11 +842,11 @@ svg {
     text-transform: capitalize;
     color: #2d2d2d;
     padding: 15px;
-    font-weight: 500;
+    font-weight: 400;
     font-size: 17px;
 }
 .arbor-section { 
-    min-height: 350px; 
+    min-height: 70vh; 
     margin-bottom: 40px;
 }
 .arbor-section h3 { color: #9a9a9a; }
@@ -871,8 +871,13 @@ svg {
     margin-right: 20px;
     margin-top: 25px;
     position: relative;
+    cursor: pointer;
 }
-.arbor-orders .arbor-book-li {  width: 330px; }
+.arbor-book-li:hover { box-shadow: 4px 4px 4px #ddd; }
+.arbor-orders .arbor-book-li {  
+    width: 330px; 
+    cursor: default;
+}
 .arbor-book-image-container { margin-right: 10px; } 
 .arbor-book-image-container img { 
     width: 73px;
@@ -888,16 +893,17 @@ svg {
 .arbor-orders .arbor-book-meta {left: 95px;}
 .arbor-book-options-container {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(154,154,154,0.4);
+    top: 5px;
+    right: 10px;
 }
+.glyphicon-shopping-cart { color: #449d44; }
+/*
 .arbor-book-options {
     margin: auto;
     width: 80px;
     vertical-align: middle;
     line-height: 11.5;
 }
+    */
 .arbor-order-history { margin-top: 40px; }
+.glow { box-shadow: 2px 0px 25px 2px greenyellow; }

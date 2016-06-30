@@ -59,14 +59,18 @@ const ArborOrders = React.createClass({
                             <div className="row"><h3>Nothing Ordered yet :(</h3></div>  
                             : 
                             <div className="row">
-                                <div className="clearfix">
-                                    <h3>Reading</h3>
-                                    <ul>{reading}</ul>
-                                </div>
-                                <div className="clearfix arbor-order-history">
-                                    <h3>Already Issued</h3>
-                                    <ul>{history}</ul>
-                                </div>
+                                { reading.length ?
+                                    <div className="clearfix">
+                                        <h3>Reading</h3>
+                                        <ul>{reading}</ul>
+                                    </div>
+                                : null }
+                                { history.length ?
+                                    <div className="clearfix arbor-order-history">
+                                        <h3>Already Issued</h3>
+                                        <ul>{history}</ul>
+                                    </div>
+                                : null }
                             </div>
                         }
                     </div>

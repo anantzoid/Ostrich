@@ -28,6 +28,12 @@ const ArborHome = React.createClass({
         },
         selectBook(arbor_id) {
             this.setState({checkout_id: arbor_id}); 
+            location.href="#checkout";
+            $(".checkout-action").addClass("glow");
+            setTimeout(function(){
+                $(".checkout-action").removeClass("glow");
+            }, 5000);
+
         },
         render() {
             let books = this.state.books.map((book) => {
@@ -35,8 +41,8 @@ const ArborHome = React.createClass({
                 let ratings = ItemUtils.getRatings(book.item.ratings);
 
                 return (
-                       <li className="arbor-book-li" key={book.arbor_id} id={book.arbor_id} onMouseEnter={this.showOptions.bind(this, true)} onMouseLeave={this.showOptions.bind(this, false)} >
-                        <div className="arbor-book-container clearfix">
+                       <li className="arbor-book-li" key={book.arbor_id} id={book.arbor_id}>
+                        <div className="arbor-book-container clearfix" onClick={this.selectBook.bind(this, book.arbor_id)}>
                             <div className="arbor-book-image-container pull-left">
                                 <img src={book.item.img_small} alt={book.item.item_name} />
                             </div>
@@ -49,6 +55,9 @@ const ArborHome = React.createClass({
                                 <div>{categories}</div>
                             </div>
                         </div>
+                            <div className="arbor-book-options-container">
+                                <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+                            </div>  
                         { book.options ?
                             <div className="arbor-book-options-container">
                                 <div className="arbor-book-options">

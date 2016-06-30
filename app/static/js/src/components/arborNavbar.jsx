@@ -51,7 +51,7 @@ const ArborNavbar = React.createClass({
             { this.props.user !== null ?
                 <div className="container-fluid sec-nav">
                     <div className="navbar-header">
-                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false" aria-controls="navbar">
+                        <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#checkout" aria-expanded="false" aria-controls="navbar">
                             <span className="sr-only">Toggle navigation</span>
                             <span className="icon-bar"></span>
                             <span className="icon-bar"></span>
@@ -59,12 +59,12 @@ const ArborNavbar = React.createClass({
                         </button>
                     </div>
 
-                    <div className="navbar-collapse collapse text-left" id="bs-example-navbar-collapse-1">
+                    <div className="navbar-collapse collapse text-left" id="checkout">
                         <form className="navbar-form navbar-left" role="search">
                             <div className="form-group">
                                 <input type="text" className="form-control" placeholder="Enter book_id " value={this.state.arbor_id} onChange={this.setArborId}/>
                             </div>
-                            <button className="btn btn-success" onClick={this.checkout}>Checkout</button>
+                            <button className="btn btn-success checkout-action" onClick={this.checkout}>Checkout</button>
                         </form>
                         <ul className="nav navbar-nav navbar-right">
                                 { this.props.user.is_admin ?

@@ -154,7 +154,7 @@ class Order():
         order_data['order_return'] = Utils.getParam(order_data, 'order_return', default = Utils.getDefaultReturnTimestamp(order_data['delivery_date'], custom_data['custom_return_days'])) 
         order_data['bought'] = 1 if Utils.getParam(order_data, 'buy', default='false') == 'true' else 0
         if order_data['bought']:
-            order_data['order_amount'] = custom_data['selling_price'] + order_data['address']['delivery_charge']
+            order_data['order_amount'] = custom_data['selling_price']
         else:
             order_data['order_amount'] = custom_data['custom_price'] + order_data['address']['delivery_charge']#Utils.getParam(order_data, 'price', 'float', default=custom_data['price'] + order_data['address']['delivery_charge'])
         order_data['source'] = Utils.getParam(order_data, 'ref', default='android')
