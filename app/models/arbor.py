@@ -18,6 +18,7 @@ class Arbor():
             for category in item['item']['categories'][:3]:
                 categories.append(Item.fetchCategory(name=category)) 
             item['item']['categories'] = categories
+
             items.append(item)
         return items
 
@@ -46,7 +47,7 @@ class Arbor():
                 (%s, %s)""", (user_id, inv_id))
         conn.commit()
         cursor.execute("""UPDATE arbor_inventory SET in_stock = 0 WHERE 
-            inventory_id = %s""", (inv_id))
+            inventory_id = %s""", (inv_id,))
         conn.commit()
         return True
 
@@ -67,3 +68,21 @@ class Arbor():
 
         return items
 
+
+    @staticmethod
+    def getUserOrders(user_id):
+        cursor = mysql.connect().cursor()
+        cursor.execute("""SELECT * FROM arbor_orders ao 
+            INNER JOIN  arbor_inventory ai ON ai.inventory_id = ao.inventory_id
+            WHERE ao.user_id = %s ORDER BY order_placed DESC""", (user_id, ))
+        orders = {'reading':[], 'history': []}
+        for _ in range(cursor.rowcount):
+            item = Utils.fetchOneAssoc(cursor)
+            item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
+            item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
+
+            if not item['order_returned']:
+                orders['reading'].append(item)
+            else:
+                orders['history'].append(item)
+        return orders

@@ -864,7 +864,7 @@ svg {
 .arbor-book-li {
     width: 385px;
     float: left;
-    height: 142px;
+    height: 120px;
     padding: 5px 10px;
     border: 1px solid #ddd;
     box-shadow: 2px 2px 4px #ddd;
@@ -872,10 +872,11 @@ svg {
     margin-top: 25px;
     position: relative;
 }
+.arbor-orders .arbor-book-li {  width: 330px; }
 .arbor-book-image-container { margin-right: 10px; } 
 .arbor-book-image-container img { 
-    width: 85px;
-    height: 130px;
+    width: 73px;
+    height: 110px;
     vertical-align: middle;
 }
 .arbor-book-name { font-weight: 600; }
@@ -898,3 +899,4 @@ svg {
     vertical-align: middle;
     line-height: 11.5;
 }
+.arbor-order-history { margin-top: 40px; }

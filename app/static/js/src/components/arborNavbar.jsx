@@ -10,7 +10,9 @@ const ArborNavbar = React.createClass({
     setArborId(event) {
         this.setState({arbor_id: event.target.value});
     },
-    checkout() {
+    checkout(event) {
+        event.preventDefault();
+
         let arbor_id = $(".form-control").val();
         if (!arbor_id) {
             return;
@@ -36,7 +38,7 @@ const ArborNavbar = React.createClass({
             <nav className="navbar navbar-default">
             <div className="container-fluid">
                 <div className="navbar-header">
-                    <a className="navbar-brand page-scroll" href="/">
+                    <a className="navbar-brand page-scroll" href="http://paypal.ostrichapp.in">
                         <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
                         <div className="pull-left navbar-brand-name">Ostrich</div>
                     </a>
@@ -68,7 +70,7 @@ const ArborNavbar = React.createClass({
                                 { this.props.user.is_admin ?
                                 <li><a href="/paypal/admin">Admin</a></li> 
                                 : null } 
-                            <li><a href="#">My Orders</a></li> 
+                            <li><a href="/paypal/orders">My Orders</a></li> 
                             <li><a>{this.props.user.name}</a></li> 
                         </ul>
                     </div>
