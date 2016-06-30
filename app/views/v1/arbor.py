@@ -36,7 +36,7 @@ def arbor_orders(**kwargs):
     if not kwargs['props']['user']:
         return redirect(url_for('arbor_index'))
 
-    if not kwargs['props']['user']['is_admin']:
+    if not kwargs['props']['user']:
         return redirect(url_for('arbor_index'))
 
     client = request.path.strip("/").split("/")[0].title()
@@ -102,4 +102,21 @@ def arbor_checkout(**kwargs):
         response['status'] = True
         response['message'] = 'Success! Please pick up the book from the library.'
 
+    return jsonify(response)
+
+@webapp.route('/arbor/return', methods=['POST'])
+@user_session
+def arbor_return(**kwargs):
+    response = {'status': False, 'message': 'Something went wrong'}
+    if not kwargs['props']['user']:
+        return jsonify(response)
+
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    if kwargs['props']['user']['user_id'] !=  user_id:
+        return jsonify(response)
+
+    arbor_id = Utils.getParam(request.form, 'arbor_id')
+    response["status"] = Arbor.returnBook(user_id, arbor_id) 
+    if response["status"]:
+        response["message"] = "Please return the book to the library"
     return jsonify(response)

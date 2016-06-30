@@ -1,13 +1,11 @@
 import React from 'react';
 import ArborNavbar from './arborNavbar';
 import Footer from './footer';
+import ItemUtils from '../utils/itemUtils';
 
 const ArborAdmin = React.createClass({
     capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);
-    },
-    stripTime(ts) {
-        return ts.split(' ')[0];
     },
     render() {
         let items = this.props.items.map((item, i) => {
@@ -19,7 +17,7 @@ const ArborAdmin = React.createClass({
                     <td>{item.condition}</td>
                     { item.in_stock ?
                         <td>In Stock</td>
-                    : <td>{item.name} - {this.stripTime(item.order_placed)}</td>
+                    : <td>{item.name} - {ItemUtils.stripTime(item.order_placed)}</td>
                     }
                     </tr>
                 );

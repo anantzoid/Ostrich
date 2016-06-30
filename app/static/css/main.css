@@ -602,7 +602,7 @@ header .header-content .header-content-inner p {
 .locality-name, .locality-valid { font-weight: bold; }
 .glyphicon-ok, .glyphicon-ban-circle { margin-right: 5px; }
 .glyphicon-ok { color: #449d44; }
-.glyphicon-ban-circle { color: #cb2b2d; }
+.glyphicon-ban-circle, .arbor-return { color: #cb2b2d; }
 .invalid-address-msg {
     font-size: 12px;
     margin-top: 5px;
@@ -885,6 +885,7 @@ svg {
     left: 105px;
     bottom: 5px;
 }
+.arbor-orders .arbor-book-meta {left: 95px;}
 .arbor-book-options-container {
     position: absolute;
     top: 0;

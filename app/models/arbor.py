@@ -86,3 +86,14 @@ class Arbor():
             else:
                 orders['history'].append(item)
         return orders
+
+    @staticmethod
+    def returnBook(user_id, arbor_id):
+        conn = mysql.connect()
+        cursor = conn.cursor()
+
+        client, item_id, inv_id = arbor_id.split('_')
+        cursor.execute("""UPDATE arbor_orders SET order_returned = CURRENT_TIMESTAMP
+            WHERE inventory_id = %s""", (inv_id, ))
+        conn.commit()
+        return True

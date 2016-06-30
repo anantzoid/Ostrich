@@ -20,6 +20,9 @@ let ItemUtils = {
             return <span className="category-tag" key={key}><a href={category.slug_url}>{category.category_name}</a>{last_el}</span>;
         });
         return categories;
-    }
+    },
+    stripTime(ts) {
+        return ts.split(' ')[0];
+    },
 }
 export default ItemUtils;
