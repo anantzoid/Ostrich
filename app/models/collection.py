@@ -217,7 +217,8 @@ class Collection(Prototype):
             if col_obj['image']:
                 col_obj['image'] = webapp.config['S3_HOST'] + 'website/collections/' + col_obj['image'] 
 
-            col_obj['more_url'] = webapp.config['HOST']
+            more_url = '/books/category' + col_obj['more_url'] if col_obj['more_url'] else '' 
+            col_obj['more_url'] = webapp.config['HOST'] + more_url 
             homepage_collections.append(col_obj)
         if not items:
             mock_collection = {
