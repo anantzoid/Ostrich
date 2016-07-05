@@ -88,7 +88,7 @@ class Search():
 
     def collectionsSearch(self, page=0):
         data = self.search_query 
-        data["query"]["function_score"]["query"] = {"match": {"in_collections": self.query}} 
+        data["query"]["function_score"]["query"] = {"match_phrase": {"in_collections": self.query}} 
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
