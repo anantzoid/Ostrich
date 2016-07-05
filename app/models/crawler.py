@@ -75,7 +75,7 @@ class AmazonCrawler():
             amazon_id = book_id.attrs['value']
 
         title = response.find('span', {'id':'productTitle'})
-        title = title.text.strip('\n').strip() if title else ''
+        title = title.text if title else ''
 
         offer_price, striked_price = self.extract_price_data(response)                
         img_small, img_large = self.extract_images(response)
