@@ -62,12 +62,13 @@ class AmazonCrawler():
             return {}
         isbn13, isbn10 = '',''
         detail_div = response.find('div', {'id': 'detail_bullets_id'})
-        detail_list = detail_div.findAll('li')
-        for detail in detail_list:
-            if 'ISBN-13' in detail.text:
-                isbn13 = detail.text.replace('ISBN-13:','').replace('-','').strip()
-            if 'ISBN-10' in detail.text:
-                isbn10 = detail.text.replace('ISBN-10:','').replace('-','').strip()
+        if detail_div:
+            detail_list = detail_div.findAll('li')
+            for detail in detail_list:
+                if 'ISBN-13' in detail.text:
+                    isbn13 = detail.text.replace('ISBN-13:','').replace('-','').strip()
+                if 'ISBN-10' in detail.text:
+                    isbn10 = detail.text.replace('ISBN-10:','').replace('-','').strip()
 
         amazon_id = 0
         book_id = response.find('input',{'id':'ASIN'})

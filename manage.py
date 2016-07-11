@@ -20,8 +20,8 @@ def indexer():
 
 @manager.command
 def indexcol():
-    from app.scripts import Indexer
-    Indexer().indexCollections()
+    from app.scripts.extended_inv_match import ext_crawl
+    ext_crawl()
 
 if __name__ == "__main__":
     manager.run()

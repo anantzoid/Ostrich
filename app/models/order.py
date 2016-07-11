@@ -42,10 +42,10 @@ class Order():
             if 'formatted' in kwargs:
                 order_info['pickup_time'] = Utils.cleanTimeSlot(Order.getTimeSlot(order_info['pickup_slot']))
         
-            # Buy Book data: temporary
-            order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items'] if _['price']])) 
+            if Item.checkLocalStock(order_info['items'][0]['item_id']):
+                order_info['selling_price'] = int(sum([0.8 * _['price'] for _ in order_info['items'] if _['price']])) 
+                order_info['selling_percentage'] = 80
             order_info['order_type'] = 64 if order_info['bought'] else 16
-            order_info['selling_percentage'] = 80
 
             if order_info['parent_id'] or order_info['is_parent']:
                 if 'fetch_all' in kwargs:
