@@ -106,7 +106,10 @@ class Item(Prototype):
         for item_id in item_ids:
             item = Item(item_id).getObj() if isinstance(item_id, int) else item_id
             if item['categories'] and 'Comics' in item['categories']:
-                charge = max(min(int(0.15 * item['price']), 200), 100)
+                if item['price']:
+                    charge = max(min(int(0.15 * item['price']), 200), 100)
+                else:
+                    charge = 60
                 charges.append(charge)
                 days.append(14)
             else:
@@ -125,7 +128,7 @@ class Item(Prototype):
                     charges.append(45)
                 days.append(default_return_days)
             
-            if len(item_ids) == 1 and checkLocalStock:
+            if len(item_ids) == 1 and Item.checkLocalStock(item['item_id']):
                 sp = int(0.8*item['price']) if item['price'] else None
 
         props = {'custom_price': sum(charges), 

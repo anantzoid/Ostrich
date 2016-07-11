@@ -159,7 +159,6 @@ class Order():
             order_data['order_amount'] = custom_data['custom_price'] + order_data['address']['delivery_charge']#Utils.getParam(order_data, 'price', 'float', default=custom_data['price'] + order_data['address']['delivery_charge'])
         order_data['source'] = Utils.getParam(order_data, 'ref', default='android')
 
-
         #check order validity
         # TODO check if item exists
         # TODO check for timeslot (exists or not)
@@ -169,6 +168,14 @@ class Order():
         user_not_valid = Order.isUserValidForOrder(user, order_data)
         if user_not_valid:
             return user_not_valid
+
+        if order_data['source'] == 'web':
+            if not user.phone:
+                phone = Utils.getParam(order_data, 'phone')
+                if not phone:
+                    return {'message': 'Phone number missing'}
+                else:
+                    user.editDetails({'phone': phone})
 
         connect = mysql.connect() 
         insert_data_cursor = connect.cursor()
