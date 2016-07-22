@@ -845,6 +845,7 @@ svg {
     font-weight: 400;
     font-size: 17px;
 }
+.arbor-nav-option { color: #009CDE; }
 .arbor-section { 
     min-height: 70vh; 
     margin-bottom: 40px;

@@ -38,7 +38,7 @@ const ArborNavbar = React.createClass({
             <nav className="navbar navbar-default">
             <div className="container-fluid">
                 <div className="navbar-header">
-                    <a className="navbar-brand page-scroll" target="_href" href="http://www.ostrichapp.in">
+                    <a className="navbar-brand page-scroll" target="_href" href="http://paypal.ostrichapp.in">
                         <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
                         <div className="pull-left navbar-brand-name">Ostrich</div>
                     </a>
@@ -68,9 +68,9 @@ const ArborNavbar = React.createClass({
                         </form>
                         <ul className="nav navbar-nav navbar-right">
                                 { this.props.user.is_admin ?
-                                <li><a href="/paypal/admin">Admin</a></li> 
+                                <li><a href="/paypal/admin" className="arbor-nav-option">Admin</a></li> 
                                 : null } 
-                            <li><a href="/paypal/orders">My Orders</a></li> 
+                            <li><a href="/paypal/orders" className="arbor-nav-option">Return Books</a></li> 
                             <li><a>{this.props.user.name}</a></li> 
                         </ul>
                     </div>
