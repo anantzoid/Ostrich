@@ -64,7 +64,7 @@ class Arbor():
         items = []
         for _ in range(cursor.rowcount):
             item = Utils.fetchOneAssoc(cursor)
-            item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
+            item['arbor_id'] = '_'.join([item['owner'], str(item['item_id']), str(item['inventory_id'])])
             items.append(item)
 
         return items
@@ -79,7 +79,7 @@ class Arbor():
         orders = {'reading':[], 'history': []}
         for _ in range(cursor.rowcount):
             item = Utils.fetchOneAssoc(cursor)
-            item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
+            item['arbor_id'] = '_'.join([item['owner'], str(item['item_id']), str(item['inventory_id'])])
             item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
 
             if not item['order_returned']:

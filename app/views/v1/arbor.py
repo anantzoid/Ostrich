@@ -4,6 +4,7 @@ from app import webapp
 from app.models import *
 from app.decorators import user_session
 from app.views.v1.website import path
+import copy
     
 @webapp.route('/paypal/')
 @user_session
@@ -22,7 +23,9 @@ def arbor_index(**kwargs):
     else:
         store['component'] = 'arborHome.jsx'
         props['books'] = Arbor.getArborBooks(client)
-        rendered = render_component(path(store['component']), props=props)
+        req_props = copy.copy(props)
+        req_props['books'] = req_props['books'][:10]
+        rendered = render_component(path(store['component']), props=req_props)
 
     store['props'] = props
     return render_template('index.html',
