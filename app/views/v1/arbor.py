@@ -22,10 +22,13 @@ def arbor_index(**kwargs):
         rendered = render_component(path(store['component']), props=props)
     else:
         store['component'] = 'arborHome.jsx'
-        props['books'] = Arbor.getArborBooks(client)
+        stock, taken = Arbor.getArborBooks(client)
         req_props = copy.copy(props)
-        req_props['books'] = req_props['books'][:10]
+        req_props['books'] = stock[:10]
+        req_props['taken'] = taken[:10]
         rendered = render_component(path(store['component']), props=req_props)
+        props['books'] = stock
+        props['taken'] = taken
 
     store['props'] = props
     return render_template('index.html',

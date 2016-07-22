@@ -6,9 +6,9 @@ class Arbor():
     @staticmethod
     def getArborBooks(client):
         cursor = mysql.connect().cursor()
-        cursor.execute("""SELECT * FROM arbor_inventory WHERE in_stock = 1 AND
+        cursor.execute("""SELECT * FROM arbor_inventory WHERE
                  client=%s GROUP BY item_id""", (client.lower(),))
-        items = []
+        stock, taken = [], []
         for _ in range(cursor.rowcount):
             item = Utils.fetchOneAssoc(cursor)
             item['arbor_id'] = '_'.join([item['client'], str(item['item_id']), str(item['inventory_id'])])
@@ -18,9 +18,12 @@ class Arbor():
             for category in item['item']['categories'][:3]:
                 categories.append(Item.fetchCategory(name=category)) 
             item['item']['categories'] = categories
-
-            items.append(item)
-        return items
+            
+            if item['in_stock']:
+                stock.append(item)
+            else:
+                taken.append(item)
+        return [stock, taken]
 
     @staticmethod
     def checkout(user_id, arbor_id):

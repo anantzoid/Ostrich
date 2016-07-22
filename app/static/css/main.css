@@ -874,6 +874,18 @@ svg {
     cursor: pointer;
 }
 .arbor-book-li:hover { box-shadow: 4px 4px 4px #ddd; }
+.arbor-book-li-overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: gray;
+    opacity: 0.3;
+    z-index: 100;
+    cursor: default;
+}
+.taken-msg { margin-top: 60px; }
 .arbor-orders .arbor-book-li {  
     width: 330px; 
     cursor: default;

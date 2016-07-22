@@ -35,13 +35,17 @@ const ArborHome = React.createClass({
             }, 5000);
 
         },
-        render() {
-            let books = this.state.books.map((book) => {
+        getBookCards(books, type) {
+            console.log(books);
+            let cards = books.map((book) => {
                 let categories = ItemUtils.getCategories(book.item.categories);
                 let ratings = ItemUtils.getRatings(book.item.ratings);
 
                 return (
                        <li className="arbor-book-li" key={book.arbor_id} id={book.arbor_id}>
+                       {type == 'taken' ?
+                            <div className="arbor-book-li-overlay"></div> 
+                       : null}
                         <div className="arbor-book-container clearfix" onClick={this.selectBook.bind(this, book.arbor_id)}>
                             <div className="arbor-book-image-container pull-left">
                                 <img src={book.item.img_small} alt={book.item.item_name} />
@@ -55,19 +59,15 @@ const ArborHome = React.createClass({
                                 <div>{categories}</div>
                             </div>
                         </div>
-                            <div className="arbor-book-options-container">
-                                <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
-                            </div>  
-                        { book.options ?
-                            <div className="arbor-book-options-container">
-                                <div className="arbor-book-options">
-                                    <button className="btn btn-success" onClick={this.selectBook.bind(this, book.arbor_id)}>Checkout</button>
-                                </div>
-                            </div>  
-                        : null }
                       </li>
                     );
             });
+            return cards;
+        },
+        render() {
+            let books = this.getBookCards(this.state.books, 'stock'); 
+            let taken = this.getBookCards(this.props.taken, 'taken'); 
+
             return  (
                 <div className="arbor">
                     <ArborNavbar {...this.props} checkout_id={this.state.checkout_id}/>
@@ -75,6 +75,16 @@ const ArborHome = React.createClass({
                         <div className="container-fluid">
                             <div className="row">
                                 <ul>{books}</ul>
+                            </div>
+                        </div>
+                        <div className="container">
+                            <div className="row">
+                                <h4 className="taken-msg">Currently Being Read</h4>
+                            </div>
+                        </div>
+                        <div className="container-fluid">
+                            <div className="row">
+                                <ul>{taken}</ul>
                             </div>
                         </div>
                     </section>
@@ -85,3 +95,9 @@ const ArborHome = React.createClass({
 });
 
 module.exports = ArborHome;
+
+/*
+<div className="arbor-book-options-container">
+    <span className="glyphicon glyphicon-shopping-cart" aria-hidden="true"></span>
+</div>  
+*/
