@@ -77,6 +77,7 @@ const ArborHome = React.createClass({
                                 <ul>{books}</ul>
                             </div>
                         </div>
+                        { taken ? <div>
                         <div className="container">
                             <div className="row">
                                 <h4 className="taken-msg">Currently Being Read</h4>
@@ -87,6 +88,7 @@ const ArborHome = React.createClass({
                                 <ul>{taken}</ul>
                             </div>
                         </div>
+                        </div> : null }
                     </section>
                     <Footer {...this.props} />
             </div> 
