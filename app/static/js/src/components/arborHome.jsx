@@ -36,7 +36,6 @@ const ArborHome = React.createClass({
 
         },
         getBookCards(books, type) {
-            console.log(books);
             let cards = books.map((book) => {
                 let categories = ItemUtils.getCategories(book.item.categories);
                 let ratings = ItemUtils.getRatings(book.item.ratings);
@@ -67,7 +66,6 @@ const ArborHome = React.createClass({
         render() {
             let books = this.getBookCards(this.state.books, 'stock'); 
             let taken = this.getBookCards(this.props.taken, 'taken'); 
-
             return  (
                 <div className="arbor">
                     <ArborNavbar {...this.props} checkout_id={this.state.checkout_id}/>
@@ -77,7 +75,7 @@ const ArborHome = React.createClass({
                                 <ul>{books}</ul>
                             </div>
                         </div>
-                        { taken ? <div>
+                        { taken.length > 0 ? <div>
                         <div className="container">
                             <div className="row">
                                 <h4 className="taken-msg">Currently Being Read</h4>
