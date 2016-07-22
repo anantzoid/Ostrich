@@ -38,11 +38,11 @@ const ArborNavbar = React.createClass({
             <nav className="navbar navbar-default">
             <div className="container-fluid">
                 <div className="navbar-header">
-                    <a className="navbar-brand page-scroll" href="http://paypal.ostrichapp.in">
+                    <a className="navbar-brand page-scroll" target="_href" href="http://www.ostrichapp.in">
                         <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
                         <div className="pull-left navbar-brand-name">Ostrich</div>
                     </a>
-                    <a className="navbar-brand navbar-brand-sec pull-right" href="/">
+                    <a className="navbar-brand navbar-brand-sec pull-right" href="http://paypal.ostrichapp.in">
                         <img className="navbar-logo pull-left" src={this.props.cdn+"arbor/paypal.png"} alt="paypal Logo" />
                     </a>
                 </div>
@@ -62,7 +62,7 @@ const ArborNavbar = React.createClass({
                     <div className="navbar-collapse collapse text-left" id="checkout">
                         <form className="navbar-form navbar-left" role="search">
                             <div className="form-group">
-                                <input type="text" className="form-control" placeholder="Enter book_id " value={this.state.arbor_id} onChange={this.setArborId}/>
+                                <input type="text" className="form-control" placeholder="Enter Book Id" value={this.state.arbor_id} onChange={this.setArborId}/>
                             </div>
                             <button className="btn btn-success checkout-action" onClick={this.checkout}>Checkout</button>
                         </form>
