@@ -88,6 +88,20 @@ def arbor_admin(**kwargs):
             title='%s Arbor Admin' %client,
             store=store)
 
+# For mobile
+@webapp.route('/arborOrder', methods=['POST'])
+def arborOrder():
+    response = {'status': False, 'message': 'Something went wrong'}
+
+    status = Arbor.checkout(Utils.getParam(request.form, 'user_id', 'int'), Utils.getParam(request.form, 'arbor_id'))
+    if not status:
+        response['message'] = 'Sorry, that book is no longer available.'
+        return Utils.errorResponse(response)
+    else:
+        response['status'] = True
+        response['message'] = 'Success! Please pick up the book from the library.'
+    return jsonify(response)
+
 @webapp.route('/arbor/checkout', methods=['POST'])
 @user_session
 def arbor_checkout(**kwargs):
