@@ -18,10 +18,12 @@ def getRelatedItems(item_id):
     if related_items_data:
         return
 
+    #TODO register in queue
     item = Item(item_id)
     url = amazon_search_url+item.item_name+' '+item.author
     soup = prepareSoup(url)
     if isinstance(soup, dict):
+        # TODO empty q
         return None
 
     link = soup.find('a', {'class':'s-access-detail-page'}) 
@@ -30,6 +32,7 @@ def getRelatedItems(item_id):
         print item_url
         soup = checkForPaperback(item_url)
         if not soup:
+            # TODO empty q
             return None
         
         amazon_id = 0

@@ -1,6 +1,11 @@
 from app import webapp
-from app.models import Search, Order, User, Collection
+from app.models import Search, Order, User, Collection, Utils
 from flask import jsonify, request
+from app.decorators import async
+
+from pymongo import MongoClient
+from app.scripts.related_items import getRelatedItems
+import json
 
 @webapp.route('/startSession')
 def startSession():
@@ -34,3 +39,27 @@ def startSession():
             data['user_model'] = user.getObj()
             user.logMetadata(app_version)
     return jsonify(data)
+
+@webapp.route('/getRelatedItems')
+def getRelatedItemsApi():
+    client = MongoClient(webapp.config['MONGO_DB'])
+    db = client.ostrich
+
+    item_id = Utils.getParam(request.args, 'item_id', 'int')
+
+    related_items_cursor = db.related_item_ids.find({'_id': item_id})
+    related_item_ids = [_ for _ in related_items_cursor]
+
+    if len(related_item_ids) == 0:
+        #check redis queue
+        getRelatedItemsAsyncWrapper(item_id)
+        return jsonify({'status': 'wait', 'message':'Crawling in progress'})
+
+    related_item_ids = related_item_ids[0]['item_ids']
+    items = Search().getById(related_item_ids)
+    return json.dumps(items)
+
+@async
+def getRelatedItemsAsyncWrapper(item_id):
+    getRelatedItems(item_id)
+    return
