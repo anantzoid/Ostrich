@@ -150,9 +150,11 @@ def googlesignin():
     users_service = discovery.build('oauth2', 'v2', http=http_auth)
     user_document = users_service.userinfo().get().execute()
 
-    from app import cache
-    cache_key = credentials.id_token['sub']
-    user = cache.get(cache_key)
+    #TODO check consistencies b/w session and user cache
+    #from app import cache
+    #cache_key = credentials.id_token['sub']
+    #user = cache.get(cache_key)
+    user = session.get('_user', None)
     if not user:
         user_data = {
             'username': user_document['email'],
