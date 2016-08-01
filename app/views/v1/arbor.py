@@ -61,6 +61,14 @@ def arbor_orders(**kwargs):
             rendered=rendered,
             title='%s Arbor Orders' %client,
             store=store)
+#for mobile
+@webapp.route('/arborMyOrders', methods=['POST'])
+def arborMyOrders():
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    if not user_id:
+        return Utils.errorResponse({'status':'False'})
+    orders = Arbor.getUserOrders(user_id)
+    return jsonify(orders) 
 
 @webapp.route('/paypal/admin/')
 @user_session
