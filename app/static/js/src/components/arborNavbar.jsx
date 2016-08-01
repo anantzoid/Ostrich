@@ -1,4 +1,5 @@
 import React from 'react';
+import { signout} from '../utils/loginUtils.js'; 
 
 const ArborNavbar = React.createClass({
     getInitialState() {
@@ -71,7 +72,7 @@ const ArborNavbar = React.createClass({
                                 <li><a href="/paypal/admin" className="arbor-nav-option">Admin</a></li> 
                                 : null } 
                             <li><a href="/paypal/orders" className="arbor-nav-option">Return Books</a></li> 
-                            <li><a>{this.props.user.name}</a></li> 
+                            <li><a href="#" onClick={signout}>Signout</a></li> 
                         </ul>
                     </div>
                 </div>
