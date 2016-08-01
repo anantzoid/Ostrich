@@ -61,14 +61,6 @@ def arbor_orders(**kwargs):
             rendered=rendered,
             title='%s Arbor Orders' %client,
             store=store)
-#for mobile
-@webapp.route('/arborMyOrders', methods=['POST'])
-def arborMyOrders():
-    user_id = Utils.getParam(request.form, 'user_id', 'int')
-    if not user_id:
-        return Utils.errorResponse({'status':'False'})
-    orders = Arbor.getUserOrders(user_id)
-    return jsonify(orders) 
 
 @webapp.route('/paypal/admin/')
 @user_session
@@ -95,20 +87,6 @@ def arbor_admin(**kwargs):
             rendered=rendered,
             title='%s Arbor Admin' %client,
             store=store)
-
-# For mobile
-@webapp.route('/arborOrder', methods=['POST'])
-def arborOrder():
-    response = {'status': False, 'message': 'Something went wrong'}
-
-    status = Arbor.checkout(Utils.getParam(request.form, 'user_id', 'int'), Utils.getParam(request.form, 'arbor_id'))
-    if not status:
-        response['message'] = 'Sorry, that book is no longer available.'
-        return Utils.errorResponse(response)
-    else:
-        response['status'] = True
-        response['message'] = 'Success! Please pick up the book from the library.'
-    return jsonify(response)
 
 @webapp.route('/arbor/checkout', methods=['POST'])
 @user_session
@@ -148,3 +126,39 @@ def arbor_return(**kwargs):
     if response["status"]:
         response["message"] = "Please return the book to the library"
     return jsonify(response)
+
+#for mobile TODO make it secure and merge with web apis
+@webapp.route('/arborReturnBook', methods=['POST'])
+def arborReturnBook():
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    arbor_id = Utils.getParam(request.form, 'arbor_id')
+    if not user_id or not arbor_id:
+        return Utils.errorResponse({'response': 'False'})
+
+    response = {}
+    response["status"] = Arbor.returnBook(user_id, arbor_id) 
+    if response["status"]:
+        response["message"] = "Please return the book to the library"
+    return jsonify(response)
+
+@webapp.route('/arborMyOrders', methods=['POST'])
+def arborMyOrders():
+    user_id = Utils.getParam(request.form, 'user_id', 'int')
+    if not user_id:
+        return Utils.errorResponse({'status':'False'})
+    orders = Arbor.getUserOrders(user_id)
+    return jsonify(orders) 
+
+@webapp.route('/arborOrder', methods=['POST'])
+def arborOrder():
+    response = {'status': False, 'message': 'Something went wrong'}
+    status = Arbor.checkout(Utils.getParam(request.form, 'user_id', 'int'), Utils.getParam(request.form, 'arbor_id'))
+    if not status:
+        response['message'] = 'Sorry, that book is no longer available.'
+        return Utils.errorResponse(response)
+    else:
+        response['status'] = True
+        response['message'] = 'Success! Please pick up the book from the library.'
+    return jsonify(response)
+
+
