@@ -62,7 +62,7 @@ class Arbor():
             INNER JOIN items i ON i.item_id = ai.item_id
             LEFT JOIN arbor_orders ao ON ao.inventory_id = ai.inventory_id 
             LEFT JOIN users u ON u.user_id = ao.user_id
-            WHERE client = %s AND date_removed IS NULL
+            WHERE client = %s AND date_removed IS NULL AND order_returned IS NULL
             ORDER BY i.item_name""", (client, ))
         items = []
         for _ in range(cursor.rowcount):
