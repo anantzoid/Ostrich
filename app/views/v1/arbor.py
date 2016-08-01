@@ -100,14 +100,7 @@ def arbor_checkout(**kwargs):
         return jsonify(response)
 
     arbor_id = Utils.getParam(request.form, 'arbor_id')
-   
-    status = Arbor.checkout(user_id, arbor_id)
-    if not status:
-        response['message'] = 'Sorry, that book is no longer available.'
-    else:
-        response['status'] = True
-        response['message'] = 'Success! Please pick up the book from the library.'
-
+    response = Arbor.checkout(user_id, arbor_id)
     return jsonify(response)
 
 @webapp.route('/arbor/return', methods=['POST'])
@@ -151,14 +144,9 @@ def arborMyOrders():
 
 @webapp.route('/arborOrder', methods=['POST'])
 def arborOrder():
-    response = {'status': False, 'message': 'Something went wrong'}
-    status = Arbor.checkout(Utils.getParam(request.form, 'user_id', 'int'), Utils.getParam(request.form, 'arbor_id'))
-    if not status:
-        response['message'] = 'Sorry, that book is no longer available.'
+    response = Arbor.checkout(Utils.getParam(request.form, 'user_id', 'int'), Utils.getParam(request.form, 'arbor_id'))
+    if not response['status']:
         return Utils.errorResponse(response)
-    else:
-        response['status'] = True
-        response['message'] = 'Success! Please pick up the book from the library.'
     return jsonify(response)
 
 

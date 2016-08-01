@@ -532,7 +532,7 @@ class User(Prototype):
         if client:
             if client.lower() == 'paypal':
                 # NOTE insert paypal admin user id here
-                if self.user_id in [330]:
+                if self.user_id in [330, 398]:
                     return 1
         return 0
 

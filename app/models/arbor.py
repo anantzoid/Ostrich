@@ -31,6 +31,16 @@ class Arbor():
         cursor = conn.cursor()
         
         client, item_id, inv_id = arbor_id.split('_')
+        cursor.execute("""SELECT COUNT(*) FROM arbor_orders ao
+                INNER JOIN arbor_inventory ai ON ai.inventory_id=ao.inventory_id
+                WHERE user_id = %s AND order_returned IS NULL AND
+                in_stock = 0""", (user_id,))
+        has_book = cursor.fetchone()[0]
+        print has_book
+        if has_book:
+            return {'status': False,
+            'message': 'Sorry, you can checkout only upto 1 book.'}
+
         cursor.execute("""SELECT COUNT(*) FROM arbor_inventory WHERE inventory_id =
                 %s AND in_stock = 1""", (inv_id,))
         in_stock = cursor.fetchone()[0]
@@ -44,7 +54,8 @@ class Arbor():
                 # TODO test this
                 arbor_id = str(result[0])
             else:
-                return False
+                return {'status': False,
+                'message': 'Sorry, that book is no longer available.'}
 
         cursor.execute("""INSERT INTO arbor_orders (user_id, inventory_id) VALUES
                 (%s, %s)""", (user_id, inv_id))
@@ -52,7 +63,8 @@ class Arbor():
         cursor.execute("""UPDATE arbor_inventory SET in_stock = 0 WHERE 
             inventory_id = %s""", (inv_id,))
         conn.commit()
-        return True
+        return {'status': True,
+                'message': 'Success! Please pick up the book from the library.'}
 
     @staticmethod
     def getInventoryItems(client):
