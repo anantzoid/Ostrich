@@ -74,7 +74,7 @@ class Arbor():
 
 
     @staticmethod
-    def getUserOrders(user_id):
+    def getUserOrders(user_id, for_mobile=False):
         cursor = mysql.connect().cursor()
         cursor.execute("""SELECT * FROM arbor_orders ao 
             INNER JOIN  arbor_inventory ai ON ai.inventory_id = ao.inventory_id
@@ -83,7 +83,10 @@ class Arbor():
         for _ in range(cursor.rowcount):
             item = Utils.fetchOneAssoc(cursor)
             item['arbor_id'] = '_'.join([item['owner'], str(item['item_id']), str(item['inventory_id'])])
-            item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
+            if for_mobile:
+                item['items'] = [WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]]
+            else:
+                item['item'] = WebUtils.extendItemWebProperties([Item(item['item_id']).getObj()])[0]
 
             if not item['order_returned']:
                 orders['reading'].append(item)

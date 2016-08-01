@@ -146,7 +146,7 @@ def arborMyOrders():
     user_id = Utils.getParam(request.form, 'user_id', 'int')
     if not user_id:
         return Utils.errorResponse({'status':'False'})
-    orders = Arbor.getUserOrders(user_id)
+    orders = Arbor.getUserOrders(user_id, for_mobile=True)
     return jsonify(orders) 
 
 @webapp.route('/arborOrder', methods=['POST'])
