@@ -818,7 +818,6 @@ svg {
     }
     .footer-links{ padding-left: 10px; }
 }
-
 .arbor .navbar-header { 
     height: auto; 
     float: none;
@@ -834,9 +833,10 @@ svg {
 }
 .sec-nav {     
     background-color: #ddd;
-    height: 50px;
+    min-height: 50px;
     margin-top: 3px;
 }
+.sec-nav .navbar-collapse { background-color: #e7e7e7; }
 .arbor .navbar-right { margin-right: inherit !important; }
 .arbor .navbar-default .nav > li > a {
     text-transform: capitalize;
@@ -920,3 +920,10 @@ svg {
     */
 .arbor-order-history { margin-top: 40px; }
 .glow { box-shadow: 2px 0px 25px 2px greenyellow; }
+@media (max-width: 768px) {
+    .arbor-book-li {
+        width: 100%;
+        margin-left: -15px;
+    }
+    .sec-nav { background-color: #006073; }
+}
