@@ -50,6 +50,7 @@ class Search():
         query_fail = False
 
         phrase_results = self.matchPhrase(page)
+
         if len(phrase_results['items']) == 0:
             phrase_fail = True
         if source == 'app':
@@ -59,27 +60,86 @@ class Search():
         if condition:
             filter_ids = [_['item_id'] for _ in phrase_results['items']]
             queried_results = self.queryMatch(page, filter_ids)
+
             if phrase_fail and len(queried_results['items']) == 0 :
                 query_fail = True
             phrase_results['items'].extend(queried_results['items'])
             phrase_results['total'] += queried_results['total']
       
-        phrase_results['collections'] = self.getCollectionsFromResults(phrase_results['items'])
+        # phrase_results['collections'] = self.getCollectionsFromResults(phrase_results['items'])
         self.reportFail(phrase_fail, query_fail)
         return phrase_results
 
     def matchPhrase(self, page):
+        return self.fetchResultsFromMYSQL(page, " AND i.item_name LIKE '%s%%'"%(self.query))
+
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match_phrase": {"item_name": self.query}} 
         return self.executeSearch(data, page)
 
     def queryMatch(self, page, filter_ids):
+        return self.fetchResultsFromMYSQL(page, " AND (i.item_name LIKE '%"+self.query+"%' OR i.author LIKE '%"+self.query+"%')")
+
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"filtered": {
                             "query": {"query_string": {"query": self.query}},
                             "filter": {"bool": {"must_not":{"ids":{"values": filter_ids}}}}
                         }}
         return self.executeSearch(data, page)
+
+    '''
+        Similar to IndexItems. Switching from ES to MySQL
+    '''
+    def fetchResultsFromMYSQL(self, page, query_condition):
+        search_query = """SELECT i.item_id, i.item_name, i.author, i.price,i.ratings, 
+        i.num_ratings, i.num_reviews, i.img_small, i.asin, i.goodreads_id, i.summary, i.slug_url,
+        (select group_concat(c.category_name SEPARATOR '|') FROM categories c 
+        INNER JOIN items_categories ic ON ic.category_id = c.category_id WHERE 
+        ic.item_id = i.item_id) AS categories
+        FROM items i WHERE i.active=1"""
+
+        if query_condition:
+            search_query += query_condition
+
+        page += 1 
+        limit = page * self.size
+        offset = (page-1) * self.size
+        search_query += ' LIMIT %d OFFSET %d'%(limit, offset)
+
+        cursor = mysql.connect().cursor()
+        print search_query
+        cursor.execute(search_query)
+
+        results = {'items': []}
+        num_items = cursor.rowcount
+        for num in range(num_items):
+            item = Utils.fetchOneAssoc(cursor)
+            if item['categories'] is not None:
+                item['categories'] = item['categories'].split("|")
+            else:
+                item['categories'] = []
+
+            item['isbn_10'] = []
+            item['isbn_13'] = []
+            item['in_stock'] = 0
+            item['in_collections'] = []
+            item['num_ratings_int'] = 0
+            item['num_reviews_int'] = 0
+
+            from app.models import Item
+            item.update(Item.getCustomProperties([item]))
+            if Item.checkStock(item['item_id']):
+                item['in_stock'] = 1
+
+            if item['num_ratings']:
+                item['num_ratings_int'] = int(item['num_ratings'].replace(',',''))
+
+            if item['num_reviews']:
+                item['num_reviews_int'] = int(item['num_reviews'].replace(',',''))
+
+            results['items'].append(item)
+        results['total'] = len(results['items'])
+        return results
 
     def categorySearch(self, page=0):
         data = self.search_query 
@@ -274,5 +334,4 @@ class Search():
             db.autocomplete_search_log.insert_one(data)
         else:
             db.search_log.insert_one(data)
-
 
