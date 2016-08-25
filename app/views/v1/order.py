@@ -26,7 +26,9 @@ import json
 @is_user
 def orderItem():
   
-    return jsonify({'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services from Monday, 29th August.'}) 
+    temp_response = {'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services from Monday, 29th August.'}
+    return Utils.errorResponse(temp_response)
+
     order_data = {}
     for key in request.form:
         order_data[key] = request.form[key]
