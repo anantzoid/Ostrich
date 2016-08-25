@@ -25,7 +25,8 @@ import json
 @webapp.route('/order', methods=['POST'])
 @is_user
 def orderItem():
-   
+  
+    return jsonify({'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services from Monday, 29th August.'}) 
     order_data = {}
     for key in request.form:
         order_data[key] = request.form[key]
