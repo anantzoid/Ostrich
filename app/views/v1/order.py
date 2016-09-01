@@ -27,7 +27,7 @@ import json
 def orderItem():
   
     temp_response = {'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services from Monday, 29th August.'}
-    return Utils.errorResponse(temp_response)
+    #return Utils.errorResponse(temp_response)
 
     order_data = {}
     for key in request.form:
