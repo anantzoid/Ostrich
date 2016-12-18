@@ -197,6 +197,7 @@ class Collection(Prototype):
             homepage_collection_ids = [38, 40, 41, 42]
         else:
             homepage_collection_ids = [25, 26, 27, 28]
+            homepage_collection_ids = [38, 40, 41, 42]
         homepage_collections = []
         for col_id in homepage_collection_ids:
             col_obj = Collection(col_id)
