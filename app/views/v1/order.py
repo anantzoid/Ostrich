@@ -26,7 +26,7 @@ import json
 @is_user
 def orderItem():
   
-    temp_response = {'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services from Monday, 29th August.'}
+    temp_response = {'status':'Order Failed', 'message': 'Sorry, we are currently offline. We\'ll resume our services shortly.'}
     #return Utils.errorResponse(temp_response)
 
     order_data = {}

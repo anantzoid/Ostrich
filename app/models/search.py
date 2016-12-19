@@ -145,7 +145,7 @@ class Search():
         cat_search_query = """ and i.item_id in (select icc.item_id from 
         items_categories icc INNER JOIN categories cc on 
         cc.category_id=icc.category_id where cc.category_name='%s')"""%self.query
-        return self.fetchResultsFromMYSQL(page, self.query, cat_search_query)  
+        return self.fetchResultsFromMYSQL(page,cat_search_query)  
 
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match": {"categories": self.query}} 
