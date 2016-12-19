@@ -10,7 +10,8 @@ import string
 class Search():
     def __init__(self, query='', user_info={}, flow='borrow', size=24):
         self.es_url  = webapp.config['ES_NODES'].split(',')
-        self.es = Elasticsearch(self.es_url)
+        # NOTE removed ES global object & placed it in individual fns.
+        # self.es = Elasticsearch(self.es_url)
         self.query = query
         self.index = 'items_alias'
         self.size = size
@@ -107,7 +108,6 @@ class Search():
         search_query += ' LIMIT %d OFFSET %d'%(limit, offset)
 
         cursor = mysql.connect().cursor()
-        print search_query
         cursor.execute(search_query)
 
         results = {'items': []}
@@ -142,16 +142,25 @@ class Search():
         return results
 
     def categorySearch(self, page=0):
+        cat_search_query = """ and i.item_id in (select icc.item_id from 
+        items_categories icc INNER JOIN categories cc on 
+        cc.category_id=icc.category_id where cc.category_name='%s')"""%self.query
+        return self.fetchResultsFromMYSQL(page, self.query, cat_search_query)  
+
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match": {"categories": self.query}} 
         return self.executeSearch(data, page)
 
     def collectionsSearch(self, page=0):
+        return {"total":0, "items":[]}
+
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match_phrase": {"in_collections": self.query}} 
         return self.executeSearch(data, page)
 
     def isbnSearch(self, page=0):
+        return {"total":0, "items":[]}
+
         data = self.search_query 
         data["query"]["function_score"]["query"] = {
                 "multi_match": {
@@ -186,7 +195,8 @@ class Search():
             collection_object = collection_results['items'][0]
             collection_object['items'] = self.getById(collection_object['item_ids']) 
         return collection_object
-        
+      
+    # NOTE this is not used, so ignored for switching to MySQL
     def autoComplete(self, page=0):
         if len(self.query) < 4:
             return {"items": []}
@@ -195,6 +205,7 @@ class Search():
         return self.executeSearch(data, page)
 
     def executeSearch(self, data, page=0):
+        self.es = Elasticsearch(self.es_url)
         search_results = self.es.search(index=self.index, body=data, from_=page*self.size, size=self.size)
         item_results = []
         total_results = 0
@@ -212,6 +223,7 @@ class Search():
 
     def unindexItem(self):
         try:
+            self.es = Elasticsearch(self.es_url)
             self.es.delete(index=self.index,doc_type='item',id=self.query,refresh=True)
         except Exception,err:
             print str(err)
@@ -222,6 +234,7 @@ class Search():
         TODO: add data support
     '''
     def customQuery(self):
+        self.es = Elasticsearch(self.es_url)
         resp = requests.get(string.rstrip(self.es_url[0], '/')+'/'+self.query)
         return resp.text
 
@@ -276,6 +289,7 @@ class Search():
         db = client.ostrich
         refined_content = []
          
+        self.es = Elasticsearch(self.es_url)
         for content in db.content.find():
             docs = self.es.mget(index=self.index, doc_type='item', body={"ids":content['items']})
             item_list = []
