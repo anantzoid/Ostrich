@@ -44,6 +44,7 @@ class Search():
             self.gcm_id = user_info['gcm_id']
         except:
             pass
+        self.str_util = lambda x: ",".join([str(_) for _ in x])
 
 
     def basicSearch(self, page=0, source='app'):
@@ -100,7 +101,7 @@ class Search():
         FROM items i WHERE i.active=1"""
 
         if query_condition:
-            search_query += query_condition
+            search_query += " " + query_condition
 
         page += 1 
         limit = page * self.size
@@ -307,7 +308,7 @@ class Search():
 
     def mostRecommended(self):
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
-        return self.fetchResultsFromMYSQL(page, "AND i.item_id in (%s)"%(",".join(self.query)))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
 
         item_ids = { "ids": self.query }
         reco_list = []
@@ -321,7 +322,7 @@ class Search():
 
     def mostSearched(self):
         self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
-        return self.fetchResultsFromMYSQL(page, "AND i.item_id in (%s)"%(",".join(self.query)))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
 
         item_ids = { "ids": self.query }
         most_searched = []
@@ -333,7 +334,7 @@ class Search():
         return most_searched
 
     def getById(self, item_ids):
-        return self.fetchResultsFromMYSQL(page, "AND i.item_id in (%s)"%(",".join(item_ids)))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
 
         result_list = []
         docs = self.es.mget(index=self.index, doc_type='item', body={"ids": item_ids})
