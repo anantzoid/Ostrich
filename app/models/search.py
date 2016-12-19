@@ -308,7 +308,7 @@ class Search():
 
     def mostRecommended(self):
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         item_ids = { "ids": self.query }
         reco_list = []
@@ -322,7 +322,7 @@ class Search():
 
     def mostSearched(self):
         self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         item_ids = { "ids": self.query }
         most_searched = []
@@ -334,7 +334,7 @@ class Search():
         return most_searched
 
     def getById(self, item_ids):
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))
+        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         result_list = []
         docs = self.es.mget(index=self.index, doc_type='item', body={"ids": item_ids})
