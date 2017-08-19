@@ -6,7 +6,7 @@ from app.decorators import user_session
 from app.views.v1.website import path
 import copy
     
-@webapp.route('/paypal/')
+@webapp.route('/arbor/')
 @user_session
 def arbor_index(**kwargs):
     client = request.path.strip("/").title()
@@ -36,7 +36,7 @@ def arbor_index(**kwargs):
             title='%s Arbor' % client,
             store=store)
 
-@webapp.route('/paypal/orders/')
+@webapp.route('/arbor/orders/')
 @user_session
 def arbor_orders(**kwargs):
     if not kwargs['props']['user']:
@@ -62,7 +62,7 @@ def arbor_orders(**kwargs):
             title='%s Arbor Orders' %client,
             store=store)
 
-@webapp.route('/paypal/admin/')
+@webapp.route('/arbor/admin/')
 @user_session
 def arbor_admin(**kwargs):
     if not kwargs['props']['user']:
