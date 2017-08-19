@@ -169,7 +169,7 @@ body:after{
   background-size: cover;
   -o-background-size: cover;
   background-position: center;
-  background-image: url('https://d3i8lg6krdgeel.cloudfront.net/website/header.png');
+  background-image: url('http://localhost:5000/static/img/website/header.png');
   text-align: center;
   color: white;
 }
@@ -403,7 +403,7 @@ header .header-content .header-content-inner p {
     text-align: center;
 }
 .catalog-book-image-container {
-    background-image: url('https://d3i8lg6krdgeel.cloudfront.net/website/book_placeholder.png');
+    background-image: url('http://localhost:5000/static/img/website/book_placeholder.png');
     width: 110px;
     height: 175px;
     background-repeat: no-repeat;

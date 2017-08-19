@@ -1,0 +1,63 @@
+APP_ENV = 'dev'
+HOST = 'http://localhost:5000'
+
+#System Config and Credentials
+MYSQL_DATABASE_USER = 'root'
+MYSQL_DATABASE_PASSWORD = 'root'
+MYSQL_DATABASE_DB = 'ostrichdb'
+MYSQL_DATABASE_HOST = '127.0.0.1'
+
+MAIL_SERVER = '127.0.0.1'
+MAIL_PORT = 25
+
+CACHE_TYPE =  'simple'
+CACHE_DEFAULT_TIMEOUT = 600
+
+# API key for sending push notifications
+GCM_API_KEY = ''
+
+GOOGLE_AUTH_CLIENT_ID = ''
+GOOGLE_AUTH_CLIENT_SECRET = 'XXXXXX'
+
+MIXPANEL_API_KEY = ''
+MIXPANEL_API_SECRET = 'XXXXXX'
+
+ES_NODES = '127.0.0.1:9200'
+# Location where images are hosted, temporarily, it's the local dir
+S3_HOST = "http://localhost:5000/static/img/"
+S3_IMAGE_BUCKET = 'images/'
+
+SESSION_TYPE = 'redis'
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+
+MAIL_SERVER = 'smtp.gmail.com'
+MAIL_PORT = 465
+MAIL_USE_SSL = True
+MAIL_USERNAME = 'contact@ostrichapp.in'
+MAIL_PASSWORD = 'XXXX'
+MAIL_SUPPRESS_SEND = True
+MAIL_DEFAULT_SENDER = ('Ostrich','contact@ostrichapp.in')
+
+MONGO_DB = '127.0.0.1'
+
+#Flags and Codes
+HTTP_STATUS_CODE_DATA_MISSING = 400
+HTTP_STATUS_CODE_ENTRY_EXISTS = 409
+HTTP_STATUS_CODE_SUCCESS = 200
+HTTP_STATUS_CODE_ERROR = 401
+
+HTTP_STATUS_CODE_CLIENT_ERROR = 445
+HTTP_STATUS_CODE_SERVER_ERROR = 456
+
+APP_INVITE = 1
+USER_BOOKS_LIMIT = 0
+DEFAULT_WALLET_CREDIT_AMOUNT = 100
+NOTIFICATIONS_ENABLED = 0
+SEARCH_SOURCE = "mysql"
+
+#call session function in manager to update
+DEFAULT_RETURN_DAYS = 21
+NEW_READING_RATE = 2.15
+COMICS = "217, 323, 18488, 410, 18489, 18490"

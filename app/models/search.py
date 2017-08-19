@@ -16,6 +16,7 @@ class Search():
         self.index = 'items_alias'
         self.size = size
         self.flow = flow
+        self.source = webapp.config['SEARCH_SOURCE']
         self.search_query = {
                 "query": {
                     "function_score": {
@@ -73,14 +74,17 @@ class Search():
         return phrase_results
 
     def matchPhrase(self, page):
-        return self.fetchResultsFromMYSQL(page, " AND i.item_name LIKE '%s%%'"%(self.query))
+        # This was done as a last minute adjustment
+        if self.source == "mysql":
+            return self.fetchResultsFromMYSQL(page, " AND i.item_name LIKE '%s%%'"%(self.query))
 
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match_phrase": {"item_name": self.query}} 
         return self.executeSearch(data, page)
 
     def queryMatch(self, page, filter_ids):
-        return self.fetchResultsFromMYSQL(page, " AND (i.item_name LIKE '%"+self.query+"%' OR i.author LIKE '%"+self.query+"%')")
+        if self.source == "mysql":
+            return self.fetchResultsFromMYSQL(page, " AND (i.item_name LIKE '%"+self.query+"%' OR i.author LIKE '%"+self.query+"%')")
 
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"filtered": {
@@ -143,10 +147,11 @@ class Search():
         return results
 
     def categorySearch(self, page=0):
-        cat_search_query = """ and i.item_id in (select icc.item_id from 
-        items_categories icc INNER JOIN categories cc on 
-        cc.category_id=icc.category_id where cc.category_name='%s')"""%self.query
-        return self.fetchResultsFromMYSQL(page,cat_search_query)  
+        if self.source == "mysql":
+            cat_search_query = """ and i.item_id in (select icc.item_id from 
+            items_categories icc INNER JOIN categories cc on 
+            cc.category_id=icc.category_id where cc.category_name='%s')"""%self.query
+            return self.fetchResultsFromMYSQL(page,cat_search_query)  
 
         data = self.search_query 
         data["query"]["function_score"]["query"] = {"match": {"categories": self.query}} 
@@ -308,7 +313,8 @@ class Search():
 
     def mostRecommended(self):
         self.query = [4648, 9, 16, 4026, 4603, 4051, 306, 311, 87, 133, 79, 305, 4576, 50, 5788, 18304, 177]
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
+        if self.source == "mysql":
+            return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         item_ids = { "ids": self.query }
         reco_list = []
@@ -322,7 +328,8 @@ class Search():
 
     def mostSearched(self):
         self.query = [3963, 66, 299, 287, 644, 51, 143, 2058, 4089, 1, 347]
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
+        if self.source == "mysql":
+            return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         item_ids = { "ids": self.query }
         most_searched = []
@@ -334,7 +341,8 @@ class Search():
         return most_searched
 
     def getById(self, item_ids):
-        return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
+        if self.source == "mysql":
+            return self.fetchResultsFromMYSQL(0, "AND i.item_id in (%s)"%self.str_util(item_ids))['items']
 
         result_list = []
         docs = self.es.mget(index=self.index, doc_type='item', body={"ids": item_ids})

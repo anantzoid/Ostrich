@@ -31,7 +31,7 @@ const Navbar = React.createClass({
                     <span className="icon-bar"></span>
                 </button>
                 <a className="navbar-brand page-scroll" href="/">
-                    <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
+                    <img className="navbar-logo pull-left" src={this.props.host+"static/img/logo.png"} alt="Ostrich Logo" />
                     <div className="pull-left navbar-brand-name">Ostrich</div>
                 </a>
             </div>

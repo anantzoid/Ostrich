@@ -40,7 +40,7 @@ const ArborNavbar = React.createClass({
             <div className="container-fluid">
                 <div className="navbar-header">
                     <a className="navbar-brand page-scroll" target="_href" href="http://paypal.ostrichapp.in">
-                        <img className="navbar-logo pull-left" src={this.props.cdn+"logo.png"} alt="Ostrich Logo" />
+                        <img className="navbar-logo pull-left" src={this.props.host+"static/img/logo.png"} alt="Ostrich Logo" />
                         <div className="pull-left navbar-brand-name">Ostrich</div>
                     </a>
                     <a className="navbar-brand navbar-brand-sec pull-right" href="http://paypal.ostrichapp.in">
