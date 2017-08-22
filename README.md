@@ -19,7 +19,7 @@ Scroll to the bottom to checkout more screenshots.
 ## Tech Stack
 
 - [Flask](http://flask.pocoo.org/): Backend, api and rendering initial pages
-- [ReactJS](https://facebook.github.io/react/): Frontend (built using [Webpack] (https://webpack.github.io/))
+- [ReactJS](https://facebook.github.io/react/): Frontend (built using [Webpack](https://webpack.github.io/))
 - [Python-React](https://github.com/markfinger/python-react/tree/master/examples/frontend-rendering-with-webpack): Bridge between Flask and React
 - [Celery](http://www.celeryproject.org/): Crons, Automation, Crawling
 - [Redis](https://redis.io/): Caching via Memcached, Broker for Celery
