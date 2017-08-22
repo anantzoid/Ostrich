@@ -203,5 +203,5 @@ I'm still working on refining the docs and make them easily installable on any m
 <br/>
 
 ### Responsive Catalog Page
-<div style="text-align:center"><img src="app/static/img/screens/responsive_product.gif" alt="Catalog" style="width: 255px;"></div>
+<p align="center"><img src="app/static/img/screens/responsive_product.gif" alt="Catalog" style="width: 255px;"></p>
 
