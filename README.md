@@ -161,7 +161,7 @@ We know good SEO is acheived if pages are rendered via server initially. But her
 ### Responsive
 The CSS has been written in a fully responsive manner to support all kinds of media resolutions.
 
-<div style="text-align:center"><img src="/anantzoid/Ostrich/raw/master/app/static/img/screens/responsive_homepage.gif" alt="Responsive" style="width: 255px;"></div>
+<div style="text-align:center"><img src="app/static/img/screens/responsive_homepage.gif" alt="Responsive" style="width: 255px;"></div>
 
 <br>
 
@@ -188,20 +188,20 @@ I'm still working on refining the docs and make them easily installable on any m
 ## Product Preview
 
 ### Catalog Page
-<div style="text-align:center"><img src="/anantzoid/Ostrich/raw/master/app/static/img/screens/item.png" alt="Item" style="max-width:100%;width: 600px;"></div>
+<div style="text-align:center"><img src="app/static/img/screens/item.png" alt="Item" style="max-width:100%;width: 600px;"></div>
 
 <br/>
 
 ### Order Dialog
-<div style="text-align:center"><img src="/anantzoid/Ostrich/raw/master/app/static/img/screens/order.png" alt="Order" style="max-width:100%;width: 600px;"></div>
+<div style="text-align:center"><img src="app/static/img/screens/order.png" alt="Order" style="max-width:100%;width: 600px;"></div>
 
 <br/>
 
 ### Add address Dialog
-<div style="text-align:center"><img src="/anantzoid/Ostrich/raw/master/app/static/img/screens/address.png" alt="Address" style="max-width:100%;width: 600px;"></div>
+<div style="text-align:center"><img src="app/static/img/screens/address.png" alt="Address" style="max-width:100%;width: 600px;"></div>
 
 <br/>
 
 ### Responsive Catalog Page
-<div style="text-align:center"><img src="/anantzoid/Ostrich/raw/master/app/static/img/screens/responsive_product.gif" alt="Catalog" style="width: 255px;"></div>
+<div style="text-align:center"><img src="app/static/img/screens/responsive_product.gif" alt="Catalog" style="width: 255px;"></div>
 
