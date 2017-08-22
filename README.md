@@ -4,10 +4,12 @@
 
 Ostrich was built as a physical book rental platform which enables users to order books to their doorstep, track the delivery status, rate, review and return books. The complete e-commerce ecosystem surrounds the core feature providing the users with an end-to-end experience via strategic and timely push notification and mailers, Google authentication, automated updation of items and inventory and user behaviour tracking to understand preferences to name a few. 
 
-The architecture is written in a simple and generic manner and can be customized to suit various business solutions. 
+The architecture follows a lightweight, intuitive design pattern inspired by the beautiful [flamejam](https://github.com/svenstaro/flamejam) project for the backend and [flux](https://facebook.github.io/flux/docs/overview.html) architecture for the React frontend. The platform is written in a simple and generic manner and can be customized to suit various business solutions. 
 
 <br>
-![Homepage](app/static/img/homepage_ss.png)
+![Homepage](app/static/img/screens/homepage_ss.png)
+<br>
+Scroll to the bottom to checkout more screenshots.
 <br><br>
 
 ## Tech Stack
@@ -110,59 +112,61 @@ Apart from serving the consumers directly, Ostrich also had a B2B business model
 The API endpoints cater to various user and admin facing features that correpond to both the web and mobile app. Relevant information is cached within API calls. The following is a non-exhaustive list highlighting some of the relevant ones:
 
 ### Search
-- [Search String] ()
-- [Report Search fail] ()
-- [Categories] ()
-- [Most Searched items] ()
-- [Related/Recommended Items] ()
+- [Search String]()
+- [Report Search fail]()
+- [Categories]()
+- [Most Searched items]()
+- [Related/Recommended Items]()
 
 ### Orders
-- [Order/Rent Item] ()
-- [Lend Item] ()
-- [Order Details] ()
-- [Order Status] ()
-- [Time Slots for delivery] ()
+- [Order/Rent Item]()
+- [Lend Item]()
+- [Order Details]()
+- [Order Status]()
+- [Time Slots for delivery]()
 
 ### User
-- [Signup] ()
-- [User Details] ()
-- [Edit Details] ()
-- [Add Address] ()
-- [Get Delivery areas] ()
-- [Validate Delivery area] ()
-- [Order History] ()
-- [Wishlist Items] ()
-- [Referral Code] ()
-- [Reviews] ()
-- [Delete User] ()
-- [Mass notification to user groups] ()
+- [Signup]()
+- [User Details]()
+- [Edit Details]()
+- [Add Address]()
+- [Get Delivery areas]()
+- [Validate Delivery area]()
+- [Order History]()
+- [Wishlist Items]()
+- [Referral Code]()
+- [Reviews]()
+- [Delete User]()
+- [Mass notification to user groups]()
 
 ### Admin
-- [Inventory detail] ()
-- [All Orders] ()
-- [Update Order Status] ()
-- [Crawl] ()
-- [Send push notification] ()
+- [Inventory detail]()
+- [All Orders]()
+- [Update Order Status]()
+- [Crawl]()
+- [Send push notification]()
 
+<br/><br/>
 
-## Other Goodies
+## Bonus Goodies
 
-### Design Pattern
-
-### Python-React
+### SEO by rendering React pages through Flask
+We know good SEO is acheived if pages are rendered via server initially. But here lies a challenge since the backend here is Flask, and only Node can render React pages from server side. Hence, with the help of [Python-React](https://github.com/markfinger/python-react), an intermediate Node server is setup that receives payload from flask depending on the url/query and renders the React template to normal string accordingly. This plain string is then passed pack to Flask which returns it to the browser. Of course, there a number of intricacies that needs to be taken care of which I've isolated in this design pattern [here](https://github.com/markfinger/python-react/tree/master/examples/frontend-rendering-with-webpack). Also, note that this mechanism was implemented in Spring 2016 and there might have been considerable developments done in the area since then.
 
 
 ### Responsive
 The CSS has been written in a fully responsive manner to support all kinds of media resolutions.
 
-![Responsive](app/static/img/responsive_homepage.gif)
+![Responsive](app/static/img/screens/responsive_homepage.gif)
 
 <br>
 ### Mentions
-Ostrich appeared in a [local lifestlye blog] (https://lbb.in/bangalore/ostrich-app-forlending-and-borrowing-books/) eons ago.
+Ostrich appeared in a [local lifestyle blog] (https://lbb.in/bangalore/ostrich-app-forlending-and-borrowing-books/) eons ago.
 
 
 ### Supporting apps and dashboards
+
+Apart from the main product codebase, Ostrich comprises of a suite of complementing tools consisting of:
 
 - Admin Dashboard
 	- Track and update orders
@@ -174,3 +178,17 @@ Ostrich appeared in a [local lifestlye blog] (https://lbb.in/bangalore/ostrich-a
 - Arbor (Business Solution)
 
 I'm still working on refining the docs and make them easily installable on any machine. Contributions are welcome.
+
+## Product Preview
+
+### Catalog Page
+![Product](app/static/img/screens/item.png)
+
+### Order Dialog
+![Order](app/static/img/screens/order.png)
+
+### Add address Dialog
+![Address](app/static/img/screens/address.png)
+
+### Responsive Catalog Page
+![Responsive](app/static/img/screens/responsive_product.gif)
