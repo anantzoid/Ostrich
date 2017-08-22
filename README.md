@@ -161,7 +161,7 @@ We know good SEO is acheived if pages are rendered via server initially. But her
 ### Responsive
 The CSS has been written in a fully responsive manner to support all kinds of media resolutions.
 
-<div style="text-align:center"><img src="app/static/img/screens/responsive_homepage.gif" alt="Responsive" style="width: 255px;"></div>
+<p align="center"><img src="app/static/img/screens/responsive_homepage.gif" alt="Responsive" style="width: 255px;"></p>
 
 <br>
 
