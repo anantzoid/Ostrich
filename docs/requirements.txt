@@ -17,7 +17,7 @@ Twisted-Core==13.2.0
 Twisted-Names==13.2.0
 Twisted-Web==13.2.0
 Unidecode==0.04.19
-Werkzeug==0.10.4
+Werkzeug==0.15.3
 amqp==1.4.8
 anyjson==0.3.3
 apt-xapian-index==0.45
