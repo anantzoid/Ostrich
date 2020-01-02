@@ -33,7 +33,7 @@ def searchString():
         return Utils.errorResponse(response, 'HTTP_STATUS_CODE_DATA_MISSING')
    
     if ref == 'web':
-        return json.dumps(WebUtils.fetchSearchResults(query, search_type, page))
+        return jsonify(WebUtils.fetchSearchResults(query, search_type, page))
 
     user_info = {'user_id': user_id, 'gcm_id': gcm_id, 'uuid': uuid}
     search = Search(query, user_info, flow)
@@ -59,11 +59,11 @@ def searchString():
 @webapp.route('/getCategories')
 def getCategories():
     categories = Search.getSearchCategoriesForApp()
-    return json.dumps(categories)
+    return jsonify(categories)
 
 @webapp.route('/getCollectionCategory')
 def getCollectionCategory():
-   return json.dumps(Collection.getByCategory())
+   return jsonify(Collection.getByCategory())
 
 @webapp.route('/searchFail', methods=['POST'])
 def searchFail():
@@ -80,11 +80,11 @@ def searchFail():
 
 @webapp.route('/recommended', methods=['GET'])
 def recommended():
-    return json.dumps(Search([]).mostRecommended())
+    return jsonify(Search([]).mostRecommended())
 
 @webapp.route('/mostSearched', methods=['GET'])
 def mostSearched():
-    return json.dumps(Search([]).mostSearched())
+    return jsonify(Search([]).mostSearched())
 
 @webapp.route('/getMultiplePanels')
 def getMultiplePanels():
@@ -94,5 +94,5 @@ def getMultiplePanels():
     panels = []
     for col_id in cursor.fetchall():
         panels.append(Collection(col_id).getObj())
-    return json.dumps(panels)
+    return jsonify(panels)
 
