@@ -1,5 +1,5 @@
 from app import webapp, mysql
-from flask import request  
+from flask import request, jsonify
 from app.models import *
 import json
 
@@ -45,4 +45,4 @@ def getBooks():
                 del(item_objects[i]['genre1'])
                 del(item_objects[i]['genre2'])
                 del(item_objects[i]['genre3'])
-    return json.dumps(item_objects)
+    return jsonify(item_objects)
