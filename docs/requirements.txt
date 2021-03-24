@@ -69,7 +69,7 @@ pytz==2015.7
 react==3.0.1
 redis==2.10.5
 requests==2.10.0
-rsa==3.4.2
+rsa==4.1
 simplejson==3.8.2
 six==1.10.0
 ssh-import-id==3.21
