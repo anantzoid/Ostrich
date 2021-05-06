@@ -1,7 +1,7 @@
 Cheetah==2.4.4
 Flask==0.10.1
 Flask-Cache==0.13.1
-Flask-Cors==2.1.0
+Flask-Cors==3.0.9
 Flask-Jsonpify==1.5.0
 Flask-Mail==0.9.1
 Flask-MySQL==1.3
