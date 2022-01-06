@@ -27,7 +27,7 @@ beautifulsoup4==4.4.1
 billiard==3.3.0.22
 blinker==1.4
 boto==2.39.0
-celery==3.1.19
+celery==5.2.2
 chardet==2.0.1
 cloud-init==0.7.5
 colorama==0.2.5
